@@ -1,11 +1,10 @@
 package detect
 
 import (
-  "github.com/markelog/eclectica/download"
   "github.com/markelog/eclectica/dists/nodejs"
 )
 
-func Detect(dist string) error {
+func Detect(dist string) (map[string]string, error) {
   var (
     version map[string]string
     err error
@@ -17,10 +16,8 @@ func Detect(dist string) error {
   }
 
   if err != nil {
-    return err
+    return nil, err
   }
 
-  download.Download(version["url"])
-
-  return nil
+  return version, nil
 }

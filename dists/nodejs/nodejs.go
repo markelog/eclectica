@@ -42,6 +42,7 @@ func Latest() (map[string]string, error) {
   versionReg := regexp.MustCompile(`node-v(\d+\.\d+\.\d)`)
 
   version := versionReg.FindStringSubmatch(file)[1]
+  result["name"] = "node"
   result["version"] = version
   result["url"] = fmt.Sprintf("%s/node-v%s-darwin-x64.tar.gz", partLatest, version)
 
