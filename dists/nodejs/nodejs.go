@@ -44,7 +44,8 @@ func Latest() (map[string]string, error) {
   version := versionReg.FindStringSubmatch(file)[1]
   result["name"] = "node"
   result["version"] = version
-  result["url"] = fmt.Sprintf("%s/node-v%s-darwin-x64.tar.gz", partLatest, version)
+  result["filename"] = fmt.Sprintf("node-v%s-darwin-x64", version)
+  result["url"] = fmt.Sprintf("%s/%s.tar.gz", partLatest, result["filename"])
 
   return result, nil
 }
