@@ -44,7 +44,6 @@ Usage: e <name>, <name>@<version>
       activation.Activate(path)
       os.Exit(0)
     }
-
     downloadPlace := download(dists["url"])
 
     fmt.Println("Extract archive")
@@ -66,7 +65,6 @@ Usage: e <name>, <name>@<version>
     extractionPath := fmt.Sprintf("%s/%s", extractionPlace, dists["version"])
     os.Rename(downloadPath, extractionPath)
 
-    fmt.Println("one")
     activation.Activate(path)
   }
 }
