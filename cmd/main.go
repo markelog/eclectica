@@ -12,15 +12,12 @@ import (
 
   "github.com/markelog/eclectica/detect"
   "github.com/markelog/eclectica/directory"
-)
-
-var (
-  home = fmt.Sprintf("%s/.electica/versions", os.Getenv("HOME"))
+  "github.com/markelog/eclectica/variables"
 )
 
 func exists(name string) bool {
   _, err := os.Stat(name)
-  return !os.IsExist(err)
+  return !os.IsNotExist(err)
 }
 
 
@@ -40,7 +37,7 @@ Usage: e <name>, <name>@<version>
       os.Exit(1)
     }
 
-    path := fmt.Sprintf("%s/%s/%s", home, dists["name"], dists["version"])
+    path := fmt.Sprintf("%s/%s/%s", variables.Home, dists["name"], dists["version"])
 
     if exists(path) {
       os.Exit(0)
