@@ -10,9 +10,10 @@ import (
   "github.com/urfave/cli"
   "github.com/cavaliercoder/grab"
 
+  "github.com/markelog/eclectica/variables"
   "github.com/markelog/eclectica/detect"
   "github.com/markelog/eclectica/directory"
-  "github.com/markelog/eclectica/variables"
+  "github.com/markelog/eclectica/activation"
 )
 
 func exists(name string) bool {
@@ -40,6 +41,7 @@ Usage: e <name>, <name>@<version>
     path := fmt.Sprintf("%s/%s/%s", variables.Home, dists["name"], dists["version"])
 
     if exists(path) {
+      activation.Activate(path)
       os.Exit(0)
     }
 
@@ -60,9 +62,12 @@ Usage: e <name>, <name>@<version>
       os.Exit(1)
     }
 
-    from := fmt.Sprintf("%s/%s", extractionPlace, dists["filename"])
-    to := fmt.Sprintf("%s/%s", extractionPlace, dists["version"])
-    os.Rename(from, to)
+    downloadPath := fmt.Sprintf("%s/%s", downloadPlace, dists["filename"])
+    extractionPath := fmt.Sprintf("%s/%s", extractionPlace, dists["version"])
+    os.Rename(downloadPath, extractionPath)
+
+    fmt.Println("one")
+    activation.Activate(path)
   }
 }
 
