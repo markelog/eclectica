@@ -15,16 +15,17 @@ import (
 var (
   client = &http.Client{}
 
-  partLatest = "https://nodejs.org/dist/latest"
-  latest = fmt.Sprintf("%s/SHASUMS256.txt", partLatest)
+  versionsLink = "https://nodejs.org/dist"
 
   directories = [1]string{"test"}
   prefix = "/usr/local"
 )
 
 func Latest() (map[string]string, error) {
-  file, err := info(latest)
   result := make(map[string]string)
+  sumUrl := fmt.Sprintf("%s/latest/SHASUMS256.txt", versionsLink)
+  sourcesUrl := fmt.Sprintf("%s/latest", versionsLink)
+  file, err := info(sumUrl)
 
   if err != nil {
     return result, err
@@ -36,7 +37,26 @@ func Latest() (map[string]string, error) {
   result["name"] = "node"
   result["version"] = version
   result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
-  result["url"] = fmt.Sprintf("%s/%s.tar.gz", partLatest, result["filename"])
+  result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
+
+  return result, nil
+}
+
+func Version(params ...string) (map[string]string, error) {
+  var version string
+
+  if len(params) == 0 {
+    return Latest()
+  }
+
+  result := make(map[string]string)
+
+  sourcesUrl := fmt.Sprintf("%s/v%s", versionsLink, version)
+
+  result["name"] = "node"
+  result["version"] = version
+  result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
+  result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 
   return result, nil
 }
@@ -82,13 +102,8 @@ func Activate(path string) error {
   return nil
 }
 
-func exists(name string) bool {
-  _, err := os.Stat(name)
-  return !os.IsNotExist(err)
-}
-
 func info(url string) (file string, err error){
-  response, err := client.Get(latest)
+  response, err := client.Get(url)
 
   if err != nil {
     return "", err

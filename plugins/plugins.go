@@ -12,7 +12,7 @@ func Detect(plugin string) (map[string]string, error) {
 
   switch {
     case plugin == "node":
-      version, err = nodejs.Latest()
+      version, err = nodejs.Version()
   }
 
   if err != nil {
