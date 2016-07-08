@@ -7,8 +7,6 @@ import(
 
 var (
   Home = fmt.Sprintf("%s/.eclectica/versions", os.Getenv("HOME"))
-  Directories = [4]string{"bin", "include", "share", "lib"}
-  Prefix = "/usr/local"
 )
 
 

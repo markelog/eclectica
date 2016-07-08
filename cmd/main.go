@@ -6,14 +6,12 @@ import (
   "time"
 
   "github.com/markelog/archive"
-
   "github.com/urfave/cli"
   "github.com/cavaliercoder/grab"
 
   "github.com/markelog/eclectica/variables"
-  "github.com/markelog/eclectica/detect"
+  "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/directory"
-  "github.com/markelog/eclectica/activation"
 )
 
 func exists(name string) bool {
@@ -31,7 +29,7 @@ Usage: e <name>, <name>@<version>
     cli.NewApp().Run(os.Args)
   } else {
 
-    dists, err := detect.Detect(os.Args[1])
+    dists, err := plugins.Detect(os.Args[1])
 
     if err != nil {
       fmt.Println(err)
@@ -41,7 +39,7 @@ Usage: e <name>, <name>@<version>
     path := fmt.Sprintf("%s/%s/%s", variables.Home, dists["name"], dists["version"])
 
     if exists(path) {
-      activation.Activate(path)
+      plugins.Activate(dists["name"], path)
       os.Exit(0)
     }
     downloadPlace := download(dists["url"])
@@ -65,7 +63,7 @@ Usage: e <name>, <name>@<version>
     extractionPath := fmt.Sprintf("%s/%s", extractionPlace, dists["version"])
     os.Rename(downloadPath, extractionPath)
 
-    activation.Activate(path)
+    plugins.Activate(dists["name"], path)
   }
 }
 
