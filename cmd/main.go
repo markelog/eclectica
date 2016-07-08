@@ -4,6 +4,7 @@ import (
   "os"
   "fmt"
   "time"
+  "io/ioutil"
 
   "github.com/markelog/archive"
   "github.com/urfave/cli"
@@ -14,11 +15,30 @@ import (
   "github.com/markelog/eclectica/directory"
 )
 
-func exists(name string) bool {
-  _, err := os.Stat(name)
+func exists(path string) bool {
+  _, err := os.Stat(path)
   return !os.IsNotExist(err)
 }
 
+func list(name string) {
+  path := variables.Home + "/" + name
+
+  if !exists(path) {
+    fmt.Println("There is no installed versions of " + name)
+    os.Exit(0)
+  }
+
+  files, err := ioutil.ReadDir(variables.Home + "/" + name)
+
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+
+  for _, file := range files {
+    fmt.Println(file.Name())
+  }
+}
 
 func main() {
   cli.AppHelpTemplate = `
@@ -27,8 +47,9 @@ Usage: e <name>, <name>@<version>
 `
   if len(os.Args) == 1 {
     cli.NewApp().Run(os.Args)
+  } else if os.Args[1] == "ls" {
+    fmt.Println(os.Args[2])
   } else {
-
     dists, err := plugins.Detect(os.Args[1])
 
     if err != nil {
