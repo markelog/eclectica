@@ -48,7 +48,7 @@ Usage: e <name>, <name>@<version>
   if len(os.Args) == 1 {
     cli.NewApp().Run(os.Args)
   } else if os.Args[1] == "ls" {
-    fmt.Println(os.Args[2])
+    list(os.Args[2])
   } else {
     dists, err := plugins.Detect(os.Args[1])
 
@@ -60,9 +60,16 @@ Usage: e <name>, <name>@<version>
     path := fmt.Sprintf("%s/%s/%s", variables.Home, dists["name"], dists["version"])
 
     if exists(path) {
-      plugins.Activate(dists["name"], path)
+      err := plugins.Activate(dists["name"], dists)
+
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
+
       os.Exit(0)
     }
+
     downloadPlace := download(dists["url"])
 
     fmt.Println("Extract archive")
@@ -80,11 +87,16 @@ Usage: e <name>, <name>@<version>
       os.Exit(1)
     }
 
-    downloadPath := fmt.Sprintf("%s/%s", downloadPlace, dists["filename"])
+    downloadPath := fmt.Sprintf("%s/%s", extractionPlace, dists["filename"])
     extractionPath := fmt.Sprintf("%s/%s", extractionPlace, dists["version"])
-    os.Rename(downloadPath, extractionPath)
+    err = os.Rename(downloadPath, extractionPath)
 
-    plugins.Activate(dists["name"], path)
+    if err != nil {
+      fmt.Println(err)
+      os.Exit(1)
+    }
+
+    plugins.Activate(dists["name"], dists)
   }
 }
 

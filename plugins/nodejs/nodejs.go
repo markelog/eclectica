@@ -7,18 +7,18 @@ import (
   "runtime"
   "fmt"
   "os"
-  "path/filepath"
 
-  "github.com/termie/go-shutil"
+  "github.com/markelog/eclectica/variables"
 )
 
 var (
   client = &http.Client{}
 
   versionsLink = "https://nodejs.org/dist"
+  home = fmt.Sprintf("%s/%s", variables.Home, "node")
 
-  directories = [1]string{"test"}
-  prefix = "/usr/local"
+  bins = [2]string{"node", "npm"}
+  prefix = "/usr/local/bin"
 )
 
 func Latest() (map[string]string, error) {
@@ -61,40 +61,31 @@ func Version(params ...string) (map[string]string, error) {
   return result, nil
 }
 
-func Activate(path string) error {
-  var err error
+func Activate(data map[string]string) error {
+  base := fmt.Sprintf("%s/%s/bin", home, data["version"])
 
-  for _, directory := range directories {
-    to := fmt.Sprintf("%s/%s", prefix, directory)
-    from := fmt.Sprintf("%s/%s", path, directory)
-
-    filepath.Walk(from, func(path string, info os.FileInfo, err error) error {
-      if from == path {
-        return nil
-      }
-
-      newPath := filepath.Join(to, info.Name())
-
-      if info.IsDir() {
-        fmt.Println()
-
-        err = os.MkdirAll(newPath, info.Mode())
-
-        if err != nil {
-          return err
-        }
-
-        return nil
-      }
-
-      err = shutil.CopyFile(path, newPath, true)
-      fmt.Println(err)
-
-      return nil
-    })
+  if _, err := os.Stat(prefix); os.IsNotExist(err) {
+    err := os.MkdirAll(prefix, 0755)
 
     if err != nil {
-      fmt.Println(err)
+      return err
+    }
+  }
+
+  for _, bin := range bins {
+    from := fmt.Sprintf("%s/%s", base, bin)
+    to := fmt.Sprintf("%s/%s", prefix, bin)
+
+    if _, err := os.Stat(to); err == nil {
+      err := os.Remove(to)
+      if err != nil {
+        return err
+      }
+    }
+
+    err := os.Symlink(from, to)
+
+    if err != nil {
       return err
     }
   }
