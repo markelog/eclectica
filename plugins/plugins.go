@@ -22,9 +22,9 @@ func Detect(plugin string) (map[string]string, error) {
   return version, nil
 }
 
-func Activate(name string, data map[string]string) error {
+func Activate(data map[string]string) error {
   switch {
-    case name == "node":
+    case data["name"] == "node":
       return nodejs.Activate(data)
   }
 
