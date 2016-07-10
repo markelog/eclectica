@@ -42,10 +42,8 @@ func Latest() (map[string]string, error) {
   return result, nil
 }
 
-func Version(params ...string) (map[string]string, error) {
-  var version string
-
-  if len(params) == 0 {
+func Version(version string) (map[string]string, error) {
+  if version == "latest" {
     return Latest()
   }
 
@@ -64,24 +62,11 @@ func Version(params ...string) (map[string]string, error) {
 func Activate(data map[string]string) error {
   base := fmt.Sprintf("%s/%s/bin", home, data["version"])
 
-  if _, err := os.Stat(prefix); os.IsNotExist(err) {
-    err := os.MkdirAll(prefix, 0755)
-
-    if err != nil {
-      return err
-    }
-  }
-
   for _, bin := range bins {
     from := fmt.Sprintf("%s/%s", base, bin)
     to := fmt.Sprintf("%s/%s", prefix, bin)
 
-    if _, err := os.Stat(to); err == nil {
-      err := os.Remove(to)
-      if err != nil {
-        return err
-      }
-    }
+    os.Remove(to)
 
     err := os.Symlink(from, to)
 

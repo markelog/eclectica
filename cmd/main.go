@@ -60,6 +60,8 @@ Usage: e <name>, <name>@<version>
     path := fmt.Sprintf("%s/%s/%s", variables.Home, info["name"], info["version"])
 
     if exists(path) {
+      output := fmt.Sprintf("Activating %s %s version", info["name"], info["version"])
+      fmt.Println(output)
       err := plugins.Activate(info)
 
       if err != nil {
@@ -67,6 +69,7 @@ Usage: e <name>, <name>@<version>
         os.Exit(1)
       }
 
+      fmt.Println("done")
       os.Exit(0)
     }
 
@@ -96,7 +99,10 @@ Usage: e <name>, <name>@<version>
       os.Exit(1)
     }
 
+    output := fmt.Sprintf("Activating %s %s version", info["name"], info["version"])
+    fmt.Println(output)
     plugins.Activate(info)
+    fmt.Println("done")
   }
 }
 

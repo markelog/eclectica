@@ -1,25 +1,34 @@
 package plugins
 
 import (
+  "strings"
+
   "github.com/markelog/eclectica/plugins/nodejs"
 )
 
-func Detect(plugin string) (map[string]string, error) {
+func Detect(nameAndVersion string) (map[string]string, error) {
   var (
-    version map[string]string
+    info map[string]string
+    version = "latest"
+    data = strings.Split(nameAndVersion, "@")
+    plugin = data[0]
     err error
   )
 
+  if len(data) == 2 {
+    version = data[1]
+  }
+
   switch {
     case plugin == "node":
-      version, err = nodejs.Version()
+      info, err = nodejs.Version(version)
   }
 
   if err != nil {
     return nil, err
   }
 
-  return version, nil
+  return info, nil
 }
 
 func Activate(data map[string]string) error {
