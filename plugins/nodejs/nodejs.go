@@ -21,10 +21,10 @@ var (
   prefix = "/usr/local/bin"
 )
 
-func Latest() (map[string]string, error) {
+func Keyword(keyword string) (map[string]string, error) {
   result := make(map[string]string)
-  sumUrl := fmt.Sprintf("%s/latest/SHASUMS256.txt", versionsLink)
-  sourcesUrl := fmt.Sprintf("%s/latest", versionsLink)
+  sumUrl := fmt.Sprintf("%s/%s/SHASUMS256.txt", versionsLink, keyword)
+  sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, keyword)
   file, err := info(sumUrl)
 
   if err != nil {
@@ -43,8 +43,8 @@ func Latest() (map[string]string, error) {
 }
 
 func Version(version string) (map[string]string, error) {
-  if version == "latest" {
-    return Latest()
+  if version == "latest" || version == "lts" {
+    return Keyword(version)
   }
 
   result := make(map[string]string)
@@ -59,7 +59,32 @@ func Version(version string) (map[string]string, error) {
   return result, nil
 }
 
+func Remove(version string) error {
+  var err error
+  base := fmt.Sprintf("%s/%s", home, version)
+
+  err = os.RemoveAll(base)
+
+  if err != nil {
+    return err
+  }
+
+  for _, bin := range bins {
+    exec := fmt.Sprintf("%s/%s", prefix, bin)
+
+    err = os.RemoveAll(exec)
+
+    if err != nil {
+      return err
+    }
+  }
+
+  return nil
+}
+
 func Activate(data map[string]string) error {
+  var err error
+
   base := fmt.Sprintf("%s/%s/bin", home, data["version"])
 
   for _, bin := range bins {
@@ -68,7 +93,7 @@ func Activate(data map[string]string) error {
 
     os.Remove(to)
 
-    err := os.Symlink(from, to)
+    err = os.Symlink(from, to)
 
     if err != nil {
       return err

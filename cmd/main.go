@@ -5,6 +5,7 @@ import (
   "fmt"
   "time"
   "io/ioutil"
+  // "strings"
 
   "github.com/markelog/archive"
   "github.com/urfave/cli"
@@ -13,6 +14,7 @@ import (
   "github.com/markelog/eclectica/variables"
   "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/directory"
+  "github.com/markelog/eclectica/cmd/prompt"
 )
 
 func exists(path string) bool {
@@ -20,7 +22,7 @@ func exists(path string) bool {
   return !os.IsNotExist(err)
 }
 
-func list(name string) {
+func getVersions(name string) []string {
   path := variables.Home + "/" + name
 
   if !exists(path) {
@@ -28,16 +30,48 @@ func list(name string) {
     os.Exit(0)
   }
 
-  files, err := ioutil.ReadDir(variables.Home + "/" + name)
+  folders, err := ioutil.ReadDir(variables.Home + "/" + name)
+  versions := []string{}
 
   if err != nil {
     fmt.Println(err)
     os.Exit(1)
   }
 
-  for _, file := range files {
-    fmt.Println(file.Name())
+  for _, folder := range folders {
+    if folder.IsDir() {
+      versions = append(versions, folder.Name())
+    }
   }
+
+  return versions
+}
+
+func listVersions(language string) {
+  versions := getVersions(language)
+
+  fmt.Println()
+  for _, version := range versions {
+    fmt.Println("  " + version)
+  }
+  fmt.Println()
+}
+
+func list() {
+  language := prompt.List("Language", plugins.List).Language
+
+  listVersions(language)
+}
+
+func askInfo() string {
+  language := prompt.List("Language", plugins.List).Language
+  version := prompt.List("Version", getVersions(language)).Version
+
+  return language + "@" + version
+}
+
+func use() {
+  activate(askInfo())
 }
 
 func main() {
@@ -46,64 +80,96 @@ Usage: e <name>, <name>@<version>
 
 `
   if len(os.Args) == 1 {
-    cli.NewApp().Run(os.Args)
+    use()
+
   } else if os.Args[1] == "ls" {
-    list(os.Args[2])
+    list()
+
+  } else if os.Args[1] == "rm" {
+    var nameAndVersion string
+
+    if len(os.Args) == 2 {
+      nameAndVersion = askInfo()
+    } else {
+      nameAndVersion = os.Args[2]
+    }
+
+    remove(nameAndVersion)
+
   } else {
-    info, err := plugins.Detect(os.Args[1])
+    activate(os.Args[1])
+  }
+}
 
-    if err != nil {
-      fmt.Println(err)
-      os.Exit(1)
-    }
+func remove(nameAndVersion string) {
+  err := plugins.Remove(nameAndVersion)
 
-    path := fmt.Sprintf("%s/%s/%s", variables.Home, info["name"], info["version"])
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+}
 
-    if exists(path) {
-      output := fmt.Sprintf("Activating %s %s version", info["name"], info["version"])
-      fmt.Println(output)
-      err := plugins.Activate(info)
+func activate(language string) {
+  info, err := plugins.Detect(language)
 
-      if err != nil {
-        fmt.Println(err)
-        os.Exit(1)
-      }
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
 
-      fmt.Println("done")
-      os.Exit(0)
-    }
+  path := fmt.Sprintf("%s/%s/%s", variables.Home, info["name"], info["version"])
 
-    downloadPlace := download(info["url"])
-
-    fmt.Println("Extract archive")
-    extractionPlace, err := directory.Create(info["name"])
-
-    if err != nil {
-      fmt.Println(err)
-      os.Exit(1)
-    }
-
-    err = archive.Extract(downloadPlace, extractionPlace)
-
-    if err != nil {
-      fmt.Println(err)
-      os.Exit(1)
-    }
-
-    downloadPath := fmt.Sprintf("%s/%s", extractionPlace, info["filename"])
-    extractionPath := fmt.Sprintf("%s/%s", extractionPlace, info["version"])
-    err = os.Rename(downloadPath, extractionPath)
-
-    if err != nil {
-      fmt.Println(err)
-      os.Exit(1)
-    }
-
+  if exists(path) {
     output := fmt.Sprintf("Activating %s %s version", info["name"], info["version"])
     fmt.Println(output)
-    plugins.Activate(info)
+    err := plugins.Activate(info)
+
+    if err != nil {
+      fmt.Println(err)
+      os.Exit(1)
+    }
+
     fmt.Println("done")
+    os.Exit(0)
   }
+
+  downloadPlace := download(info["url"])
+
+  fmt.Println("Extract archive")
+  extractionPlace, err := directory.Create(info["name"])
+
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+
+  err = archive.Extract(downloadPlace, extractionPlace)
+
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+
+  downloadPath := fmt.Sprintf("%s/%s", extractionPlace, info["filename"])
+  extractionPath := fmt.Sprintf("%s/%s", extractionPlace, info["version"])
+  err = os.Rename(downloadPath, extractionPath)
+
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+
+  output := fmt.Sprintf("Activating %s %s version", info["name"], info["version"])
+  fmt.Println(output)
+
+  err = plugins.Activate(info)
+  if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+  }
+
+  fmt.Println("done")
 }
 
 func download(url string) string {
