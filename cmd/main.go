@@ -121,8 +121,6 @@ func activate(language string) {
   path := fmt.Sprintf("%s/%s/%s", variables.Home, info["name"], info["version"])
 
   if exists(path) {
-    output := fmt.Sprintf("Activating %s %s version", info["name"], info["version"])
-    fmt.Println(output)
     err := plugins.Activate(info)
 
     if err != nil {
@@ -130,13 +128,11 @@ func activate(language string) {
       os.Exit(1)
     }
 
-    fmt.Println("done")
     os.Exit(0)
   }
 
   downloadPlace := download(info["url"])
 
-  fmt.Println("Extract archive")
   extractionPlace, err := directory.Create(info["name"])
 
   if err != nil {
@@ -160,16 +156,11 @@ func activate(language string) {
     os.Exit(1)
   }
 
-  output := fmt.Sprintf("Activating %s %s version", info["name"], info["version"])
-  fmt.Println(output)
-
   err = plugins.Activate(info)
   if err != nil {
     fmt.Println(err)
     os.Exit(1)
   }
-
-  fmt.Println("done")
 }
 
 func download(url string) string {
