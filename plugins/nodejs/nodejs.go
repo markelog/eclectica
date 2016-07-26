@@ -9,6 +9,8 @@ import (
   "os"
 
   "github.com/markelog/eclectica/variables"
+
+  "github.com/markelog/cprf"
 )
 
 var (
@@ -17,8 +19,8 @@ var (
   versionsLink = "https://nodejs.org/dist"
   home = fmt.Sprintf("%s/%s", variables.Home, "node")
 
-  bins = [2]string{"node", "npm"}
-  prefix = "/usr/local/bin"
+  files = [4]string{"bin", "lib", "include", "share"}
+  prefix = "/usr/local"
 )
 
 func Keyword(keyword string) (map[string]string, error) {
@@ -69,31 +71,24 @@ func Remove(version string) error {
     return err
   }
 
-  for _, bin := range bins {
-    exec := fmt.Sprintf("%s/%s", prefix, bin)
-
-    err = os.RemoveAll(exec)
-
-    if err != nil {
-      return err
-    }
-  }
-
   return nil
 }
 
 func Activate(data map[string]string) error {
   var err error
 
-  base := fmt.Sprintf("%s/%s/bin", home, data["version"])
+  base := fmt.Sprintf("%s/%s", home, data["version"])
 
-  for _, bin := range bins {
-    from := fmt.Sprintf("%s/%s", base, bin)
-    to := fmt.Sprintf("%s/%s", prefix, bin)
+  for _, file := range files {
+    from := fmt.Sprintf("%s/%s", base, file)
+    to := prefix
 
-    os.Remove(to)
+    // Older versions might not have certain files
+    if _, err := os.Stat(from); os.IsNotExist(err) {
+      continue
+    }
 
-    err = os.Symlink(from, to)
+    err = cprf.Copy(from, to)
 
     if err != nil {
       return err
