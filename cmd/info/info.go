@@ -22,7 +22,7 @@ func Versions(name string) []string {
 
   if _, err := os.Stat(path); os.IsNotExist(err) {
     fmt.Println("There is no installed versions of " + name)
-    os.Exit(0)
+    os.Exit(1)
   }
 
   folders, err := ioutil.ReadDir(variables.Home + "/" + name)

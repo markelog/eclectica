@@ -6,7 +6,6 @@ import (
   "strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
   "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/cmd/activation"
