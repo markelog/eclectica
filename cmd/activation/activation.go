@@ -33,6 +33,12 @@ func checkErrors(err error) {
   os.Exit(1)
 }
 
+func check404(resp *grab.Response, version string) {
+  if resp.HTTPResponse.StatusCode == 404 {
+    checkErrors(errors.New("Incorrect version " + version))
+  }
+}
+
 func printInStyle(name, entity string) {
   color.Set(color.FgBlack)
   fmt.Print(name)
@@ -91,10 +97,7 @@ func download(info map[string]string) string {
 
   resp := <-respch
 
-  if resp.Error != nil && grab.IsContentLengthMismatch(resp.Error) {
-    checkErrors(errors.New("Incorrect version " + info["version"]))
-  }
-
+  check404(resp, info["version"])
   checkErrors(resp.Error)
 
   // Print progress until transfer is complete
@@ -136,12 +139,8 @@ func download(info map[string]string) string {
   printInStyle("Version", info["version"])
   fmt.Println()
 
-  if resp.HTTPResponse.StatusCode == 404 {
-    checkErrors(errors.New("Incorrect version " + info["version"]))
-  }
-
-  // Don't know how to reproduce
-  checkErrors(resp.Error)
+  checkErrors(resp.Error) // Don't know how to reproduce
+  check404(resp, info["version"])
 
   return resp.Filename
 }
