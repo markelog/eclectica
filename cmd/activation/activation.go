@@ -14,11 +14,11 @@ import (
   "github.com/dustin/go-humanize"
   "github.com/sethgrid/curse"
 
+  "github.com/markelog/eclectica/cmd/helpers"
   "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/variables"
   "github.com/markelog/eclectica/directory"
 )
-
 
 func checkErrors(err error) {
   if err == nil {
@@ -37,16 +37,6 @@ func check404(resp *grab.Response, version string) {
   if resp.HTTPResponse.StatusCode == 404 {
     checkErrors(errors.New("Incorrect version " + version))
   }
-}
-
-func printInStyle(name, entity string) {
-  color.Set(color.FgBlack)
-  fmt.Print(name)
-
-  color.Set(color.FgCyan)
-  fmt.Print(" ")
-  fmt.Print(entity + " ")
-  color.Unset()
 }
 
 func Activate(language string) {
@@ -87,9 +77,9 @@ func download(info map[string]string) string {
   url := info["url"]
 
   // Start file download
-  printInStyle("Language", info["name"])
+  helpers.PrintInStyle("Language", info["name"])
   fmt.Println()
-  printInStyle("Version", info["version"])
+  helpers.PrintInStyle("Version", info["version"])
   fmt.Println()
 
   respch, err := grab.GetAsync(os.TempDir(), url)
@@ -115,7 +105,7 @@ func download(info map[string]string) string {
     }
     started = true
 
-    printInStyle("Version", info["version"])
+    helpers.PrintInStyle("Version", info["version"])
 
     color.Set(color.FgBlack)
     fmt.Print("(")
@@ -136,7 +126,7 @@ func download(info map[string]string) string {
   c.MoveUp(1)
   c.EraseCurrentLine()
 
-  printInStyle("Version", info["version"])
+  helpers.PrintInStyle("Version", info["version"])
   fmt.Println()
 
   checkErrors(resp.Error) // Don't know how to reproduce

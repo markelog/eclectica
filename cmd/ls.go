@@ -4,7 +4,9 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+  "github.com/fatih/color"
 
+  "github.com/markelog/eclectica/cmd/helpers"
   "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/cmd/prompt"
   "github.com/markelog/eclectica/cmd/info"
@@ -17,10 +19,15 @@ func listVersions(language string) {
   fmt.Println()
   for _, version := range versions {
     if current == version {
-      fmt.Println("★  " + version)
+
+      color.Set(color.FgCyan)
+      fmt.Println("♥ " + version)
+      color.Unset()
 
     } else {
-      fmt.Println("   " + version)
+      color.Set(color.FgBlack)
+      fmt.Println("  " + version)
+      color.Unset()
     }
   }
   fmt.Println()
@@ -45,7 +52,9 @@ var lsCmd = &cobra.Command{
 
     for _, element := range plugins.List {
       if args[0] == element {
-        listVersions(args[0])
+        helpers.PrintInStyle("Language", element)
+        fmt.Println()
+        listVersions(element)
         return
       }
     }
