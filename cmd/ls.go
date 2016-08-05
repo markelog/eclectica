@@ -12,6 +12,8 @@ import (
   "github.com/markelog/eclectica/cmd/info"
 )
 
+var isRemote bool
+
 func listVersions(language string) {
   versions := info.Versions(language)
   current := plugins.CurrentVersion(language)
@@ -45,6 +47,10 @@ var lsCmd = &cobra.Command{
 	Short:   "List installed language versions",
 	Run: func(cmd *cobra.Command, args []string) {
 
+    if isRemote {
+      return
+    }
+
     if len(args) == 0 {
       list()
       return
@@ -62,5 +68,6 @@ var lsCmd = &cobra.Command{
 }
 
 func init() {
+  RootCmd.PersistentFlags().BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
 	RootCmd.AddCommand(lsCmd)
 }

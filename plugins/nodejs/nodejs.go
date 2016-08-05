@@ -10,9 +10,9 @@ import (
   "os/exec"
   "strings"
 
-  "github.com/markelog/eclectica/variables"
-
   "github.com/markelog/cprf"
+
+  "github.com/markelog/eclectica/variables"
 )
 
 var (
@@ -106,6 +106,16 @@ func CurrentVersion() string {
   version := strings.TrimSpace(string(out))
 
   return strings.Replace(version, "v", "", 1)
+}
+
+func RemoteList() (map[string][]string, error) {
+  versions, err := ListVersions()
+
+  if err != nil {
+    return nil, err
+  }
+
+  return ComposeVersions(versions), nil
 }
 
 func info(url string) (file string, err error){
