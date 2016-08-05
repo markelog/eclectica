@@ -1,7 +1,6 @@
 package cmd
 
 import (
-  "os"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -10,11 +9,6 @@ import (
   "github.com/markelog/eclectica/cmd/prompt"
   "github.com/markelog/eclectica/cmd/info"
 )
-
-func exists(path string) bool {
-  _, err := os.Stat(path)
-  return !os.IsNotExist(err)
-}
 
 func listVersions(language string) {
   versions := info.Versions(language)
@@ -37,7 +31,18 @@ var lsCmd = &cobra.Command{
 	Use:     "ls",
 	Short:   "List installed language versions",
 	Run: func(cmd *cobra.Command, args []string) {
-    list()
+
+    if len(args) == 0 {
+      list()
+      return
+    }
+
+    for _, element := range plugins.List {
+      if args[0] == element {
+        listVersions(args[0])
+        return
+      }
+    }
   },
 }
 
