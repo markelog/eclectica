@@ -12,10 +12,16 @@ import (
 
 func listVersions(language string) {
   versions := info.Versions(language)
+  current := plugins.CurrentVersion(language)
 
   fmt.Println()
   for _, version := range versions {
-    fmt.Println("  " + version)
+    if current == version {
+      fmt.Println("★  " + version)
+
+    } else {
+      fmt.Println("   " + version)
+    }
   }
   fmt.Println()
 }

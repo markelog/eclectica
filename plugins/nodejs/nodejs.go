@@ -7,6 +7,8 @@ import (
   "runtime"
   "fmt"
   "os"
+  "os/exec"
+  "strings"
 
   "github.com/markelog/eclectica/variables"
 
@@ -21,6 +23,7 @@ var (
 
   files = [4]string{"bin", "lib", "include", "share"}
   prefix = "/usr/local"
+  bin = prefix + "/bin/node"
 )
 
 func Keyword(keyword string) (map[string]string, error) {
@@ -96,6 +99,13 @@ func Activate(data map[string]string) error {
   }
 
   return nil
+}
+
+func CurrentVersion() string {
+  out, _ := exec.Command(bin, "--version").Output()
+  version := strings.TrimSpace(string(out))
+
+  return strings.Replace(version, "v", "", 1)
 }
 
 func info(url string) (file string, err error){

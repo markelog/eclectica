@@ -89,3 +89,12 @@ func Activate(data map[string]string) error {
 
   return nil
 }
+
+func CurrentVersion(name string) string {
+  switch {
+    case name == "node":
+      return nodejs.CurrentVersion()
+  }
+
+  return ""
+}
