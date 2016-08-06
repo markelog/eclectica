@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/spf13/cobra"
+  "github.com/spf13/cobra"
   "github.com/fatih/color"
 
   "github.com/markelog/eclectica/cmd/helpers"
@@ -94,9 +94,9 @@ func local(args []string) {
 
 // lsCmd represents the ls command
 var lsCmd = &cobra.Command{
-	Use:     "ls",
-	Short:   "List installed language versions",
-	Run: func(cmd *cobra.Command, args []string) {
+  Use:     "ls",
+  Short:   "List installed language versions",
+  Run: func(cmd *cobra.Command, args []string) {
     if isRemote {
       remote(args)
     } else {
@@ -107,5 +107,5 @@ var lsCmd = &cobra.Command{
 
 func init() {
   RootCmd.PersistentFlags().BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
-	RootCmd.AddCommand(lsCmd)
+  RootCmd.AddCommand(lsCmd)
 }
