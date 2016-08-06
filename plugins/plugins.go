@@ -80,7 +80,6 @@ func Remove(nameAndVersion string) error {
   return nil
 }
 
-
 func Activate(data map[string]string) error {
   switch {
     case data["name"] == "node":
@@ -88,6 +87,22 @@ func Activate(data map[string]string) error {
   }
 
   return nil
+}
+
+func RemoteList(name string) (map[string][]string, error) {
+  var versions []string
+  var err error
+
+  switch {
+    case name == "node":
+      versions, err = nodejs.ListVersions()
+
+      if err != nil {
+        return nil, err
+      }
+  }
+
+  return ComposeVersions(versions), nil
 }
 
 func CurrentVersion(name string) string {
@@ -98,3 +113,4 @@ func CurrentVersion(name string) string {
 
   return ""
 }
+

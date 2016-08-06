@@ -9,6 +9,7 @@ import (
 type Result struct {
   Language string `form:"list"`
   Version string `form:"list"`
+  Mask string `form:"list"`
 }
 
 func List(name string, choices []string) Result {

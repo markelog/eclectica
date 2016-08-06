@@ -108,16 +108,6 @@ func CurrentVersion() string {
   return strings.Replace(version, "v", "", 1)
 }
 
-func RemoteList() (map[string][]string, error) {
-  versions, err := ListVersions()
-
-  if err != nil {
-    return nil, err
-  }
-
-  return ComposeVersions(versions), nil
-}
-
 func info(url string) (file string, err error){
   response, err := client.Get(url)
 
