@@ -7,12 +7,14 @@ import (
   "errors"
 
   "github.com/markelog/eclectica/plugins/nodejs"
+  "github.com/markelog/eclectica/plugins/rust"
   "github.com/markelog/eclectica/variables"
 )
 
 var (
   List = []string{
     "node",
+    "rust",
   }
 )
 
@@ -53,6 +55,8 @@ func Detect(nameAndVersion string) (map[string]string, error) {
   switch {
     case plugin == "node":
       info, err = nodejs.Version(version)
+    case plugin == "rust":
+      info, err = rust.Version(version)
   }
 
   if err != nil {
@@ -96,10 +100,12 @@ func RemoteList(name string) (map[string][]string, error) {
   switch {
     case name == "node":
       versions, err = nodejs.ListVersions()
+    case name == "rust":
+      versions, err = rust.ListVersions()
+  }
 
-      if err != nil {
-        return nil, err
-      }
+  if err != nil {
+    return nil, err
   }
 
   return ComposeVersions(versions), nil
@@ -113,4 +119,3 @@ func CurrentVersion(name string) string {
 
   return ""
 }
-
