@@ -4,10 +4,9 @@ import (
   "regexp"
   "io/ioutil"
 
+  "github.com/jarcoal/httpmock"
   . "github.com/onsi/ginkgo"
   . "github.com/onsi/gomega"
-
-  "github.com/jarcoal/httpmock"
 
   ."github.com/markelog/eclectica/plugins/rust"
 )
