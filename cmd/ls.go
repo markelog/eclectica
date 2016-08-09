@@ -12,8 +12,6 @@ import (
   "github.com/markelog/eclectica/cmd/info"
 )
 
-var isRemote bool
-
 func listVersions(versions []string, current string) {
   fmt.Println()
   for _, version := range versions {
@@ -106,6 +104,5 @@ var lsCmd = &cobra.Command{
 }
 
 func init() {
-  RootCmd.PersistentFlags().BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
   RootCmd.AddCommand(lsCmd)
 }

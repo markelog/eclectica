@@ -12,7 +12,7 @@ import (
   "github.com/markelog/eclectica/cmd/info"
 )
 
-var cfgFile string
+var isRemote bool
 
 var RootCmd = &cobra.Command{
 	Use:     "eclectica",
@@ -21,7 +21,7 @@ var RootCmd = &cobra.Command{
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// This is called by main.main(). It only needs to happen once to the rootCmd
 func Execute() {
   if len(os.Args) == 1 {
     use()
@@ -44,6 +44,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize()
+  RootCmd.PersistentFlags().BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
 }
 
 func use() {
