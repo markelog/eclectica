@@ -22,21 +22,54 @@ var RootCmd = &cobra.Command{
 	Long:    `Eclectica is version language manager for Node.js`,
 }
 
+func getLanguage(args []string) (string, bool) {
+  for _, element := range args {
+    data := strings.Split(element , "@")
+    language := data[0]
+
+    if len(data) == 2 {
+      return "", false
+    }
+
+    for _, plugin := range plugins.List {
+      if strings.HasPrefix(language, plugin) {
+        return element, true
+      }
+    }
+  }
+
+  return "", false
+}
+
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd
 func Execute() {
+
   // We don't use cobra here, since we support `ec <language>@version` syntax
   pflag.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
   pflag.Parse()
 
-  // If `--remote` flag were passed - just show list for the remote versions
+  language, hasLanguage := getLanguage(os.Args[1:])
+
+  // If `--remote` flag was passed
   if isRemote {
-    activation.Activate(info.AskRemote())
+
+    // In case of `ec -r <language>` or `ec <language> -r`
+    if hasLanguage {
+      helpers.PrintInStyle("Language", language)
+      fmt.Println()
+      activation.Activate(info.AskRemoteVersion(language))
+
+    // In case of `ec -r`
+    } else {
+      activation.Activate(info.AskRemote())
+    }
+
     return
   }
 
-  // If nothing were passed - just show list for the local versions
-  if len(os.Args) == 1 {
+  // If nothing was passed - just show list for the local versions
+  if len(os.Args[1:]) == 0 {
     activation.Activate(info.Ask())
     return
   }

@@ -12,7 +12,7 @@ import (
 
 func Ask() string {
   language := prompt.List("Language", plugins.List).Language
-  version := prompt.List("Version", Versions(language)).Version
+  version := AskVersion(language)
 
   return language + "@" + version
 }
@@ -25,6 +25,12 @@ func AskVersion(language string) string {
 
 func AskRemote() string {
   language := prompt.List("Language", plugins.List).Language
+  version := AskRemoteVersion(language)
+
+  return language + "@" + version
+}
+
+func AskRemoteVersion(language string) string {
   list, _ := plugins.RemoteList(language)
   key := prompt.List("Mask", plugins.GetKeys(list)).Mask
   versions := plugins.GetElements(key, list)
