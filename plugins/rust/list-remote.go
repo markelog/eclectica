@@ -4,6 +4,8 @@ import (
   "errors"
   "runtime"
   "regexp"
+
+  "github.com/markelog/eclectica/request"
 )
 
 var (
@@ -15,6 +17,7 @@ var (
   versionPattern = "(" + defaultPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
 )
 
+// Do not know how to test it :/
 func getPlatfrom() (string, error) {
   if runtime.GOOS == "linux" {
     return "x86_64-unknown-linux-gnu", nil
@@ -32,7 +35,7 @@ func getFullPattern() (string, error) {
   result := ""
 
   if err != nil {
-    return result, nil
+    return result, err
   }
 
   result = "/dist/rust-" + fullVersionPattern + "-" + platform + ".tar.gz,"
@@ -41,17 +44,17 @@ func getFullPattern() (string, error) {
 }
 
 func ListVersions() ([]string, error) {
-  body, err := info(versionsLink)
+  body, err := request.Body(versionsLink)
   result := []string{}
 
   if err != nil {
-    return result, nil
+    return result, err
   }
 
   fullPattern, err := getFullPattern()
 
   if err != nil {
-    return result, nil
+    return result, err
   }
 
   fullUrlsPattern := regexp.MustCompile(fullPattern)

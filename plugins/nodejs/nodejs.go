@@ -1,8 +1,6 @@
 package nodejs
 
 import (
-  "net/http"
-  "io/ioutil"
   "regexp"
   "runtime"
   "fmt"
@@ -13,11 +11,10 @@ import (
   "github.com/markelog/cprf"
 
   "github.com/markelog/eclectica/variables"
+  "github.com/markelog/eclectica/request"
 )
 
 var (
-  client = &http.Client{}
-
   versionsLink = "https://nodejs.org/dist"
   home = fmt.Sprintf("%s/%s", variables.Home, "node")
 
@@ -30,7 +27,7 @@ func Keyword(keyword string) (map[string]string, error) {
   result := make(map[string]string)
   sumUrl := fmt.Sprintf("%s/%s/SHASUMS256.txt", versionsLink, keyword)
   sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, keyword)
-  file, err := info(sumUrl)
+  file, err := request.Body(sumUrl)
 
   if err != nil {
     return result, err
@@ -106,21 +103,4 @@ func CurrentVersion() string {
   version := strings.TrimSpace(string(out))
 
   return strings.Replace(version, "v", "", 1)
-}
-
-func info(url string) (file string, err error){
-  response, err := client.Get(url)
-
-  if err != nil {
-    return "", err
-  }
-
-  defer response.Body.Close()
-  contents, err := ioutil.ReadAll(response.Body)
-
-  if err != nil {
-    return "", err
-  }
-
-  return string(contents), nil
 }
