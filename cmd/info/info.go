@@ -17,6 +17,12 @@ func Ask() string {
   return language + "@" + version
 }
 
+func AskVersion(language string) string {
+  version := prompt.List("Version", Versions(language)).Version
+
+  return version
+}
+
 func AskRemote() string {
   language := prompt.List("Language", plugins.List).Language
   list, _ := plugins.RemoteList(language)
