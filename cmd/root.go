@@ -6,10 +6,11 @@ import (
   "strings"
 
 	"github.com/spf13/cobra"
+  "github.com/spf13/pflag"
 
-  "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/cmd/activation"
   "github.com/markelog/eclectica/cmd/info"
+  "github.com/markelog/eclectica/plugins"
 )
 
 var isRemote bool
@@ -23,6 +24,14 @@ var RootCmd = &cobra.Command{
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd
 func Execute() {
+  pflag.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
+  pflag.Parse()
+
+  if isRemote {
+    activation.Activate(info.AskRemote())
+    return
+  }
+
   if len(os.Args) == 1 {
     use()
     return
@@ -31,14 +40,14 @@ func Execute() {
   language := strings.Split(os.Args[1], "@")[0]
   for _, plugin := range plugins.List {
     if strings.HasPrefix(language, plugin) {
-      activation.Activate(os.Args[1])
+      activation.ActivateAndPrint(os.Args[1])
       return
     }
   }
 
   if err := RootCmd.Execute(); err != nil {
     fmt.Println(err)
-    os.Exit(-1)
+    os.Exit(1)
   }
 }
 

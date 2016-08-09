@@ -39,6 +39,18 @@ func check404(resp *grab.Response, version string) {
   }
 }
 
+func ActivateAndPrint(language string) {
+  info, err := plugins.Detect(language)
+  checkErrors(err)
+
+  helpers.PrintInStyle("Language", info["name"])
+  fmt.Println()
+  helpers.PrintInStyle("Version", info["version"])
+  fmt.Println()
+
+  Activate(language)
+}
+
 func Activate(language string) {
   info, err := plugins.Detect(language)
   checkErrors(err)
@@ -77,11 +89,6 @@ func download(info map[string]string) string {
   url := info["url"]
 
   // Start file download
-  helpers.PrintInStyle("Language", info["name"])
-  fmt.Println()
-  helpers.PrintInStyle("Version", info["version"])
-  fmt.Println()
-
   respch, err := grab.GetAsync(os.TempDir(), url)
   checkErrors(err)
 

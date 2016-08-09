@@ -17,6 +17,16 @@ func Ask() string {
   return language + "@" + version
 }
 
+func AskRemote() string {
+  language := prompt.List("Language", plugins.List).Language
+  list, _ := plugins.RemoteList(language)
+  key := prompt.List("Mask", plugins.GetKeys(list)).Mask
+  versions := plugins.GetElements(key, list)
+  version := prompt.List("Version", versions).Version
+
+  return language + "@" + version
+}
+
 func Versions(name string) []string {
   path := variables.Home + "/" + name
 
