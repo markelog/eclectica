@@ -5,36 +5,37 @@ import (
   "fmt"
   "io/ioutil"
 
+  "github.com/markelog/list"
+
   "github.com/markelog/eclectica/plugins"
-  "github.com/markelog/eclectica/cmd/prompt"
   "github.com/markelog/eclectica/variables"
 )
 
 func Ask() string {
-  language := prompt.List("Language", plugins.List).Language
+  language := list.GetWith("Language", plugins.List)
   version := AskVersion(language)
 
   return language + "@" + version
 }
 
 func AskVersion(language string) string {
-  version := prompt.List("Version", Versions(language)).Version
+  version := list.GetWith("Version", Versions(language))
 
   return version
 }
 
 func AskRemote() string {
-  language := prompt.List("Language", plugins.List).Language
+  language := list.GetWith("Language", plugins.List)
   version := AskRemoteVersion(language)
 
   return language + "@" + version
 }
 
 func AskRemoteVersion(language string) string {
-  list, _ := plugins.RemoteList(language)
-  key := prompt.List("Mask", plugins.GetKeys(list)).Mask
-  versions := plugins.GetElements(key, list)
-  version := prompt.List("Version", versions).Version
+  remoteList, _ := plugins.RemoteList(language)
+  key := list.GetWith("Mask", plugins.GetKeys(remoteList))
+  versions := plugins.GetElements(key, remoteList)
+  version := list.GetWith("Version", versions)
 
   return language + "@" + version
 }

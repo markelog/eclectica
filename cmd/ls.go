@@ -6,9 +6,10 @@ import (
   "github.com/spf13/cobra"
   "github.com/fatih/color"
 
+  "github.com/markelog/list"
+
   "github.com/markelog/eclectica/cmd/helpers"
   "github.com/markelog/eclectica/plugins"
-  "github.com/markelog/eclectica/cmd/prompt"
   "github.com/markelog/eclectica/cmd/info"
 )
 
@@ -38,22 +39,22 @@ func listLocalVersions(language string) {
 }
 
 func listLocal() {
-  language := prompt.List("Language", plugins.List).Language
+  language := list.GetWith("Language", plugins.List)
 
   listLocalVersions(language)
 }
 
 func listRemoteVersions(language string) {
-  list, _ := plugins.RemoteList(language)
-  key := prompt.List("Mask", plugins.GetKeys(list)).Mask
-  versions := plugins.GetElements(key, list)
+  remoteList, _ := plugins.RemoteList(language)
+  mask := list.GetWith("Mask", plugins.GetKeys(remoteList))
+  versions := plugins.GetElements(mask, remoteList)
   current := plugins.CurrentVersion(language)
 
   listVersions(versions, current)
 }
 
 func listRemote() {
-  language := prompt.List("Language", plugins.List).Language
+  language := list.GetWith("Language", plugins.List)
 
   listRemoteVersions(language)
 }
