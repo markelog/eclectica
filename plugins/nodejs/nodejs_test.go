@@ -79,10 +79,10 @@ var _ = Describe("nodejs", func() {
       // :/
       if runtime.GOOS == "darwin" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-darwin-x64.tar.gz"))
+        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-darwin-x64.tar.gz"))
       } else if runtime.GOOS == "linux" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-linux-x64.tar.gz"))
+        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-linux-x64.tar.gz"))
       }
     })
   })
@@ -119,10 +119,10 @@ var _ = Describe("nodejs", func() {
       // :/
       if runtime.GOOS == "darwin" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-darwin-x64.tar.gz"))
+        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-darwin-x64.tar.gz"))
       } else if runtime.GOOS == "linux" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-linux-x64.tar.gz"))
+        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-linux-x64.tar.gz"))
       }
     })
 
@@ -151,10 +151,10 @@ var _ = Describe("nodejs", func() {
       // :/
       if runtime.GOOS == "darwin" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-darwin-x64.tar.gz"))
+        Expect(result["url"]).To(Equal("https://nodejs.org/dist/v6.3.1/node-v6.3.1-darwin-x64.tar.gz"))
       } else if runtime.GOOS == "linux" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-linux-x64.tar.gz"))
+        Expect(result["url"]).To(Equal("https://nodejs.org/dist/v6.3.1/node-v6.3.1-linux-x64.tar.gz"))
       }
     })
   })

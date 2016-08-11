@@ -23,8 +23,8 @@ var _ = Describe("plugins", func() {
       list := map[string][]string{"4.x": []string{}, "0.x": []string{"0.8.2"}}
       keys := GetKeys(list)
 
-      Expect(keys[0]).To(Equal("4.x"))
-      Expect(keys[1]).To(Equal("0.x"))
+      Expect(keys[0]).To(Equal("0.x"))
+      Expect(keys[1]).To(Equal("4.x"))
     })
   })
 

@@ -2,6 +2,7 @@ package plugins
 
 import (
   "regexp"
+  "sort"
 )
 
 func ComposeVersions(versions []string) map[string][]string {
@@ -29,6 +30,8 @@ func GetKeys(versions map[string][]string) []string {
     result = append(result, version)
   }
 
+  sort.Strings(result)
+
   return result
 }
 
@@ -42,6 +45,8 @@ func GetElements(key string, versions map[string][]string) []string {
       }
     }
   }
+
+  sort.Strings(result)
 
   return result
 }
