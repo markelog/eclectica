@@ -18,7 +18,6 @@ var (
 
   home = fmt.Sprintf("%s/%s", variables.Home, "rust")
 
-  dists = [2]string{"cargo", "rustc"}
   files = [4]string{"bin", "lib", "include", "share"}
   prefix = os.Getenv("HOME")
   bin = prefix + "/bin/rustc"
@@ -28,7 +27,7 @@ var (
   betaPattern = "beta(\\.[0-9]+)?"
   defaultPattern = "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-(alpha|beta)(\\.[0-9]*)?)?"
   rcPattern = defaultPattern + "-rc(\\.[0-9]+)?"
-  versionPattern = "(" + defaultPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
+  versionPattern = "(" + defaultPattern + "|" + nighltyPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
 )
 
 // Do not know how to test it :/
@@ -45,6 +44,8 @@ func getPlatform() (string, error) {
 }
 
 func Keyword(keyword string) (map[string]string, error) {
+  // Keywords in rust dists, like "nighlty", "beta" do not refer
+  // to version number but to the keywords :/
   return Version(keyword)
 }
 
@@ -53,12 +54,12 @@ func Version(version string) (map[string]string, error) {
 
   platform, err := getPlatform()
 
-  filename := fmt.Sprintf("rust-%s-%s", version, platform)
-  sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, filename)
-
   if err != nil {
     return nil, err
   }
+
+  filename := fmt.Sprintf("rust-%s-%s", version, platform)
+  sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, filename)
 
   result["name"] = "rust"
   result["version"] = version

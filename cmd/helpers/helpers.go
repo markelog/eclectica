@@ -6,7 +6,6 @@ import(
   "github.com/fatih/color"
 )
 
-
 func PrintInStyle(name, entity string) {
   color.Set(color.Bold)
   fmt.Print(name)

@@ -89,61 +89,43 @@ var _ = Describe("rust", func() {
   })
 
   Describe("Version", func() {
-    BeforeEach(func() {
-      content := Read("../../testdata/nodejs/latest.txt")
-
-      httpmock.Activate()
-
-      httpmock.RegisterResponder(
-        "GET",
-        "https://nodejs.org/dist/latest/SHASUMS256.txt",
-        httpmock.NewStringResponder(200, content),
-      )
-
-      httpmock.RegisterResponder(
-        "GET",
-        "https://nodejs.org/dist/lts/SHASUMS256.txt",
-        httpmock.NewStringResponder(200, content),
-      )
-    })
-
     AfterEach(func() {
       defer httpmock.DeactivateAndReset()
     })
 
-    It("should get info about latest version", func() {
-      result, _ := Version("latest")
+    It("should get info about nightly version", func() {
+      result, _ := Version("nightly")
 
-      Expect(result["name"]).To(Equal("node"))
-      Expect(result["version"]).To(Equal("6.3.1"))
+      Expect(result["name"]).To(Equal("rust"))
+      Expect(result["version"]).To(Equal("nightly"))
 
       // :/
       if runtime.GOOS == "darwin" {
-        Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-darwin-x64.tar.gz"))
+        Expect(result["filename"]).To(Equal("rust-nightly-x86_64-apple-darwin"))
+        Expect(result["url"]).To(Equal("https://static.rust-lang.org/dist/rust-nightly-x86_64-apple-darwin.tar.gz"))
       } else if runtime.GOOS == "linux" {
-        Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-linux-x64.tar.gz"))
+        Expect(result["filename"]).To(Equal("rust-nightly-x86_64-unknown-linux-gnu"))
+        Expect(result["url"]).To(Equal("https://static.rust-lang.org/dist/rust-nightly-x86_64-unknown-linux-gnu.tar.gz"))
       }
     })
 
     It("should get info about lts version", func() {
-      result, _ := Version("lts")
+      result, _ := Version("beta")
 
-      Expect(result["name"]).To(Equal("node"))
-      Expect(result["version"]).To(Equal("6.3.1"))
+      Expect(result["name"]).To(Equal("rust"))
+      Expect(result["version"]).To(Equal("beta"))
 
       // :/
       if runtime.GOOS == "darwin" {
-        Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-darwin-x64.tar.gz"))
+        Expect(result["filename"]).To(Equal("rust-beta-x86_64-apple-darwin"))
+        Expect(result["url"]).To(Equal("https://static.rust-lang.org/dist/rust-beta-x86_64-apple-darwin.tar.gz"))
       } else if runtime.GOOS == "linux" {
-        Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-linux-x64.tar.gz"))
+        Expect(result["filename"]).To(Equal("rust-beta-x86_64-unknown-linux-gnu"))
+        Expect(result["url"]).To(Equal("https://static.rust-lang.org/dist/rust-beta-x86_64-unknown-linux-gnu.tar.gz"))
       }
     })
 
-    FIt("should get info about 1.9.0 version", func() {
+    It("should get info about 1.9.0 version", func() {
       result, _ := Version("1.9.0")
 
       Expect(result["name"]).To(Equal("rust"))
