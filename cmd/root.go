@@ -15,49 +15,17 @@ import (
 )
 
 var isRemote bool
-var commands = []string{"ls", "rm"}
 
 var RootCmd = &cobra.Command{
 	Use:     "eclectica",
 	Short:   "Version manager for any language",
 }
 
-func getLanguage(args []string) (string, bool) {
-  for _, element := range args {
-    data := strings.Split(element , "@")
-    language := data[0]
-
-    if len(data) == 2 {
-      return "", false
-    }
-
-    for _, plugin := range plugins.List {
-      if strings.HasPrefix(language, plugin) {
-        return element, true
-      }
-    }
-  }
-
-  return "", false
-}
-
-func hasCommand(args []string) bool {
-  for _, element := range args {
-    for _, command := range commands {
-      if command == element {
-        return true
-      }
-    }
-  }
-
-  return false
-}
-
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd
 func Execute() {
 
-  if hasCommand(os.Args[1:]) {
+  if info.HasCommand(os.Args[1:]) {
     // Initialize cobra for other commands
     if err := RootCmd.Execute(); err != nil {
       fmt.Println(err)
@@ -71,7 +39,7 @@ func Execute() {
   pflag.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
   pflag.Parse()
 
-  language, hasLanguage := getLanguage(os.Args[1:])
+  language, hasLanguage := info.GetLanguage(os.Args[1:])
 
   // If `--remote` flag was passed
   if isRemote {

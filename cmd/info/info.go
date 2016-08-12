@@ -4,6 +4,7 @@ import (
   "os"
   "fmt"
   "io/ioutil"
+  "strings"
 
   "github.com/markelog/list"
 
@@ -63,4 +64,35 @@ func Versions(name string) []string {
   }
 
   return versions
+}
+
+func GetLanguage(args []string) (string, bool) {
+  for _, element := range args {
+    data := strings.Split(element , "@")
+    language := data[0]
+
+    if len(data) == 2 {
+      return "", false
+    }
+
+    for _, plugin := range plugins.List {
+      if strings.HasPrefix(language, plugin) {
+        return element, true
+      }
+    }
+  }
+
+  return "", false
+}
+
+func HasCommand(args []string) bool {
+  for _, element := range args {
+    for _, command := range variables.Commands {
+      if command == element {
+        return true
+      }
+    }
+  }
+
+  return false
 }
