@@ -9,8 +9,6 @@ import (
   "errors"
   "regexp"
 
-  "github.com/markelog/cprf"
-
   "github.com/markelog/eclectica/variables"
 )
 
@@ -83,40 +81,11 @@ func Remove(version string) error {
   return nil
 }
 
-func activate(name, version string) error {
-  var err error
-
-  base := fmt.Sprintf("%s/%s/%s", home, version, name)
-
-  for _, file := range files {
-    from := fmt.Sprintf("%s/%s", base, file)
-    to := prefix
-
-    // Older versions might not have certain files
-    if _, err := os.Stat(from); os.IsNotExist(err) {
-      continue
-    }
-
-    err = cprf.Copy(from, to)
-
-    if err != nil {
-      return err
-    }
-  }
-
-  return nil
-}
-
 func Activate(data map[string]string) error {
-  for _, dist := range dists {
-    err := activate(dist, data["version"])
+  installer := fmt.Sprintf("%s/%s/%s", home, data["version"], "install.sh")
+  _, err := exec.Command(installer, "--prefix=" + prefix).Output()
 
-    if err != nil {
-      return err
-    }
-  }
-
-  return nil
+  return err
 }
 
 func CurrentVersion() string {
