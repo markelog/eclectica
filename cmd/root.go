@@ -15,6 +15,7 @@ import (
 )
 
 var isRemote bool
+var commands = []string{"ls", "rm"}
 
 var RootCmd = &cobra.Command{
 	Use:     "eclectica",
@@ -41,9 +42,31 @@ func getLanguage(args []string) (string, bool) {
   return "", false
 }
 
+func hasCommand(args []string) bool {
+  for _, element := range args {
+    for _, command := range commands {
+      if command == element {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd
 func Execute() {
+
+  if hasCommand(os.Args[1:]) {
+    // Initialize cobra for other commands
+    if err := RootCmd.Execute(); err != nil {
+      fmt.Println(err)
+      os.Exit(1)
+    }
+
+    return
+  }
 
   // We don't use cobra here, since we support `ec <language>@version` syntax
   pflag.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
@@ -74,7 +97,7 @@ func Execute() {
     return
   }
 
-  data := strings.Split(os.Args[1], "@")
+  data := strings.Split(os.Args[1:][0], "@")
 
   // In case of `ec <language>`
   if len(data) == 1 {
@@ -86,12 +109,6 @@ func Execute() {
   if len(data) == 2 {
     activateWithVersion(data[0])
     return
-  }
-
-  // Initialize cobra for other commands
-  if err := RootCmd.Execute(); err != nil {
-    fmt.Println(err)
-    os.Exit(1)
   }
 }
 
