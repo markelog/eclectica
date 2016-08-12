@@ -1,37 +1,13 @@
 package rust
 
 import (
-  "errors"
-  "runtime"
   "regexp"
 
   "github.com/markelog/eclectica/request"
 )
 
-var (
-  fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
-  nighltyPattern = "nightly(\\.[0-9]+)?"
-  betaPattern = "beta(\\.[0-9]+)?"
-  defaultPattern = "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-(alpha|beta)(\\.[0-9]*)?)?"
-  rcPattern = defaultPattern + "-rc(\\.[0-9]+)?"
-  versionPattern = "(" + defaultPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
-)
-
-// Do not know how to test it :/
-func getPlatfrom() (string, error) {
-  if runtime.GOOS == "linux" {
-    return "x86_64-unknown-linux-gnu", nil
-  }
-
-  if runtime.GOOS == "darwin" {
-    return "x86_64-apple-darwin", nil
-  }
-
-  return "", errors.New("Not supported envionment")
-}
-
 func getFullPattern() (string, error) {
-  platform, err := getPlatfrom()
+  platform, err := getPlatform()
   result := ""
 
   if err != nil {
@@ -44,7 +20,7 @@ func getFullPattern() (string, error) {
 }
 
 func ListVersions() ([]string, error) {
-  body, err := request.Body(versionsLink)
+  body, err := request.Body(listLink)
   result := []string{}
 
   if err != nil {

@@ -79,6 +79,8 @@ func Remove(nameAndVersion string) error {
   switch {
     case name == "node":
       return nodejs.Remove(version)
+    case name == "rust":
+      return rust.Remove(version)
   }
 
   return nil
@@ -88,6 +90,8 @@ func Activate(data map[string]string) error {
   switch {
     case data["name"] == "node":
       return nodejs.Activate(data)
+    case data["name"] == "rust":
+      return rust.Activate(data)
   }
 
   return nil
@@ -115,6 +119,8 @@ func CurrentVersion(name string) string {
   switch {
     case name == "node":
       return nodejs.CurrentVersion()
+    case name == "rust":
+      return rust.CurrentVersion()
   }
 
   return ""

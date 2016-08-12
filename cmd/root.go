@@ -20,7 +20,6 @@ var commands = []string{"ls", "rm"}
 var RootCmd = &cobra.Command{
 	Use:     "eclectica",
 	Short:   "Version manager for any language",
-	Long:    `Eclectica is version language manager for Node.js`,
 }
 
 func getLanguage(args []string) (string, bool) {

@@ -1,62 +1,71 @@
 package rust
 
 import (
-  "regexp"
   "runtime"
   "fmt"
   "os"
   "os/exec"
   "strings"
+  "errors"
+  "regexp"
 
   "github.com/markelog/cprf"
 
   "github.com/markelog/eclectica/variables"
-  "github.com/markelog/eclectica/request"
 )
 
 var (
-  versionsLink = "https://static.rust-lang.org/dist/index.txt"
-  home = fmt.Sprintf("%s/%s", variables.Home, "node")
+  versionsLink = "https://static.rust-lang.org/dist"
+  listLink = "https://static.rust-lang.org/dist/index.txt"
 
+  home = fmt.Sprintf("%s/%s", variables.Home, "rust")
+
+  dists = [2]string{"cargo", "rustc"}
   files = [4]string{"bin", "lib", "include", "share"}
   prefix = "/usr/local"
-  bin = prefix + "/bin/node"
+  bin = prefix + "/bin/rustc"
+
+  fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
+  nighltyPattern = "nightly(\\.[0-9]+)?"
+  betaPattern = "beta(\\.[0-9]+)?"
+  defaultPattern = "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-(alpha|beta)(\\.[0-9]*)?)?"
+  rcPattern = defaultPattern + "-rc(\\.[0-9]+)?"
+  versionPattern = "(" + defaultPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
 )
 
-func Keyword(keyword string) (map[string]string, error) {
-  result := make(map[string]string)
-  sumUrl := fmt.Sprintf("%s/%s/SHASUMS256.txt", versionsLink, keyword)
-  sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, keyword)
-  file, err := request.Body(sumUrl)
-
-  if err != nil {
-    return result, err
+// Do not know how to test it :/
+func getPlatform() (string, error) {
+  if runtime.GOOS == "linux" {
+    return "x86_64-unknown-linux-gnu", nil
   }
 
-  versionReg := regexp.MustCompile(`node-v(\d+\.\d+\.\d)`)
+  if runtime.GOOS == "darwin" {
+    return "x86_64-apple-darwin", nil
+  }
 
-  version := versionReg.FindStringSubmatch(file)[1]
-  result["name"] = "node"
-  result["version"] = version
-  result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
-  result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
+  return "", errors.New("Not supported envionment")
+}
 
-  return result, nil
+func Keyword(keyword string) (map[string]string, error) {
+  return Version(keyword)
 }
 
 func Version(version string) (map[string]string, error) {
-  if version == "latest" || version == "lts" {
-    return Keyword(version)
-  }
-
   result := make(map[string]string)
 
-  sourcesUrl := fmt.Sprintf("%s/v%s", versionsLink, version)
+  platform, err := getPlatform()
 
-  result["name"] = "node"
+  filename := fmt.Sprintf("rust-%s-%s", version, platform)
+  sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, filename)
+
+  if err != nil {
+    return nil, err
+  }
+
+  result["name"] = "rust"
   result["version"] = version
-  result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
-  result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
+  result["filename"] = filename
+  result["url"] = fmt.Sprintf("%s.tar.gz", sourcesUrl)
 
   return result, nil
 }
@@ -74,10 +83,10 @@ func Remove(version string) error {
   return nil
 }
 
-func Activate(data map[string]string) error {
+func activate(name, version string) error {
   var err error
 
-  base := fmt.Sprintf("%s/%s", home, data["version"])
+  base := fmt.Sprintf("%s/%s/%s", home, version, name)
 
   for _, file := range files {
     from := fmt.Sprintf("%s/%s", base, file)
@@ -98,9 +107,26 @@ func Activate(data map[string]string) error {
   return nil
 }
 
+func Activate(data map[string]string) error {
+  for _, dist := range dists {
+    err := activate(dist, data["version"])
+
+    if err != nil {
+      return err
+    }
+  }
+
+  return nil
+}
+
 func CurrentVersion() string {
+  vp := regexp.MustCompile(versionPattern)
+
   out, _ := exec.Command(bin, "--version").Output()
   version := strings.TrimSpace(string(out))
+  version = vp.FindAllStringSubmatch(version, 1)[0][0]
+
+  fmt.Println(version)
 
   return strings.Replace(version, "v", "", 1)
 }
