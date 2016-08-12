@@ -22,7 +22,7 @@ var (
 
   dists = [2]string{"cargo", "rustc"}
   files = [4]string{"bin", "lib", "include", "share"}
-  prefix = "/usr/local"
+  prefix = os.Getenv("HOME")
   bin = prefix + "/bin/rustc"
 
   fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"

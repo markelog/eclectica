@@ -19,7 +19,7 @@ var (
   home = fmt.Sprintf("%s/%s", variables.Home, "node")
 
   files = [4]string{"bin", "lib", "include", "share"}
-  prefix = "/usr/local"
+  prefix = os.Getenv("HOME")
   bin = prefix + "/bin/node"
 )
 
