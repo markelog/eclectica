@@ -117,6 +117,7 @@ func download(info map[string]string) string {
     color.Set(color.FgBlack)
     fmt.Print("(")
     fmt.Printf("%s/%s ", transfered, size)
+    color.Unset()
 
     color.Set(color.FgCyan)
     fmt.Print(s.Next())
@@ -126,6 +127,7 @@ func download(info map[string]string) string {
     fmt.Printf(" %d%%", int(100*resp.Progress()))
     fmt.Print(")")
     fmt.Println()
+    color.Unset()
 
     time.Sleep(200 * time.Millisecond)
   }
