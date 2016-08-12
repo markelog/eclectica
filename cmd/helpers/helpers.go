@@ -8,7 +8,7 @@ import(
 
 
 func PrintInStyle(name, entity string) {
-  color.Set(color.FgBlack)
+  color.Set(color.Bold)
   fmt.Print(name)
 
   color.Set(color.FgCyan)

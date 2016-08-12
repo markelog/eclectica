@@ -126,7 +126,5 @@ func CurrentVersion() string {
   version := strings.TrimSpace(string(out))
   version = vp.FindAllStringSubmatch(version, 1)[0][0]
 
-  fmt.Println(version)
-
   return strings.Replace(version, "v", "", 1)
 }
