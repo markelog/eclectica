@@ -36,7 +36,7 @@ func Execute() {
   }
 
   // We don't use cobra here, since we support `ec <language>@version` syntax
-  pflag.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
+  pflag.BoolVarP(isRemoteInfo())
   pflag.Parse()
 
   language, hasLanguage := info.GetLanguage(os.Args[1:])
@@ -105,5 +105,9 @@ func activateWithVersion(language string) {
 
 func init() {
 	cobra.OnInitialize()
-  RootCmd.PersistentFlags().BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
+  RootCmd.PersistentFlags().BoolVarP(isRemoteInfo())
+}
+
+func isRemoteInfo() (*bool, string, string, bool, string) {
+  return &isRemote, "remote", "r", false, "Get remote versions"
 }

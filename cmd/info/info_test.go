@@ -30,7 +30,7 @@ var _ = Describe("info", func() {
     })
   })
 
-  Describe("hasCommand", func() {
+  Describe("HasCommand", func() {
     It("should detect command", func() {
       hasCommand := info.HasCommand([]string{"-r", "ls",})
 
