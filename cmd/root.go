@@ -3,13 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
-  "strings"
 
 	"github.com/spf13/cobra"
   "github.com/spf13/pflag"
 
   "github.com/markelog/eclectica/cmd/activation"
-  "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/cmd/info"
   "github.com/markelog/eclectica/cmd/helpers"
 )
@@ -24,11 +22,11 @@ var RootCmd = &cobra.Command{
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd
 func Execute() {
+  args := os.Args[1:]
 
-  if info.HasCommand(os.Args[1:]) {
+  if info.HasCommand(args) {
     // Initialize cobra for other commands
     if err := RootCmd.Execute(); err != nil {
-      fmt.Println(err)
       os.Exit(1)
     }
 
@@ -36,70 +34,65 @@ func Execute() {
   }
 
   // We don't use cobra here, since we support `ec <language>@version` syntax
-  pflag.BoolVarP(isRemoteInfo())
-  pflag.Parse()
 
-  language, hasLanguage := info.GetLanguage(os.Args[1:])
-
-  // If `--remote` flag was passed
-  if isRemote {
-
-    // In case of `ec -r <language>` or `ec <language> -r`
-    if hasLanguage {
-      helpers.PrintInStyle("Language", language)
-      fmt.Println()
-      activation.Activate(info.AskRemoteVersion(language))
-
-    // In case of `ec -r`
-    } else {
-      activation.Activate(info.AskRemote())
-    }
-
-    return
-  }
-
-  // If nothing was passed - just show list for the local versions
-  if len(os.Args[1:]) == 0 {
+  // If nothing was passed - just show list of the local versions
+  if len(args) == 0 {
     activation.Activate(info.Ask())
     return
   }
 
-  data := strings.Split(os.Args[1:][0], "@")
+  pflag.BoolVarP(isRemoteInfo())
+  pflag.Parse()
 
-  // In case of `ec <language>`
-  if len(data) == 1 {
-    activateWithoutVersion(data[0])
-    return
-  }
+  language, version := info.GetLanguage(args)
+  hasLanguage := info.HasLanguage(args)
+  hasVersion := info.HasVersion(args)
+
+  print(language, version)
 
   // In case of `ec <language>@<version>`
-  if len(data) == 2 {
-    activateWithVersion(data[0])
+  if hasLanguage && hasVersion {
+    activation.Activate(language, version)
     return
   }
-}
 
-func activateWithoutVersion(language string) {
-  var version string
+  // If `--remote` or `-r` flag was passed
+  if isRemote {
 
-  for _, plugin := range plugins.List {
-    if strings.HasPrefix(language, plugin) {
-      helpers.PrintInStyle("Language", language)
-      fmt.Println()
+    // In case of `ec -r <language>` or `ec <language> -r`
+    if hasVersion {
+      activation.Activate(language, info.AskRemoteVersion(language))
+      return
 
-      version = info.AskVersion(language)
-      activation.Activate(language + "@" + version)
+    // In case of `ec -r`
+    } else {
+      activation.Activate(info.AskRemote())
       return
     }
+
+    return
   }
+
+  // In case of `ec <language>`
+  if hasLanguage && hasVersion == false {
+    activation.Activate(language, info.AskVersion(language))
+    return
+  }
+
+  // We already know it will show an error
+  RootCmd.Execute()
+  os.Exit(1)
 }
 
-func activateWithVersion(language string) {
-  for _, plugin := range plugins.List {
-    if strings.HasPrefix(language, plugin) {
-      activation.ActivateAndPrint(os.Args[1])
-      return
-    }
+func print(language, version string) {
+  if language != "" {
+    helpers.PrintInStyle("Language", language)
+    fmt.Println()
+  }
+
+  if version != "" {
+    helpers.PrintInStyle("Version", version)
+    fmt.Println()
   }
 }
 

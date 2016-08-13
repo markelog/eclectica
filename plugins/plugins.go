@@ -2,9 +2,7 @@ package plugins
 
 import (
   "os"
-  "strings"
   "io/ioutil"
-  "errors"
 
   "github.com/markelog/eclectica/plugins/nodejs"
   "github.com/markelog/eclectica/plugins/rust"
@@ -18,68 +16,43 @@ var (
   }
 )
 
-func Versions(name string) ([]string, error) {
+func Versions(name string) (versions []string) {
+  versions = []string{}
   path := variables.Home + "/" + name
 
   if _, err := os.Stat(path); os.IsNotExist(err) {
-    return nil, errors.New("There is no installed versions of " + name)
+    return
   }
 
-  folders, err := ioutil.ReadDir(variables.Home + "/" + name)
-  versions := make([]string, len(folders))
-
-  if err != nil {
-    return nil, err
-  }
-
+  folders, _ := ioutil.ReadDir(path)
   for _, folder := range folders {
     versions = append(versions, folder.Name())
   }
 
-  return versions, nil
+  return
 }
 
-func Detect(nameAndVersion string) (map[string]string, error) {
+func Version(langauge, version string) (map[string]string, error) {
   var (
     info map[string]string
-    version = "latest"
-    data = strings.Split(nameAndVersion, "@")
-    plugin = data[0]
     err error
   )
 
-  if len(data) == 2 {
-    version = data[1]
-  }
-
   switch {
-    case plugin == "node":
+    case langauge == "node":
       info, err = nodejs.Version(version)
-    case plugin == "rust":
+    case langauge == "rust":
       info, err = rust.Version(version)
   }
 
-  if err != nil {
-    return nil, err
-  }
-
-  return info, nil
+  return info, err
 }
 
-func Remove(nameAndVersion string) error {
-  data := strings.Split(nameAndVersion, "@")
-
-  if len(data) == 1 {
-    return errors.New("Can't remove without specific version")
-  }
-
-  name := data[0]
-  version := data[1]
-
+func Remove(langauge, version string) error {
   switch {
-    case name == "node":
+    case langauge == "node":
       return nodejs.Remove(version)
-    case name == "rust":
+    case langauge == "rust":
       return rust.Remove(version)
   }
 
@@ -97,14 +70,16 @@ func Activate(data map[string]string) error {
   return nil
 }
 
-func RemoteList(name string) (map[string][]string, error) {
-  var versions []string
-  var err error
+func RemoteList(langauge string) (map[string][]string, error) {
+  var (
+    versions []string
+    err error
+  )
 
   switch {
-    case name == "node":
+    case langauge == "node":
       versions, err = nodejs.ListVersions()
-    case name == "rust":
+    case langauge == "rust":
       versions, err = rust.ListVersions()
   }
 
@@ -115,11 +90,11 @@ func RemoteList(name string) (map[string][]string, error) {
   return ComposeVersions(versions), nil
 }
 
-func CurrentVersion(name string) string {
+func CurrentVersion(langauge string) string {
   switch {
-    case name == "node":
+    case langauge == "node":
       return nodejs.CurrentVersion()
-    case name == "rust":
+    case langauge == "rust":
       return rust.CurrentVersion()
   }
 

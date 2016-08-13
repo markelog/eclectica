@@ -1,9 +1,6 @@
 package info
 
 import (
-  "os"
-  "fmt"
-  "io/ioutil"
   "strings"
 
   "github.com/markelog/list"
@@ -12,87 +9,78 @@ import (
   "github.com/markelog/eclectica/variables"
 )
 
-func Ask() string {
-  language := list.GetWith("Language", plugins.List)
-  version := AskVersion(language)
+func Ask() (language, version string) {
+  language = list.GetWith("Language", plugins.List)
+  version = AskVersion(language)
 
-  return language + "@" + version
+  return
 }
 
-func AskVersion(language string) string {
-  version := list.GetWith("Version", Versions(language))
+func AskVersion(language string) (version string) {
+  version = list.GetWith("Version", plugins.Versions(language))
 
-  return version
+  return
 }
 
-func AskRemote() string {
-  language := list.GetWith("Language", plugins.List)
-  version := AskRemoteVersion(language)
+func AskRemote() (language, version string) {
+  language = list.GetWith("Language", plugins.List)
+  version = AskRemoteVersion(language)
 
-  return language + "@" + version
+  return
 }
 
-func AskRemoteVersion(language string) string {
+func AskRemoteVersion(language string) (version string) {
   remoteList, _ := plugins.RemoteList(language)
   key := list.GetWith("Mask", plugins.GetKeys(remoteList))
   versions := plugins.GetElements(key, remoteList)
-  version := list.GetWith("Version", versions)
+  version = list.GetWith("Version", versions)
 
-  return language + "@" + version
+  return
 }
 
-func Versions(name string) []string {
-  path := variables.Home + "/" + name
-
-  if _, err := os.Stat(path); os.IsNotExist(err) {
-    fmt.Println("There is no installed versions of " + name)
-    os.Exit(1)
-  }
-
-  folders, err := ioutil.ReadDir(variables.Home + "/" + name)
-  versions := []string{}
-
-  if err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-  }
-
-  for _, folder := range folders {
-    if folder.IsDir() {
-      versions = append(versions, folder.Name())
-    }
-  }
-
-  return versions
-}
-
-func GetLanguage(args []string) (string, bool) {
+func GetLanguage(args []string) (language, version string) {
   for _, element := range args {
     data := strings.Split(element , "@")
-    language := data[0]
+    language = data[0]
 
     if len(data) == 2 {
-      return "", false
+      version = data[1]
     }
 
     for _, plugin := range plugins.List {
-      if strings.HasPrefix(language, plugin) {
-        return element, true
+      if language == plugin {
+        return
       }
     }
   }
 
-  return "", false
+  return
 }
 
-func HasCommand(args []string) bool {
+func GetCommand(args []string) string {
   for _, element := range args {
     for _, command := range variables.Commands {
       if command == element {
-        return true
+        return command
       }
     }
   }
 
-  return false
+  return ""
+}
+
+func HasLanguage(args []string) bool {
+  language, _ := GetLanguage(args)
+
+  return language != ""
+}
+
+func HasVersion(args []string) bool {
+  _, version := GetLanguage(args)
+
+  return version != ""
+}
+
+func HasCommand(args []string) bool {
+  return GetCommand(args) != ""
 }

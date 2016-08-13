@@ -4,8 +4,8 @@ import (
   "fmt"
   "os"
   "time"
-  "strings"
   "errors"
+  "strings"
 
   "github.com/markelog/archive"
   "github.com/cavaliercoder/grab"
@@ -25,6 +25,7 @@ func checkErrors(err error) {
     return
   }
 
+  fmt.Println(err)
   color.Set(color.FgRed)
   fmt.Print("> ")
   color.Unset()
@@ -39,29 +40,15 @@ func check404(resp *grab.Response, version string) {
   }
 }
 
-func ActivateAndPrint(language string) {
-  info, err := plugins.Detect(language)
-  checkErrors(err)
-
-  helpers.PrintInStyle("Language", info["name"])
-  fmt.Println()
-  helpers.PrintInStyle("Version", info["version"])
-  fmt.Println()
-
-  Activate(language)
-}
-
-func Activate(language string) {
-  info, err := plugins.Detect(language)
+func Activate(language, version string) {
+  info, err := plugins.Version(language, version)
   checkErrors(err)
 
   path := fmt.Sprintf("%s/%s/%s", variables.Home, info["name"], info["version"])
 
   if _, err := os.Stat(path); err == nil {
     err := plugins.Activate(info)
-
     checkErrors(err)
-
     os.Exit(0)
   }
 
@@ -138,7 +125,8 @@ func download(info map[string]string) string {
   helpers.PrintInStyle("Version", info["version"])
   fmt.Println()
 
-  checkErrors(resp.Error) // Don't know how to reproduce
+  // Didn't test, don't know how to reproduce
+  checkErrors(resp.Error)
   check404(resp, info["version"])
 
   return resp.Filename

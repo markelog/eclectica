@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
   "os"
+  "errors"
 
 	"github.com/spf13/cobra"
 
@@ -13,21 +14,26 @@ import (
 var rmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove language version",
-	Run: func(cmd *cobra.Command, args []string) {
-		var nameAndVersion string
+  RunE: func(cmd *cobra.Command, args []string) error {
+    _, version := info.GetLanguage(args)
 
-    if len(args) == 0 {
-      nameAndVersion = info.Ask()
-    } else {
-      nameAndVersion = args[0]
+    if version == "" {
+      return errors.New("Can't remove without specific version")
     }
 
-    remove(nameAndVersion)
+    return nil
+  },
+	Run: func(cmd *cobra.Command, args []string) {
+    if len(args) == 0 {
+      remove(info.Ask())
+    } else {
+      remove(info.GetLanguage(args))
+    }
 	},
 }
 
-func remove(nameAndVersion string) {
-  err := plugins.Remove(nameAndVersion)
+func remove(language, version string) {
+  err := plugins.Remove(language, version)
 
   if err != nil {
     fmt.Println(err)

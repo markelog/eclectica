@@ -10,7 +10,6 @@ import (
 
   "github.com/markelog/eclectica/cmd/helpers"
   "github.com/markelog/eclectica/plugins"
-  "github.com/markelog/eclectica/cmd/info"
 )
 
 func listVersions(versions []string, current string) {
@@ -32,7 +31,7 @@ func listVersions(versions []string, current string) {
 }
 
 func listLocalVersions(language string) {
-  versions := info.Versions(language)
+  versions := plugins.Versions(language)
   current := plugins.CurrentVersion(language)
 
   listVersions(versions, current)
