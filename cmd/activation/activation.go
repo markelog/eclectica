@@ -14,7 +14,7 @@ import (
   "github.com/dustin/go-humanize"
   "github.com/sethgrid/curse"
 
-  "github.com/markelog/eclectica/cmd/helpers"
+  "github.com/markelog/eclectica/cmd/print"
   "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/variables"
   "github.com/markelog/eclectica/directory"
@@ -40,6 +40,7 @@ func check404(resp *grab.Response, version string) {
   }
 }
 
+// Move to plugins
 func Activate(language, version string) {
   info, err := plugins.Version(language, version)
   checkErrors(err)
@@ -72,6 +73,7 @@ func Activate(language, version string) {
   checkErrors(err)
 }
 
+// Move to "helpers"
 func download(info map[string]string) string {
   url := info["url"]
 
@@ -84,10 +86,11 @@ func download(info map[string]string) string {
   check404(resp, info["version"])
   checkErrors(resp.Error)
 
-  // Print progress until transfer is complete
   s := spin.New()
   c, _ := curse.New()
   started := false
+
+  // Print progress until transfer is complete
   for !resp.IsComplete() {
     size := humanize.Bytes(resp.Size)
     transfered := humanize.Bytes(resp.BytesTransferred())
@@ -99,7 +102,7 @@ func download(info map[string]string) string {
     }
     started = true
 
-    helpers.PrintInStyle("Version", info["version"])
+    print.InStyle("Version", info["version"])
 
     color.Set(color.FgBlack)
     fmt.Print("(")
@@ -122,7 +125,7 @@ func download(info map[string]string) string {
   c.MoveUp(1)
   c.EraseCurrentLine()
 
-  helpers.PrintInStyle("Version", info["version"])
+  print.InStyle("Version", info["version"])
   fmt.Println()
 
   // Didn't test, don't know how to reproduce

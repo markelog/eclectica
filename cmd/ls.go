@@ -8,7 +8,7 @@ import (
 
   "github.com/markelog/list"
 
-  "github.com/markelog/eclectica/cmd/helpers"
+  "github.com/markelog/eclectica/cmd/print"
   "github.com/markelog/eclectica/plugins"
 )
 
@@ -66,7 +66,7 @@ func remote(args []string) {
 
   for _, element := range plugins.List {
     if args[0] == element {
-      helpers.PrintInStyle("Language", element)
+      print.InStyle("Language", element)
       fmt.Println()
       listRemoteVersions(element)
       return
@@ -82,7 +82,7 @@ func local(args []string) {
 
   for _, element := range plugins.List {
     if args[0] == element {
-      helpers.PrintInStyle("Language", element)
+      print.InStyle("Language", element)
       fmt.Println()
       listLocalVersions(element)
       return

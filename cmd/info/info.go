@@ -54,7 +54,7 @@ func GetLanguage(args []string) (language, version string) {
     }
   }
 
-  return
+  return "", ""
 }
 
 func GetCommand(args []string) string {

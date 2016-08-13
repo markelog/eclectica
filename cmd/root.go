@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -9,7 +8,7 @@ import (
 
   "github.com/markelog/eclectica/cmd/activation"
   "github.com/markelog/eclectica/cmd/info"
-  "github.com/markelog/eclectica/cmd/helpers"
+  "github.com/markelog/eclectica/cmd/print"
 )
 
 var isRemote bool
@@ -48,7 +47,7 @@ func Execute() {
   hasLanguage := info.HasLanguage(args)
   hasVersion := info.HasVersion(args)
 
-  print(language, version)
+  print.LaguageOrVersion(language, version)
 
   // In case of `ec <language>@<version>`
   if hasLanguage && hasVersion {
@@ -82,18 +81,6 @@ func Execute() {
   // We already know it will show an error
   RootCmd.Execute()
   os.Exit(1)
-}
-
-func print(language, version string) {
-  if language != "" {
-    helpers.PrintInStyle("Language", language)
-    fmt.Println()
-  }
-
-  if version != "" {
-    helpers.PrintInStyle("Version", version)
-    fmt.Println()
-  }
 }
 
 func init() {

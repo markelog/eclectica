@@ -9,7 +9,7 @@ import (
 
 var _ = Describe("info", func() {
   Describe("GetLanguage", func() {
-    FIt("should get language", func() {
+    It("should get language", func() {
       language, version := info.GetLanguage([]string{"-r", "rust",})
 
       Expect(language).To(Equal("rust"))
