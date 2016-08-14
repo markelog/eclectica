@@ -16,11 +16,8 @@ var (
   versionsLink = "https://static.rust-lang.org/dist"
   listLink = "https://static.rust-lang.org/dist/index.txt"
 
-  home = fmt.Sprintf("%s/%s", variables.Home, "rust")
-
-  files = [4]string{"bin", "lib", "include", "share"}
-  prefix = os.Getenv("HOME")
-  bin = prefix + "/bin/rustc"
+  home = fmt.Sprintf("%s/%s", variables.Home(), "rust")
+  bin = variables.Prefix() + "/bin/rustc"
 
   fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
   nighltyPattern = "nightly(\\.[0-9]+)?"
@@ -82,9 +79,9 @@ func Remove(version string) error {
   return nil
 }
 
-func Activate(data map[string]string) error {
+func Install(data map[string]string) error {
   installer := fmt.Sprintf("%s/%s/%s", home, data["version"], "install.sh")
-  _, err := exec.Command(installer, "--prefix=" + prefix).Output()
+  _, err := exec.Command(installer, "--prefix=" + variables.Prefix()).Output()
 
   return err
 }

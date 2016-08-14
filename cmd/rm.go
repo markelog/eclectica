@@ -15,7 +15,7 @@ var rmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove language version",
   RunE: func(cmd *cobra.Command, args []string) error {
-    if info.HasVersion(args) {
+    if info.HasVersion(args) == false {
       return errors.New("Can't remove without specific version")
     }
 

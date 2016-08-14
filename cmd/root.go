@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
   "github.com/spf13/pflag"
 
-  "github.com/markelog/eclectica/cmd/activation"
+  "github.com/markelog/eclectica/plugins"
   "github.com/markelog/eclectica/cmd/info"
   "github.com/markelog/eclectica/cmd/print"
 )
@@ -36,7 +36,7 @@ func Execute() {
 
   // If nothing was passed - just show list of the local versions
   if len(args) == 0 {
-    activation.Activate(info.Ask())
+    install(info.Ask())
     return
   }
 
@@ -51,21 +51,21 @@ func Execute() {
 
   // In case of `ec <language>@<version>`
   if hasLanguage && hasVersion {
-    activation.Activate(language, version)
+    install(language, version)
     return
   }
 
   // If `--remote` or `-r` flag was passed
   if isRemote {
 
-    // In case of `ec -r <language>` or `ec <language> -r`
+    // In case of `ec -r`
     if hasVersion {
-      activation.Activate(language, info.AskRemoteVersion(language))
+      install(info.AskRemote())
       return
 
-    // In case of `ec -r`
+    // In case of `ec -r <language>` or `ec <language> -r`
     } else {
-      activation.Activate(info.AskRemote())
+      install(language, info.AskRemoteVersion(language))
       return
     }
 
@@ -74,13 +74,31 @@ func Execute() {
 
   // In case of `ec <language>`
   if hasLanguage && hasVersion == false {
-    activation.Activate(language, info.AskVersion(language))
+    install(language, info.AskVersion(language))
     return
   }
 
   // We already know it will show an error
   RootCmd.Execute()
   os.Exit(1)
+}
+
+func install(language, version string) {
+  info, err := plugins.Version(language, version)
+  print.Error(err)
+
+  response, err := plugins.Download(info)
+  print.Error(err)
+
+  if response == nil {
+    plugins.Install(info)
+    return
+  }
+
+  print.Download(response, version)
+
+  err = plugins.Activate(info)
+  print.Error(err)
 }
 
 func init() {

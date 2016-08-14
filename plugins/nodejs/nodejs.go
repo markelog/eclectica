@@ -16,18 +16,12 @@ import (
 
 var (
   versionsLink = "https://nodejs.org/dist"
-  home = fmt.Sprintf("%s/%s", variables.Home, "node")
-
-  // TODO: move to variables
-  files = [4]string{"bin", "lib", "include", "share"}
-
-  // TODO: move to variables
-  prefix = os.Getenv("HOME")
-
-  bin = prefix + "/bin/node"
+  home = fmt.Sprintf("%s/%s", variables.Home(), "node")
+  bin = variables.Prefix() + "/bin/node"
 )
 
-// Plugin implementation.
+// TODO
+// Plugin interface –
 // type Plugin struct{}
 
 func CurrentVersion() string {
@@ -52,6 +46,11 @@ func Version(version string) (map[string]string, error) {
   result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
   result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 
+  result["archive-folder"] = os.TempDir()
+  result["archive-path"] = fmt.Sprintf("%s%s.tar.gz", result["archive-folder"], result["filename"])
+
+  result["destination-folder"] = fmt.Sprintf("%s/%s/%s", variables.Home(), result["name"], result["version"])
+
   return result, nil
 }
 
@@ -73,6 +72,11 @@ func Keyword(keyword string) (map[string]string, error) {
   result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
   result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 
+  result["archive-folder"] = os.TempDir()
+  result["archive-path"] = fmt.Sprintf("%s%s.tar.gz", result["archive-folder"], result["filename"])
+
+  result["destination-folder"] = fmt.Sprintf("%s/%s/%s", variables.Home(), result["name"], result["version"])
+
   return result, nil
 }
 
@@ -89,16 +93,16 @@ func Remove(version string) error {
   return nil
 }
 
-func Activate(data map[string]string) error {
+func Install(data map[string]string) error {
   var err error
 
   base := fmt.Sprintf("%s/%s", home, data["version"])
 
-  for _, file := range files {
+  for _, file := range variables.Files {
     from := fmt.Sprintf("%s/%s", base, file)
-    to := prefix
+    to := variables.Prefix()
 
-    // Older versions might not have certain files
+    // Some versions might not have certain files
     if _, err := os.Stat(from); os.IsNotExist(err) {
       continue
     }
