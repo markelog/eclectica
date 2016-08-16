@@ -7,6 +7,7 @@ import (
   "os"
   "os/exec"
   "strings"
+  "net"
   "errors"
 
   "github.com/markelog/cprf"
@@ -17,7 +18,7 @@ import (
 )
 
 var (
-  versionsLink = "https://nodejs.org/dist"
+  VersionsLink = "https://nodejs.org/dist"
   home = fmt.Sprintf("%s/%s", variables.Home(), "node")
   bin = variables.Prefix() + "/bin/node"
 )
@@ -55,7 +56,7 @@ func (node Node) Info(version string) (map[string]string, error) {
 
   result := make(map[string]string)
 
-  sourcesUrl := fmt.Sprintf("%s/v%s", versionsLink, version)
+  sourcesUrl := fmt.Sprintf("%s/v%s", VersionsLink, version)
 
   result["name"] = "node"
   result["version"] = version
@@ -73,10 +74,10 @@ func (node Node) Current() string {
 }
 
 func (node Node) ListRemote() ([]string, error) {
-  doc, err := goquery.NewDocument(versionsLink)
+  doc, err := goquery.NewDocument(VersionsLink)
 
   if err != nil {
-    if err.Error() == "Response.Request is nil" {
+    if _, ok := err.(net.Error); ok {
       return nil, errors.New("Can't establish connection")
     }
 
@@ -112,8 +113,8 @@ func (node Node) ListRemote() ([]string, error) {
 
 func keyword(keyword string) (map[string]string, error) {
   result := make(map[string]string)
-  sumUrl := fmt.Sprintf("%s/%s/SHASUMS256.txt", versionsLink, keyword)
-  sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, keyword)
+  sumUrl := fmt.Sprintf("%s/%s/SHASUMS256.txt", VersionsLink, keyword)
+  sourcesUrl := fmt.Sprintf("%s/%s", VersionsLink, keyword)
   file, err := request.Body(sumUrl)
 
   if err != nil {

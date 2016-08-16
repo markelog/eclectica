@@ -4,6 +4,9 @@ import (
   "regexp"
   "io/ioutil"
   "runtime"
+  "net/http"
+  "net/http/httptest"
+  "io"
 
   "github.com/jarcoal/httpmock"
   . "github.com/onsi/ginkgo"
@@ -27,25 +30,32 @@ var _ = Describe("nodejs", func() {
   node := &Node{}
 
   Describe("ListRemote", func() {
+    old := VersionsLink
+
+    AfterEach(func() {
+      VersionsLink = old
+    })
+
     Describe("success", func() {
       BeforeEach(func() {
 
-        // TODO:
-        // Doesn't work for some reason :/
-        // content := Read("../../testdata/nodejs/dist.html")
-        // httpmock.Activate()
-        // httpmock.RegisterResponder(
-        //   "GET",
-        //   "https://nodejs.org/dist/",
-        //   httpmock.NewStringResponder(200, content),
-        // )
+        content := Read("../../testdata/nodejs/dist.html")
+
+        // httpmock is not incompatible with goquery :/.
+        // See https://github.com/jarcoal/httpmock/issues/18
+        req, _ := http.NewRequest("GET", VersionsLink, nil)
+
+        rr := httptest.NewRecorder()
+        handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          w.WriteHeader(http.StatusOK)
+          w.Header().Set("Content-Type", "text/html")
+          io.WriteString(w, content)
+        })
+
+        handler.ServeHTTP(rr, req)
 
         remotes, err = node.ListRemote()
       })
-
-      // AfterEach(func() {
-      //   defer httpmock.DeactivateAndReset()
-      // })
 
       It("should not return an error", func() {
         Expect(err).To(BeNil())
@@ -62,19 +72,8 @@ var _ = Describe("nodejs", func() {
 
     Describe("fail", func() {
       BeforeEach(func() {
-        httpmock.Activate()
-
-        httpmock.RegisterResponder(
-          "GET",
-          "https://nodejs.org/dist",
-          httpmock.NewStringResponder(500, ""),
-        )
-
+        VersionsLink = ""
         remotes, err = node.ListRemote()
-      })
-
-      AfterEach(func() {
-        defer httpmock.DeactivateAndReset()
       })
 
       It("should return an error", func() {
