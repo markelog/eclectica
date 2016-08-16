@@ -9,25 +9,122 @@ import (
   "github.com/cavaliercoder/grab"
   "github.com/markelog/archive"
 
-  "github.com/markelog/eclectica/plugins/nodejs"
-  "github.com/markelog/eclectica/plugins/rust"
   "github.com/markelog/eclectica/variables"
+  "github.com/markelog/eclectica/plugins/nodejs"
 )
 
 var (
-  List = []string{
+  Plugins = []string{
     "node",
     "rust",
   }
 )
 
-func Activate(info map[string]string) (err error) {
-  err = Extract(info)
+type Pkg interface {
+  Install(string) error
+  ListRemote() ([]string, error)
+  Info(string) (map[string]string, error)
+  Current() string
+}
+
+type Plugin struct {
+  name string
+  version string
+  pkg Pkg
+  info map[string]string
+}
+
+func New(args... string) *Plugin {
+  var pkg Pkg
+  var version string
+  name := args[0]
+
+  if len(args) == 2 {
+    version = args[1]
+  } else {
+    version = ""
+  }
+
+  plugin := &Plugin{
+    name: name,
+    version: version,
+  }
+
+  switch {
+    case name == "node":
+      pkg = &nodejs.Node{}
+  }
+
+  if len(args) == 2 {
+    info, _ := pkg.Info(version)
+    plugin.info = info
+  }
+
+  plugin.pkg = pkg
+
+  return plugin
+}
+
+func (plugin *Plugin) Install() error {
+  if plugin.version == "" {
+    return errors.New("Version was not defined")
+  }
+
+  return plugin.pkg.Install(plugin.version)
+}
+
+func (plugin *Plugin) Info() (map[string]string, error) {
+  if plugin.version == "" {
+    return nil, errors.New("Version was not defined")
+  }
+
+  info, err := plugin.pkg.Info(plugin.version)
+  if err != nil {
+    return nil, err
+  }
+
+  info["archive-folder"] = os.TempDir()
+  info["archive-path"] = fmt.Sprintf("%s%s.tar.gz", info["archive-folder"], info["filename"])
+
+  info["destination-folder"] = fmt.Sprintf("%s/%s/%s", variables.Home(), plugin.name, plugin.version)
+
+  return info, nil
+}
+
+func (plugin *Plugin) Current() string {
+  return plugin.pkg.Current()
+}
+
+func (plugin *Plugin) ListRemote() (map[string][]string, error) {
+  versions, err := plugin.pkg.ListRemote()
+  if err != nil {
+    return nil, err
+  }
+
+  return ComposeVersions(versions), nil
+}
+
+func (plugin *Plugin) Remove(version string) error {
+  var err error
+  home := fmt.Sprintf("%s/%s", variables.Home(), plugin.name)
+  base := fmt.Sprintf("%s/%s", home, version)
+
+  err = os.RemoveAll(base)
+
+  if err != nil {
+    return err
+  }
+
+  return nil
+}
+
+func (plugin *Plugin) Activate() (err error) {
+  err = plugin.Extract()
   if err != nil {
     return
   }
 
-  err = Install(info)
+  err = plugin.Install()
   if err != nil {
     return
   }
@@ -35,9 +132,13 @@ func Activate(info map[string]string) (err error) {
   return
 }
 
-func Download(info map[string]string) (*grab.Response, error) {
+func (plugin *Plugin) Download() (*grab.Response, error) {
+  if plugin.version == "" {
+    return nil, errors.New("Version was not defined")
+  }
+
   // If already downloaded
-  if _, err := os.Stat(info["destination-folder"]); err == nil {
+  if _, err := os.Stat(plugin.info["destination-folder"]); err == nil {
     if err != nil {
       return nil, err
     }
@@ -45,7 +146,7 @@ func Download(info map[string]string) (*grab.Response, error) {
     return nil, nil
   }
 
-  response, err := grab.GetAsync(info["archive-folder"], info["url"])
+  response, err := grab.GetAsync(plugin.info["archive-folder"], plugin.info["url"])
   if err != nil {
     return nil, err
   }
@@ -53,29 +154,33 @@ func Download(info map[string]string) (*grab.Response, error) {
   resp := <-response
 
   if resp.HTTPResponse.StatusCode == 404 {
-    return resp, errors.New("Incorrect version " + info["version"])
+    return resp, errors.New("Incorrect version " + plugin.version)
   }
 
   return resp, nil
 }
 
-func Extract(info map[string]string) error {
-  extractionPlace, err := createDir(fmt.Sprintf("%s/%s", variables.Home(), info["name"]))
+func (plugin *Plugin) Extract() error {
+  if plugin.version == "" {
+    return errors.New("Version was not defined")
+  }
+
+  extractionPlace, err := createDir(fmt.Sprintf("%s/%s", variables.Home(), plugin.name))
   if err != nil {
     return err
   }
 
   // Just in case archive was downloaded, but not extracted
   // i.e. is below steps have failed this issues comes up in the second run
-  err = os.RemoveAll(fmt.Sprintf("%s/%s/%s", variables.Home(), info["name"], info["filename"]))
+  os.RemoveAll(fmt.Sprintf("%s/%s/%s", variables.Home(), plugin.name, plugin.info["filename"]))
 
-  err = archive.Extract(info["archive-path"], extractionPlace)
+  err = archive.Extract(plugin.info["archive-path"], extractionPlace)
   if err != nil {
     return err
   }
 
-  downloadPath := fmt.Sprintf("%s/%s", extractionPlace, info["filename"])
-  extractionPath := info["destination-folder"]
+  downloadPath := fmt.Sprintf("%s/%s", extractionPlace, plugin.info["filename"])
+  extractionPath := plugin.info["destination-folder"]
 
   err = os.Rename(downloadPath, extractionPath)
   if err != nil {
@@ -85,9 +190,9 @@ func Extract(info map[string]string) error {
   return nil
 }
 
-func Versions(name string) (versions []string) {
+func (plugin *Plugin) List() (versions []string) {
   versions = []string{}
-  path := variables.Home() + "/" + name
+  path := variables.Home() + "/" + plugin.name
 
   if _, err := os.Stat(path); os.IsNotExist(err) {
     return
@@ -99,75 +204,6 @@ func Versions(name string) (versions []string) {
   }
 
   return
-}
-
-func Version(langauge, version string) (map[string]string, error) {
-  var (
-    info map[string]string
-    err error
-  )
-
-  switch {
-    case langauge == "node":
-      info, err = nodejs.Version(version)
-    case langauge == "rust":
-      info, err = rust.Version(version)
-  }
-
-  return info, err
-}
-
-func Remove(langauge, version string) error {
-  switch {
-    case langauge == "node":
-      return nodejs.Remove(version)
-    case langauge == "rust":
-      return rust.Remove(version)
-  }
-
-  return nil
-}
-
-func Install(data map[string]string) error {
-  switch {
-    case data["name"] == "node":
-      return nodejs.Install(data)
-    case data["name"] == "rust":
-      return rust.Install(data)
-  }
-
-  return nil
-}
-
-func RemoteList(langauge string) (map[string][]string, error) {
-  var (
-    versions []string
-    err error
-  )
-
-  switch {
-    case langauge == "node":
-      versions, err = nodejs.ListVersions()
-    case langauge == "rust":
-      versions, err = rust.ListVersions()
-  }
-
-  if err != nil {
-    return nil, err
-  }
-
-  return ComposeVersions(versions), nil
-}
-
-func CurrentVersion(langauge string) string {
-  switch {
-    case langauge == "node":
-      return nodejs.CurrentVersion()
-    case langauge == "rust":
-      return rust.CurrentVersion()
-  }
-
-  return ""
 }
 
 func createDir(path string) (string, error) {

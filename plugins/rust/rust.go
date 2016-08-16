@@ -3,13 +3,13 @@ package rust
 import (
   "runtime"
   "fmt"
-  "os"
   "os/exec"
   "strings"
   "errors"
   "regexp"
 
   "github.com/markelog/eclectica/variables"
+  "github.com/markelog/eclectica/request"
 )
 
 var (
@@ -19,6 +19,7 @@ var (
   home = fmt.Sprintf("%s/%s", variables.Home(), "rust")
   bin = variables.Prefix() + "/bin/rustc"
 
+  // TODO: Simplify
   fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
   nighltyPattern = "nightly(\\.[0-9]+)?"
   betaPattern = "beta(\\.[0-9]+)?"
@@ -27,26 +28,16 @@ var (
   versionPattern = "(" + defaultPattern + "|" + nighltyPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
 )
 
-// Do not know how to test it :/
-func getPlatform() (string, error) {
-  if runtime.GOOS == "linux" {
-    return "x86_64-unknown-linux-gnu", nil
-  }
+type Rust struct{}
 
-  if runtime.GOOS == "darwin" {
-    return "x86_64-apple-darwin", nil
-  }
+func (rust Rust) Install(version string) error {
+  installer := fmt.Sprintf("%s/%s/%s", home, version, "install.sh")
+  _, err := exec.Command(installer, "--prefix=" + variables.Prefix()).Output()
 
-  return "", errors.New("Not supported envionment")
+  return err
 }
 
-func Keyword(keyword string) (map[string]string, error) {
-  // Keywords in rust dists, like "nighlty", "beta" do not refer
-  // to version number but to the keywords :/
-  return Version(keyword)
-}
-
-func Version(version string) (map[string]string, error) {
+func (rust Rust) Info(version string) (map[string]string, error) {
   result := make(map[string]string)
 
   platform, err := getPlatform()
@@ -66,32 +57,76 @@ func Version(version string) (map[string]string, error) {
   return result, nil
 }
 
-func Remove(version string) error {
-  var err error
-  base := fmt.Sprintf("%s/%s", home, version)
-
-  err = os.RemoveAll(base)
-
-  if err != nil {
-    return err
-  }
-
-  return nil
-}
-
-func Install(data map[string]string) error {
-  installer := fmt.Sprintf("%s/%s/%s", home, data["version"], "install.sh")
-  _, err := exec.Command(installer, "--prefix=" + variables.Prefix()).Output()
-
-  return err
-}
-
-func CurrentVersion() string {
+func (rust Rust) Current() string {
   vp := regexp.MustCompile(versionPattern)
 
   out, _ := exec.Command(bin, "--version").Output()
   version := strings.TrimSpace(string(out))
-  version = vp.FindAllStringSubmatch(version, 1)[0][0]
+  versionArr := vp.FindAllStringSubmatch(version, 1)
+  if len(versionArr) > 0 {
+    version = strings.Replace(versionArr[0][0], "v", "", 1)
+  }
 
   return strings.Replace(version, "v", "", 1)
+}
+
+func (rust Rust) ListRemote() ([]string, error) {
+  body, err := request.Body(listLink)
+
+  if err != nil {
+    return []string{}, err
+  }
+
+  return getVersions(body)
+}
+
+func getFullPattern() (string, error) {
+  platform, err := getPlatform()
+
+  if err != nil {
+    return "", err
+  }
+
+  result := "/dist/rust-" + fullVersionPattern + "-" + platform + ".tar.gz,"
+
+  return result, nil
+}
+
+func getVersions(list string) ([]string, error) {
+  fullPattern, err := getFullPattern()
+  result := []string{}
+
+  if err != nil {
+    return result, err
+  }
+
+  fullUrlsPattern := regexp.MustCompile(fullPattern)
+
+  fullUrlsTmp := fullUrlsPattern.FindAllStringSubmatch(list, -1)
+  var fullUrls []string
+
+  // Flatten them out
+  for _, element := range fullUrlsTmp {
+    fullUrls = append(fullUrls, element[0])
+  }
+
+  vp := regexp.MustCompile(versionPattern)
+  for _, element := range fullUrls {
+    result = append(result, vp.FindAllStringSubmatch(element, 1)[0][0])
+  }
+
+  return result, nil
+}
+
+// Do not know how to test it :/
+func getPlatform() (string, error) {
+  if runtime.GOOS == "linux" {
+    return "x86_64-unknown-linux-gnu", nil
+  }
+
+  if runtime.GOOS == "darwin" {
+    return "x86_64-apple-darwin", nil
+  }
+
+  return "", errors.New("Not supported envionment")
 }

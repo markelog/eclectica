@@ -10,27 +10,27 @@ import (
 )
 
 func Ask() (language, version string) {
-  language = list.GetWith("Language", plugins.List)
+  language = list.GetWith("Language", plugins.Plugins)
   version = AskVersion(language)
 
   return
 }
 
 func AskVersion(language string) (version string) {
-  version = list.GetWith("Version", plugins.Versions(language))
+  version = list.GetWith("Version", plugins.New(language).List())
 
   return
 }
 
 func AskRemote() (language, version string) {
-  language = list.GetWith("Language", plugins.List)
+  language = list.GetWith("Language", plugins.Plugins)
   version = AskRemoteVersion(language)
 
   return
 }
 
 func AskRemoteVersion(language string) (version string) {
-  remoteList, _ := plugins.RemoteList(language)
+  remoteList, _ := plugins.New(language).ListRemote()
   key := list.GetWith("Mask", plugins.GetKeys(remoteList))
   versions := plugins.GetElements(key, remoteList)
   version = list.GetWith("Version", versions)
@@ -47,7 +47,7 @@ func GetLanguage(args []string) (language, version string) {
       version = data[1]
     }
 
-    for _, plugin := range plugins.List {
+    for _, plugin := range plugins.Plugins {
       if language == plugin {
         return
       }

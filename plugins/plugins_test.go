@@ -1,9 +1,11 @@
 package plugins_test
 
 import (
+  "reflect"
   "os"
   "io/ioutil"
   "path/filepath"
+  "fmt"
 
   "github.com/jarcoal/httpmock"
   "github.com/bouk/monkey"
@@ -11,11 +13,13 @@ import (
   . "github.com/onsi/gomega"
 
   "github.com/markelog/eclectica/variables"
+  "github.com/markelog/eclectica/plugins/nodejs"
   ."github.com/markelog/eclectica/plugins"
 )
 
 func Read(path string) string {
   bytes, _ := ioutil.ReadFile(path)
+  fmt.Print()
 
   return string(bytes)
 }
@@ -31,28 +35,44 @@ var _ = Describe("plugins", func() {
     url string
     filename string
     info map[string]string
+    plugin *Plugin
   )
+
+  Describe("Install", func() {
+    It("returns error if version was not defined", func() {
+      plugin := New("node")
+      Expect(plugin.Install()).Should(MatchError("Version was not defined"))
+    })
+  })
 
   Describe("Activate", func() {
     It("should call Extract then Install methods", func() {
       result := ""
 
-      monkey.Patch(Extract, func(info map[string]string) error {
+      plugin := New("node", "5.0.0")
+      ptype := reflect.TypeOf(plugin)
+
+      var guardExtract *monkey.PatchGuard
+      guardExtract = monkey.PatchInstanceMethod(ptype, "Extract", func(*Plugin) error {
         result += "Extract"
+
+        guardExtract.Unpatch()
+
         return nil
       })
 
-      monkey.Patch(Install, func(info map[string]string) error {
+      var guardInstall *monkey.PatchGuard
+      guardInstall = monkey.PatchInstanceMethod(ptype, "Install", func(*Plugin) error {
         result += "Install"
+
+        guardInstall.Unpatch()
+
         return nil
       })
 
-      Activate(map[string]string{})
+      plugin.Activate()
 
       Expect(result).To(Equal("ExtractInstall"))
-
-      monkey.Unpatch(Extract)
-      monkey.Unpatch(Install)
     })
   })
 
@@ -77,6 +97,19 @@ var _ = Describe("plugins", func() {
       monkey.Patch(variables.Home, func() string {
         return versionsFolder
       })
+
+      var d *nodejs.Node
+      ptype := reflect.TypeOf(d)
+
+      var guard *monkey.PatchGuard
+      guard = monkey.PatchInstanceMethod(ptype, "Info",
+        func(*nodejs.Node, string) (map[string]string, error) {
+          guard.Unpatch()
+          guard.Restore()
+          return info, nil
+        })
+
+      plugin = New("node", "5.0.0")
     })
 
     AfterEach(func() {
@@ -84,8 +117,13 @@ var _ = Describe("plugins", func() {
       os.RemoveAll(versionsFolder + "/" + name)
     })
 
+    It("returns error if version was not defined", func() {
+      plugin := New("node")
+      Expect(plugin.Extract()).Should(MatchError("Version was not defined"))
+    })
+
     It("should extract langauge", func() {
-      Extract(info)
+      plugin.Extract()
 
       _, err := os.Stat(destFolder + "/test.txt");
       Expect(err).To(BeNil())
@@ -96,7 +134,7 @@ var _ = Describe("plugins", func() {
 
       os.MkdirAll(failedAttempt, 0700)
 
-      Extract(info)
+      plugin.Extract()
 
       _, err := os.Stat(destFolder + "/test.txt");
       Expect(err).To(BeNil())
@@ -109,25 +147,48 @@ var _ = Describe("plugins", func() {
   Describe("Download", func() {
     BeforeEach(func() {
       path, _ = filepath.Abs("../testdata/plugins")
-      filename = "node-v6.3.0-darwin-x64.tar.gz"
+      filename = "node-v5.0.0-darwin-x64.tar.gz"
       archivePath = path + "/" + filename
       destFolder = path + "/test"
       url = "https://example.com/" + filename
 
       info = map[string]string{
         "name": "node",
-        "version": "6.3.0",
+        "version": "5.0.0",
         "destination-folder": destFolder,
         "archive-folder": path,
         "archive-path": archivePath,
         "url": url,
       }
+
+      monkey.Patch(variables.Home, func() string {
+        return versionsFolder
+      })
+
+      var d *nodejs.Node
+      ptype := reflect.TypeOf(d)
+
+      var guard *monkey.PatchGuard
+      guard = monkey.PatchInstanceMethod(ptype, "Info",
+        func(*nodejs.Node, string) (map[string]string, error) {
+          guard.Unpatch()
+          guard.Restore()
+          return info, nil
+        })
+
+      plugin = New("node", "5.0.0")
     })
 
     AfterEach(func() {
       defer httpmock.DeactivateAndReset()
       os.RemoveAll(archivePath)
       os.RemoveAll(destFolder)
+    })
+
+    It("returns error if version was not defined", func() {
+      plugin := New("node")
+      _, err := plugin.Download()
+      Expect(err).Should(MatchError("Version was not defined"))
     })
 
     Describe("200 response", func() {
@@ -142,7 +203,7 @@ var _ = Describe("plugins", func() {
       })
 
       It("should download tar", func() {
-        Download(info)
+        plugin.Download()
 
         _, err := os.Stat(archivePath);
         Expect(err).To(BeNil())
@@ -151,7 +212,7 @@ var _ = Describe("plugins", func() {
       It("should not download anything if file already exist", func() {
         os.MkdirAll(destFolder, 0777)
 
-        response, _ := Download(info)
+        response, _ := plugin.Download()
         Expect(response).To(BeNil())
       })
     })
@@ -166,10 +227,48 @@ var _ = Describe("plugins", func() {
       })
 
       It("should return error", func() {
-        _, err := Download(info)
+        _, err := plugin.Download()
 
-        Expect(err).Should(MatchError("Incorrect version 6.3.0"))
+        Expect(err).Should(MatchError("Incorrect version 5.0.0"))
       })
+    })
+  })
+
+  Describe("Info", func() {
+    BeforeEach(func() {
+      info = map[string]string{
+        "name": "node",
+        "version": "5.0.0",
+        "filename": "node-arch",
+        "url": url,
+      }
+
+      var d *nodejs.Node
+      ptype := reflect.TypeOf(d)
+
+      var guard *monkey.PatchGuard
+      guard = monkey.PatchInstanceMethod(ptype, "Info",
+        func(*nodejs.Node, string) (map[string]string, error) {
+          guard.Unpatch()
+          guard.Restore()
+          return info, nil
+        })
+
+      plugin = New("node", "5.0.0")
+    })
+
+    It("returns error if version was not defined", func() {
+      plugin := New("node")
+      _, err := plugin.Info()
+      Expect(err).Should(MatchError("Version was not defined"))
+    })
+
+    It("should augment output from plugin `Info` method", func() {
+      info, _ := plugin.Info()
+
+      Expect(info["archive-folder"]).To(Equal(os.TempDir()))
+      Expect(info["archive-path"]).To(Equal(os.TempDir() + "node-arch.tar.gz"))
+      Expect(info["destination-folder"]).To(Equal(variables.Home() + "/node/5.0.0"))
     })
   })
 

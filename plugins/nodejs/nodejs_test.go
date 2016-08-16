@@ -4,14 +4,12 @@ import (
   "regexp"
   "io/ioutil"
   "runtime"
-  "os"
 
   "github.com/jarcoal/httpmock"
   . "github.com/onsi/ginkgo"
   . "github.com/onsi/gomega"
 
   ."github.com/markelog/eclectica/plugins/nodejs"
-  "github.com/markelog/eclectica/variables"
 )
 
 func Read(path string) string {
@@ -26,74 +24,66 @@ var _ = Describe("nodejs", func() {
     err error
   )
 
-  Describe("ListVersions", func() {
-    BeforeEach(func() {
-      remotes, err = ListVersions()
+  node := &Node{}
+
+  Describe("ListRemote", func() {
+    Describe("success", func() {
+      BeforeEach(func() {
+
+        // TODO:
+        // Doesn't work for some reason :/
+        // content := Read("../../testdata/nodejs/dist.html")
+        // httpmock.Activate()
+        // httpmock.RegisterResponder(
+        //   "GET",
+        //   "https://nodejs.org/dist/",
+        //   httpmock.NewStringResponder(200, content),
+        // )
+
+        remotes, err = node.ListRemote()
+      })
+
+      // AfterEach(func() {
+      //   defer httpmock.DeactivateAndReset()
+      // })
+
+      It("should not return an error", func() {
+        Expect(err).To(BeNil())
+      })
+
+      It("should have correct version values", func() {
+        rp := regexp.MustCompile("[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+$")
+
+        for _, element := range remotes {
+          Expect(rp.MatchString(element)).To(Equal(true))
+        }
+      })
     })
 
-    It("should not return an error", func() {
-      Expect(err).To(BeNil())
-    })
+    Describe("fail", func() {
+      BeforeEach(func() {
+        httpmock.Activate()
 
-    It("should have correct version values", func() {
-      rp := regexp.MustCompile("[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+$")
+        httpmock.RegisterResponder(
+          "GET",
+          "https://nodejs.org/dist",
+          httpmock.NewStringResponder(500, ""),
+        )
 
-      for _, element := range remotes {
-        Expect(rp.MatchString(element)).To(Equal(true))
-      }
-    })
-  })
+        remotes, err = node.ListRemote()
+      })
 
-  Describe("Keyword", func() {
-    var (
-      result map[string]string
-      err error
-    )
+      AfterEach(func() {
+        defer httpmock.DeactivateAndReset()
+      })
 
-    BeforeEach(func() {
-      content := Read("../../testdata/nodejs/latest.txt")
-
-      httpmock.Activate()
-
-      httpmock.RegisterResponder(
-        "GET",
-        "https://nodejs.org/dist/latest/SHASUMS256.txt",
-        httpmock.NewStringResponder(200, content),
-      )
-    })
-
-    AfterEach(func() {
-      defer httpmock.DeactivateAndReset()
-    })
-
-    BeforeEach(func() {
-      result, err = Keyword("latest")
-    })
-
-    It("should not return an error", func() {
-      Expect(err).To(BeNil())
-    })
-
-    It("should get info about latest version", func() {
-      Expect(result["name"]).To(Equal("node"))
-      Expect(result["version"]).To(Equal("6.3.1"))
-      Expect(result["archive-folder"]).To(Equal(os.TempDir()))
-      Expect(result["destination-folder"]).To(Equal(variables.Home() + "/node/6.3.1"))
-
-      // :/
-      if runtime.GOOS == "darwin" {
-        Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-darwin-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-darwin-x64.tar.gz"))
-      } else if runtime.GOOS == "linux" {
-        Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
-        Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-linux-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-linux-x64.tar.gz"))
-      }
+      It("should return an error", func() {
+        Expect(err).Should(MatchError("Can't establish connection"))
+      })
     })
   })
 
-  Describe("Version", func() {
+  Describe("Info", func() {
     BeforeEach(func() {
       content := Read("../../testdata/nodejs/latest.txt")
 
@@ -117,62 +107,50 @@ var _ = Describe("nodejs", func() {
     })
 
     It("should get info about latest version", func() {
-      result, _ := Version("latest")
+      result, _ := node.Info("latest")
 
       Expect(result["name"]).To(Equal("node"))
       Expect(result["version"]).To(Equal("6.3.1"))
-      Expect(result["archive-folder"]).To(Equal(os.TempDir()))
-      Expect(result["destination-folder"]).To(Equal(variables.Home() + "/node/6.3.1"))
 
       // :/
       if runtime.GOOS == "darwin" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
         Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-darwin-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-darwin-x64.tar.gz"))
       } else if runtime.GOOS == "linux" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
         Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-linux-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-linux-x64.tar.gz"))
       }
     })
 
     It("should get info about lts version", func() {
-      result, _ := Version("lts")
+      result, _ := node.Info("lts")
 
       Expect(result["name"]).To(Equal("node"))
       Expect(result["version"]).To(Equal("6.3.1"))
-      Expect(result["archive-folder"]).To(Equal(os.TempDir()))
-      Expect(result["destination-folder"]).To(Equal(variables.Home() + "/node/6.3.1"))
 
       // :/
       if runtime.GOOS == "darwin" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
         Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-darwin-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-darwin-x64.tar.gz"))
       } else if runtime.GOOS == "linux" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
         Expect(result["url"]).To(Equal("https://nodejs.org/dist/lts/node-v6.3.1-linux-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-linux-x64.tar.gz"))
       }
     })
 
     It("should get info about 6.3.1 version", func() {
-      result, _ := Version("6.3.1")
+      result, _ := node.Info("6.3.1")
 
       Expect(result["name"]).To(Equal("node"))
       Expect(result["version"]).To(Equal("6.3.1"))
-      Expect(result["archive-folder"]).To(Equal(os.TempDir()))
-      Expect(result["destination-folder"]).To(Equal(variables.Home() + "/node/6.3.1"))
 
       // :/
       if runtime.GOOS == "darwin" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
         Expect(result["url"]).To(Equal("https://nodejs.org/dist/v6.3.1/node-v6.3.1-darwin-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-darwin-x64.tar.gz"))
       } else if runtime.GOOS == "linux" {
         Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
         Expect(result["url"]).To(Equal("https://nodejs.org/dist/v6.3.1/node-v6.3.1-linux-x64.tar.gz"))
-        Expect(result["archive-path"]).To(Equal(result["archive-folder"] + "node-v6.3.1-linux-x64.tar.gz"))
       }
     })
   })

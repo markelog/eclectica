@@ -84,20 +84,19 @@ func Execute() {
 }
 
 func install(language, version string) {
-  info, err := plugins.Version(language, version)
-  print.Error(err)
+  plugin := plugins.New(language, version)
 
-  response, err := plugins.Download(info)
+  response, err := plugin.Download()
   print.Error(err)
 
   if response == nil {
-    plugins.Install(info)
+    plugin.Install()
     return
   }
 
   print.Download(response, version)
 
-  err = plugins.Activate(info)
+  err = plugin.Activate()
   print.Error(err)
 }
 

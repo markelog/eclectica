@@ -31,7 +31,7 @@ var rmCmd = &cobra.Command{
 }
 
 func remove(language, version string) {
-  err := plugins.Remove(language, version)
+  err := plugins.New(language).Remove(version)
 
   if err != nil {
     fmt.Println(err)

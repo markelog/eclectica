@@ -31,29 +31,31 @@ func listVersions(versions []string, current string) {
 }
 
 func listLocalVersions(language string) {
-  versions := plugins.Versions(language)
-  current := plugins.CurrentVersion(language)
+  plugin := plugins.New(language)
+  versions := plugin.List()
+  current := plugin.Current()
 
   listVersions(versions, current)
 }
 
 func listLocal() {
-  language := list.GetWith("Language", plugins.List)
+  language := list.GetWith("Language", plugins.Plugins)
 
   listLocalVersions(language)
 }
 
 func listRemoteVersions(language string) {
-  remoteList, _ := plugins.RemoteList(language)
+  plugin := plugins.New(language)
+  remoteList, _ := plugin.ListRemote()
   mask := list.GetWith("Mask", plugins.GetKeys(remoteList))
   versions := plugins.GetElements(mask, remoteList)
-  current := plugins.CurrentVersion(language)
+  current := plugin.Current()
 
   listVersions(versions, current)
 }
 
 func listRemote() {
-  language := list.GetWith("Language", plugins.List)
+  language := list.GetWith("Language", plugins.Plugins)
 
   listRemoteVersions(language)
 }
@@ -64,7 +66,7 @@ func remote(args []string) {
     return
   }
 
-  for _, element := range plugins.List {
+  for _, element := range plugins.Plugins {
     if args[0] == element {
       print.InStyle("Language", element)
       fmt.Println()
@@ -80,7 +82,7 @@ func local(args []string) {
     return
   }
 
-  for _, element := range plugins.List {
+  for _, element := range plugins.Plugins {
     if args[0] == element {
       print.InStyle("Language", element)
       fmt.Println()
