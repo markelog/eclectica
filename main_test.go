@@ -15,8 +15,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/markelog/eclectica/plugins"
-	"github.com/markelog/eclectica/plugins/rust"
-	"github.com/markelog/eclectica/plugins/nodejs"
 )
 
 var (
@@ -27,15 +25,30 @@ func init() {
 	path, _ = filepath.Abs("./main.go")
 }
 
-func Command(args... interface{}) *exec.Cmd {
+func getCmd(args []interface{}) *exec.Cmd {
 	fn := reflect.ValueOf(exec.Command)
 	rargs := make([]reflect.Value, len(args))
-    for i, a := range args {
-        rargs[i] = reflect.ValueOf(a)
-    }
+	for i, a := range args {
+		rargs[i] = reflect.ValueOf(a)
+	}
 
 	cmd := fn.Call(rargs)[0].Interface().(*exec.Cmd)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
+	return cmd
+}
+
+func Command(args... interface{}) *exec.Cmd {
+	return getCmd(args)
+}
+
+func Execute(args... interface{}) *exec.Cmd {
+	cmd := getCmd(args)
+
+	// Output result for testing purposes
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 
 	return cmd
 }
@@ -55,22 +68,23 @@ func checkRemoteList(name, mask string, timeout int) bool {
 	timer := time.AfterFunc(time.Duration(timeout)*time.Second, func() {
 		Kill(cmd)
 		proceed = false
-    })
+	})
 
 	go func() {
 		for {
 			out := string(output.Bytes())
-	        result = strings.Contains(out, mask)
+			fmt.Println(out)
+			result = strings.Contains(out, mask)
 
-	        if result {
-	        	timer.Stop()
-	        	Kill(cmd)
-	        	proceed = false
-	        	return
-	        }
+			if result {
+				timer.Stop()
+				Kill(cmd)
+				proceed = false
+				return
+			}
 
-	        time.Sleep(200 * time.Millisecond)
-	    }
+			time.Sleep(200 * time.Millisecond)
+		}
 	}()
 
 	cmd.Start()
@@ -87,31 +101,36 @@ var _ = Describe("main", func() {
 		return
 	}
 
-	rust := &rust.Rust{}
-	node := &nodejs.Node{}
-
 	Describe("Rust", func() {
-		It("should install rust 1.0.0", func() {
-			Command("go", "run", path, "rust@1.0.0").Output()
+		BeforeEach(func() {
+			// fmt.Println()
+			// fmt.Println("Removing rust@1.0.0")
+			// Execute("go", "run", path, "rm", "rust@1.0.0")
+		})
 
-			Expect(rust.Current()).To(Equal("1.0.0"))
+		It("should install rust 1.0.0", func() {
+			Execute("go", "run", path, "rust@1.0.0")
+			command, _ := Command("go", "run", path, "ls", "rust").Output()
+
+			Expect(strings.Contains(string(command), "♥ 1.0.0")).To(Equal(true))
 		})
 
 		It("should list installed rust versions", func() {
-			Command("go", "run", path, "rust@1.0.0").Output()
+			Execute("go", "run", path, "rust@1.0.0")
 			command, _ := Command("go", "run", path, "ls", "rust").Output()
+
 			Expect(strings.Contains(string(command), "1.0.0")).To(Equal(true))
 		})
 
-		It("should list installed node versions", func() {
-			Expect(checkRemoteList("rust", "1.x", 20)).To(Equal(true))
+		It("should list installed ru versions", func() {
+			Expect(checkRemoteList("rust", "1.x", 120)).To(Equal(true))
 		})
 
 		It("should remove rust version", func() {
 			result := true
 
-			Command("go", "run", path, "rust@1.0.0").Output()
-			cmd, _ := Command("go", "run", path, "rm", "rust@1.0.0").Output()
+			Execute("go", "run", path, "rust@1.0.0")
+			Command("go", "run", path, "rm", "rust@1.0.0").Output()
 
 			plugin := plugins.New("rust")
 			versions := plugin.List()
@@ -127,16 +146,25 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("node", func() {
-		It("should install node 6.4.0", func() {
-			Command("go", "run", path, "node@6.4.0").Output()
+		BeforeEach(func() {
+			fmt.Println()
+			fmt.Println("Removing node@6.4.0")
+			Execute("go", "run", path, "rm", "node@6.4.0")
+		})
 
-			Expect(node.Current()).To(Equal("6.4.0"))
+		It("should install node 6.4.0", func() {
+			Execute("go", "run", path, "node@6.4.0")
+			command, _ := Command("go", "run", path, "ls", "node").Output()
+
+			Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
 		})
 
 		It("should list installed node versions", func() {
-			Command("go", "run", path, "node@6.4.0")
+			Execute("go", "run", path, "node@6.4.0")
 			command, _ := Command("go", "run", path, "ls", "node").Output()
-			Expect(strings.Contains(string(command), "6.4.0")).To(Equal(true))
+
+			Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
+			Expect(strings.Contains(string(command), "node-v6.4.0-darwin-x64")).To(Equal(false))
 		})
 
 		It("should list installed node versions", func() {
@@ -146,7 +174,7 @@ var _ = Describe("main", func() {
 		It("should remove node version", func() {
 			result := true
 
-			Command("go", "run", path, "node@6.4.0").Output()
+			Execute("go", "run", path, "node@6.4.0")
 			Command("go", "run", path, "rm", "node@6.4.0").Output()
 
 			plugin := plugins.New("node")

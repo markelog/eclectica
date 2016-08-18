@@ -145,7 +145,7 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
     return nil, nil
   }
 
-  response, err := grab.GetAsync(plugin.info["destination-folder"], plugin.info["url"])
+  response, err := grab.GetAsync(plugin.info["archive-folder"], plugin.info["url"])
   if err != nil {
     return nil, err
   }
@@ -173,7 +173,7 @@ func (plugin *Plugin) Extract() error {
 
   // Just in case archive was downloaded, but not extracted
   // i.e. is below steps have failed this issues comes up in the second run
-  os.RemoveAll(fmt.Sprintf("%s/%s/%s", variables.Home(), plugin.name, plugin.info["filename"]))
+  os.RemoveAll(fmt.Sprintf("%s/%s", extractionPlace, plugin.info["filename"]))
 
   err = archive.Extract(plugin.info["archive-path"], extractionPlace)
   if err != nil {
