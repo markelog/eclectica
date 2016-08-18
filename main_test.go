@@ -103,23 +103,23 @@ var _ = Describe("main", func() {
 
 	Describe("Rust", func() {
 		BeforeEach(func() {
-			// fmt.Println()
-			// fmt.Println("Removing rust@1.0.0")
-			// Execute("go", "run", path, "rm", "rust@1.0.0")
+			fmt.Println()
+			fmt.Println("Removing rust@1.9.0")
+			Execute("go", "run", path, "rm", "rust@1.9.0")
 		})
 
-		It("should install rust 1.0.0", func() {
-			Execute("go", "run", path, "rust@1.0.0")
+		It("should install rust 1.9.0", func() {
+			Execute("go", "run", path, "rust@1.9.0")
 			command, _ := Command("go", "run", path, "ls", "rust").Output()
 
-			Expect(strings.Contains(string(command), "♥ 1.0.0")).To(Equal(true))
+			Expect(strings.Contains(string(command), "♥ 1.9.0")).To(Equal(true))
 		})
 
 		It("should list installed rust versions", func() {
-			Execute("go", "run", path, "rust@1.0.0")
+			Execute("go", "run", path, "rust@1.9.0")
 			command, _ := Command("go", "run", path, "ls", "rust").Output()
 
-			Expect(strings.Contains(string(command), "1.0.0")).To(Equal(true))
+			Expect(strings.Contains(string(command), "1.9.0")).To(Equal(true))
 		})
 
 		It("should list installed ru versions", func() {
@@ -129,14 +129,14 @@ var _ = Describe("main", func() {
 		It("should remove rust version", func() {
 			result := true
 
-			Execute("go", "run", path, "rust@1.0.0")
-			Command("go", "run", path, "rm", "rust@1.0.0").Output()
+			Execute("go", "run", path, "rust@1.9.0")
+			Command("go", "run", path, "rm", "rust@1.9.0").Output()
 
 			plugin := plugins.New("rust")
 			versions := plugin.List()
 
 			for _, version := range versions {
-				if version == "1.0.0" {
+				if version == "1.9.0" {
 					result = false
 				}
 			}
