@@ -1,12 +1,12 @@
 package nodejs_test
 
 import (
-  "regexp"
   "io/ioutil"
   "runtime"
   "net/http"
   "net/http/httptest"
   "io"
+  "fmt"
 
   "github.com/jarcoal/httpmock"
   . "github.com/onsi/ginkgo"
@@ -38,21 +38,22 @@ var _ = Describe("nodejs", func() {
 
     Describe("success", func() {
       BeforeEach(func() {
-
         content := Read("../../testdata/nodejs/dist.html")
 
         // httpmock is not incompatible with goquery :/.
         // See https://github.com/jarcoal/httpmock/issues/18
-        req, _ := http.NewRequest("GET", VersionsLink, nil)
+        ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	        status := 200
 
-        rr := httptest.NewRecorder()
-        handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-          w.WriteHeader(http.StatusOK)
-          w.Header().Set("Content-Type", "text/html")
-          io.WriteString(w, content)
-        })
+	        if _, ok := r.URL.Query()["status"]; ok {
+	          fmt.Sscanf(r.URL.Query().Get("status"), "%d", &status)
+	        }
 
-        handler.ServeHTTP(rr, req)
+	        w.WriteHeader(status)
+	        io.WriteString(w, content)
+	      }))
+
+        VersionsLink = ts.URL
 
         remotes, err = node.ListRemote()
       })
@@ -62,11 +63,7 @@ var _ = Describe("nodejs", func() {
       })
 
       It("should have correct version values", func() {
-        rp := regexp.MustCompile("[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+$")
-
-        for _, element := range remotes {
-          Expect(rp.MatchString(element)).To(Equal(true))
-        }
+        Expect(remotes[0]).To(Equal("6.4.0"))
       })
     })
 

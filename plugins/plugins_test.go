@@ -3,11 +3,12 @@ package plugins_test
 import (
   "reflect"
   "os"
-  "io/ioutil"
+  "io"
   "path/filepath"
   "fmt"
+  "net/http"
+  "net/http/httptest"
 
-  "github.com/jarcoal/httpmock"
   "github.com/bouk/monkey"
   . "github.com/onsi/ginkgo"
   . "github.com/onsi/gomega"
@@ -16,13 +17,6 @@ import (
   "github.com/markelog/eclectica/plugins/nodejs"
   ."github.com/markelog/eclectica/plugins"
 )
-
-func Read(path string) string {
-  bytes, _ := ioutil.ReadFile(path)
-  fmt.Print()
-
-  return string(bytes)
-}
 
 var _ = Describe("plugins", func() {
   var (
@@ -98,14 +92,13 @@ var _ = Describe("plugins", func() {
         return versionsFolder
       })
 
-      var d *nodejs.Node
+      var d *Plugin
       ptype := reflect.TypeOf(d)
 
       var guard *monkey.PatchGuard
       guard = monkey.PatchInstanceMethod(ptype, "Info",
-        func(*nodejs.Node, string) (map[string]string, error) {
+        func(plugin *Plugin) (map[string]string, error) {
           guard.Unpatch()
-          guard.Restore()
           return info, nil
         })
 
@@ -145,12 +138,28 @@ var _ = Describe("plugins", func() {
   })
 
   Describe("Download", func() {
+    var (
+      guard *monkey.PatchGuard
+      ts *httptest.Server
+    )
+
     BeforeEach(func() {
+      ts = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        status := 200
+
+        if _, ok := r.URL.Query()["status"]; ok {
+          fmt.Sscanf(r.URL.Query().Get("status"), "%d", &status)
+        }
+
+        w.WriteHeader(status)
+        io.WriteString(w, "test")
+      }))
+
       path, _ = filepath.Abs("../testdata/plugins")
       filename = "node-v5.0.0-darwin-x64.tar.gz"
       archivePath = path + "/" + filename
-      destFolder = path + "/test"
-      url = "https://example.com/" + filename
+      destFolder = path + "/" + filename
+      url = ts.URL + "/" + filename
 
       info = map[string]string{
         "name": "node",
@@ -165,22 +174,21 @@ var _ = Describe("plugins", func() {
         return versionsFolder
       })
 
-      var d *nodejs.Node
+      var d *Plugin
       ptype := reflect.TypeOf(d)
 
-      var guard *monkey.PatchGuard
       guard = monkey.PatchInstanceMethod(ptype, "Info",
-        func(*nodejs.Node, string) (map[string]string, error) {
-          guard.Unpatch()
-          guard.Restore()
+        func(*Plugin) (map[string]string, error) {
           return info, nil
-        })
+        },
+      )
 
       plugin = New("node", "5.0.0")
     })
 
     AfterEach(func() {
-      defer httpmock.DeactivateAndReset()
+      defer ts.Close()
+      guard.Unpatch()
       os.RemoveAll(archivePath)
       os.RemoveAll(destFolder)
     })
@@ -192,16 +200,6 @@ var _ = Describe("plugins", func() {
     })
 
     Describe("200 response", func() {
-      BeforeEach(func() {
-        content := Read("../testdata/plugins/download.txt")
-
-        httpmock.Activate()
-
-        httpmock.RegisterResponder(
-          "GET", url, httpmock.NewStringResponder(200, content),
-        )
-      })
-
       It("should download tar", func() {
         plugin.Download()
 
@@ -218,16 +216,9 @@ var _ = Describe("plugins", func() {
     })
 
     Describe("404 response", func() {
-      BeforeEach(func() {
-        httpmock.Activate()
-
-        httpmock.RegisterResponder(
-          "GET", "", httpmock.NewStringResponder(404, ""),
-        )
-      })
-
       It("should return error", func() {
-        _, err := plugin.Download()
+        info["url"] += "?status=404"
+        _, err := New("node", "5.0.0").Download()
 
         Expect(err).Should(MatchError("Incorrect version 5.0.0"))
       })
@@ -250,7 +241,6 @@ var _ = Describe("plugins", func() {
       guard = monkey.PatchInstanceMethod(ptype, "Info",
         func(*nodejs.Node, string) (map[string]string, error) {
           guard.Unpatch()
-          guard.Restore()
           return info, nil
         })
 
@@ -267,7 +257,7 @@ var _ = Describe("plugins", func() {
       info, _ := plugin.Info()
 
       Expect(info["archive-folder"]).To(Equal(os.TempDir()))
-      Expect(info["archive-path"]).To(Equal(os.TempDir() + "node-arch.tar.gz"))
+      Expect(info["archive-path"]).To(Equal(os.TempDir() + "node-v5.0.0-darwin-x64.tar.gz"))
       Expect(info["destination-folder"]).To(Equal(variables.Home() + "/node/5.0.0"))
     })
   })

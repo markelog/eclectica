@@ -11,6 +11,7 @@ import (
 
   "github.com/markelog/eclectica/variables"
   "github.com/markelog/eclectica/plugins/nodejs"
+  "github.com/markelog/eclectica/plugins/rust"
 )
 
 var (
@@ -53,14 +54,16 @@ func New(args... string) *Plugin {
   switch {
     case name == "node":
       pkg = &nodejs.Node{}
-  }
-
-  if len(args) == 2 {
-    info, _ := pkg.Info(version)
-    plugin.info = info
+    case name == "rust":
+      pkg = &rust.Rust{}
   }
 
   plugin.pkg = pkg
+
+  if len(args) == 2 {
+    info, _ := plugin.Info()
+    plugin.info = info
+  }
 
   return plugin
 }
@@ -139,14 +142,10 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
 
   // If already downloaded
   if _, err := os.Stat(plugin.info["destination-folder"]); err == nil {
-    if err != nil {
-      return nil, err
-    }
-
     return nil, nil
   }
 
-  response, err := grab.GetAsync(plugin.info["archive-folder"], plugin.info["url"])
+  response, err := grab.GetAsync(plugin.info["destination-folder"], plugin.info["url"])
   if err != nil {
     return nil, err
   }
@@ -154,6 +153,8 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
   resp := <-response
 
   if resp.HTTPResponse.StatusCode == 404 {
+    grab.NewClient().CancelRequest(resp.Request)
+
     return resp, errors.New("Incorrect version " + plugin.version)
   }
 

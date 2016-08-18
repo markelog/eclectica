@@ -21,7 +21,7 @@ var rmCmd = &cobra.Command{
 
     return nil
   },
-	Run: func(cmd *cobra.Command, args []string) {
+  Run: func(cmd *cobra.Command, args []string) {
     if len(args) == 0 {
       remove(info.Ask())
     } else {
