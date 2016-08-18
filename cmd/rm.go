@@ -19,15 +19,14 @@ var rmCmd = &cobra.Command{
       return errors.New("Can't remove without specific version")
     }
 
-    return nil
-  },
-  Run: func(cmd *cobra.Command, args []string) {
     if len(args) == 0 {
       remove(info.Ask())
     } else {
       remove(info.GetLanguage(args))
     }
-	},
+
+    return nil
+  },
 }
 
 func remove(language, version string) {
