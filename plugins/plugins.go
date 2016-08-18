@@ -5,6 +5,7 @@ import (
   "io/ioutil"
   "fmt"
   "errors"
+  "runtime"
 
   "github.com/cavaliercoder/grab"
   "github.com/markelog/archive"
@@ -86,7 +87,13 @@ func (plugin *Plugin) Info() (map[string]string, error) {
     return nil, err
   }
 
-  info["archive-folder"] = os.TempDir()
+  // I am crying over here :/
+  tmpDir := os.TempDir()
+  if runtime.GOOS == "linux" {
+    tmpDir += "/"
+  }
+
+  info["archive-folder"] = tmpDir
   info["archive-path"] = fmt.Sprintf("%s%s.tar.gz", info["archive-folder"], info["filename"])
 
   info["destination-folder"] = fmt.Sprintf("%s/%s/%s", variables.Home(), plugin.name, plugin.version)
