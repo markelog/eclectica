@@ -12,6 +12,19 @@ import (
   "github.com/markelog/eclectica/plugins"
 )
 
+// lsCmd represents the ls command
+var lsCmd = &cobra.Command{
+  Use:     "ls",
+  Short:   "List installed language versions",
+  Run: func(cmd *cobra.Command, args []string) {
+    if isRemote {
+      remote(args)
+    } else {
+      local(args)
+    }
+  },
+}
+
 func listVersions(versions []string, current string) {
   fmt.Println()
   for _, version := range versions {
@@ -92,19 +105,7 @@ func local(args []string) {
   }
 }
 
-// lsCmd represents the ls command
-var lsCmd = &cobra.Command{
-  Use:     "ls",
-  Short:   "List installed language versions",
-  Run: func(cmd *cobra.Command, args []string) {
-    if isRemote {
-      remote(args)
-    } else {
-      local(args)
-    }
-  },
-}
-
 func init() {
   RootCmd.AddCommand(lsCmd)
+  lsCmd.PersistentFlags().BoolVarP(remoteInfo())
 }

@@ -13,9 +13,22 @@ import (
 
 var isRemote bool
 
+const example = `
+  Install specifc version
+  $ ec node@6.4.0
+
+  Choose local version with interactive list
+  $ ec node
+
+  Choose remote version with interactive list
+  $ ec -r rust
+`
+
 var RootCmd = &cobra.Command{
-	Use:     "eclectica",
+	Use:     "eclectica [env] [command] [args]",
 	Short:   "Version manager for any language",
+	Long: 	 "Cool and eclectic version manager for any language",
+	Example: example,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -40,7 +53,7 @@ func Execute() {
     return
   }
 
-  pflag.BoolVarP(isRemoteInfo())
+  pflag.BoolVarP(remoteInfo())
   pflag.Parse()
 
   language, version := info.GetLanguage(args)
@@ -100,11 +113,10 @@ func install(language, version string) {
   print.Error(err)
 }
 
-func init() {
-	cobra.OnInitialize()
-  RootCmd.PersistentFlags().BoolVarP(isRemoteInfo())
+func remoteInfo() (*bool, string, string, bool, string) {
+  return &isRemote, "remote", "r", false, "Get remote versions"
 }
 
-func isRemoteInfo() (*bool, string, string, bool, string) {
-  return &isRemote, "remote", "r", false, "Get remote versions"
+func init() {
+	cobra.OnInitialize()
 }

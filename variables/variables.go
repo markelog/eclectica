@@ -6,7 +6,7 @@ import(
 )
 
 var (
-  Commands = []string{"ls", "rm"}
+  Commands = []string{"ls", "rm", "--help", "-h"}
   Files = [4]string{"bin", "lib", "include", "share"}
 )
 
