@@ -13,19 +13,8 @@ import (
 
 var isRemote bool
 
-const example = `
-  Install specifc version
-  $ ec node@6.4.0
-
-  Choose local version with interactive list
-  $ ec node
-
-  Choose remote version with interactive list
-  $ ec -r rust
-`
-
 var RootCmd = &cobra.Command{
-	Use:     "eclectica [env] [command] [args]",
+	Use:     "eclectica",
 	Short:   "Version manager for any language",
 	Long: 	 "Cool and eclectic version manager for any language",
 	Example: example,
@@ -118,5 +107,6 @@ func remoteInfo() (*bool, string, string, bool, string) {
 }
 
 func init() {
+	RootCmd.SetUsageTemplate(usage)
 	cobra.OnInitialize()
 }
