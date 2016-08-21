@@ -23,6 +23,7 @@ var RootCmd = &cobra.Command{
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd
 func Execute() {
+	var err error
   args := os.Args[1:]
 
   if info.HasCommand(args) {
@@ -38,7 +39,8 @@ func Execute() {
 
   // If nothing was passed - just show list of the local versions
   if len(args) == 0 {
-    install(info.Ask())
+  	language, version := info.Ask()
+    install(language, version, nil)
     return
   }
 
@@ -53,7 +55,7 @@ func Execute() {
 
   // In case of `ec <language>@<version>`
   if hasLanguage && hasVersion {
-    install(language, version)
+    install(language, version, nil)
     return
   }
 
@@ -62,12 +64,14 @@ func Execute() {
 
     // In case of `ec -r`
     if hasVersion {
-      install(info.AskRemote())
+    	language, version, err = info.AskRemote()
+      install(language, version, err)
       return
 
     // In case of `ec -r <language>` or `ec <language> -r`
     } else {
-      install(language, info.AskRemoteVersion(language))
+    	version, err = info.AskRemoteVersion(language)
+      install(language, version, err)
       return
     }
 
@@ -76,7 +80,8 @@ func Execute() {
 
   // In case of `ec <language>`
   if hasLanguage && hasVersion == false {
-    install(language, info.AskVersion(language))
+  	version = info.AskVersion(language)
+    install(language, version, nil)
     return
   }
 
@@ -85,7 +90,9 @@ func Execute() {
   os.Exit(1)
 }
 
-func install(language, version string) {
+func install(language, version string, err error) {
+	print.Error(err)
+
   plugin := plugins.New(language, version)
 
   response, err := plugin.Download()

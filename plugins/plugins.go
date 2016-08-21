@@ -107,11 +107,12 @@ func (plugin *Plugin) Current() string {
 
 func (plugin *Plugin) ListRemote() (map[string][]string, error) {
   versions, err := plugin.pkg.ListRemote()
+
   if err != nil {
     return nil, err
   }
 
-  return ComposeVersions(versions), nil
+  return Compose(versions), nil
 }
 
 func (plugin *Plugin) Remove(version string) error {

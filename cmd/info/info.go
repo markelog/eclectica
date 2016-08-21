@@ -22,15 +22,19 @@ func AskVersion(language string) (version string) {
   return
 }
 
-func AskRemote() (language, version string) {
+func AskRemote() (language, version string, err error) {
   language = list.GetWith("Language", plugins.Plugins)
-  version = AskRemoteVersion(language)
+  version, err = AskRemoteVersion(language)
 
   return
 }
 
-func AskRemoteVersion(language string) (version string) {
-  remoteList, _ := plugins.New(language).ListRemote()
+func AskRemoteVersion(language string) (version string, err error) {
+  remoteList, err := plugins.New(language).ListRemote()
+  if err != nil {
+  	return
+  }
+
   key := list.GetWith("Mask", plugins.GetKeys(remoteList))
   versions := plugins.GetElements(key, remoteList)
   version = list.GetWith("Version", versions)
