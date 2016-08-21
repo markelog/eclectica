@@ -10,6 +10,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"runtime"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -73,7 +74,6 @@ func checkRemoteList(name, mask string, timeout int) bool {
 	go func() {
 		for {
 			out := string(output.Bytes())
-			fmt.Println(out)
 			result = strings.Contains(out, mask)
 
 			if result {
@@ -122,7 +122,7 @@ var _ = Describe("main", func() {
 			Expect(strings.Contains(string(command), "1.9.0")).To(Equal(true))
 		})
 
-		It("should list installed ru versions", func() {
+		It("should list remote rust versions", func() {
 			Expect(checkRemoteList("rust", "1.x", 120)).To(Equal(true))
 		})
 
@@ -167,7 +167,7 @@ var _ = Describe("main", func() {
 			Expect(strings.Contains(string(command), "node-v6.4.0-darwin-x64")).To(Equal(false))
 		})
 
-		It("should list installed node versions", func() {
+		It("should list remote node versions", func() {
 			Expect(checkRemoteList("node", "6.x", 5)).To(Equal(true))
 		})
 
@@ -187,6 +187,18 @@ var _ = Describe("main", func() {
 			}
 
 			Expect(result).To(Equal(true))
+		})
+	})
+
+	Describe("ruby", func() {
+		It("should list remote ruby versions", func() {
+			if runtime.GOOS == "darwin" {
+				Expect(checkRemoteList("ruby", "2.0.x", 5)).To(Equal(true))
+			}
+
+			if runtime.GOOS == "linux" {
+				Expect(checkRemoteList("ruby", "2.x", 5)).To(Equal(true))
+			}
 		})
 	})
 })
