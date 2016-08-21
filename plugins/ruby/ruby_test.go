@@ -2,6 +2,7 @@ package ruby_test
 
 import (
 	"fmt"
+	"runtime"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -74,6 +75,28 @@ var _ = Describe("ruby", func() {
 			It("should return an error", func() {
 				Expect(err).Should(MatchError("Can't establish connection"))
 			})
+		})
+	})
+
+	Describe("Info", func() {
+		It("should get info about 2.2.3 version", func() {
+			result, _ := ruby.Info("2.2.3")
+
+			Expect(result["name"]).To(Equal("ruby"))
+			Expect(result["version"]).To(Equal("2.2.3"))
+			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
+
+			Expect(result["url"]).Should(ContainSubstring("https://rvm.io/binaries"))
+			Expect(result["url"]).Should(ContainSubstring("x86_64"))
+			Expect(result["url"]).Should(ContainSubstring("ruby-2.2.3.tar.bz2"))
+
+			if runtime.GOOS == "darwin" {
+				Expect(result["url"]).Should(ContainSubstring("osx"))
+			}
+
+			if runtime.GOOS == "linux" {
+				Expect(result["url"]).Should(ContainSubstring("ubuntu"))
+			}
 		})
 	})
 })

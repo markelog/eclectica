@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"runtime"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -52,12 +51,10 @@ func (ruby Ruby) Install(version string) error {
 func (ruby Ruby) Info(version string) (map[string]string, error) {
 	result := make(map[string]string)
 
-	sourcesUrl := fmt.Sprintf("%s/v%s", VersionsLink, version)
-
-	result["name"] = "node"
+	result["name"] = "ruby"
 	result["version"] = version
-	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
-	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
+	result["filename"] = fmt.Sprintf("ruby-%s", version)
+	result["url"] = fmt.Sprintf("%s/%s.tar.bz2", getUrl(), result["filename"])
 
 	return result, nil
 }
