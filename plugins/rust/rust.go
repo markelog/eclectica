@@ -1,132 +1,132 @@
 package rust
 
 import (
-  "runtime"
-  "fmt"
-  "os/exec"
-  "strings"
-  "errors"
-  "regexp"
+	"errors"
+	"fmt"
+	"os/exec"
+	"regexp"
+	"runtime"
+	"strings"
 
-  "github.com/markelog/eclectica/variables"
-  "github.com/markelog/eclectica/request"
+	"github.com/markelog/eclectica/request"
+	"github.com/markelog/eclectica/variables"
 )
 
 var (
-  versionsLink = "https://static.rust-lang.org/dist"
-  listLink = "https://static.rust-lang.org/dist/index.txt"
+	versionsLink = "https://static.rust-lang.org/dist"
+	listLink     = "https://static.rust-lang.org/dist/index.txt"
 
-  home = fmt.Sprintf("%s/%s", variables.Home(), "rust")
-  bin = variables.Prefix() + "/bin/rustc"
+	home = fmt.Sprintf("%s/%s", variables.Home(), "rust")
+	bin  = variables.Prefix() + "/bin/rustc"
 
-  // TODO: Simplify
-  fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
-  nighltyPattern = "nightly(\\.[0-9]+)?"
-  betaPattern = "beta(\\.[0-9]+)?"
-  defaultPattern = "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-(alpha|beta)(\\.[0-9]*)?)?"
-  rcPattern = defaultPattern + "-rc(\\.[0-9]+)?"
-  versionPattern = "(" + defaultPattern + "|" + nighltyPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
+	// TODO: Simplify
+	fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
+	nighltyPattern     = "nightly(\\.[0-9]+)?"
+	betaPattern        = "beta(\\.[0-9]+)?"
+	defaultPattern     = "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-(alpha|beta)(\\.[0-9]*)?)?"
+	rcPattern          = defaultPattern + "-rc(\\.[0-9]+)?"
+	versionPattern     = "(" + defaultPattern + "|" + nighltyPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
 )
 
 type Rust struct{}
 
 func (rust Rust) Install(version string) error {
-  installer := fmt.Sprintf("%s/%s/%s", home, version, "install.sh")
-  _, err := exec.Command(installer, "--prefix=" + variables.Prefix()).Output()
+	installer := fmt.Sprintf("%s/%s/%s", home, version, "install.sh")
+	_, err := exec.Command(installer, "--prefix="+variables.Prefix()).Output()
 
-  return err
+	return err
 }
 
 func (rust Rust) Info(version string) (map[string]string, error) {
-  result := make(map[string]string)
+	result := make(map[string]string)
 
-  platform, err := getPlatform()
+	platform, err := getPlatform()
 
-  if err != nil {
-    return nil, err
-  }
+	if err != nil {
+		return nil, err
+	}
 
-  filename := fmt.Sprintf("rust-%s-%s", version, platform)
-  sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, filename)
+	filename := fmt.Sprintf("rust-%s-%s", version, platform)
+	sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, filename)
 
-  result["name"] = "rust"
-  result["version"] = version
-  result["filename"] = filename
-  result["url"] = fmt.Sprintf("%s.tar.gz", sourcesUrl)
+	result["name"] = "rust"
+	result["version"] = version
+	result["filename"] = filename
+	result["url"] = fmt.Sprintf("%s.tar.gz", sourcesUrl)
 
-  return result, nil
+	return result, nil
 }
 
 func (rust Rust) Current() string {
-  vp := regexp.MustCompile(versionPattern)
+	vp := regexp.MustCompile(versionPattern)
 
-  out, _ := exec.Command(bin, "--version").Output()
-  version := strings.TrimSpace(string(out))
-  versionArr := vp.FindAllStringSubmatch(version, 1)
-  if len(versionArr) > 0 {
-    version = strings.Replace(versionArr[0][0], "v", "", 1)
-  }
+	out, _ := exec.Command(bin, "--version").Output()
+	version := strings.TrimSpace(string(out))
+	versionArr := vp.FindAllStringSubmatch(version, 1)
+	if len(versionArr) > 0 {
+		version = strings.Replace(versionArr[0][0], "v", "", 1)
+	}
 
-  return strings.Replace(version, "v", "", 1)
+	return strings.Replace(version, "v", "", 1)
 }
 
 func (rust Rust) ListRemote() ([]string, error) {
-  body, err := request.Body(listLink)
+	body, err := request.Body(listLink)
 
-  if err != nil {
-    return []string{}, err
-  }
+	if err != nil {
+		return []string{}, err
+	}
 
-  return getVersions(body)
+	return getVersions(body)
 }
 
 func getFullPattern() (string, error) {
-  platform, err := getPlatform()
+	platform, err := getPlatform()
 
-  if err != nil {
-    return "", err
-  }
+	if err != nil {
+		return "", err
+	}
 
-  result := "/dist/rust-" + fullVersionPattern + "-" + platform + ".tar.gz,"
+	result := "/dist/rust-" + fullVersionPattern + "-" + platform + ".tar.gz,"
 
-  return result, nil
+	return result, nil
 }
 
 func getVersions(list string) ([]string, error) {
-  fullPattern, err := getFullPattern()
-  result := []string{}
+	fullPattern, err := getFullPattern()
+	result := []string{}
 
-  if err != nil {
-    return result, err
-  }
+	if err != nil {
+		return result, err
+	}
 
-  fullUrlsPattern := regexp.MustCompile(fullPattern)
+	fullUrlsPattern := regexp.MustCompile(fullPattern)
 
-  fullUrlsTmp := fullUrlsPattern.FindAllStringSubmatch(list, -1)
-  var fullUrls []string
+	fullUrlsTmp := fullUrlsPattern.FindAllStringSubmatch(list, -1)
+	var fullUrls []string
 
-  // Flatten them out
-  for _, element := range fullUrlsTmp {
-    fullUrls = append(fullUrls, element[0])
-  }
+	// Flatten them out
+	for _, element := range fullUrlsTmp {
+		fullUrls = append(fullUrls, element[0])
+	}
 
-  vp := regexp.MustCompile(versionPattern)
-  for _, element := range fullUrls {
-    result = append(result, vp.FindAllStringSubmatch(element, 1)[0][0])
-  }
+	vp := regexp.MustCompile(versionPattern)
+	for _, element := range fullUrls {
+		result = append(result, vp.FindAllStringSubmatch(element, 1)[0][0])
+	}
 
-  return result, nil
+	return result, nil
 }
 
 // Do not know how to test it :/
 func getPlatform() (string, error) {
-  if runtime.GOOS == "linux" {
-    return "x86_64-unknown-linux-gnu", nil
-  }
+	if runtime.GOOS == "linux" {
+		return "x86_64-unknown-linux-gnu", nil
+	}
 
-  if runtime.GOOS == "darwin" {
-    return "x86_64-apple-darwin", nil
-  }
+	if runtime.GOOS == "darwin" {
+		return "x86_64-apple-darwin", nil
+	}
 
-  return "", errors.New("Not supported envionment")
+	return "", errors.New("Not supported envionment")
 }

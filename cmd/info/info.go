@@ -1,90 +1,90 @@
 package info
 
 import (
-  "strings"
+	"strings"
 
-  "github.com/markelog/list"
+	"github.com/markelog/list"
 
-  "github.com/markelog/eclectica/plugins"
-  "github.com/markelog/eclectica/variables"
+	"github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/variables"
 )
 
 func Ask() (language, version string) {
-  language = list.GetWith("Language", plugins.Plugins)
-  version = AskVersion(language)
+	language = list.GetWith("Language", plugins.Plugins)
+	version = AskVersion(language)
 
-  return
+	return
 }
 
 func AskVersion(language string) (version string) {
-  version = list.GetWith("Version", plugins.New(language).List())
+	version = list.GetWith("Version", plugins.New(language).List())
 
-  return
+	return
 }
 
 func AskRemote() (language, version string, err error) {
-  language = list.GetWith("Language", plugins.Plugins)
-  version, err = AskRemoteVersion(language)
+	language = list.GetWith("Language", plugins.Plugins)
+	version, err = AskRemoteVersion(language)
 
-  return
+	return
 }
 
 func AskRemoteVersion(language string) (version string, err error) {
-  remoteList, err := plugins.New(language).ListRemote()
-  if err != nil {
-  	return
-  }
+	remoteList, err := plugins.New(language).ListRemote()
+	if err != nil {
+		return
+	}
 
-  key := list.GetWith("Mask", plugins.GetKeys(remoteList))
-  versions := plugins.GetElements(key, remoteList)
-  version = list.GetWith("Version", versions)
+	key := list.GetWith("Mask", plugins.GetKeys(remoteList))
+	versions := plugins.GetElements(key, remoteList)
+	version = list.GetWith("Version", versions)
 
-  return
+	return
 }
 
 func GetLanguage(args []string) (language, version string) {
-  for _, element := range args {
-    data := strings.Split(element , "@")
-    language = data[0]
+	for _, element := range args {
+		data := strings.Split(element, "@")
+		language = data[0]
 
-    if len(data) == 2 {
-      version = data[1]
-    }
+		if len(data) == 2 {
+			version = data[1]
+		}
 
-    for _, plugin := range plugins.Plugins {
-      if language == plugin {
-        return
-      }
-    }
-  }
+		for _, plugin := range plugins.Plugins {
+			if language == plugin {
+				return
+			}
+		}
+	}
 
-  return "", ""
+	return "", ""
 }
 
 func GetCommand(args []string) string {
-  for _, element := range args {
-    for _, command := range variables.Commands {
-      if command == element {
-        return command
-      }
-    }
-  }
+	for _, element := range args {
+		for _, command := range variables.Commands {
+			if command == element {
+				return command
+			}
+		}
+	}
 
-  return ""
+	return ""
 }
 
 func HasLanguage(args []string) bool {
-  language, _ := GetLanguage(args)
+	language, _ := GetLanguage(args)
 
-  return language != ""
+	return language != ""
 }
 
 func HasVersion(args []string) bool {
-  _, version := GetLanguage(args)
+	_, version := GetLanguage(args)
 
-  return version != ""
+	return version != ""
 }
 
 func HasCommand(args []string) bool {
-  return GetCommand(args) != ""
+	return GetCommand(args) != ""
 }

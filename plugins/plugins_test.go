@@ -1,36 +1,36 @@
 package plugins_test
 
 import (
-	"reflect"
-	"os"
-	"io"
-	"path/filepath"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"reflect"
 	"runtime"
 
 	"github.com/bouk/monkey"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/markelog/eclectica/variables"
+	. "github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/plugins/nodejs"
-	."github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/variables"
 )
 
 var _ = Describe("plugins", func() {
 	var (
-		name string
-		path string
-		version string
-		archivePath string
-		destFolder string
+		name           string
+		path           string
+		version        string
+		archivePath    string
+		destFolder     string
 		versionsFolder string
-		url string
-		filename string
-		info map[string]string
-		plugin *Plugin
+		url            string
+		filename       string
+		info           map[string]string
+		plugin         *Plugin
 	)
 
 	Describe("Install", func() {
@@ -82,11 +82,11 @@ var _ = Describe("plugins", func() {
 			archivePath = path + "/" + filename + ".tar.gz"
 
 			info = map[string]string{
-				"name": name,
-				"version": version,
-				"archive-path": archivePath,
+				"name":               name,
+				"version":            version,
+				"archive-path":       archivePath,
 				"destination-folder": destFolder,
-				"filename": filename,
+				"filename":           filename,
 			}
 
 			monkey.Patch(variables.Home, func() string {
@@ -119,7 +119,7 @@ var _ = Describe("plugins", func() {
 		It("should extract langauge", func() {
 			plugin.Extract()
 
-			_, err := os.Stat(destFolder + "/test.txt");
+			_, err := os.Stat(destFolder + "/test.txt")
 			Expect(err).To(BeNil())
 		})
 
@@ -130,10 +130,10 @@ var _ = Describe("plugins", func() {
 
 			plugin.Extract()
 
-			_, err := os.Stat(destFolder + "/test.txt");
+			_, err := os.Stat(destFolder + "/test.txt")
 			Expect(err).To(BeNil())
 
-			_, err = os.Stat(failedAttempt);
+			_, err = os.Stat(failedAttempt)
 			Expect(err).ShouldNot(BeNil())
 		})
 	})
@@ -141,7 +141,7 @@ var _ = Describe("plugins", func() {
 	Describe("Download", func() {
 		var (
 			guard *monkey.PatchGuard
-			ts *httptest.Server
+			ts    *httptest.Server
 		)
 
 		BeforeEach(func() {
@@ -163,12 +163,12 @@ var _ = Describe("plugins", func() {
 			url = ts.URL + "/" + filename
 
 			info = map[string]string{
-				"name": "node",
-				"version": "5.0.0",
+				"name":               "node",
+				"version":            "5.0.0",
 				"destination-folder": destFolder,
-				"archive-folder": path,
-				"archive-path": archivePath,
-				"url": url,
+				"archive-folder":     path,
+				"archive-path":       archivePath,
+				"url":                url,
 			}
 
 			monkey.Patch(variables.Home, func() string {
@@ -204,7 +204,7 @@ var _ = Describe("plugins", func() {
 			It("should download tar", func() {
 				plugin.Download()
 
-				_, err := os.Stat(archivePath);
+				_, err := os.Stat(archivePath)
 				Expect(err).To(BeNil())
 			})
 
@@ -229,10 +229,10 @@ var _ = Describe("plugins", func() {
 	Describe("Info", func() {
 		BeforeEach(func() {
 			info = map[string]string{
-				"name": "node",
-				"version": "5.0.0",
+				"name":     "node",
+				"version":  "5.0.0",
 				"filename": "node-arch",
-				"url": url,
+				"url":      url,
 			}
 
 			var d *nodejs.Node

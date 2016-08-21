@@ -1,13 +1,13 @@
 package ruby_test
 
 import (
-  . "github.com/onsi/ginkgo"
-  . "github.com/onsi/gomega"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 
-  "testing"
+	"testing"
 )
 
 func TestCprf(t *testing.T) {
-  RegisterFailHandler(Fail)
-  RunSpecs(t, "Ruby Suite")
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Ruby Suite")
 }

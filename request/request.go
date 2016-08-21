@@ -1,28 +1,28 @@
 package request
 
 import (
-  "io/ioutil"
-  "net/http"
-  "errors"
+	"errors"
+	"io/ioutil"
+	"net/http"
 )
 
 var (
-  client = &http.Client{}
+	client = &http.Client{}
 )
 
-func Body(url string) (string, error){
-  response, _ := client.Get(url)
+func Body(url string) (string, error) {
+	response, _ := client.Get(url)
 
-  if response.StatusCode != 200 {
-    return "", errors.New("Can't establish connection")
-  }
+	if response.StatusCode != 200 {
+		return "", errors.New("Can't establish connection")
+	}
 
-  defer response.Body.Close()
-  contents, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+	contents, err := ioutil.ReadAll(response.Body)
 
-  if err != nil {
-    return "", err
-  }
+	if err != nil {
+		return "", err
+	}
 
-  return string(contents), nil
+	return string(contents), nil
 }

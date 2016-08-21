@@ -1,29 +1,29 @@
 package ruby
 
 import (
-	"regexp"
-	"runtime"
+	"errors"
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
+	"regexp"
+	"runtime"
 	"strings"
-	"net"
-	"errors"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/markelog/cprf"
 	"github.com/markelog/release"
-	"github.com/PuerkitoBio/goquery"
 
 	"github.com/markelog/eclectica/variables"
 )
 
 var (
 	VersionsLink = "https://rvm.io/binaries"
-	home = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
-	bin = variables.Prefix() + "/bin/ruby"
+	home         = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
+	bin          = variables.Prefix() + "/bin/ruby"
 )
 
-type Ruby struct {}
+type Ruby struct{}
 
 func (ruby Ruby) Install(version string) error {
 	var err error

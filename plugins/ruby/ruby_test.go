@@ -1,16 +1,16 @@
 package ruby_test
 
 import (
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"io"
-	"fmt"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	."github.com/markelog/eclectica/plugins/ruby"
+	. "github.com/markelog/eclectica/plugins/ruby"
 )
 
 func Read(path string) string {
@@ -22,7 +22,7 @@ func Read(path string) string {
 var _ = Describe("ruby", func() {
 	var (
 		remotes []string
-		err error
+		err     error
 	)
 
 	ruby := &Ruby{}

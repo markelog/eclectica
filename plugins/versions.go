@@ -1,8 +1,8 @@
 package plugins
 
 import (
-  "regexp"
-  "sort"
+	"regexp"
+	"sort"
 )
 
 func Compose(versions []string) map[string][]string {
@@ -20,65 +20,65 @@ func Compose(versions []string) map[string][]string {
 }
 
 func ComposeMajors(versions []string) map[string][]string {
-  result := map[string][]string{}
-  firstPart := regexp.MustCompile("([[:digit:]]+)\\.")
+	result := map[string][]string{}
+	firstPart := regexp.MustCompile("([[:digit:]]+)\\.")
 
-  for _, version := range versions {
-    major := firstPart.FindAllStringSubmatch(version, 1)[0][1]
-    major += ".x"
+	for _, version := range versions {
+		major := firstPart.FindAllStringSubmatch(version, 1)[0][1]
+		major += ".x"
 
-    if _, ok := result[major]; ok == false {
-      result[major] = []string{}
-    }
+		if _, ok := result[major]; ok == false {
+			result[major] = []string{}
+		}
 
-    result[major] = append(result[major], version)
-  }
+		result[major] = append(result[major], version)
+	}
 
-  return result
+	return result
 }
 
 func ComposeMinors(versions []string) map[string][]string {
-  result := map[string][]string{}
-  firstPart := regexp.MustCompile("([[:digit:]])+\\.([[:digit:]]+)\\.")
+	result := map[string][]string{}
+	firstPart := regexp.MustCompile("([[:digit:]])+\\.([[:digit:]]+)\\.")
 
-  for _, version := range versions {
-    versions := firstPart.FindAllStringSubmatch(version, 1)[0]
-    part := versions[1] + "." + versions[2] + ".x"
+	for _, version := range versions {
+		versions := firstPart.FindAllStringSubmatch(version, 1)[0]
+		part := versions[1] + "." + versions[2] + ".x"
 
-    if _, ok := result[part]; ok == false {
-      result[part] = []string{}
-    }
+		if _, ok := result[part]; ok == false {
+			result[part] = []string{}
+		}
 
-    result[part] = append(result[part], version)
-  }
+		result[part] = append(result[part], version)
+	}
 
-  return result
+	return result
 }
 
 func GetKeys(versions map[string][]string) []string {
-  result := []string{}
+	result := []string{}
 
-  for version, _ := range versions {
-    result = append(result, version)
-  }
+	for version, _ := range versions {
+		result = append(result, version)
+	}
 
-  sort.Strings(result)
+	sort.Strings(result)
 
-  return result
+	return result
 }
 
 func GetElements(key string, versions map[string][]string) []string {
-  result := []string{}
+	result := []string{}
 
-  for version, _ := range versions {
-    if version == key {
-      for _, element := range versions[version] {
-        result = append(result, element)
-      }
-    }
-  }
+	for version, _ := range versions {
+		if version == key {
+			for _, element := range versions[version] {
+				result = append(result, element)
+			}
+		}
+	}
 
-  sort.Strings(result)
+	sort.Strings(result)
 
-  return result
+	return result
 }

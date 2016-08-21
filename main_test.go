@@ -1,15 +1,15 @@
 package main_test
 
 import (
-	"path/filepath"
-	"time"
+	"bytes"
+	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"syscall"
-	"bytes"
-	"os"
-	"fmt"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -38,11 +38,11 @@ func getCmd(args []interface{}) *exec.Cmd {
 	return cmd
 }
 
-func Command(args... interface{}) *exec.Cmd {
+func Command(args ...interface{}) *exec.Cmd {
 	return getCmd(args)
 }
 
-func Execute(args... interface{}) *exec.Cmd {
+func Execute(args ...interface{}) *exec.Cmd {
 	cmd := getCmd(args)
 
 	// Output result for testing purposes
