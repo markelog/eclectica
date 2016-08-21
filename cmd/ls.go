@@ -59,7 +59,10 @@ func listLocal() {
 
 func listRemoteVersions(language string) {
 	plugin := plugins.New(language)
-	remoteList, _ := plugin.ListRemote()
+	remoteList, err := plugin.ListRemote()
+
+	print.Error(err)
+
 	mask := list.GetWith("Mask", plugins.GetKeys(remoteList))
 	versions := plugins.GetElements(mask, remoteList)
 	current := plugin.Current()
