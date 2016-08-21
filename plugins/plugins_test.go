@@ -277,12 +277,20 @@ var _ = Describe("plugins", func() {
 	})
 
 	Describe("ComposeVersions", func() {
-		It("should compose versions", func() {
-			compose := ComposeVersions([]string{"0.8.2", "4.4.7", "6.3.0", "6.4.2"})
+		It("should compose major versions", func() {
+			compose := Compose([]string{"0.8.2", "4.4.7", "6.3.0", "6.4.2"})
 
 			Expect(compose["0.x"]).To(Equal([]string{"0.8.2"}))
 			Expect(compose["4.x"]).To(Equal([]string{"4.4.7"}))
 			Expect(compose["6.x"]).To(Equal([]string{"6.3.0", "6.4.2"}))
+		})
+
+		It("should compose minor versions", func() {
+			compose := Compose([]string{"2.1.1", "2.2.1", "2.3.1"})
+
+			Expect(compose["2.1.x"]).To(Equal([]string{"2.1.1"}))
+			Expect(compose["2.2.x"]).To(Equal([]string{"2.2.1"}))
+			Expect(compose["2.3.x"]).To(Equal([]string{"2.3.1"}))
 		})
 	})
 
@@ -298,7 +306,7 @@ var _ = Describe("plugins", func() {
 
 	Describe("GetElements", func() {
 		It("should get version elements", func() {
-			list := ComposeVersions([]string{"0.8.2", "4.4.7", "6.3.0", "6.4.2"})
+			list := Compose([]string{"0.8.2", "4.4.7", "6.3.0", "6.4.2"})
 			elements := GetElements("6.x", list)
 
 			Expect(elements[0]).To(Equal("6.3.0"))
