@@ -54,7 +54,8 @@ func (ruby Ruby) Info(version string) (map[string]string, error) {
 	result["name"] = "ruby"
 	result["version"] = version
 	result["filename"] = fmt.Sprintf("ruby-%s", version)
-	result["url"] = fmt.Sprintf("%s/%s.tar.bz2", getUrl(), result["filename"])
+	result["extension"] = "tar.bz2"
+	result["url"] = fmt.Sprintf("%s/%s.%s", getUrl(), result["filename"], result["extension"])
 
 	return result, nil
 }

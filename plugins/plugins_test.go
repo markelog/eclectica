@@ -227,6 +227,8 @@ var _ = Describe("plugins", func() {
 	})
 
 	Describe("Info", func() {
+		var guard *monkey.PatchGuard
+
 		BeforeEach(func() {
 			info = map[string]string{
 				"name":     "node",
@@ -238,19 +240,23 @@ var _ = Describe("plugins", func() {
 			var d *nodejs.Node
 			ptype := reflect.TypeOf(d)
 
-			var guard *monkey.PatchGuard
 			guard = monkey.PatchInstanceMethod(ptype, "Info",
 				func(*nodejs.Node, string) (map[string]string, error) {
-					guard.Unpatch()
 					return info, nil
-				})
+				},
+			)
 
 			plugin = New("node", "5.0.0")
+		})
+
+		AfterEach(func() {
+			guard.Unpatch()
 		})
 
 		It("returns error if version was not defined", func() {
 			plugin := New("node")
 			_, err := plugin.Info()
+
 			Expect(err).Should(MatchError("Version was not defined"))
 		})
 
@@ -263,16 +269,19 @@ var _ = Describe("plugins", func() {
 			}
 
 			Expect(info["archive-folder"]).To(Equal(tmpDir))
-
-			if runtime.GOOS == "linux" {
-				Expect(info["archive-path"]).To(Equal(tmpDir + "node-v5.0.0-linux-x64.tar.gz"))
-			}
-
-			if runtime.GOOS == "darwin" {
-				Expect(info["archive-path"]).To(Equal(tmpDir + "node-v5.0.0-darwin-x64.tar.gz"))
-			}
-
+			Expect(info["archive-path"]).To(Equal(tmpDir + "node-arch.tar.gz"))
 			Expect(info["destination-folder"]).To(Equal(variables.Home() + "/node/5.0.0"))
+		})
+
+		It("should add extension if it was not defined by the plugin", func() {
+			Expect(info["extension"]).To(Equal("tar.gz"))
+		})
+
+		It("should not add extension if it was defined by the plugin", func() {
+			info["extension"] = "test"
+			info, _ := New("node", "5.0.0").Info()
+
+			Expect(info["extension"]).To(Equal("test"))
 		})
 	})
 
