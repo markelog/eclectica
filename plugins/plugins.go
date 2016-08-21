@@ -11,14 +11,18 @@ import (
   "github.com/markelog/archive"
 
   "github.com/markelog/eclectica/variables"
+
+  // plugins
   "github.com/markelog/eclectica/plugins/nodejs"
   "github.com/markelog/eclectica/plugins/rust"
+  "github.com/markelog/eclectica/plugins/ruby"
 )
 
 var (
   Plugins = []string{
     "node",
     "rust",
+    "ruby",
   }
 )
 
@@ -57,6 +61,8 @@ func New(args... string) *Plugin {
       pkg = &nodejs.Node{}
     case name == "rust":
       pkg = &rust.Rust{}
+    case name == "ruby":
+      pkg = &ruby.Ruby{}
   }
 
   plugin.pkg = pkg
