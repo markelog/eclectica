@@ -20,12 +20,16 @@ var (
 	VersionsLink = "https://rvm.io/binaries"
 	home         = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
 	bin          = variables.Prefix() + "/bin/ruby"
+	versionPattern = "[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]"
 )
 
 type Ruby struct{}
 
 func (ruby Ruby) Install(version string) error {
 	var err error
+
+	rVersion := regexp.MustCompile(versionPattern)
+	version = rVersion.FindAllStringSubmatch(version, 1)[0][0]
 
 	base := fmt.Sprintf("%s/%s", home, version)
 
@@ -34,7 +38,7 @@ func (ruby Ruby) Install(version string) error {
 		to := variables.Prefix()
 
 		// Some versions might not have certain files
-		if _, err := os.Stat(from); os.IsNotExist(err) {
+		if _, statError := os.Stat(from); os.IsNotExist(statError) {
 			continue
 		}
 
@@ -64,7 +68,10 @@ func (ruby Ruby) Current() string {
 	out, _ := exec.Command(bin, "--version").Output()
 	version := strings.TrimSpace(string(out))
 
-	return strings.Replace(version, "v", "", 1)
+	rVersion := regexp.MustCompile(versionPattern)
+	version = rVersion.FindAllStringSubmatch(version, 1)[0][0]
+
+	return version
 }
 
 func (ruby Ruby) ListRemote() ([]string, error) {

@@ -191,14 +191,53 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("ruby", func() {
+		BeforeEach(func() {
+			fmt.Println()
+			fmt.Println("Removing ruby@2.2.1")
+			Execute("go", "run", path, "rm", "ruby@2.2.1")
+		})
+
+		It("should install ruby 2.2.1", func() {
+			Execute("go", "run", path, "ruby@2.2.1")
+			command, _ := Command("go", "run", path, "ls", "ruby").Output()
+
+			Expect(strings.Contains(string(command), "♥ 2.2.1")).To(Equal(true))
+		})
+
+		It("should list installed ruby versions", func() {
+			Execute("go", "run", path, "ruby@2.2.1")
+			command, _ := Command("go", "run", path, "ls", "ruby").Output()
+
+			Expect(strings.Contains(string(command), "♥ 2.2.1")).To(Equal(true))
+			Expect(strings.Contains(string(command), "ruby-v2.2.1")).To(Equal(false))
+		})
+
 		It("should list remote ruby versions", func() {
 			if runtime.GOOS == "darwin" {
-				Expect(checkRemoteList("ruby", "2.0.x", 5)).To(Equal(true))
+				Expect(checkRemoteList("ruby", "2.1.x", 5)).To(Equal(true))
 			}
 
 			if runtime.GOOS == "linux" {
 				Expect(checkRemoteList("ruby", "2.x", 5)).To(Equal(true))
 			}
+		})
+
+		It("should remove ruby version", func() {
+			result := true
+
+			Execute("go", "run", path, "ruby@2.2.1")
+			Command("go", "run", path, "rm", "ruby@2.2.1").Output()
+
+			plugin := plugins.New("ruby")
+			versions := plugin.List()
+
+			for _, version := range versions {
+				if version == "2.2.1" {
+					result = false
+				}
+			}
+
+			Expect(result).To(Equal(true))
 		})
 	})
 })
