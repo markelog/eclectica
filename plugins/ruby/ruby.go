@@ -17,9 +17,9 @@ import (
 )
 
 var (
-	VersionsLink = "https://rvm.io/binaries"
-	home         = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
-	bin          = variables.Prefix() + "/bin/ruby"
+	VersionsLink   = "https://rvm.io/binaries"
+	home           = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
+	bin            = variables.Prefix() + "/bin/ruby"
 	versionPattern = "[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]"
 )
 
@@ -48,6 +48,8 @@ func (ruby Ruby) Install(version string) error {
 			return err
 		}
 	}
+
+	printMissingDependencies()
 
 	return nil
 }
