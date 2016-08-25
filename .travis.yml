@@ -4,5 +4,8 @@ os:
 
 language: go
 
+before_install:
+  - echo $PATH
+
 go:
   - tip
