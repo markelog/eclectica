@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	"github.com/cavaliercoder/grab"
@@ -28,6 +29,7 @@ var (
 
 type Pkg interface {
 	Install(string) error
+	PostInstall() (bool, error)
 	ListRemote() ([]string, error)
 	Info(string) (map[string]string, error)
 	Current() string
@@ -75,12 +77,39 @@ func New(args ...string) *Plugin {
 	return plugin
 }
 
+func (plugin *Plugin) PostInstall() (err error) {
+	showMessage, err := plugin.pkg.PostInstall()
+	if err != nil {
+		return
+	}
+
+	if showMessage && variables.NeedToRestartShell() {
+		printShellMessage(plugin.name)
+	}
+
+	return
+}
+
 func (plugin *Plugin) Install() error {
+	Initiate()
+
 	if plugin.version == "" {
 		return errors.New("Version was not defined")
 	}
 
-	return plugin.pkg.Install(plugin.version)
+	base := variables.Prefix(plugin.name)
+
+	createDir(base)
+	for _, file := range variables.Files {
+		createDir(filepath.Join(base, file))
+	}
+
+	err := plugin.pkg.Install(plugin.version)
+	if err != nil {
+		return err
+	}
+
+	return plugin.PostInstall()
 }
 
 func (plugin *Plugin) Info() (map[string]string, error) {
@@ -100,7 +129,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 	}
 
 	if _, ok := info["extension"]; ok == false {
-    info["extension"] = "tar.gz"
+		info["extension"] = "tar.gz"
 	}
 
 	info["archive-folder"] = tmpDir

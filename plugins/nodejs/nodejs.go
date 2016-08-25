@@ -20,7 +20,7 @@ import (
 var (
 	VersionsLink = "https://nodejs.org/dist"
 	home         = fmt.Sprintf("%s/%s", variables.Home(), "node")
-	bin          = variables.Prefix() + "/bin/node"
+	bin          = variables.Prefix("node") + "/bin/node"
 )
 
 type Node struct{}
@@ -32,7 +32,7 @@ func (node Node) Install(version string) error {
 
 	for _, file := range variables.Files {
 		from := fmt.Sprintf("%s/%s", base, file)
-		to := variables.Prefix()
+		to := variables.Prefix("node")
 
 		// Some versions might not have certain files
 		if _, err := os.Stat(from); os.IsNotExist(err) {
@@ -47,6 +47,10 @@ func (node Node) Install(version string) error {
 	}
 
 	return nil
+}
+
+func (node Node) PostInstall() (bool, error) {
+	return true, nil
 }
 
 func (node Node) Info(version string) (map[string]string, error) {

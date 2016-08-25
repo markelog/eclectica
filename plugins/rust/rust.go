@@ -17,7 +17,7 @@ var (
 	listLink     = "https://static.rust-lang.org/dist/index.txt"
 
 	home = fmt.Sprintf("%s/%s", variables.Home(), "rust")
-	bin  = variables.Prefix() + "/bin/rustc"
+	bin  = variables.Prefix("rust") + "/bin/rustc"
 
 	// TODO: Simplify
 	fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
@@ -32,9 +32,13 @@ type Rust struct{}
 
 func (rust Rust) Install(version string) error {
 	installer := fmt.Sprintf("%s/%s/%s", home, version, "install.sh")
-	_, err := exec.Command(installer, "--prefix="+variables.Prefix()).Output()
+	_, err := exec.Command(installer, "--prefix="+variables.Prefix("rustc")).Output()
 
 	return err
+}
+
+func (rust Rust) PostInstall() (bool, error) {
+	return true, nil
 }
 
 func (rust Rust) Info(version string) (map[string]string, error) {

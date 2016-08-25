@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+
+	"github.com/markelog/eclectica/variables"
 )
 
 var (
@@ -18,12 +20,16 @@ var (
 	}
 )
 
-func checkDependencies() (has bool, deps []string) {
+func checkDependencies() (has bool, deps []string, err error) {
 	if runtime.GOOS != "linux" {
 		return
 	}
 
-	out, _ := exec.Command("dpkg", "-l").Output()
+	out, err := exec.Command("dpkg", "-l").Output()
+	if err != nil {
+		return
+	}
+
 	output := string(out)
 
 	for _, dep := range dependencies {
@@ -39,17 +45,26 @@ func checkDependencies() (has bool, deps []string) {
 	return
 }
 
-func printMissingDependencies() {
-	has, deps := checkDependencies()
+func printMissingDependencies() error {
+	has, deps, err := checkDependencies()
+
+	if err != nil {
+		return err
+	}
 
 	if has == false {
-		return
+		return nil
 	}
 
 	messageStart := `Ruby has been installed, but it requires global dependencies which weren't found on your system,
   please execute following command to complete installation (you would need to do it only`
 	messageMiddle := " once"
 	messageEnd := "):"
+	fullMessage := "                          sudo apt-get install " + strings.Join(deps, " ")
+
+	if variables.HasLocalBin() == false {
+		fullMessage += " && " + variables.GetShellName()
+	}
 
 	fmt.Println()
 
@@ -69,6 +84,8 @@ func printMissingDependencies() {
 
 	fmt.Println()
 	fmt.Println()
-	fmt.Println("                          sudo apt-get install", strings.Join(deps, " "))
+	fmt.Println(fullMessage)
 	fmt.Println()
+
+	return nil
 }

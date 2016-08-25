@@ -19,7 +19,7 @@ import (
 var (
 	VersionsLink   = "https://rvm.io/binaries"
 	home           = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
-	bin            = variables.Prefix() + "/bin/ruby"
+	bin            = variables.Prefix("ruby") + "/bin/ruby"
 	versionPattern = "[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]"
 )
 
@@ -35,7 +35,7 @@ func (ruby Ruby) Install(version string) error {
 
 	for _, file := range variables.Files {
 		from := fmt.Sprintf("%s/%s", base, file)
-		to := variables.Prefix()
+		to := variables.Prefix("ruby")
 
 		// Some versions might not have certain files
 		if _, statError := os.Stat(from); os.IsNotExist(statError) {
@@ -49,9 +49,11 @@ func (ruby Ruby) Install(version string) error {
 		}
 	}
 
-	printMissingDependencies()
-
 	return nil
+}
+
+func (ruby Ruby) PostInstall() (bool, error) {
+	return false, printMissingDependencies()
 }
 
 func (ruby Ruby) Info(version string) (map[string]string, error) {
