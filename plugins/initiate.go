@@ -21,8 +21,12 @@ export ECLECTICA="true"
 	}
 )
 
-func Initiate() (err error) {
-	if variables.HasLocalBin() {
+func Initiate(name string) (err error) {
+	if name == "rust" {
+		name = "rustc"
+	}
+
+	if variables.ShouldBeLocalBin(name) {
 		return
 	}
 

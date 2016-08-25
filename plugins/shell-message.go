@@ -7,8 +7,6 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-
-	"github.com/markelog/eclectica/variables"
 )
 
 func GetShellName() string {
@@ -57,7 +55,12 @@ func printShellMessage(name string) error {
 
 	fmt.Println()
 	fmt.Println()
-	fmt.Println("                          $ " + variables.GetShellName())
+
+	color.Set(color.FgGreen)
+	fmt.Print("> ")
+	color.Unset()
+
+	fmt.Print("exec " + os.Getenv("SHELL"))
 	fmt.Println()
 
 	return nil

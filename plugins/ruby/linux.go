@@ -60,9 +60,9 @@ func printMissingDependencies() error {
   please execute following command to complete installation (you would need to do it only`
 	messageMiddle := " once"
 	messageEnd := "):"
-	fullMessage := "                          sudo apt-get install " + strings.Join(deps, " ")
+	fullMessage := "sudo apt-get install " + strings.Join(deps, " ")
 
-	if variables.HasLocalBin() == false {
+	if variables.ShouldBeLocalBin("ruby") == false {
 		fullMessage += " && " + variables.GetShellName()
 	}
 
@@ -84,7 +84,12 @@ func printMissingDependencies() error {
 
 	fmt.Println()
 	fmt.Println()
-	fmt.Println(fullMessage)
+
+	color.Set(color.FgGreen)
+	fmt.Print("> ")
+	color.Unset()
+
+	fmt.Print(fullMessage)
 	fmt.Println()
 
 	return nil

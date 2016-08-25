@@ -83,7 +83,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return
 	}
 
-	if showMessage && variables.NeedToRestartShell() {
+	if showMessage && variables.NeedToRestartShell(plugin.name) {
 		printShellMessage(plugin.name)
 	}
 
@@ -91,7 +91,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 }
 
 func (plugin *Plugin) Install() error {
-	Initiate()
+	Initiate(plugin.name)
 
 	if plugin.version == "" {
 		return errors.New("Version was not defined")
