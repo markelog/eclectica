@@ -63,14 +63,14 @@ func Execute() {
 	if isRemote {
 
 		// In case of `ec -r`
-		if hasVersion {
-			language, version, err = info.AskRemote()
+		if hasLanguage {
+			version, err = info.AskRemoteVersion(language)
 			install(language, version, err)
 			return
 
 			// In case of `ec -r <language>` or `ec <language> -r`
 		} else {
-			version, err = info.AskRemoteVersion(language)
+			language, version, err = info.AskRemote()
 			install(language, version, err)
 			return
 		}

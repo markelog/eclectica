@@ -7,10 +7,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
-	"runtime"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -96,10 +96,84 @@ func checkRemoteList(name, mask string, timeout int) bool {
 	return result
 }
 
+func checkRemoteUse() (result string) {
+	cmd := Command("go", "run", path, "-r")
+	output := &bytes.Buffer{}
+	cmd.Stdout = output
+	proceed := true
+
+	go func() {
+		for {
+			result = string(output.Bytes())
+
+			if len(result) > 0 {
+				Kill(cmd)
+				proceed = false
+				return
+			}
+
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
+
+	cmd.Start()
+
+	for proceed {
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	return result
+}
+
+func checkRemoteUseWithLanguage(name string) (result string) {
+	cmd := Command("go", "run", path, "-r", "go")
+	output := &bytes.Buffer{}
+	cmd.Stdout = output
+	proceed := true
+
+	go func() {
+		for {
+			result = string(output.Bytes())
+
+			if len(result) > 0 && strings.Contains(result, "Mask") {
+				Kill(cmd)
+				proceed = false
+				return
+			}
+
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
+
+	cmd.Start()
+
+	for proceed {
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	return result
+}
+
 var _ = Describe("main", func() {
 	if os.Getenv("TRAVIS") != "true" && os.Getenv("INT") != "true" {
 		return
 	}
+
+	Describe("main logic", func() {
+		It("should show list without language", func() {
+			output := checkRemoteUse()
+
+			Expect(strings.Contains(output, "Language")).To(Equal(true))
+			Expect(strings.Contains(output, "node")).To(Equal(true))
+		})
+
+		It("should show list with language", func() {
+			output := checkRemoteUseWithLanguage("node")
+
+			Expect(strings.Contains(output, "Mask")).To(Equal(true))
+			Expect(strings.Contains(output, "6.x")).To(Equal(true))
+		})
+	})
 
 	Describe("Rust", func() {
 		BeforeEach(func() {
