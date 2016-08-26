@@ -76,7 +76,7 @@ var _ = Describe("plugins", func() {
 			path, _ = filepath.Abs("../testdata/plugins")
 			versionsFolder, _ = filepath.Abs("../testdata/plugins/versions")
 			name = "node"
-			version = "1.0.0"
+			version = "5.0.0"
 			filename = "node-arch"
 			destFolder, _ = filepath.Abs("../testdata/plugins/versions/" + name + "/" + version)
 			archivePath = path + "/" + filename + ".tar.gz"
@@ -87,6 +87,7 @@ var _ = Describe("plugins", func() {
 				"archive-path":       archivePath,
 				"destination-folder": destFolder,
 				"filename":           filename,
+				"unarchive-filename": filename,
 			}
 
 			monkey.Patch(variables.Home, func() string {
@@ -271,6 +272,21 @@ var _ = Describe("plugins", func() {
 			Expect(info["archive-folder"]).To(Equal(tmpDir))
 			Expect(info["archive-path"]).To(Equal(tmpDir + "node-arch.tar.gz"))
 			Expect(info["destination-folder"]).To(Equal(variables.Home() + "/node/5.0.0"))
+		})
+
+		It("should add extension if it was not defined by the plugin", func() {
+			Expect(info["extension"]).To(Equal("tar.gz"))
+		})
+
+		It("should add extension if it was not defined by the plugin", func() {
+			Expect(info["unarchive-filename"]).To(Equal(info["filename"]))
+		})
+
+		It("should not add extension if it was defined by the plugin", func() {
+			info["extension"] = "test"
+			info, _ := New("node", "5.0.0").Info()
+
+			Expect(info["extension"]).To(Equal("test"))
 		})
 
 		It("should add extension if it was not defined by the plugin", func() {

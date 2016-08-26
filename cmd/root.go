@@ -99,7 +99,8 @@ func install(language, version string, err error) {
 	print.Error(err)
 
 	if response == nil {
-		plugin.Install()
+		err = plugin.Install()
+		print.Error(err)
 		return
 	}
 

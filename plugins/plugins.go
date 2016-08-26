@@ -14,6 +14,7 @@ import (
 	"github.com/markelog/eclectica/variables"
 
 	// plugins
+	"github.com/markelog/eclectica/plugins/golang"
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/plugins/ruby"
 	"github.com/markelog/eclectica/plugins/rust"
@@ -24,6 +25,7 @@ var (
 		"node",
 		"rust",
 		"ruby",
+		"go",
 	}
 )
 
@@ -65,6 +67,8 @@ func New(args ...string) *Plugin {
 		pkg = &rust.Rust{}
 	case name == "ruby":
 		pkg = &ruby.Ruby{}
+	case name == "go":
+		pkg = &golang.Golang{}
 	}
 
 	plugin.pkg = pkg
@@ -130,6 +134,10 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 
 	if _, ok := info["extension"]; ok == false {
 		info["extension"] = "tar.gz"
+	}
+
+	if _, ok := info["unarchive-filename"]; ok == false {
+		info["unarchive-filename"] = info["filename"]
 	}
 
 	info["name"] = plugin.name
@@ -228,7 +236,7 @@ func (plugin *Plugin) Extract() error {
 		return err
 	}
 
-	downloadPath := fmt.Sprintf("%s/%s", extractionPlace, plugin.info["filename"])
+	downloadPath := fmt.Sprintf("%s/%s", extractionPlace, plugin.info["unarchive-filename"])
 	extractionPath := plugin.info["destination-folder"]
 
 	err = os.Rename(downloadPath, extractionPath)
