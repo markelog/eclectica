@@ -62,7 +62,7 @@ func printMissingDependencies() error {
 	messageEnd := "):"
 	fullMessage := "sudo apt-get install " + strings.Join(deps, " ")
 
-	if variables.ShouldBeLocalBin("ruby") == false {
+	if variables.NeedToRestartShell("ruby") {
 		fullMessage += " && " + variables.GetShellName()
 	}
 

@@ -57,7 +57,7 @@ func InLocalBin(path, local, name string) bool {
 		return false
 	}
 
-	for _, element := range bins {
+	for index, element := range bins {
 
 		// Exclude local path
 		if element == local {
@@ -68,7 +68,7 @@ func InLocalBin(path, local, name string) bool {
 
 		// Compare executable positions in the $PATH, if specific binary is present
 		if _, err := os.Stat(bin); err == nil {
-			if Index(path, element) < localIndex {
+			if index < localIndex {
 				return false
 			}
 		}
