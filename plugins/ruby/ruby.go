@@ -59,7 +59,6 @@ func (ruby Ruby) PostInstall() (bool, error) {
 func (ruby Ruby) Info(version string) (map[string]string, error) {
 	result := make(map[string]string)
 
-	result["name"] = "ruby"
 	result["version"] = version
 	result["filename"] = fmt.Sprintf("ruby-%s", version)
 	result["extension"] = "tar.bz2"

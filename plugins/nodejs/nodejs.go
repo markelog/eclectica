@@ -62,7 +62,6 @@ func (node Node) Info(version string) (map[string]string, error) {
 
 	sourcesUrl := fmt.Sprintf("%s/v%s", VersionsLink, version)
 
-	result["name"] = "node"
 	result["version"] = version
 	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])

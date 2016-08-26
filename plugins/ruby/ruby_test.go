@@ -2,11 +2,11 @@ package ruby_test
 
 import (
 	"fmt"
-	"runtime"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"runtime"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -82,7 +82,6 @@ var _ = Describe("ruby", func() {
 		It("should get info about 2.2.3 version", func() {
 			result, _ := ruby.Info("2.2.3")
 
-			Expect(result["name"]).To(Equal("ruby"))
 			Expect(result["version"]).To(Equal("2.2.3"))
 			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
 

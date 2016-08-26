@@ -105,7 +105,6 @@ var _ = Describe("nodejs", func() {
 		It("should get info about latest version", func() {
 			result, _ := node.Info("latest")
 
-			Expect(result["name"]).To(Equal("node"))
 			Expect(result["version"]).To(Equal("6.3.1"))
 
 			// :/
@@ -121,7 +120,6 @@ var _ = Describe("nodejs", func() {
 		It("should get info about lts version", func() {
 			result, _ := node.Info("lts")
 
-			Expect(result["name"]).To(Equal("node"))
 			Expect(result["version"]).To(Equal("6.3.1"))
 
 			// :/
@@ -137,7 +135,6 @@ var _ = Describe("nodejs", func() {
 		It("should get info about 6.3.1 version", func() {
 			result, _ := node.Info("6.3.1")
 
-			Expect(result["name"]).To(Equal("node"))
 			Expect(result["version"]).To(Equal("6.3.1"))
 
 			// :/

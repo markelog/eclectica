@@ -132,6 +132,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 		info["extension"] = "tar.gz"
 	}
 
+	info["name"] = plugin.name
 	info["archive-folder"] = tmpDir
 	info["archive-path"] = fmt.Sprintf("%s%s.%s", info["archive-folder"], info["filename"], info["extension"])
 

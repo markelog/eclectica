@@ -53,7 +53,6 @@ func (rust Rust) Info(version string) (map[string]string, error) {
 	filename := fmt.Sprintf("rust-%s-%s", version, platform)
 	sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, filename)
 
-	result["name"] = "rust"
 	result["version"] = version
 	result["filename"] = filename
 	result["url"] = fmt.Sprintf("%s.tar.gz", sourcesUrl)

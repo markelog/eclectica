@@ -125,7 +125,6 @@ var _ = Describe("rust", func() {
 		It("should get info about nightly version", func() {
 			result, _ := rust.Info("nightly")
 
-			Expect(result["name"]).To(Equal("rust"))
 			Expect(result["version"]).To(Equal("nightly"))
 
 			// :/
@@ -141,7 +140,6 @@ var _ = Describe("rust", func() {
 		It("should get info about lts version", func() {
 			result, _ := rust.Info("beta")
 
-			Expect(result["name"]).To(Equal("rust"))
 			Expect(result["version"]).To(Equal("beta"))
 
 			// :/
@@ -157,7 +155,6 @@ var _ = Describe("rust", func() {
 		It("should get info about 1.9.0 version", func() {
 			result, _ := rust.Info("1.9.0")
 
-			Expect(result["name"]).To(Equal("rust"))
 			Expect(result["version"]).To(Equal("1.9.0"))
 
 			// :/
