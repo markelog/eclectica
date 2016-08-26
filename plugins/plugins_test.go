@@ -301,6 +301,13 @@ var _ = Describe("plugins", func() {
 			Expect(compose["2.2.x"]).To(Equal([]string{"2.2.1"}))
 			Expect(compose["2.3.x"]).To(Equal([]string{"2.3.1"}))
 		})
+
+		It("should compose peculiar versions", func() {
+			compose := Compose([]string{"1.4.3", "1.5beta1", "1.5beta2", "1.5rc1"})
+
+			Expect(compose["1.4.x"]).To(Equal([]string{"1.4.3"}))
+			Expect(compose["1.5.x"]).To(Equal([]string{"1.5beta1", "1.5beta2", "1.5rc1"}))
+		})
 	})
 
 	Describe("GetKeys", func() {

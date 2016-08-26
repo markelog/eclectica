@@ -39,10 +39,18 @@ func ComposeMajors(versions []string) map[string][]string {
 
 func ComposeMinors(versions []string) map[string][]string {
 	result := map[string][]string{}
-	firstPart := regexp.MustCompile("([[:digit:]])+\\.([[:digit:]]+)\\.")
+	firstPart := regexp.MustCompile("([[:digit:]])+\\.([[:digit:]]+)")
 
 	for _, version := range versions {
-		versions := firstPart.FindAllStringSubmatch(version, 1)[0]
+		checkVersions := firstPart.FindAllStringSubmatch(version, 1)
+
+		// Just in case
+		if len(checkVersions) == 0 {
+			continue
+		}
+
+		versions := checkVersions[0]
+
 		part := versions[1] + "." + versions[2] + ".x"
 
 		if _, ok := result[part]; ok == false {
