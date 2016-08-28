@@ -314,4 +314,48 @@ var _ = Describe("main", func() {
 			Expect(result).To(Equal(true))
 		})
 	})
+
+	Describe("go", func() {
+		BeforeEach(func() {
+			fmt.Println()
+			fmt.Println("Removing go@1.7")
+			Execute("go", "run", path, "rm", "go@1.7")
+		})
+
+		It("should install go 1.7", func() {
+			Execute("go", "run", path, "go@1.7")
+			command, _ := Command("go", "run", path, "ls", "go").Output()
+
+			Expect(strings.Contains(string(command), "♥ 1.7")).To(Equal(true))
+		})
+
+		It("should list installed go versions", func() {
+			Execute("go", "run", path, "go@1.7")
+			command, _ := Command("go", "run", path, "ls", "go").Output()
+
+			Expect(strings.Contains(string(command), "♥ 1.7")).To(Equal(true))
+		})
+
+		It("should list remote go versions", func() {
+			Expect(checkRemoteList("go", "1.7.x", 5)).To(Equal(true))
+		})
+
+		It("should remove go version", func() {
+			result := true
+
+			Execute("go", "run", path, "go@1.7")
+			Command("go", "run", path, "rm", "go@1.7").Output()
+
+			plugin := plugins.New("go")
+			versions := plugin.List()
+
+			for _, version := range versions {
+				if version == "1.7" {
+					result = false
+				}
+			}
+
+			Expect(result).To(Equal(true))
+		})
+	})
 })

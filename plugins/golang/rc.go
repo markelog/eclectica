@@ -12,17 +12,17 @@ import (
 
 var (
 	goRootCommand = `
-export GOROOT=%s/%s
+export GOROOT=%s
 `
 	goPathCommand = `
 export GOPATH=%s
 `
 	gopath = filepath.Join(os.Getenv("HOME"), "gocode")
-	goroot = filepath.Join(variables.DefaultInstall, "bin")
+	goroot = filepath.Join(variables.DefaultInstall)
 )
 
 func dealWithRc() (bool, error) {
-	goRootCommand := fmt.Sprintf(goRootCommand, variables.DefaultInstall, "bin")
+	goRootCommand := fmt.Sprintf(goRootCommand, goroot)
 	goPathCommand := fmt.Sprintf(goPathCommand, gopath)
 
 	err := rc.New(goRootCommand).Add()
@@ -30,7 +30,8 @@ func dealWithRc() (bool, error) {
 		return false, err
 	}
 
-	if os.Getenv("GOPATH") == "" {
+	gopath := rc.New("export GOPATH")
+	if os.Getenv("GOPATH") == "" || gopath.Exists() == false {
 		err := rc.New(goPathCommand).Add()
 		if err != nil {
 			return false, err

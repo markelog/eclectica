@@ -3,9 +3,11 @@ package golang
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -13,6 +15,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/markelog/cprf"
 
+	"github.com/markelog/eclectica/directory"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -31,10 +34,35 @@ func (golang Golang) Install(version string) error {
 	var err error
 
 	base := fmt.Sprintf("%s/%s", home, version)
+	to := filepath.Join(variables.Prefix("go"), "go")
 
+	files, err := ioutil.ReadDir(base)
+	if err != nil {
+		return err
+	}
+
+	// Remove everything in GOROOT dir in case there was previous versions installed there
+	os.RemoveAll(to)
+
+	// Re-create GOROOT
+	_, err = directory.Create(to)
+	if err != nil {
+		return err
+	}
+
+	// Copy to GOROOT
 	for _, element := range files {
+		from := fmt.Sprintf("%s/%s", base, element.Name())
+
+		err = cprf.Copy(from, to)
+		if err != nil {
+			return err
+		}
+	}
+
+	to = variables.Prefix("go")
+	for _, element := range variables.Files {
 		from := fmt.Sprintf("%s/%s", base, element)
-		to := variables.Prefix("go")
 
 		// Some versions might not have certain files
 		if _, err := os.Stat(from); os.IsNotExist(err) {

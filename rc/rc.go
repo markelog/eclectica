@@ -33,31 +33,56 @@ func New(command string) *Rc {
 	return rc
 }
 
-func (rc *Rc) Add() error {
+// Add bash configs on Linux system
+// .bashrc works when you open new bash session
+// .bash_profile is executed when you login
+// So in order for our env variables to be consistently exposed when need to modify both of them
+// Note: on Mac, .bash_profile is executed when new bash session is opened,
+// so we don't need to this in there
+func (rc *Rc) addLinux() error {
 	shell := variables.GetShellName()
 
-	if shell == "bash" && runtime.GOOS == "linux" {
-		bashrc := &Rc{
-			command: rc.command,
-			path:    filepath.Join(os.Getenv("HOME"), ".bashrc"),
-		}
+	if shell != "bash" {
+		return rc.add()
+	}
 
-		bashProfile := &Rc{
-			command: rc.command,
-			path:    filepath.Join(os.Getenv("HOME"), ".bash_profile"),
-		}
+	pathsRc := filepath.Join(os.Getenv("HOME"), ".bashrc")
+	pathsProfile := filepath.Join(os.Getenv("HOME"), ".bash_profile")
 
-		err := bashrc.add()
-		if err != nil {
-			return err
-		}
+	// Make sure we have those files
+	if _, err := os.Stat(pathsRc); err != nil {
+		return rc.add()
+	}
+	if _, err := os.Stat(pathsProfile); err != nil {
+		return rc.add()
+	}
 
-		err = bashProfile.add()
-		if err != nil {
-			return err
-		}
+	bashrc := &Rc{
+		command: rc.command,
+		path:    pathsRc,
+	}
 
-		return nil
+	bashProfile := &Rc{
+		command: rc.command,
+		path:    pathsProfile,
+	}
+
+	err := bashrc.add()
+	if err != nil {
+		return err
+	}
+
+	err = bashProfile.add()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rc *Rc) Add() error {
+	if runtime.GOOS == "linux" {
+		return rc.addLinux()
 	}
 
 	return rc.add()

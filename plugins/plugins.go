@@ -11,6 +11,7 @@ import (
 	"github.com/cavaliercoder/grab"
 	"github.com/markelog/archive"
 
+	"github.com/markelog/eclectica/directory"
 	"github.com/markelog/eclectica/variables"
 
 	// plugins
@@ -106,9 +107,16 @@ func (plugin *Plugin) Install() error {
 
 	base := variables.Prefix(plugin.name)
 
-	createDir(base)
+	_, err = directory.Create(base)
+	if err != nil {
+		return err
+	}
+
 	for _, file := range variables.Files {
-		createDir(filepath.Join(base, file))
+		_, err := directory.Create(filepath.Join(base, file))
+		if err != nil {
+			return err
+		}
 	}
 
 	err = plugin.pkg.Install(plugin.version)
@@ -225,7 +233,7 @@ func (plugin *Plugin) Extract() error {
 		return errors.New("Version was not defined")
 	}
 
-	extractionPlace, err := createDir(fmt.Sprintf("%s/%s", variables.Home(), plugin.name))
+	extractionPlace, err := directory.Create(fmt.Sprintf("%s/%s", variables.Home(), plugin.name))
 	if err != nil {
 		return err
 	}
@@ -264,14 +272,4 @@ func (plugin *Plugin) List() (versions []string) {
 	}
 
 	return
-}
-
-func createDir(path string) (string, error) {
-	err := os.MkdirAll(path, 0700)
-
-	if err != nil {
-		return "", err
-	}
-
-	return path, nil
 }
