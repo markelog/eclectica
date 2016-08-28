@@ -71,10 +71,17 @@ func (golang Golang) Info(version string) (map[string]string, error) {
 }
 
 func (golang Golang) Current() string {
-	out, _ := exec.Command(bin, "--version").Output()
+	rVersion := regexp.MustCompile(versionPattern)
+	out, _ := exec.Command(bin, "version").Output()
 	version := strings.TrimSpace(string(out))
 
-	return strings.Replace(version, "v", "", 1)
+	testVersion := rVersion.FindAllStringSubmatch(version, 1)
+
+	if len(testVersion) == 0 {
+		return ""
+	}
+
+	return testVersion[0][0]
 }
 
 func (golang Golang) ListRemote() ([]string, error) {

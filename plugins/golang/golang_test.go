@@ -6,8 +6,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os/exec"
 	"runtime"
 
+	"github.com/bouk/monkey"
 	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -137,6 +139,52 @@ var _ = Describe("golang", func() {
 				Expect(result["filename"]).To(Equal("go1.7.linux-amd64"))
 				Expect(result["url"]).To(Equal("https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz"))
 			}
+		})
+	})
+
+	Describe("Current", func() {
+		It("should handle empty output", func() {
+			program := ""
+			firstArg := ""
+
+			monkey.Patch(exec.Command, func(name string, arg ...string) *exec.Cmd {
+				program = name
+				firstArg = arg[0]
+
+				return &exec.Cmd{}
+			})
+
+			monkey.Patch((*exec.Cmd).Output, func(*exec.Cmd) ([]uint8, error) {
+				return []uint8("test"), nil
+			})
+
+			golang.Current()
+
+			Expect(program).To(ContainSubstring("bin/go"))
+			Expect(firstArg).To(Equal("version"))
+
+			monkey.Unpatch(exec.Command)
+		})
+
+		It("should report correct version", func() {
+			program := ""
+			firstArg := ""
+
+			monkey.Patch(exec.Command, func(name string, arg ...string) *exec.Cmd {
+				program = name
+				firstArg = arg[0]
+
+				return &exec.Cmd{}
+			})
+
+			monkey.Patch((*exec.Cmd).Output, func(*exec.Cmd) ([]uint8, error) {
+				return []uint8("go version go1.6.2 darwin/amd64"), nil
+			})
+
+			result := golang.Current()
+
+			Expect(result).To(Equal("1.6.2"))
+			monkey.Unpatch(exec.Command)
 		})
 	})
 })
