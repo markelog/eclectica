@@ -216,4 +216,25 @@ var _ = Describe("rust", func() {
 
 		monkey.Unpatch(exec.Command)
 	})
+
+	It("should report correct version", func() {
+		program := ""
+		firstArg := ""
+
+		monkey.Patch(exec.Command, func(name string, arg ...string) *exec.Cmd {
+			program = name
+			firstArg = arg[0]
+
+			return &exec.Cmd{}
+		})
+
+		monkey.Patch((*exec.Cmd).Output, func(*exec.Cmd) ([]uint8, error) {
+			return []uint8("rustc 1.11.0 (9b21dcd6a 2016-08-15)"), nil
+		})
+
+		result := rust.Current()
+
+		Expect(result).To(Equal("1.11.0"))
+		monkey.Unpatch(exec.Command)
+	})
 })
