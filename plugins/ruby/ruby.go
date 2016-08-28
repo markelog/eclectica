@@ -53,7 +53,7 @@ func (ruby Ruby) Install(version string) error {
 }
 
 func (ruby Ruby) PostInstall() (bool, error) {
-	return false, printMissingDependencies()
+	return dealWithShell()
 }
 
 func (ruby Ruby) Info(version string) (map[string]string, error) {

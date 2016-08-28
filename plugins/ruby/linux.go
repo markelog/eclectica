@@ -1,13 +1,11 @@
 package ruby
 
 import (
-	"fmt"
 	"os/exec"
 	"runtime"
 	"strings"
 
-	"github.com/fatih/color"
-
+	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -45,52 +43,28 @@ func checkDependencies() (has bool, deps []string, err error) {
 	return
 }
 
-func printMissingDependencies() error {
+func dealWithShell() (bool, error) {
 	has, deps, err := checkDependencies()
 
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	if has == false {
-		return nil
+		return true, nil
 	}
 
-	messageStart := `Ruby has been installed, but it requires global dependencies which weren't found on your system,
+	start := `Ruby has been installed, but it requires global dependencies which weren't found on your system,
   please execute following command to complete installation (you would need to do it only`
-	messageMiddle := " once"
-	messageEnd := "):"
-	fullMessage := "sudo apt-get install " + strings.Join(deps, " ")
+	middle := " once"
+	end := "):"
+	command := "sudo apt-get install " + strings.Join(deps, " ")
 
 	if variables.NeedToRestartShell("ruby") {
-		fullMessage += " && " + variables.GetShellName()
+		command += " && " + variables.GetShellName()
 	}
 
-	fmt.Println()
+	print.PostInstall(start, middle, end, command)
 
-	color.Set(color.FgRed)
-	fmt.Print("> ")
-	color.Unset()
-
-	color.Set(color.Bold)
-	fmt.Print(messageStart)
-	color.Set(color.FgRed)
-	fmt.Print(messageMiddle)
-	color.Unset()
-
-	color.Set(color.Bold)
-	fmt.Print(messageEnd)
-	color.Unset()
-
-	fmt.Println()
-	fmt.Println()
-
-	color.Set(color.FgGreen)
-	fmt.Print("> ")
-	color.Unset()
-
-	fmt.Print(fullMessage)
-	fmt.Println()
-
-	return nil
+	return false, nil
 }

@@ -51,7 +51,7 @@ func (golang Golang) Install(version string) error {
 }
 
 func (golang Golang) PostInstall() (bool, error) {
-	return true, nil
+	return dealWithRc()
 }
 
 func (golang Golang) Info(version string) (map[string]string, error) {

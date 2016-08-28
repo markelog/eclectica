@@ -97,3 +97,31 @@ func Download(response *grab.Response, version string) string {
 
 	return response.Filename
 }
+
+func PostInstall(start, middle, end, command string) {
+	fmt.Println()
+
+	color.Set(color.FgRed)
+	fmt.Print("> ")
+	color.Unset()
+
+	color.Set(color.Bold)
+	fmt.Print(start)
+	color.Set(color.FgRed)
+	fmt.Print(middle)
+	color.Unset()
+
+	color.Set(color.Bold)
+	fmt.Print(end)
+	color.Unset()
+
+	fmt.Println()
+	fmt.Println()
+
+	color.Set(color.FgGreen)
+	fmt.Print("> ")
+	color.Unset()
+
+	fmt.Print(command)
+	fmt.Println()
+}

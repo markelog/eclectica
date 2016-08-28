@@ -2,11 +2,10 @@ package plugins
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"strings"
 
-	"github.com/fatih/color"
+	"github.com/markelog/eclectica/cmd/print"
 )
 
 func GetShellName() string {
@@ -29,39 +28,14 @@ func makeFirstUppercase(name string) string {
 	return string(bytes.Join([][]byte{lc, rest}, nil))
 }
 
-func printShellMessage(name string) error {
+func printShellMessage(name string) {
 	name = makeFirstUppercase(name)
 
-	messageStart := name + ` has been installed, but it requires to restart your shell,
-  please execute following command (you would need to do it only`
-	messageMiddle := " once"
-	messageEnd := "):"
+	start := name + ` has been installed, but it requires to restart your shell,
+  for this to take affect you need to execute following command (you would need to do it only`
+	middle := " once"
+	end := "):"
+	command := "exec " + os.Getenv("SHELL")
 
-	fmt.Println()
-
-	color.Set(color.FgRed)
-	fmt.Print("> ")
-	color.Unset()
-
-	color.Set(color.Bold)
-	fmt.Print(messageStart)
-	color.Set(color.FgRed)
-	fmt.Print(messageMiddle)
-	color.Unset()
-
-	color.Set(color.Bold)
-	fmt.Print(messageEnd)
-	color.Unset()
-
-	fmt.Println()
-	fmt.Println()
-
-	color.Set(color.FgGreen)
-	fmt.Print("> ")
-	color.Unset()
-
-	fmt.Print("exec " + os.Getenv("SHELL"))
-	fmt.Println()
-
-	return nil
+	print.PostInstall(start, middle, end, command)
 }

@@ -95,7 +95,10 @@ func (plugin *Plugin) PostInstall() (err error) {
 }
 
 func (plugin *Plugin) Install() error {
-	Initiate(plugin.name)
+	err := Initiate(plugin.name)
+	if err != nil {
+		return err
+	}
 
 	if plugin.version == "" {
 		return errors.New("Version was not defined")
@@ -108,7 +111,7 @@ func (plugin *Plugin) Install() error {
 		createDir(filepath.Join(base, file))
 	}
 
-	err := plugin.pkg.Install(plugin.version)
+	err = plugin.pkg.Install(plugin.version)
 	if err != nil {
 		return err
 	}
