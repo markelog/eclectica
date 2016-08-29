@@ -3,9 +3,11 @@ package ruby
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -27,7 +29,6 @@ type Ruby struct{}
 
 func (ruby Ruby) Install(version string) error {
 	var err error
-
 	rVersion := regexp.MustCompile(versionPattern)
 	version = rVersion.FindAllStringSubmatch(version, 1)[0][0]
 
@@ -49,7 +50,20 @@ func (ruby Ruby) Install(version string) error {
 		}
 	}
 
+	removeRVMArtefacts(base)
+
 	return nil
+}
+
+// Removes RVM artefacts
+func removeRVMArtefacts(base string) {
+	gems := filepath.Join(base, "lib/ruby/gems")
+
+	// Remove `cache` folder since it supposed to work with RVM cache
+	folders, _ := ioutil.ReadDir(gems)
+	for _, folder := range folders {
+		os.Remove(filepath.Join(gems, folder.Name(), "cache"))
+	}
 }
 
 func (ruby Ruby) PostInstall() (bool, error) {
