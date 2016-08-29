@@ -3,6 +3,7 @@ package variables
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -37,6 +38,7 @@ func NeedToRestartShell(name string) bool {
 }
 
 func Index(path string, value string) int {
+	value = filepath.Join(value, "bin")
 	bins := strings.Split(path, ":")
 
 	for index, element := range bins {
