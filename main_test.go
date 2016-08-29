@@ -207,7 +207,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "rust@1.9.0").Output()
 
 			plugin := plugins.New("rust")
-			versions := plugin.List()
+			versions, _ := plugin.List()
 
 			for _, version := range versions {
 				if version == "1.9.0" {
@@ -252,7 +252,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "node@6.4.0").Output()
 
 			plugin := plugins.New("node")
-			versions := plugin.List()
+			versions, _ := plugin.List()
 
 			for _, version := range versions {
 				if version == "6.4.0" {
@@ -303,7 +303,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "ruby@2.2.1").Output()
 
 			plugin := plugins.New("ruby")
-			versions := plugin.List()
+			versions, _ := plugin.List()
 
 			for _, version := range versions {
 				if version == "2.2.1" {
@@ -340,7 +340,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "go@1.7").Output()
 
 			plugin := plugins.New("go")
-			versions := plugin.List()
+			versions, _ := plugin.List()
 
 			for _, version := range versions {
 				if version == "1.7" {

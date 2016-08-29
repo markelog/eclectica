@@ -2,40 +2,45 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/info"
+	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
 )
 
 var rmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove language version",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		if info.HasVersion(args) == false {
-			return errors.New("Can't remove without specific version")
+			print.Error(errors.New("Can't remove without specific version"))
 		}
+
+		var (
+			language string
+			version  string
+			err      error
+		)
 
 		if len(args) == 0 {
-			remove(info.Ask())
+			language, version, err = info.Ask()
 		} else {
-			remove(info.GetLanguage(args))
+			language, version = info.GetLanguage(args)
 		}
 
-		return nil
+		remove(language, version, err)
 	},
 }
 
-func remove(language, version string) {
-	err := plugins.New(language).Remove(version)
+func remove(language, version string, err error) {
+	print.Error(err)
 
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	err = plugins.New(language).Remove(version)
+
+	print.Error(err)
+
 }
 
 func init() {

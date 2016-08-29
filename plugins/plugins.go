@@ -164,6 +164,23 @@ func (plugin *Plugin) Current() string {
 	return plugin.pkg.Current()
 }
 
+func (plugin *Plugin) List() (versions []string, err error) {
+	versions = []string{}
+	path := variables.Home() + "/" + plugin.name
+
+	if _, statErr := os.Stat(path); os.IsNotExist(statErr) {
+		err = errors.New("There is no installed versions")
+		return
+	}
+
+	folders, _ := ioutil.ReadDir(path)
+	for _, folder := range folders {
+		versions = append(versions, folder.Name())
+	}
+
+	return
+}
+
 func (plugin *Plugin) ListRemote() (map[string][]string, error) {
 	versions, err := plugin.pkg.ListRemote()
 
@@ -256,20 +273,4 @@ func (plugin *Plugin) Extract() error {
 	}
 
 	return nil
-}
-
-func (plugin *Plugin) List() (versions []string) {
-	versions = []string{}
-	path := variables.Home() + "/" + plugin.name
-
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return
-	}
-
-	folders, _ := ioutil.ReadDir(path)
-	for _, folder := range folders {
-		versions = append(versions, folder.Name())
-	}
-
-	return
 }

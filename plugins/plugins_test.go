@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"syscall"
 
 	"github.com/bouk/monkey"
 	. "github.com/onsi/ginkgo"
@@ -224,6 +225,28 @@ var _ = Describe("plugins", func() {
 
 				Expect(err).Should(MatchError("Incorrect version 5.0.0"))
 			})
+		})
+	})
+
+	Describe("List", func() {
+		var guard *monkey.PatchGuard
+
+		BeforeEach(func() {
+			guard = monkey.Patch(os.Stat, func(path string) (os.FileInfo, error) {
+				return nil, syscall.ENOENT
+			})
+
+			plugin = New("node", "5.0.0")
+		})
+
+		AfterEach(func() {
+			guard.Unpatch()
+		})
+
+		It("returns error if there is no installed versions", func() {
+			_, err := plugin.List()
+
+			Expect(err).Should(MatchError("There is no installed versions"))
 		})
 	})
 

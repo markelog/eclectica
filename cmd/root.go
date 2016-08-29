@@ -39,8 +39,8 @@ func Execute() {
 
 	// If nothing was passed - just show list of the local versions
 	if len(args) == 0 {
-		language, version := info.Ask()
-		install(language, version, nil)
+		language, version, err := info.Ask()
+		install(language, version, err)
 		return
 	}
 
@@ -80,8 +80,8 @@ func Execute() {
 
 	// In case of `ec <language>`
 	if hasLanguage && hasVersion == false {
-		version = info.AskVersion(language)
-		install(language, version, nil)
+		version, err = info.AskVersion(language)
+		install(language, version, err)
 		return
 	}
 

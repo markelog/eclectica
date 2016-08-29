@@ -9,15 +9,16 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
-func Ask() (language, version string) {
+func Ask() (language, version string, err error) {
 	language = list.GetWith("Language", plugins.Plugins)
-	version = AskVersion(language)
+	version, err = AskVersion(language)
 
 	return
 }
 
-func AskVersion(language string) (version string) {
-	version = list.GetWith("Version", plugins.New(language).List())
+func AskVersion(language string) (version string, err error) {
+	versions, err := plugins.New(language).List()
+	version = list.GetWith("Version", versions)
 
 	return
 }
