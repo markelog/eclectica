@@ -322,18 +322,11 @@ var _ = Describe("main", func() {
 			Execute("go", "run", path, "rm", "go@1.7")
 		})
 
-		It("should install go 1.7", func() {
-			Execute("go", "run", path, "go@1.7")
-			command, _ := Command("go", "run", path, "ls", "go").Output()
-
-			Expect(strings.Contains(string(command), "♥ 1.7")).To(Equal(true))
-		})
-
 		It("should list installed go versions", func() {
 			Execute("go", "run", path, "go@1.7")
 			command, _ := Command("go", "run", path, "ls", "go").Output()
 
-			Expect(strings.Contains(string(command), "♥ 1.7")).To(Equal(true))
+			Expect(strings.Contains(string(command), "1.7")).To(Equal(true))
 		})
 
 		It("should list remote go versions", func() {

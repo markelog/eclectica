@@ -15,13 +15,13 @@ import (
 var _ = Describe("variables", func() {
 	Describe("Index", func() {
 		It("doesn't provide index", func() {
-			exec := Index(DefaultBins, "/home/markelog/bin")
+			exec := Index(DefaultBins, "/home/markelog")
 
 			Expect(exec).To(Equal(-1))
 		})
 
 		It("doesn provide index", func() {
-			exec := Index(DefaultBins, "/usr/bin")
+			exec := Index(DefaultBins, "/usr")
 
 			Expect(exec).To(Equal(0))
 		})
@@ -53,28 +53,28 @@ var _ = Describe("variables", func() {
 			})
 
 			It("should be in local path since $PATH doesn't contain it", func() {
-				firstPath = "/first/go"
-				secondPath = "/second/go"
+				firstPath = "/first/go/bin"
+				secondPath = "/second/go/bin"
 
-				result := InLocalBin("/first:/second", "/third", "go")
+				result := InLocalBin("/first/bin:/second/bin", "/third", "go")
 
 				Expect(result).To(Equal(false))
 			})
 
 			It("should be in local path since it has lower index", func() {
-				firstPath = "/first/go"
-				secondPath = "/second/go"
+				firstPath = "/first/go/bin"
+				secondPath = "/second/go/bin"
 
-				result := InLocalBin("/first:/second", "/first", "go")
+				result := InLocalBin("/first/bin:/second/bin", "/first", "go")
 
 				Expect(result).To(Equal(true))
 			})
 
 			It("shouldn't be in local path since it has higher index", func() {
-				firstPath = "/first/go"
-				secondPath = "/second/go"
+				firstPath = "/first/go/bin"
+				secondPath = "/second/go/bin"
 
-				result := InLocalBin("/first:/second", "/second", "go")
+				result := InLocalBin("/first/go/bin:/second/go/bin", "/second", "go")
 
 				Expect(result).To(Equal(false))
 			})
