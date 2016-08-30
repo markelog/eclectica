@@ -161,6 +161,15 @@ var _ = Describe("main", func() {
 	}
 
 	Describe("main logic", func() {
+		It("should output version", func() {
+			regVersion := "[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+$"
+
+			command, _ := Command("go", "run", path, "version").Output()
+			strCommand := strings.TrimSpace(string(command))
+
+			Expect(strCommand).To(MatchRegexp(regVersion))
+		})
+
 		It("should show list without language", func() {
 			output := checkRemoteUse()
 
