@@ -278,13 +278,14 @@ var _ = Describe("main", func() {
 			Expect(strings.Contains(string(command), "♥ 2.2.1")).To(Equal(true))
 		})
 
-		It("should install bundler 2.2.1", func() {
+		It("should install bundler", func() {
 			tempDir := os.TempDir()
 
 			Execute("go", "run", path, "ruby@2.2.1")
-			Command("GEM_HOME="+tempDir, "gem", "install", "bundler").Output()
+			Execute("GEM_HOME="+tempDir, "gem", "install", "bundler")
 
 			command, _ := Command("ls", filepath.Join(tempDir, "gems")).Output()
+			fmt.Println(command)
 
 			Expect(strings.Contains(string(command), "bundle-")).To(Equal(true))
 
