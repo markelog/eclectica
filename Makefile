@@ -1,5 +1,9 @@
 version := $(shell go run ec/main.go version)
 
+install:
+	@go get ./...
+.PHONY: install
+
 release:
 	@echo "[+] releasing"
 	@echo "[+] testing"
