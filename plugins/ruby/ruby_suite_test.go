@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestCprf(t *testing.T) {
+func TestRuby(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Ruby Suite")
 }

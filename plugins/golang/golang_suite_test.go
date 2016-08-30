@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestCprf(t *testing.T) {
+func TestGolang(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Go Suite")
 }

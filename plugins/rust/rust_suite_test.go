@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestCprf(t *testing.T) {
+func TestRust(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Rust Suite")
 }

@@ -3,6 +3,7 @@ package main_test
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -280,16 +281,16 @@ var _ = Describe("main", func() {
 
 		It("should install bundler", func() {
 			tempDir := os.TempDir()
+			gems := filepath.Join(tempDir, "gems")
 
 			Execute("go", "run", path, "ruby@2.2.1")
-			Execute("GEM_HOME="+tempDir, "gem", "install", "bundler")
+			os.Setenv("GEM_HOME", tempDir)
+			Command("gem", "install", "bundler").Output()
 
-			command, _ := Command("ls", filepath.Join(tempDir, "gems")).Output()
-			fmt.Println(command)
+			folders, _ := ioutil.ReadDir(gems)
+			Expect(strings.Contains(folders[0].Name(), "bundler-")).To(Equal(true))
 
-			Expect(strings.Contains(string(command), "bundle-")).To(Equal(true))
-
-			Execute("rm", "-rf", filepath.Join(tempDir, "gems"))
+			os.RemoveAll(gems)
 		})
 
 		It("should list installed ruby versions", func() {
