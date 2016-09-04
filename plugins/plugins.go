@@ -168,14 +168,13 @@ func (plugin *Plugin) List() (versions []string, err error) {
 	versions = []string{}
 	path := variables.Home() + "/" + plugin.name
 
-	if _, statErr := os.Stat(path); os.IsNotExist(statErr) {
-		err = errors.New("There is no installed versions")
-		return
-	}
-
 	folders, _ := ioutil.ReadDir(path)
 	for _, folder := range folders {
 		versions = append(versions, folder.Name())
+	}
+
+	if len(versions) == 0 {
+		err = errors.New("There is no installed versions")
 	}
 
 	return

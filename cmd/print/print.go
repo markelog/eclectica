@@ -40,11 +40,12 @@ func Error(err error) {
 		return
 	}
 
-	fmt.Println(err)
+	fmt.Println()
 	color.Set(color.FgRed)
 	fmt.Print("> ")
 	color.Unset()
 	fmt.Fprintf(os.Stderr, "%v", err)
+	fmt.Println()
 	fmt.Println()
 	os.Exit(1)
 }

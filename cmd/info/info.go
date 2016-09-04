@@ -18,6 +18,10 @@ func Ask() (language, version string, err error) {
 
 func AskVersion(language string) (version string, err error) {
 	versions, err := plugins.New(language).List()
+	if err != nil {
+		return
+	}
+
 	version = list.GetWith("Version", versions)
 
 	return
