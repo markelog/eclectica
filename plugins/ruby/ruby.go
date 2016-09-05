@@ -34,6 +34,8 @@ func (ruby Ruby) Install(version string) error {
 
 	base := fmt.Sprintf("%s/%s", home, version)
 
+	removeRVMArtefacts(base)
+
 	for _, file := range variables.Files {
 		from := fmt.Sprintf("%s/%s", base, file)
 		to := variables.Prefix("ruby")
@@ -50,12 +52,10 @@ func (ruby Ruby) Install(version string) error {
 		}
 	}
 
-	removeRVMArtefacts(base)
-
 	return nil
 }
 
-// Removes RVM artefacts
+// Removes RVM artefacts (ignore errors)
 func removeRVMArtefacts(base string) {
 	gems := filepath.Join(base, "lib/ruby/gems")
 
