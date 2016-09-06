@@ -9,7 +9,7 @@ import (
 	"github.com/cavaliercoder/grab"
 	"github.com/dustin/go-humanize"
 	"github.com/fatih/color"
-	"github.com/sethgrid/curse"
+	"github.com/markelog/curse"
 	"github.com/tj/go-spin"
 )
 

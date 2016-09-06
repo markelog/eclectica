@@ -20,8 +20,5 @@ test:
 .PHONY: test
 
 build:
-	# We use github.com/markeog/list, which uses https://github.com/sethgrid/curse
-	# which uses https://github.com/kless/term, which do not support anything
-	# else then "amd64" arch – https://github.com/kless/term/issues/6
-	@gox -os="darwin linux" -arch="amd64" ./...
+	@gox -osarch="darwin/amd64 linux/amd64 linux/386" ./...
 .PHONY: build
