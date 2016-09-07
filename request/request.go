@@ -11,7 +11,10 @@ var (
 )
 
 func Body(url string) (string, error) {
-	response, _ := client.Get(url)
+	response, err := client.Get(url)
+	if err != nil {
+		return "", err
+	}
 
 	if response.StatusCode != 200 {
 		return "", errors.New("Can't establish connection")
