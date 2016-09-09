@@ -14,33 +14,43 @@ var rmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove language version",
 	Run: func(cmd *cobra.Command, args []string) {
-		if info.HasVersion(args) == false {
-			print.Error(errors.New("Can't remove without specific version"))
-		}
-
 		var (
 			language string
 			version  string
 			err      error
 		)
 
-		if len(args) == 0 {
-			language, version, err = info.Ask()
-		} else {
-			language, version = info.GetLanguage(args)
+		language, version = info.GetLanguage(args)
+		hasLanguage := info.HasLanguage(args)
+		hasVersion := info.HasVersion(args)
+
+		if hasVersion == false {
+			if hasLanguage {
+				version, err = info.AskVersion(language)
+			} else {
+				language, version, err = info.Ask()
+			}
 		}
+
+		if isCurrent(language, version) {
+			err = errors.New("Cannot remove active version")
+		}
+
+		print.Error(err)
 
 		remove(language, version, err)
 	},
 }
 
+func isCurrent(language, version string) bool {
+	current := plugins.New(language).Current()
+
+	return current == version
+}
+
 func remove(language, version string, err error) {
-	print.Error(err)
-
 	err = plugins.New(language).Remove(version)
-
 	print.Error(err)
-
 }
 
 func init() {

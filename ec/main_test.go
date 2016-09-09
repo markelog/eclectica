@@ -30,6 +30,7 @@ func init() {
 func getCmd(args []interface{}) *exec.Cmd {
 	fn := reflect.ValueOf(exec.Command)
 	rargs := make([]reflect.Value, len(args))
+
 	for i, a := range args {
 		rargs[i] = reflect.ValueOf(a)
 	}
@@ -50,6 +51,7 @@ func Execute(args ...interface{}) *exec.Cmd {
 	// Output result for testing purposes
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
 	cmd.Run()
 
 	return cmd
@@ -182,6 +184,29 @@ var _ = Describe("main", func() {
 
 			Expect(strings.Contains(output, "Mask")).To(Equal(true))
 			Expect(strings.Contains(output, "6.x")).To(Equal(true))
+		})
+
+		Describe("ec rm", func() {
+			It("should not allow removal of current version", func() {
+				Execute("go", "run", path, "node@6.5.0")
+
+				output, err := Command("go", "run", path, "rm", "node@6.5.0").CombinedOutput()
+				out := string(output)
+
+				Expect(strings.Contains(out, "Cannot remove active version")).To(Equal(true))
+				Expect(err).To(MatchError("exit status 1"))
+			})
+
+			It("should remove version", func() {
+				Execute("go", "run", path, "node@6.5.0")
+				Execute("go", "run", path, "node@6.4.0")
+
+				Execute("go", "run", path, "rm", "node@6.5.0")
+
+				command, _ := Command("go", "run", path, "ls", "node").Output()
+
+				Expect(strings.Contains(string(command), "6.5.0")).To(Equal(false))
+			})
 		})
 	})
 
