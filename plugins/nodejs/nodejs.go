@@ -13,7 +13,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/markelog/cprf"
 
-	"github.com/markelog/eclectica/request"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -54,12 +53,7 @@ func (node Node) PostInstall() (bool, error) {
 }
 
 func (node Node) Info(version string) (map[string]string, error) {
-	if version == "latest" || version == "lts" {
-		return keyword(version)
-	}
-
 	result := make(map[string]string)
-
 	sourcesUrl := fmt.Sprintf("%s/v%s", VersionsLink, version)
 
 	result["version"] = version
@@ -110,27 +104,6 @@ func (node Node) ListRemote() ([]string, error) {
 			result = append(result, element)
 		}
 	}
-
-	return result, nil
-}
-
-func keyword(keyword string) (map[string]string, error) {
-	result := make(map[string]string)
-	sumUrl := fmt.Sprintf("%s/%s/SHASUMS256.txt", VersionsLink, keyword)
-	sourcesUrl := fmt.Sprintf("%s/%s", VersionsLink, keyword)
-	file, err := request.Body(sumUrl)
-
-	if err != nil {
-		return result, err
-	}
-
-	versionReg := regexp.MustCompile(`node-v(\d+\.\d+\.\d)`)
-
-	version := versionReg.FindStringSubmatch(file)[1]
-	result["name"] = "node"
-	result["version"] = version
-	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
-	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 
 	return result, nil
 }
