@@ -20,5 +20,5 @@ test:
 .PHONY: test
 
 build:
-	@gox -osarch="darwin/amd64 linux/amd64 linux/386" ./...
+	@gox -osarch="darwin/amd64 linux/amd64" ./...
 .PHONY: build
