@@ -74,8 +74,6 @@ func Execute() {
 			install(language, version, err)
 			return
 		}
-
-		return
 	}
 
 	// In case of `ec <language>`

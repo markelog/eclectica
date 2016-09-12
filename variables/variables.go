@@ -10,7 +10,7 @@ import (
 var (
 	Commands       = []string{"ls", "rm", "version", "init", "--help", "-h"}
 	Files          = [4]string{"bin", "lib", "include", "share"}
-	DefaultInstall = fmt.Sprintf("%s/.eclectica/install", os.Getenv("HOME"))
+	DefaultInstall = fmt.Sprintf("%s/.eclectica/install/go", os.Getenv("HOME"))
 	DefaultBins    = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 )
 

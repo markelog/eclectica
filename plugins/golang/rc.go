@@ -18,7 +18,7 @@ export GOROOT=%s
 export GOPATH=%s
 `
 	gopath = filepath.Join(os.Getenv("HOME"), "gocode")
-	goroot = filepath.Join(variables.DefaultInstall)
+	goroot = filepath.Join(variables.Prefix("go"), "go")
 )
 
 func dealWithRc() (bool, error) {
