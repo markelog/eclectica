@@ -10,7 +10,7 @@ install:
 
 test:
 	@echo "[+] testing"
-	@go test ./...
+	@go test -v ./...
 .PHONY: test
 
 build:

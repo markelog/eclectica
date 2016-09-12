@@ -215,6 +215,7 @@ var _ = Describe("main", func() {
 			fmt.Println()
 			fmt.Println("Removing rust@1.9.0")
 			Execute("go", "run", path, "rm", "rust@1.9.0")
+			fmt.Println("Removed")
 		})
 
 		It("should install rust 1.9.0", func() {
@@ -259,9 +260,10 @@ var _ = Describe("main", func() {
 			fmt.Println()
 			fmt.Println("Removing node@6.4.0")
 			Execute("go", "run", path, "rm", "node@6.4.0")
+			fmt.Println("Removed")
 		})
 
-		It("should install node 6.4.0", func() {
+		FIt("should install node 6.4.0", func() {
 			Execute("go", "run", path, "node@6.4.0")
 			command, _ := Command("go", "run", path, "ls", "node").Output()
 
@@ -304,6 +306,7 @@ var _ = Describe("main", func() {
 			fmt.Println()
 			fmt.Println("Removing ruby@2.2.1")
 			Execute("go", "run", path, "rm", "ruby@2.2.1")
+			fmt.Println("Removed")
 		})
 
 		It("should install ruby 2.2.1", func() {
@@ -369,6 +372,7 @@ var _ = Describe("main", func() {
 			fmt.Println()
 			fmt.Println("Removing go@1.7")
 			Execute("go", "run", path, "rm", "go@1.7")
+			fmt.Println("Removed")
 		})
 
 		It("should list installed go versions", func() {
