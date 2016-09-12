@@ -5,7 +5,7 @@ all: install test
 
 install:
 	@echo "[+] installing dependencies"
-	@go get ./...
+	@go get -t -v ./...
 .PHONY: install
 
 test:
