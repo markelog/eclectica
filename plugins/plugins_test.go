@@ -297,12 +297,15 @@ var _ = Describe("plugins", func() {
 			Expect(info["destination-folder"]).To(Equal(variables.Home() + "/node/5.0.0"))
 		})
 
-		It("should add extension if it was not defined by the plugin", func() {
-			Expect(info["extension"]).To(Equal("tar.gz"))
+		It("should not add extension if it was defined by the plugin", func() {
+			info["extension"] = "test"
+			info, _ := New("node", "5.0.0").Info()
+
+			Expect(info["extension"]).To(Equal("test"))
 		})
 
 		It("should add extension if it was not defined by the plugin", func() {
-			Expect(info["unarchive-filename"]).To(Equal(info["filename"]))
+			Expect(info["extension"]).To(Equal("tar.gz"))
 		})
 
 		It("should not add extension if it was defined by the plugin", func() {

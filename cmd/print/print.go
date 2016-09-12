@@ -10,7 +10,6 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/fatih/color"
 	"github.com/markelog/curse"
-	"github.com/tj/go-spin"
 )
 
 func InStyle(name, entity string) {
@@ -53,22 +52,19 @@ func Error(err error) {
 func Download(response *grab.Response, version string) string {
 	Error(response.Error)
 
-	s := spin.New()
 	c, _ := curse.New()
-	started := false
 
-	// Print progress until transfer is complete
-	for response.IsComplete() == false {
+	before := func() {
+		time.Sleep(500 * time.Millisecond)
+	}
+
+	prefix := func() {
 		Error(response.Error)
 		size := humanize.Bytes(response.Size)
 		transfered := humanize.Bytes(response.BytesTransferred())
 		transfered = strings.Replace(transfered, " MB", "", 1)
 
 		c.MoveUp(1)
-		if started {
-			c.EraseCurrentLine()
-		}
-		started = true
 
 		InStyle("Version", version)
 
@@ -76,11 +72,9 @@ func Download(response *grab.Response, version string) string {
 		fmt.Print("(")
 		fmt.Printf("%s/%s ", transfered, size)
 		color.Unset()
+	}
 
-		color.Set(color.FgCyan)
-		fmt.Print(s.Next())
-		color.Unset()
-
+	postfix := func() {
 		color.Set(color.FgBlack)
 		fmt.Printf(" %d%%", int(100*response.Progress()))
 		fmt.Print(")")
@@ -90,11 +84,25 @@ func Download(response *grab.Response, version string) string {
 		time.Sleep(200 * time.Millisecond)
 	}
 
-	c.MoveUp(1)
-	c.EraseCurrentLine()
+	after := func() {
+		c.MoveUp(1)
+		c.EraseCurrentLine()
+		InStyle("Version", version)
+		fmt.Println()
+	}
 
-	InStyle("Version", version)
-	fmt.Println()
+	s := &Spinner{
+		Before:  before,
+		After:   after,
+		Prefix:  prefix,
+		Postfix: postfix,
+	}
+
+	s.Start()
+	for response.IsComplete() == false {
+		time.Sleep(200 * time.Millisecond)
+	}
+	s.Stop()
 
 	return response.Filename
 }
