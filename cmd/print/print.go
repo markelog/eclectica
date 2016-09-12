@@ -53,6 +53,7 @@ func Download(response *grab.Response, version string) string {
 	Error(response.Error)
 
 	c, _ := curse.New()
+	started := false
 
 	before := func() {
 		time.Sleep(500 * time.Millisecond)
@@ -65,6 +66,11 @@ func Download(response *grab.Response, version string) string {
 		transfered = strings.Replace(transfered, " MB", "", 1)
 
 		c.MoveUp(1)
+
+		if started {
+			c.EraseCurrentLine()
+		}
+		started = true
 
 		InStyle("Version", version)
 
@@ -85,7 +91,6 @@ func Download(response *grab.Response, version string) string {
 	}
 
 	after := func() {
-		c.MoveUp(1)
 		c.EraseCurrentLine()
 		InStyle("Version", version)
 		fmt.Println()
