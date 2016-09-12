@@ -213,6 +213,10 @@ var _ = Describe("main", func() {
 	Describe("Rust", func() {
 		BeforeEach(func() {
 			fmt.Println()
+
+			fmt.Println("Install tmp version")
+			Execute("go", "run", path, "rust@1.8.0")
+
 			fmt.Println("Removing rust@1.9.0")
 			Execute("go", "run", path, "rm", "rust@1.9.0")
 			fmt.Println("Removed")
@@ -240,6 +244,7 @@ var _ = Describe("main", func() {
 			result := true
 
 			Execute("go", "run", path, "rust@1.9.0")
+			Execute("go", "run", path, "rust@1.8.0")
 			Command("go", "run", path, "rm", "rust@1.9.0").Output()
 
 			plugin := plugins.New("rust")
@@ -258,12 +263,17 @@ var _ = Describe("main", func() {
 	Describe("node", func() {
 		BeforeEach(func() {
 			fmt.Println()
+
 			fmt.Println("Removing node@6.4.0")
+
+			fmt.Println("Install tmp version")
+			Execute("go", "run", path, "node@5.1.0")
+
 			Execute("go", "run", path, "rm", "node@6.4.0")
 			fmt.Println("Removed")
 		})
 
-		FIt("should install node 6.4.0", func() {
+		It("should install node 6.4.0", func() {
 			Execute("go", "run", path, "node@6.4.0")
 			command, _ := Command("go", "run", path, "ls", "node").Output()
 
@@ -286,6 +296,7 @@ var _ = Describe("main", func() {
 			result := true
 
 			Execute("go", "run", path, "node@6.4.0")
+			Execute("go", "run", path, "node@5.1.0")
 			Command("go", "run", path, "rm", "node@6.4.0").Output()
 
 			plugin := plugins.New("node")
@@ -304,6 +315,10 @@ var _ = Describe("main", func() {
 	Describe("ruby", func() {
 		BeforeEach(func() {
 			fmt.Println()
+
+			fmt.Println("Install tmp version")
+			Execute("go", "run", path, "ruby@2.0.0-p451")
+
 			fmt.Println("Removing ruby@2.2.1")
 			Execute("go", "run", path, "rm", "ruby@2.2.1")
 			fmt.Println("Removed")
@@ -352,6 +367,8 @@ var _ = Describe("main", func() {
 			result := true
 
 			Execute("go", "run", path, "ruby@2.2.1")
+			Execute("go", "run", path, "ruby@2.1.0")
+
 			Command("go", "run", path, "rm", "ruby@2.2.1").Output()
 
 			plugin := plugins.New("ruby")
@@ -370,6 +387,10 @@ var _ = Describe("main", func() {
 	Describe("go", func() {
 		BeforeEach(func() {
 			fmt.Println()
+
+			fmt.Println("Install tmp version")
+			Execute("go", "run", path, "go@1.6")
+
 			fmt.Println("Removing go@1.7")
 			Execute("go", "run", path, "rm", "go@1.7")
 			fmt.Println("Removed")
@@ -390,6 +411,7 @@ var _ = Describe("main", func() {
 			result := true
 
 			Execute("go", "run", path, "go@1.7")
+			Execute("go", "run", path, "go@1.6")
 			Command("go", "run", path, "rm", "go@1.7").Output()
 
 			plugin := plugins.New("go")

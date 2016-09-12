@@ -53,12 +53,12 @@ func Download(response *grab.Response, version string) string {
 	Error(response.Error)
 
 	c, _ := curse.New()
-	started := false
 
 	before := func() {
 		time.Sleep(500 * time.Millisecond)
 	}
 
+	started := false
 	prefix := func() {
 		Error(response.Error)
 		size := humanize.Bytes(response.Size)
