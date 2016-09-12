@@ -19,13 +19,7 @@ var (
 	home = fmt.Sprintf("%s/%s", variables.Home(), "rust")
 	bin  = variables.Prefix("rust") + "/bin/rustc"
 
-	// TODO: Simplify
-	fullVersionPattern = "[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-(alpha|beta)(?:\\.[0-9]*)?)?"
-	nighltyPattern     = "nightly(\\.[0-9]+)?"
-	betaPattern        = "beta(\\.[0-9]+)?"
-	defaultPattern     = "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-(alpha|beta)(\\.[0-9]*)?)?"
-	rcPattern          = defaultPattern + "-rc(\\.[0-9]+)?"
-	versionPattern     = "(" + defaultPattern + "|" + nighltyPattern + "|" + betaPattern + "|" + rcPattern + "|" + betaPattern + ")"
+	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:-(alpha|beta)(?:\\.\\d*)?)?"
 )
 
 type Rust struct{}
@@ -90,7 +84,7 @@ func getFullPattern() (string, error) {
 		return "", err
 	}
 
-	result := "/dist/rust-" + fullVersionPattern + "-" + platform + ".tar.gz,"
+	result := "/dist/rust-" + versionPattern + "-" + platform + ".tar.gz,"
 
 	return result, nil
 }

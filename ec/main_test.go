@@ -164,7 +164,7 @@ var _ = Describe("main", func() {
 
 	Describe("main logic", func() {
 		It("should output version", func() {
-			regVersion := "[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+$"
+			regVersion := "\\d+\\.\\d+\\.\\d+$"
 
 			command, _ := Command("go", "run", path, "version").Output()
 			strCommand := strings.TrimSpace(string(command))

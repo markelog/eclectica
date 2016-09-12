@@ -108,7 +108,7 @@ var _ = Describe("rust", func() {
 			})
 
 			It("should have correct version values", func() {
-				rp := regexp.MustCompile("[[:digit:]]+\\.[[:digit:]]+")
+				rp := regexp.MustCompile("\\d+\\.\\d+")
 
 				for _, element := range remotes {
 					Expect(rp.MatchString(element)).To(Equal(true))

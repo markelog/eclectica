@@ -83,7 +83,7 @@ func (node Node) ListRemote() ([]string, error) {
 
 	tmp := []string{}
 	result := []string{}
-	version := regexp.MustCompile("v[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+$")
+	version := regexp.MustCompile("v\\d+\\.\\d+\\.\\d+$")
 	remove := regexp.MustCompile("0\\.[0-7]")
 
 	links := doc.Find("a")

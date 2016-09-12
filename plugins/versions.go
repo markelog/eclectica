@@ -21,7 +21,7 @@ func Compose(versions []string) map[string][]string {
 
 func ComposeMajors(versions []string) map[string][]string {
 	result := map[string][]string{}
-	firstPart := regexp.MustCompile("([[:digit:]]+)\\.")
+	firstPart := regexp.MustCompile("(\\d+)\\.")
 
 	for _, version := range versions {
 		major := firstPart.FindAllStringSubmatch(version, 1)[0][1]
@@ -39,7 +39,7 @@ func ComposeMajors(versions []string) map[string][]string {
 
 func ComposeMinors(versions []string) map[string][]string {
 	result := map[string][]string{}
-	firstPart := regexp.MustCompile("([[:digit:]])+\\.([[:digit:]]+)")
+	firstPart := regexp.MustCompile("(\\d)+\\.(\\d+)")
 
 	for _, version := range versions {
 		checkVersions := firstPart.FindAllStringSubmatch(version, 1)

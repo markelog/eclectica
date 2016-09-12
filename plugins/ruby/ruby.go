@@ -22,7 +22,7 @@ var (
 	VersionsLink   = "https://rvm.io/binaries"
 	home           = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
 	bin            = variables.Prefix("ruby") + "/bin/ruby"
-	versionPattern = "[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]"
+	versionPattern = "\\d+\\.\\d+\\.\\d"
 )
 
 type Ruby struct{}
@@ -103,7 +103,7 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 		return nil, err
 	}
 
-	version := regexp.MustCompile("[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+")
+	version := regexp.MustCompile("\\d+\\.\\d+\\.\\d+")
 	result := []string{}
 	links := doc.Find("a")
 

@@ -25,7 +25,7 @@ var (
 	bin          = variables.Prefix("go") + "/bin/go"
 	files        = [8]string{"api", "bin", "lib", "misc", "pkg", "share", "src"}
 
-	versionPattern = "[[:digit:]]+\\.[[:digit:]]+(?:\\.[[:digit:]]+)?(?:(alpha|beta|rc)(?:[[:digit:]]*)?)?"
+	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
 )
 
 type Golang struct{}
