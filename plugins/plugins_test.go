@@ -80,7 +80,7 @@ var _ = Describe("plugins", func() {
 			version = "5.0.0"
 			filename = "node-arch"
 			destFolder, _ = filepath.Abs("../testdata/plugins/versions/" + name + "/" + version)
-			archivePath = path + "/" + filename + ".tar.gz"
+			archivePath = filepath.Join(path, filename+".tar.gz")
 
 			info = map[string]string{
 				"name":               name,
@@ -110,7 +110,7 @@ var _ = Describe("plugins", func() {
 
 		AfterEach(func() {
 			monkey.Unpatch(variables.Home)
-			os.RemoveAll(versionsFolder + "/" + name)
+			os.RemoveAll(filepath.Join(versionsFolder, name))
 		})
 
 		It("returns error if version was not defined", func() {
@@ -121,12 +121,12 @@ var _ = Describe("plugins", func() {
 		It("should extract langauge", func() {
 			plugin.Extract()
 
-			_, err := os.Stat(destFolder + "/test.txt")
+			_, err := os.Stat(filepath.Join(destFolder, "/test.txt"))
 			Expect(err).To(BeNil())
 		})
 
 		It("should extract even if previous archive was downloaded, but not extracted", func() {
-			failedAttempt := versionsFolder + "/" + name + "/" + filename
+			failedAttempt := filepath.Join(versionsFolder, name, filename)
 
 			os.MkdirAll(failedAttempt, 0700)
 
@@ -160,8 +160,8 @@ var _ = Describe("plugins", func() {
 
 			path, _ = filepath.Abs("../testdata/plugins")
 			filename = "node-v5.0.0-darwin-x64.tar.gz"
-			archivePath = path + "/" + filename
-			destFolder = path + "/" + filename
+			archivePath = filepath.Join(path, filename)
+			destFolder = filepath.Join(path, filename)
 			url = ts.URL + "/" + filename
 
 			info = map[string]string{

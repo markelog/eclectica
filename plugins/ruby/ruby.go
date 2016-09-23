@@ -20,8 +20,8 @@ import (
 
 var (
 	VersionsLink   = "https://rvm.io/binaries"
-	home           = fmt.Sprintf("%s/%s", variables.Home(), "ruby")
-	bin            = variables.Prefix("ruby") + "/bin/ruby"
+	home           = filepath.Join(variables.Home(), "ruby")
+	bin            = filepath.Join(variables.Prefix("ruby"), "/bin/ruby")
 	versionPattern = "\\d+\\.\\d+\\.\\d"
 )
 
@@ -32,12 +32,12 @@ func (ruby Ruby) Install(version string) error {
 	rVersion := regexp.MustCompile(versionPattern)
 	version = rVersion.FindAllStringSubmatch(version, 1)[0][0]
 
-	base := fmt.Sprintf("%s/%s", home, version)
+	base := filepath.Join(home, version)
 
 	removeRVMArtefacts(base)
 
 	for _, file := range variables.Files {
-		from := fmt.Sprintf("%s/%s", base, file)
+		from := filepath.Join(base, file)
 		to := variables.Prefix("ruby")
 
 		// Some versions might not have certain files

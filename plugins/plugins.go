@@ -155,7 +155,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 	info["archive-folder"] = tmpDir
 	info["archive-path"] = fmt.Sprintf("%s%s.%s", info["archive-folder"], info["filename"], info["extension"])
 
-	info["destination-folder"] = fmt.Sprintf("%s/%s/%s", variables.Home(), plugin.name, plugin.version)
+	info["destination-folder"] = filepath.Join(variables.Home(), plugin.name, plugin.version)
 
 	return info, nil
 }
@@ -166,7 +166,7 @@ func (plugin *Plugin) Current() string {
 
 func (plugin *Plugin) List() (versions []string, err error) {
 	versions = []string{}
-	path := variables.Home() + "/" + plugin.name
+	path := filepath.Join(variables.Home(), plugin.name)
 
 	folders, _ := ioutil.ReadDir(path)
 	for _, folder := range folders {
@@ -192,11 +192,10 @@ func (plugin *Plugin) ListRemote() (map[string][]string, error) {
 
 func (plugin *Plugin) Remove(version string) error {
 	var err error
-	home := fmt.Sprintf("%s/%s", variables.Home(), plugin.name)
-	base := fmt.Sprintf("%s/%s", home, version)
+	home := filepath.Join(variables.Home(), plugin.name)
+	base := filepath.Join(home, version)
 
 	err = os.RemoveAll(base)
-
 	if err != nil {
 		return err
 	}
@@ -249,21 +248,21 @@ func (plugin *Plugin) Extract() error {
 		return errors.New("Version was not defined")
 	}
 
-	extractionPlace, err := directory.Create(fmt.Sprintf("%s/%s", variables.Home(), plugin.name))
+	extractionPlace, err := directory.Create(filepath.Join(variables.Home(), plugin.name))
 	if err != nil {
 		return err
 	}
 
 	// Just in case archive was downloaded, but not extracted
-	// i.e. is below steps have failed this issues comes up in the second run
-	os.RemoveAll(fmt.Sprintf("%s/%s", extractionPlace, plugin.info["filename"]))
+	// i.e. this issue comes up in the second run
+	os.RemoveAll(filepath.Join(extractionPlace, plugin.info["filename"]))
 
 	err = archive.Extract(plugin.info["archive-path"], extractionPlace)
 	if err != nil {
 		return err
 	}
 
-	downloadPath := fmt.Sprintf("%s/%s", extractionPlace, plugin.info["unarchive-filename"])
+	downloadPath := filepath.Join(extractionPlace, plugin.info["unarchive-filename"])
 	extractionPath := plugin.info["destination-folder"]
 
 	err = os.Rename(downloadPath, extractionPath)

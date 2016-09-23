@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -16,7 +17,7 @@ var (
 	versionsLink = "https://static.rust-lang.org/dist"
 	listLink     = "https://static.rust-lang.org/dist/index.txt"
 
-	home = fmt.Sprintf("%s/%s", variables.Home(), "rust")
+	home = filepath.Join(variables.Home(), "rust")
 	bin  = variables.Prefix("rust") + "/bin/rustc"
 
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:-(alpha|beta)(?:\\.\\d*)?)?"

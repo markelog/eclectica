@@ -46,7 +46,7 @@ func dealWithShell() (bool, error) {
 		return true, nil
 	}
 
-	partStart := `Go has been installed, but it requires to restart your shell,`
+	partStart := `Go has been installed, but it requires you to restart your shell,`
 
 	if os.Getenv("GOPATH") == "" {
 		partStart = `Go has been installed, but it requires you to set $GOPATH environment variable.

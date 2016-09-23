@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -18,8 +19,8 @@ import (
 
 var (
 	VersionsLink = "https://nodejs.org/dist"
-	home         = fmt.Sprintf("%s/%s", variables.Home(), "node")
-	bin          = variables.Prefix("node") + "/bin/node"
+	home         = filepath.Join(variables.Home(), "node")
+	bin          = filepath.Join(variables.Prefix("node"), "/bin/node")
 )
 
 type Node struct{}
@@ -27,10 +28,10 @@ type Node struct{}
 func (node Node) Install(version string) error {
 	var err error
 
-	base := fmt.Sprintf("%s/%s", home, version)
+	base := filepath.Join(home, version)
 
 	for _, file := range variables.Files {
-		from := fmt.Sprintf("%s/%s", base, file)
+		from := filepath.Join(base, file)
 		to := variables.Prefix("node")
 
 		// Some versions might not have certain files

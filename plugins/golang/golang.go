@@ -21,8 +21,8 @@ import (
 
 var (
 	VersionsLink = "https://storage.googleapis.com/golang"
-	home         = fmt.Sprintf("%s/%s", variables.Home(), "go")
-	bin          = variables.Prefix("go") + "/bin/go"
+	home         = filepath.Join(variables.Home(), "go")
+	bin          = filepath.Join(variables.Prefix("go"), "/bin/go")
 	files        = [8]string{"api", "bin", "lib", "misc", "pkg", "share", "src"}
 
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
@@ -33,7 +33,7 @@ type Golang struct{}
 func (golang Golang) Install(version string) error {
 	var err error
 
-	base := fmt.Sprintf("%s/%s", home, version)
+	base := filepath.Join(home, version)
 	to := filepath.Join(variables.Prefix("go"), "go")
 
 	files, err := ioutil.ReadDir(base)
@@ -52,7 +52,7 @@ func (golang Golang) Install(version string) error {
 
 	// Copy to GOROOT
 	for _, element := range files {
-		from := fmt.Sprintf("%s/%s", base, element.Name())
+		from := filepath.Join(base, element.Name())
 
 		err = cprf.Copy(from, to)
 		if err != nil {
@@ -62,7 +62,7 @@ func (golang Golang) Install(version string) error {
 
 	to = variables.Prefix("go")
 	for _, element := range variables.Files {
-		from := fmt.Sprintf("%s/%s", base, element)
+		from := filepath.Join(base, element)
 
 		// Some versions might not have certain files
 		if _, err := os.Stat(from); os.IsNotExist(err) {

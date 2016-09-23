@@ -66,7 +66,7 @@ func InLocalBin(path, local, name string) bool {
 			continue
 		}
 
-		bin := element + "/" + name
+		bin := filepath.Join(element, name)
 
 		// Compare executable positions in the $PATH, if specific binary is present
 		if _, err := os.Stat(bin); err == nil {
