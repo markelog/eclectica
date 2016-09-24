@@ -1,4 +1,3 @@
-version := $(shell go run ec/main.go version)
 
 all: install test
 .PHONY: all
@@ -19,6 +18,7 @@ build:
 .PHONY: build
 
 tag:
+	version := $(shell go run ec/main.go version)
 	@echo "[+] tagging"
 	@git tag v$(version) -a -m "Release v$(version)"
 .PHONY: tag
