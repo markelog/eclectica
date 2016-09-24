@@ -41,37 +41,6 @@ var _ = Describe("plugins", func() {
 		})
 	})
 
-	Describe("Activate", func() {
-		It("should call Extract then Install methods", func() {
-			result := ""
-
-			plugin := New("node", "5.0.0")
-			ptype := reflect.TypeOf(plugin)
-
-			var guardExtract *monkey.PatchGuard
-			guardExtract = monkey.PatchInstanceMethod(ptype, "Extract", func(*Plugin) error {
-				result += "Extract"
-
-				guardExtract.Unpatch()
-
-				return nil
-			})
-
-			var guardInstall *monkey.PatchGuard
-			guardInstall = monkey.PatchInstanceMethod(ptype, "Install", func(*Plugin) error {
-				result += "Install"
-
-				guardInstall.Unpatch()
-
-				return nil
-			})
-
-			plugin.Activate()
-
-			Expect(result).To(Equal("ExtractInstall"))
-		})
-	})
-
 	Describe("Extract", func() {
 		BeforeEach(func() {
 			path, _ = filepath.Abs("../testdata/plugins")

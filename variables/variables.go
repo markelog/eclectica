@@ -1,25 +1,32 @@
 package variables
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
 var (
-	Commands       = []string{"ls", "rm", "version", "init", "--help", "-h"}
-	Files          = [4]string{"bin", "lib", "include", "share"}
-	DefaultInstall = fmt.Sprintf("%s/.eclectica/install/go", os.Getenv("HOME"))
-	DefaultBins    = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
+	NonInstallCommands = []string{"ls", "rm", "version", "init", "--help", "-h"}
+	Files              = [4]string{"bin", "lib", "include", "share"}
+	DefaultInstall     = filepath.Join(os.Getenv("HOME"), ".eclectica/install")
+	DefaultBins        = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 )
 
 func Prefix(name string) string {
 	if ShouldBeLocalBin(name) {
-		return os.Getenv("HOME")
+		return filepath.Join(Home(), name)
 	}
 
-	return DefaultInstall
+	return filepath.Join(DefaultInstall, name)
+}
+
+func GetBin(name, version string) string {
+	if version == "" {
+		version = "current"
+	}
+
+	return filepath.Join(Home(), name, version, "bin", name)
 }
 
 func GetShellName() string {
@@ -30,7 +37,7 @@ func GetShellName() string {
 }
 
 func Home() string {
-	return fmt.Sprintf("%s/.eclectica/versions", os.Getenv("HOME"))
+	return filepath.Join(os.Getenv("HOME"), ".eclectica/versions")
 }
 
 func NeedToRestartShell(name string) bool {

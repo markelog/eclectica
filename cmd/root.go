@@ -12,6 +12,7 @@ import (
 )
 
 var isRemote bool
+var isLocal bool
 
 var RootCmd = &cobra.Command{
 	Use:     "eclectica",
@@ -26,7 +27,7 @@ func Execute() {
 	var err error
 	args := os.Args[1:]
 
-	if info.HasCommand(args) {
+	if info.NonInstallCommand(args) {
 		// Initialize cobra for other commands
 		if err := RootCmd.Execute(); err != nil {
 			os.Exit(1)
@@ -45,6 +46,7 @@ func Execute() {
 	}
 
 	pflag.BoolVarP(remoteInfo())
+	pflag.BoolVarP(localInfo())
 	pflag.Parse()
 
 	language, version := info.GetLanguage(args)
@@ -88,6 +90,18 @@ func Execute() {
 	os.Exit(1)
 }
 
+func conditionalInstall(plugin *plugins.Plugin) {
+	var err error
+
+	if isLocal {
+		err = plugin.LocalInstall()
+	} else {
+		err = plugin.Install()
+	}
+
+	print.Error(err)
+}
+
 func install(language, version string, err error) {
 	print.Error(err)
 
@@ -97,19 +111,24 @@ func install(language, version string, err error) {
 	print.Error(err)
 
 	if response == nil {
-		err = plugin.Install()
-		print.Error(err)
+		conditionalInstall(plugin)
 		return
 	}
 
 	print.Download(response, version)
 
-	err = plugin.Activate()
+	err = plugin.Extract()
 	print.Error(err)
+
+	conditionalInstall(plugin)
 }
 
 func remoteInfo() (*bool, string, string, bool, string) {
 	return &isRemote, "remote", "r", false, "Get remote versions"
+}
+
+func localInfo() (*bool, string, string, bool, string) {
+	return &isLocal, "local", "l", false, "Install local version"
 }
 
 func init() {

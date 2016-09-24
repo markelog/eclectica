@@ -68,7 +68,7 @@ func GetLanguage(args []string) (language, version string) {
 
 func GetCommand(args []string) string {
 	for _, element := range args {
-		for _, command := range variables.Commands {
+		for _, command := range variables.NonInstallCommands {
 			if command == element {
 				return command
 			}
@@ -90,6 +90,6 @@ func HasVersion(args []string) bool {
 	return version != ""
 }
 
-func HasCommand(args []string) bool {
+func NonInstallCommand(args []string) bool {
 	return GetCommand(args) != ""
 }

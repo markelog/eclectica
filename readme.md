@@ -12,7 +12,7 @@
 ## go get
 
 ```sh
-go get github.com/markelog/eclectica/ec
+go get github.com/markelog/eclectica/bin/{ec,ec-proxy}
 ```
 
 ## npm

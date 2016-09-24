@@ -49,21 +49,21 @@ var _ = Describe("info", func() {
 		})
 	})
 
-	Describe("HasCommand", func() {
+	Describe("NonInstallCommand", func() {
 		It("should detect command", func() {
-			hasCommand := info.HasCommand([]string{"-r", "ls"})
+			hasCommand := info.NonInstallCommand([]string{"-r", "ls"})
 
 			Expect(hasCommand).To(Equal(true))
 		})
 
 		It("should detect command in different sequence", func() {
-			hasCommand := info.HasCommand([]string{"ls", "-r"})
+			hasCommand := info.NonInstallCommand([]string{"ls", "-r"})
 
 			Expect(hasCommand).To(Equal(true))
 		})
 
 		It("should not detect command", func() {
-			hasCommand := info.HasCommand([]string{"-r", "rustc@1.2.3"})
+			hasCommand := info.NonInstallCommand([]string{"-r", "rustc@1.2.3"})
 
 			Expect(hasCommand).To(Equal(false))
 		})

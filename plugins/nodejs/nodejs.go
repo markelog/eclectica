@@ -50,7 +50,7 @@ func (node Node) Install(version string) error {
 }
 
 func (node Node) PostInstall() (bool, error) {
-	return true, nil
+	return false, nil
 }
 
 func (node Node) Info(version string) (map[string]string, error) {

@@ -15,7 +15,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/markelog/cprf"
 
-	"github.com/markelog/eclectica/directory"
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -45,7 +45,7 @@ func (golang Golang) Install(version string) error {
 	os.RemoveAll(to)
 
 	// Re-create GOROOT
-	_, err = directory.Create(to)
+	_, err = io.CreateDir(to)
 	if err != nil {
 		return err
 	}
