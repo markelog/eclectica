@@ -14,6 +14,7 @@ test:
 
 build:
 	@echo "[+] building"
+	@go get github.com/mitchellh/gox
 	@gox -osarch="darwin/amd64 linux/amd64" ./...
 .PHONY: build
 
