@@ -85,19 +85,27 @@ func New(args ...string) *Plugin {
 }
 
 func (plugin *Plugin) CreateProxy() (err error) {
-	folder, err := osext.ExecutableFolder()
-	if err != nil {
-		return
+	ecProxyFolder := os.Getenv("ECPROXYPLACE")
+
+	if ecProxyFolder == "" {
+		ecProxyFolder, err = osext.ExecutableFolder()
+		if err != nil {
+			return
+		}
 	}
 
-	executable := filepath.Join(folder, "ec-proxy")
+	executable := filepath.Join(ecProxyFolder, "ec-proxy")
 
 	_, err = os.Stat(executable)
 	if err != nil {
-		return
+		if os.IsNotExist(err) {
+			return errors.New("Can't find ec-proxy binary")
+		}
+
+		return err
 	}
 
-	languageExecutable := filepath.Join(folder, plugin.name)
+	languageExecutable := filepath.Join(ecProxyFolder, plugin.name)
 
 	err = cprf.Copy(executable, languageExecutable)
 	if err != nil {

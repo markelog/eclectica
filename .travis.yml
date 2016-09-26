@@ -8,5 +8,8 @@ before_install:
   - echo $PATH
   - echo $HOME
 
+test:
+  - make && make int-test
+
 go:
   - tip

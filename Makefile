@@ -12,6 +12,22 @@ test:
 	@go test -v ./...
 .PHONY: test
 
+int-test:
+	$(eval tmp := $(shell pwd)"/tmp")
+
+	@echo "[+] intergration testing"
+
+	@rm -rf $(tmp)
+	@mkdir $(tmp)
+
+	@go build -v ./bin/ec-proxy
+	@mv ec-proxy $(tmp)
+
+	@env ECPROXYPLACE=$(tmp) INT=true go test -v ./bin/ec
+	@rm -rf $(tmp)
+
+.PHONY: int-test
+
 build:
 	@echo "[+] building"
 	@go get github.com/mitchellh/gox
@@ -19,7 +35,7 @@ build:
 .PHONY: build
 
 tag:
-	version := $(shell go run ec/main.go version)
+	$(eval version := $(shell go run ec/main.go version))
 	@echo "[+] tagging"
 	@git tag v$(version) -a -m "Release v$(version)"
 .PHONY: tag
