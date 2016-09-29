@@ -22,6 +22,7 @@ var (
 	VersionsLink   = "https://rvm.io/binaries"
 	home           = filepath.Join(variables.Home(), "ruby")
 	bin            = filepath.Join(variables.Prefix("ruby"), "/bin/ruby")
+	Bins           = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
 	versionPattern = "\\d+\\.\\d+\\.\\d"
 )
 
@@ -79,6 +80,10 @@ func (ruby Ruby) Info(version string) (map[string]string, error) {
 	result["url"] = fmt.Sprintf("%s/%s.%s", getUrl(), result["filename"], result["extension"])
 
 	return result, nil
+}
+
+func (ruby Ruby) Bins() []string {
+	return Bins
 }
 
 func (ruby Ruby) Current() string {

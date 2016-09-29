@@ -17,8 +17,8 @@ var (
 	versionsLink = "https://static.rust-lang.org/dist"
 	listLink     = "https://static.rust-lang.org/dist/index.txt"
 
-	home = filepath.Join(variables.Home(), "rust")
-	bin  = variables.Prefix("rust") + "/bin/rustc"
+	home = variables.Prefix("rust")
+	Bins = []string{"cargo", "rust-gdb", "rustc", "rustdoc"}
 
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:-(alpha|beta)(?:\\.\\d*)?)?"
 )
@@ -27,7 +27,8 @@ type Rust struct{}
 
 func (rust Rust) Install(version string) error {
 	installer := fmt.Sprintf("%s/%s/%s", home, version, "install.sh")
-	_, err := exec.Command(installer, "--prefix="+variables.Prefix("rustc")).Output()
+	path := filepath.Join(variables.Path("rust", ""))
+	_, err := exec.Command(installer, "--prefix="+path).Output()
 
 	return err
 }
@@ -55,10 +56,14 @@ func (rust Rust) Info(version string) (map[string]string, error) {
 	return result, nil
 }
 
+func (rust Rust) Bins() []string {
+	return Bins
+}
+
 func (rust Rust) Current() string {
 	vp := regexp.MustCompile(versionPattern)
 
-	out, _ := exec.Command(bin, "--version").Output()
+	out, _ := exec.Command(variables.GetBin("rust", ""), "--version").Output()
 	version := strings.TrimSpace(string(out))
 	versionArr := vp.FindAllStringSubmatch(version, 1)
 	if len(versionArr) > 0 {

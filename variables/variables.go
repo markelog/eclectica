@@ -9,24 +9,39 @@ import (
 var (
 	NonInstallCommands = []string{"ls", "rm", "version", "init", "--help", "-h"}
 	Files              = [4]string{"bin", "lib", "include", "share"}
-	DefaultInstall     = filepath.Join(os.Getenv("HOME"), ".eclectica/install")
-	DefaultBins        = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
+	DefaultInstall     = filepath.Join(os.Getenv("HOME"), ".eclectica/bins")
 )
 
 func Prefix(name string) string {
-	if ShouldBeLocalBin(name) {
-		return filepath.Join(Home(), name)
-	}
-
-	return filepath.Join(DefaultInstall, name)
+	return filepath.Join(Home(), name)
 }
 
-func GetBin(name, version string) string {
+func ExecutablePath(name string) string {
+	if ShouldBeLocalBin(name) {
+		return os.Getenv("HOME")
+	}
+
+	return DefaultInstall
+}
+
+func Path(name, version string) string {
 	if version == "" {
 		version = "current"
 	}
 
-	return filepath.Join(Home(), name, version, "bin", name)
+	return filepath.Join(Home(), name, version)
+}
+
+func GetBin(name, version string) string {
+
+	// TODO: fix
+	if name == "rust" {
+		name = "rustc"
+	}
+
+	base := Path(name, version)
+
+	return filepath.Join(base, "bin", name)
 }
 
 func GetShellName() string {

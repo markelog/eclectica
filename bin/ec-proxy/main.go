@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -30,7 +31,7 @@ func getCmd(args []string) *exec.Cmd {
 
 func getVersion(path string) string {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return ""
+		return "current"
 	}
 
 	file, err := os.Open(path)
@@ -47,11 +48,14 @@ func getVersion(path string) string {
 		print.Error(err)
 	}
 
-	return ""
+	return "current"
 }
 
 func main() {
 	_, name := path.Split(os.Args[0])
+
+	language := plugins.SearchBin(name)
+	base := variables.Home()
 
 	pwd, err := os.Getwd()
 	print.Error(err)
@@ -59,7 +63,10 @@ func main() {
 	versionPath := filepath.Join(pwd, fmt.Sprintf(".%s-version", name))
 	version := getVersion(versionPath)
 
-	path := variables.GetBin(name, version)
+	path := filepath.Join(base, language, version, "bin", name)
+	// TODO: no such version error
+
+	fmt.Println(path)
 
 	args := []string{path}
 	args = append(args, os.Args[1:]...)

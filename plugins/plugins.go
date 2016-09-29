@@ -33,6 +33,7 @@ var (
 )
 
 type Pkg interface {
+	Bins() []string
 	Install(string) error
 	PostInstall() (bool, error)
 	ListRemote() ([]string, error)
@@ -84,6 +85,25 @@ func New(args ...string) *Plugin {
 	return plugin
 }
 
+func SearchBin(name string) string {
+	bins := map[string][]string{
+		"rust": rust.Bins,
+		"go":   golang.Bins,
+		"node": nodejs.Bins,
+		"ruby": ruby.Bins,
+	}
+
+	for language, _ := range bins {
+		for _, bin := range bins[language] {
+			if name == bin {
+				return language
+			}
+		}
+	}
+
+	return ""
+}
+
 func (plugin *Plugin) CreateProxy() (err error) {
 	ecProxyFolder := os.Getenv("ECPROXYPLACE")
 
@@ -105,26 +125,27 @@ func (plugin *Plugin) CreateProxy() (err error) {
 		return err
 	}
 
-	languageExecutable := filepath.Join(ecProxyFolder, plugin.name)
+	// TODO: fix, hack for rust
+	name := plugin.name
+	if name == "rust" {
+		name = "rustc"
+	}
 
-	err = cprf.Copy(executable, languageExecutable)
-	if err != nil {
-		return
+	bins := plugin.pkg.Bins()
+
+	for _, bin := range bins {
+		languageExecutable := filepath.Join(variables.ExecutablePath(name), "bin", bin)
+
+		err = cprf.Copy(executable, languageExecutable)
+		if err != nil {
+			return
+		}
 	}
 
 	return nil
 }
 
 func (plugin *Plugin) LocalInstall() error {
-	err := Initiate(plugin.name)
-	if err != nil {
-		return err
-	}
-
-	if plugin.version == "" {
-		return errors.New("Version was not defined")
-	}
-
 	pwd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -137,7 +158,7 @@ func (plugin *Plugin) LocalInstall() error {
 		return err
 	}
 
-	return nil
+	return plugin.Install()
 }
 
 func (plugin *Plugin) Install() error {
@@ -150,18 +171,11 @@ func (plugin *Plugin) Install() error {
 		return errors.New("Version was not defined")
 	}
 
-	base := variables.Prefix(plugin.name)
+	base := variables.Path(plugin.name, plugin.version)
 
 	_, err = io.CreateDir(base)
 	if err != nil {
 		return err
-	}
-
-	for _, file := range variables.Files {
-		_, err := io.CreateDir(filepath.Join(base, file))
-		if err != nil {
-			return err
-		}
 	}
 
 	err = plugin.pkg.Install(plugin.version)
@@ -173,14 +187,19 @@ func (plugin *Plugin) Install() error {
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
-	showMessage, err := plugin.pkg.PostInstall()
-	if err != nil {
-		return
-	}
+	currentPath := filepath.Join(variables.Prefix(plugin.name), "current")
+
+	os.RemoveAll(currentPath)
+	os.Symlink(variables.Path(plugin.name, plugin.version), currentPath)
 
 	err = plugin.CreateProxy()
 	if err != nil {
 		return err
+	}
+
+	showMessage, err := plugin.pkg.PostInstall()
+	if err != nil {
+		return
 	}
 
 	if showMessage && variables.NeedToRestartShell(plugin.name) {
@@ -233,7 +252,13 @@ func (plugin *Plugin) List() (versions []string, err error) {
 
 	folders, _ := ioutil.ReadDir(path)
 	for _, folder := range folders {
-		versions = append(versions, folder.Name())
+		name := folder.Name()
+
+		if name == "current" {
+			continue
+		}
+
+		versions = append(versions, name)
 	}
 
 	if len(versions) == 0 {
@@ -297,24 +322,41 @@ func (plugin *Plugin) Extract() error {
 		return errors.New("Version was not defined")
 	}
 
-	extractionPlace, err := io.CreateDir(filepath.Join(variables.Home(), plugin.name))
+	// Create something folder with path something like this – /home/user/.eclectica/versions/go
+	extractionPlace, err := io.CreateDir(variables.Prefix(plugin.name))
 	if err != nil {
 		return err
 	}
 
 	// Just in case archive was downloaded, but not extracted
-	// i.e. this issue comes up in the second run
+	// i.e. this issue comes up in the second run.
+	// Which means we will delete folder with path like this –
+	// /home/user/.eclectica/versions/go1.7.1.linux-amd64
 	os.RemoveAll(filepath.Join(extractionPlace, plugin.info["filename"]))
 
+	// Now we will extract archive from path something
+	// like this – /tmp/go1.7.1.linux-amd64.tar.gz
+	// to 				 /home/user/.eclectica/versions/go
+	//
+	// Which will give us folder with path like this –
+	// /home/user/.eclectica/versions/go/go1.7.1.linux-amd64.tar.gz
+	//
+	// or like this – /home/user/.eclectica/versions/go/go
+	//
+	// Depends under what name language devs archived their dist
 	err = archive.Extract(plugin.info["archive-path"], extractionPlace)
 	if err != nil {
 		return err
 	}
 
-	downloadPath := filepath.Join(extractionPlace, plugin.info["unarchive-filename"])
+	// Now we will need get path /home/user/.eclectica/versions/go/go1.7.1.linux-amd64.tar.gz
+	tmpPath := filepath.Join(extractionPlace, plugin.info["unarchive-filename"])
+
+	// And path like this – /home/user/.eclectica/versions/go/1.7.1
 	extractionPath := plugin.info["destination-folder"]
 
-	err = os.Rename(downloadPath, extractionPath)
+	// Then rename that `tmpPath` expected path
+	err = os.Rename(tmpPath, extractionPath)
 	if err != nil {
 		return err
 	}

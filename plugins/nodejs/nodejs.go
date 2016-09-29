@@ -21,6 +21,7 @@ var (
 	VersionsLink = "https://nodejs.org/dist"
 	home         = filepath.Join(variables.Home(), "node")
 	bin          = filepath.Join(variables.Prefix("node"), "/bin/node")
+	Bins         = []string{"node", "npm"}
 )
 
 type Node struct{}
@@ -62,6 +63,10 @@ func (node Node) Info(version string) (map[string]string, error) {
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 
 	return result, nil
+}
+
+func (node Node) Bins() []string {
+	return Bins
 }
 
 func (node Node) Current() string {

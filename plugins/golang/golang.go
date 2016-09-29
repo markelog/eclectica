@@ -3,9 +3,7 @@ package golang
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
@@ -13,16 +11,14 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/markelog/cprf"
 
-	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 )
 
 var (
 	VersionsLink = "https://storage.googleapis.com/golang"
-	home         = filepath.Join(variables.Home(), "go")
-	bin          = filepath.Join(variables.Prefix("go"), "/bin/go")
+	Bins         = []string{"go", "godoc", "gofmt"}
+	Bin          = filepath.Join(variables.Prefix("go"), "/bin/go")
 	files        = [8]string{"api", "bin", "lib", "misc", "pkg", "share", "src"}
 
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
@@ -31,50 +27,6 @@ var (
 type Golang struct{}
 
 func (golang Golang) Install(version string) error {
-	var err error
-
-	base := filepath.Join(home, version)
-	to := filepath.Join(variables.Prefix("go"), "go")
-
-	files, err := ioutil.ReadDir(base)
-	if err != nil {
-		return err
-	}
-
-	// Remove everything in GOROOT dir in case there was previous versions installed there
-	os.RemoveAll(to)
-
-	// Re-create GOROOT
-	_, err = io.CreateDir(to)
-	if err != nil {
-		return err
-	}
-
-	// Copy to GOROOT
-	for _, element := range files {
-		from := filepath.Join(base, element.Name())
-
-		err = cprf.Copy(from, to)
-		if err != nil {
-			return err
-		}
-	}
-
-	to = variables.Prefix("go")
-	for _, element := range variables.Files {
-		from := filepath.Join(base, element)
-
-		// Some versions might not have certain files
-		if _, err := os.Stat(from); os.IsNotExist(err) {
-			continue
-		}
-
-		err = cprf.Copy(from, to)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -98,9 +50,13 @@ func (golang Golang) Info(version string) (map[string]string, error) {
 	return result, nil
 }
 
+func (rust Golang) Bins() []string {
+	return Bins
+}
+
 func (golang Golang) Current() string {
 	rVersion := regexp.MustCompile(versionPattern)
-	out, _ := exec.Command(bin, "version").Output()
+	out, _ := exec.Command(variables.GetBin("go", ""), "version").Output()
 	version := strings.TrimSpace(string(out))
 
 	testVersion := rVersion.FindAllStringSubmatch(version, 1)
