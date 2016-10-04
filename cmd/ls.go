@@ -2,14 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/fatih/color"
-	"github.com/markelog/curse"
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/list"
 
+	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
 )
@@ -62,37 +61,10 @@ func listLocal() {
 }
 
 func listRemoteVersions(language string) {
-	plugin := plugins.New(language)
-	c, _ := curse.New()
-
-	prefix := func() {
-		c.MoveUp(1)
-		c.EraseCurrentLine()
-		print.InStyle("Language", language)
-	}
-
-	postfix := func() {
-		fmt.Println()
-		time.Sleep(200 * time.Millisecond)
-	}
-
-	s := &print.Spinner{
-		Before:  func() { time.Sleep(500 * time.Millisecond) },
-		After:   func() { fmt.Println() },
-		Prefix:  prefix,
-		Postfix: postfix,
-	}
-
-	s.Start()
-	remoteList, err := plugin.ListRemote()
-	s.Stop()
-
+	versions, err := info.AskRemoteVersions(language)
 	print.Error(err)
 
-	mask := list.GetWith("Mask", plugins.GetKeys(remoteList))
-	versions := plugins.GetElements(mask, remoteList)
-	current := plugin.Current()
-
+	current := plugins.New(language).Current()
 	listVersions(versions, current)
 }
 

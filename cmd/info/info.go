@@ -1,10 +1,14 @@
 package info
 
 import (
+	"fmt"
 	"strings"
+	"time"
 
+	"github.com/markelog/curse"
 	"github.com/markelog/list"
 
+	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/variables"
 )
@@ -34,14 +38,49 @@ func AskRemote() (language, version string, err error) {
 	return
 }
 
-func AskRemoteVersion(language string) (version string, err error) {
-	remoteList, err := plugins.New(language).ListRemote()
+func AskRemoteVersions(language string) (versions []string, err error) {
+	plugin := plugins.New(language)
+	c, _ := curse.New()
+
+	prefix := func() {
+		c.MoveUp(1)
+		c.EraseCurrentLine()
+		print.InStyle("Language", language)
+	}
+
+	postfix := func() {
+		fmt.Println()
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	s := &print.Spinner{
+		Before:  func() { time.Sleep(500 * time.Millisecond) },
+		After:   func() { fmt.Println() },
+		Prefix:  prefix,
+		Postfix: postfix,
+	}
+
+	s.Start()
+	remoteList, err := plugin.ListRemote()
+	s.Stop()
+
 	if err != nil {
 		return
 	}
 
 	key := list.GetWith("Mask", plugins.GetKeys(remoteList))
-	versions := plugins.GetElements(key, remoteList)
+	versions = plugins.GetElements(key, remoteList)
+
+	return
+}
+
+func AskRemoteVersion(language string) (version string, err error) {
+	versions, err := AskRemoteVersions(language)
+
+	if err != nil {
+		return
+	}
+
 	version = list.GetWith("Version", versions)
 
 	return
