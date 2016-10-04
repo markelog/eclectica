@@ -29,7 +29,7 @@ func (node Node) Environment(version string) (string, error) {
 	return "", nil
 }
 
-func (node Node) PostInstall() (bool, error) {
+func (node Node) PostInstall(version string) (bool, error) {
 	return false, nil
 }
 

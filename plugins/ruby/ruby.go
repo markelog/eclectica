@@ -71,7 +71,7 @@ func removeRVMArtefacts(base string) {
 	}
 }
 
-func (ruby Ruby) PostInstall() (bool, error) {
+func (ruby Ruby) PostInstall(version string) (bool, error) {
 	return dealWithShell()
 }
 

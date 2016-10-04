@@ -3,7 +3,6 @@ package plugins
 import (
 	"path/filepath"
 
-	// "github.com/markelog/eclectica/console"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/rc"
 	"github.com/markelog/eclectica/variables"

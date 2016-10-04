@@ -3,6 +3,7 @@ package rust
 import (
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
@@ -26,14 +27,36 @@ var (
 type Rust struct{}
 
 func (rust Rust) Install(version string) error {
-	installer := fmt.Sprintf("%s/%s/%s", home, version, "install.sh")
-	path := filepath.Join(variables.Path("rust", version))
+	pathPart := variables.Path("rust", version)
+
+	installer := filepath.Join(pathPart, "install.sh")
+	path := filepath.Join(pathPart, "..", "tmp")
+
 	_, err := exec.Command(installer, "--prefix="+path).Output()
 
 	return err
 }
 
-func (rust Rust) PostInstall() (bool, error) {
+func (rust Rust) PostInstall(version string) (bool, error) {
+	path := variables.Path("rust", version)
+
+	err := os.RemoveAll(path)
+	if err != nil {
+		return false, err
+	}
+
+	tmp := filepath.Join(path, "..", "tmp")
+
+	err = os.Rename(tmp, path)
+	if err != nil {
+		return false, err
+	}
+
+	err = os.RemoveAll(tmp)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -62,8 +85,8 @@ func (rust Rust) Bins() []string {
 
 func (rust Rust) Current() string {
 	vp := regexp.MustCompile(versionPattern)
-
 	out, _ := exec.Command(variables.GetBin("rust", ""), "--version").Output()
+
 	version := strings.TrimSpace(string(out))
 	versionArr := vp.FindAllStringSubmatch(version, 1)
 	if len(versionArr) > 0 {

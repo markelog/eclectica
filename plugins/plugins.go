@@ -38,7 +38,7 @@ type Pkg interface {
 	Bins() []string
 	Install(string) error
 	Environment(string) (string, error)
-	PostInstall() (bool, error)
+	PostInstall(string) (bool, error)
 	ListRemote() ([]string, error)
 	Info(string) (map[string]string, error)
 	Current() string
@@ -202,7 +202,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return err
 	}
 
-	showMessage, err := plugin.Pkg.PostInstall()
+	showMessage, err := plugin.Pkg.PostInstall(plugin.version)
 	if err != nil {
 		return
 	}
