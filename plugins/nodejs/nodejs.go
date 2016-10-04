@@ -4,50 +4,29 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/markelog/cprf"
 
 	"github.com/markelog/eclectica/variables"
 )
 
 var (
 	VersionsLink = "https://nodejs.org/dist"
-	home         = filepath.Join(variables.Home(), "node")
-	bin          = filepath.Join(variables.Prefix("node"), "/bin/node")
 	Bins         = []string{"node", "npm"}
 )
 
 type Node struct{}
 
 func (node Node) Install(version string) error {
-	var err error
-
-	base := filepath.Join(home, version)
-
-	for _, file := range variables.Files {
-		from := filepath.Join(base, file)
-		to := variables.Prefix("node")
-
-		// Some versions might not have certain files
-		if _, err := os.Stat(from); os.IsNotExist(err) {
-			continue
-		}
-
-		err = cprf.Copy(from, to)
-
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
+}
+
+func (node Node) Environment(version string) (string, error) {
+	return "", nil
 }
 
 func (node Node) PostInstall() (bool, error) {
@@ -70,6 +49,7 @@ func (node Node) Bins() []string {
 }
 
 func (node Node) Current() string {
+	bin := variables.GetBin("node", "")
 	out, _ := exec.Command(bin, "--version").Output()
 	version := strings.TrimSpace(string(out))
 

@@ -1,30 +1,34 @@
 package plugins
 
 import (
-	"fmt"
+	"path/filepath"
 
+	// "github.com/markelog/eclectica/console"
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/rc"
 	"github.com/markelog/eclectica/variables"
 )
 
-var (
-	command = `
-# Eclectic stuff
-export PATH=%s/bin:$PATH
-export ECLECTICA=true
-`
-)
+func composeCommand(languages []string) string {
+	result := "# Eclectic stuff\n"
 
-func Initiate(name string) (err error) {
-	command := fmt.Sprintf(command, variables.DefaultInstall)
-
-	if name == "rust" {
-		name = "rustc"
+	for _, language := range languages {
+		result += "export PATH=" +
+			filepath.Join(variables.Home(), language, "current/bin") + ":$PATH\n"
 	}
 
-	if variables.ShouldBeLocalBin(name) {
-		return
+	result += "export PATH=" + variables.DefaultInstall + ":$PATH\n"
+
+	return result
+}
+
+func Initiate(languages []string) (err error) {
+	_, err = io.CreateDir(variables.DefaultInstall)
+	if err != nil {
+		return err
 	}
+
+	command := composeCommand(languages)
 
 	return rc.New(command).Add()
 }

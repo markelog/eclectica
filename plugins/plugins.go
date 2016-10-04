@@ -7,12 +7,14 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/kardianos/osext"
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"
 
+	"github.com/markelog/eclectica/console"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 
@@ -35,6 +37,7 @@ var (
 type Pkg interface {
 	Bins() []string
 	Install(string) error
+	Environment(string) (string, error)
 	PostInstall() (bool, error)
 	ListRemote() ([]string, error)
 	Info(string) (map[string]string, error)
@@ -44,7 +47,7 @@ type Pkg interface {
 type Plugin struct {
 	name    string
 	version string
-	pkg     Pkg
+	Pkg     Pkg
 	info    map[string]string
 }
 
@@ -75,7 +78,7 @@ func New(args ...string) *Plugin {
 		pkg = &golang.Golang{}
 	}
 
-	plugin.pkg = pkg
+	plugin.Pkg = pkg
 
 	if len(args) == 2 {
 		info, _ := plugin.Info()
@@ -105,7 +108,7 @@ func SearchBin(name string) string {
 }
 
 func (plugin *Plugin) CreateProxy() (err error) {
-	ecProxyFolder := os.Getenv("ECPROXYPLACE")
+	ecProxyFolder := os.Getenv("EC_PROXY_PLACE")
 
 	if ecProxyFolder == "" {
 		ecProxyFolder, err = osext.ExecutableFolder()
@@ -131,10 +134,10 @@ func (plugin *Plugin) CreateProxy() (err error) {
 		name = "rustc"
 	}
 
-	bins := plugin.pkg.Bins()
+	bins := plugin.Pkg.Bins()
 
 	for _, bin := range bins {
-		languageExecutable := filepath.Join(variables.ExecutablePath(name), "bin", bin)
+		languageExecutable := filepath.Join(variables.ExecutablePath(name), bin)
 
 		err = cprf.Copy(executable, languageExecutable)
 		if err != nil {
@@ -162,13 +165,13 @@ func (plugin *Plugin) LocalInstall() error {
 }
 
 func (plugin *Plugin) Install() error {
-	err := Initiate(plugin.name)
-	if err != nil {
-		return err
-	}
-
 	if plugin.version == "" {
 		return errors.New("Version was not defined")
+	}
+
+	err := Initiate(Plugins)
+	if err != nil {
+		return err
 	}
 
 	base := variables.Path(plugin.name, plugin.version)
@@ -178,7 +181,10 @@ func (plugin *Plugin) Install() error {
 		return err
 	}
 
-	err = plugin.pkg.Install(plugin.version)
+	currentPath := filepath.Join(variables.Prefix(plugin.name), "current")
+	os.RemoveAll(currentPath)
+
+	err = plugin.Pkg.Install(plugin.version)
 	if err != nil {
 		return err
 	}
@@ -189,7 +195,6 @@ func (plugin *Plugin) Install() error {
 func (plugin *Plugin) PostInstall() (err error) {
 	currentPath := filepath.Join(variables.Prefix(plugin.name), "current")
 
-	os.RemoveAll(currentPath)
 	os.Symlink(variables.Path(plugin.name, plugin.version), currentPath)
 
 	err = plugin.CreateProxy()
@@ -197,13 +202,17 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return err
 	}
 
-	showMessage, err := plugin.pkg.PostInstall()
+	showMessage, err := plugin.Pkg.PostInstall()
 	if err != nil {
 		return
 	}
 
 	if showMessage && variables.NeedToRestartShell(plugin.name) {
 		printShellMessage(plugin.name)
+	}
+
+	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
+		console.Shell()
 	}
 
 	return
@@ -214,7 +223,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 		return nil, errors.New("Version was not defined")
 	}
 
-	info, err := plugin.pkg.Info(plugin.version)
+	info, err := plugin.Pkg.Info(plugin.version)
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +252,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 }
 
 func (plugin *Plugin) Current() string {
-	return plugin.pkg.Current()
+	return plugin.Pkg.Current()
 }
 
 func (plugin *Plugin) List() (versions []string, err error) {
@@ -269,7 +278,7 @@ func (plugin *Plugin) List() (versions []string, err error) {
 }
 
 func (plugin *Plugin) ListRemote() (map[string][]string, error) {
-	versions, err := plugin.pkg.ListRemote()
+	versions, err := plugin.Pkg.ListRemote()
 
 	if err != nil {
 		return nil, err

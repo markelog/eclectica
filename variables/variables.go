@@ -9,7 +9,7 @@ import (
 var (
 	NonInstallCommands = []string{"ls", "rm", "version", "init", "--help", "-h"}
 	Files              = [4]string{"bin", "lib", "include", "share"}
-	DefaultInstall     = filepath.Join(os.Getenv("HOME"), ".eclectica/bins")
+	DefaultInstall     = filepath.Join(os.Getenv("HOME"), ".eclectica/bin")
 )
 
 func Prefix(name string) string {
@@ -17,10 +17,6 @@ func Prefix(name string) string {
 }
 
 func ExecutablePath(name string) string {
-	if ShouldBeLocalBin(name) {
-		return os.Getenv("HOME")
-	}
-
 	return DefaultInstall
 }
 

@@ -1,2 +1,4 @@
 # Ignore binaries
 ec_*
+/bin/ec/ec
+/bin/ec-proxy/ec-proxy

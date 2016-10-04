@@ -30,6 +30,10 @@ func (golang Golang) Install(version string) error {
 	return nil
 }
 
+func (golang Golang) Environment(version string) (string, error) {
+	return "GOROOT=" + filepath.Join(variables.Home(), "go", version), nil
+}
+
 func (golang Golang) PostInstall() (bool, error) {
 	return dealWithRc()
 }

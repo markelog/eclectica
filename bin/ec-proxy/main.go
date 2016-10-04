@@ -2,31 +2,33 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
-	"reflect"
-	"syscall"
 
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/console"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/variables"
 )
 
-func getCmd(args []string) *exec.Cmd {
-	fn := reflect.ValueOf(exec.Command)
-	rargs := make([]reflect.Value, len(args))
+func setCmd(cmd *exec.Cmd, name, version string) {
+	plugin := plugins.New(name)
 
-	for i, a := range args {
-		rargs[i] = reflect.ValueOf(a)
-	}
+	environment, err := plugin.Pkg.Environment(version)
+	print.Error(err)
 
-	cmd := fn.Call(rargs)[0].Interface().(*exec.Cmd)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	env := os.Environ()
+	env = append(env, environment)
 
-	return cmd
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	cmd.Env = env
 }
 
 func getVersion(path string) string {
@@ -63,19 +65,20 @@ func main() {
 	versionPath := filepath.Join(pwd, fmt.Sprintf(".%s-version", name))
 	version := getVersion(versionPath)
 
-	path := filepath.Join(base, language, version, "bin", name)
-	// TODO: no such version error
+	pathPart := filepath.Join(base, language, version)
+	path := filepath.Join(pathPart, "bin", name)
 
-	fmt.Println(path)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err = errors.New("Version " + version + " has not been established")
+		print.Error(err)
+	}
 
 	args := []string{path}
 	args = append(args, os.Args[1:]...)
 
-	cmd := getCmd(args)
+	cmd := console.Get(args)
 
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
+	setCmd(cmd, language, version)
 
 	cmd.Run()
 }

@@ -28,6 +28,10 @@ var (
 
 type Ruby struct{}
 
+func (ruby Ruby) Environment(version string) (string, error) {
+	return "", nil
+}
+
 func (ruby Ruby) Install(version string) error {
 	var err error
 	rVersion := regexp.MustCompile(versionPattern)

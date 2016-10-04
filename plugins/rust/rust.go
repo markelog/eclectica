@@ -27,7 +27,7 @@ type Rust struct{}
 
 func (rust Rust) Install(version string) error {
 	installer := fmt.Sprintf("%s/%s/%s", home, version, "install.sh")
-	path := filepath.Join(variables.Path("rust", ""))
+	path := filepath.Join(variables.Path("rust", version))
 	_, err := exec.Command(installer, "--prefix="+path).Output()
 
 	return err
@@ -71,6 +71,10 @@ func (rust Rust) Current() string {
 	}
 
 	return strings.Replace(version, "v", "", 1)
+}
+
+func (rust Rust) Environment(version string) (string, error) {
+	return "", nil
 }
 
 func (rust Rust) ListRemote() ([]string, error) {
