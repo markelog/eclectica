@@ -8,8 +8,11 @@ before_install:
   - echo $PATH
   - echo $HOME
 
+install:
+  - make install
+
 test:
-  - make && make int-test
+  - travis_wait make test && make int-test
 
 go:
   - tip
