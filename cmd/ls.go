@@ -10,6 +10,7 @@ import (
 
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
 )
 
@@ -50,7 +51,14 @@ func listLocalVersions(language string) {
 	versions, err := plugin.List()
 	print.Error(err)
 
-	current := plugin.Current()
+	current, err := io.GetVersion(language)
+	print.Error(err)
+
+	// In case we could find `.<language>-version` file i.e. there is no local version
+	if current == "current" || current == "" {
+		current = plugin.Current()
+	}
+
 	listVersions(versions, current)
 }
 

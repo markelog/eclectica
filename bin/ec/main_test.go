@@ -16,6 +16,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
 )
 
@@ -229,6 +230,23 @@ var _ = Describe("main", func() {
 			Expect(strings.Contains(string(command), "♥ 1.9.0")).To(Equal(true))
 		})
 
+		It("should use local version", func() {
+			pwd, _ := os.Getwd()
+			versionFile := filepath.Join(filepath.Dir(pwd), ".rust-version")
+
+			Execute("go", "run", path, "rust@1.9.0")
+
+			io.WriteFile(versionFile, "1.8.0")
+
+			command, _ := Command("go", "run", path, "ls", "rust").Output()
+
+			Expect(strings.Contains(string(command), "♥ 1.8.0")).To(Equal(true))
+
+			err := os.RemoveAll(versionFile)
+
+			Expect(err).To(BeNil())
+		})
+
 		It("should list installed rust versions", func() {
 			Execute("go", "run", path, "rust@1.9.0")
 			command, _ := Command("go", "run", path, "ls", "rust").Output()
@@ -271,6 +289,30 @@ var _ = Describe("main", func() {
 
 			Execute("go", "run", path, "rm", "node@6.4.0")
 			fmt.Println("Removed")
+		})
+
+		It("should use local version", func() {
+			pwd, _ := os.Getwd()
+			versionFile := filepath.Join(filepath.Dir(pwd), ".node-version")
+
+			Execute("go", "run", path, "node@6.4.0")
+
+			io.WriteFile(versionFile, "5.1.0")
+
+			command, _ := Command("go", "run", path, "ls", "node").Output()
+
+			Expect(strings.Contains(string(command), "♥ 5.1.0")).To(Equal(true))
+
+			err := os.RemoveAll(versionFile)
+
+			Expect(err).To(BeNil())
+		})
+
+		It("should install node 6.4.0", func() {
+			Execute("go", "run", path, "node@6.4.0")
+			command, _ := Command("go", "run", path, "ls", "node").Output()
+
+			Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
 		})
 
 		It("should install node 6.4.0", func() {
@@ -322,6 +364,23 @@ var _ = Describe("main", func() {
 			fmt.Println("Removing ruby@2.2.1")
 			Execute("go", "run", path, "rm", "ruby@2.2.1")
 			fmt.Println("Removed")
+		})
+
+		It("should use local version", func() {
+			pwd, _ := os.Getwd()
+			versionFile := filepath.Join(filepath.Dir(pwd), ".ruby-version")
+
+			Execute("go", "run", path, "ruby@2.2.1")
+
+			io.WriteFile(versionFile, "2.1.5")
+
+			command, _ := Command("go", "run", path, "ls", "ruby").Output()
+
+			Expect(strings.Contains(string(command), "♥ 2.1.5")).To(Equal(true))
+
+			err := os.RemoveAll(versionFile)
+
+			Expect(err).To(BeNil())
 		})
 
 		It("should install ruby 2.2.1", func() {
@@ -401,6 +460,23 @@ var _ = Describe("main", func() {
 			command, _ := Command("go", "run", path, "ls", "go").Output()
 
 			Expect(strings.Contains(string(command), "1.7")).To(Equal(true))
+		})
+
+		It("should use local version", func() {
+			pwd, _ := os.Getwd()
+			versionFile := filepath.Join(filepath.Dir(pwd), ".go-version")
+
+			Execute("go", "run", path, "go@1.7")
+
+			io.WriteFile(versionFile, "1.6")
+
+			command, _ := Command("go", "run", path, "ls", "go").Output()
+
+			Expect(strings.Contains(string(command), "♥ 1.6")).To(Equal(true))
+
+			err := os.RemoveAll(versionFile)
+
+			Expect(err).To(BeNil())
 		})
 
 		It("should list remote go versions", func() {
