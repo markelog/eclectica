@@ -2,7 +2,9 @@ package rust_test
 
 import (
 	"io/ioutil"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 
@@ -11,6 +13,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/rust"
 	"github.com/markelog/eclectica/variables"
 )
@@ -23,19 +26,28 @@ func Read(path string) string {
 
 var _ = Describe("rust", func() {
 	var (
-		remotes []string
-		err     error
-		rust    *Rust
+		remotes     []string
+		err         error
+		rust        *Rust
+		version     = "1.0.0"
+		path, _     = filepath.Abs("../testdata/plugins/versions/")
+		versionPath = filepath.Join(path, "rust", version)
 	)
 
 	BeforeEach(func() {
 		rust = &Rust{}
 	})
 
+	AfterEach(func() {
+		os.RemoveAll(versionPath)
+	})
+
 	Describe("Install", func() {
 		It("should call install script with right arguments", func() {
 			program := ""
 			firstArg := ""
+
+			io.CreateDir(versionPath)
 
 			monkey.Patch(exec.Command, func(name string, arg ...string) *exec.Cmd {
 				program = name
@@ -44,10 +56,14 @@ var _ = Describe("rust", func() {
 				return &exec.Cmd{}
 			})
 
-			rust.Install("1.0.0")
+			monkey.Patch(variables.Home, func() string {
+				return path
+			})
 
-			Expect(program).To(ContainSubstring("versions/rust/1.0.0/install.sh"))
-			Expect(firstArg).To(Equal("--prefix=" + variables.Prefix("rustc")))
+			rust.Install(version)
+
+			Expect(program).To(ContainSubstring("versions/rust/" + version + "/source/install.sh"))
+			Expect(firstArg).To(Equal("--prefix=" + variables.Path("rust", version)))
 
 			monkey.Unpatch(exec.Command)
 		})
