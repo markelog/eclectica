@@ -18,13 +18,11 @@ import (
 )
 
 var (
-	versionsLink = "https://static.rust-lang.org/dist"
-	listLink     = "https://static.rust-lang.org/dist/index.txt"
-
-	home = variables.Prefix("rust")
-	Bins = []string{"cargo", "rust-gdb", "rustc", "rustdoc"}
-
+	listLink       = "https://static.rust-lang.org/dist/index.txt"
+	versionsLink   = "https://static.rust-lang.org/dist"
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:-(alpha|beta)(?:\\.\\d*)?)?"
+
+	bins = []string{"cargo", "rust-gdb", "rustc", "rustdoc"}
 )
 
 type Rust struct{}
@@ -57,8 +55,8 @@ func (rust Rust) Install(version string) error {
 	return err
 }
 
-func (rust Rust) PostInstall(version string) (bool, error) {
-	return false, nil
+func (rust Rust) PostInstall(version string) error {
+	return nil
 }
 
 func (rust Rust) Info(version string) (map[string]string, error) {
@@ -81,7 +79,7 @@ func (rust Rust) Info(version string) (map[string]string, error) {
 }
 
 func (rust Rust) Bins() []string {
-	return Bins
+	return bins
 }
 
 func (rust Rust) Current() string {

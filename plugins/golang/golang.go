@@ -16,12 +16,10 @@ import (
 )
 
 var (
-	VersionsLink = "https://storage.googleapis.com/golang"
-	Bins         = []string{"go", "godoc", "gofmt"}
-	Bin          = filepath.Join(variables.Prefix("go"), "/bin/go")
-	files        = [8]string{"api", "bin", "lib", "misc", "pkg", "share", "src"}
-
+	VersionsLink   = "https://storage.googleapis.com/golang"
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
+
+	bins = []string{"go", "godoc", "gofmt"}
 )
 
 type Golang struct{}
@@ -34,8 +32,8 @@ func (golang Golang) Environment(version string) (string, error) {
 	return "GOROOT=" + filepath.Join(variables.Home(), "go", version), nil
 }
 
-func (golang Golang) PostInstall(version string) (bool, error) {
-	return false, nil
+func (golang Golang) PostInstall(version string) error {
+	return nil
 }
 
 func (golang Golang) Info(version string) (map[string]string, error) {
@@ -55,7 +53,7 @@ func (golang Golang) Info(version string) (map[string]string, error) {
 }
 
 func (rust Golang) Bins() []string {
-	return Bins
+	return bins
 }
 
 func (golang Golang) Current() string {

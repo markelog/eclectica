@@ -38,7 +38,7 @@ type Pkg interface {
 	Bins() []string
 	Install(string) error
 	Environment(string) (string, error)
-	PostInstall(string) (bool, error)
+	PostInstall(string) error
 	ListRemote() ([]string, error)
 	Info(string) (map[string]string, error)
 	Current() string
@@ -90,10 +90,10 @@ func New(args ...string) *Plugin {
 
 func SearchBin(name string) string {
 	bins := map[string][]string{
-		"rust": rust.Bins,
-		"go":   golang.Bins,
-		"node": nodejs.Bins,
-		"ruby": ruby.Bins,
+		"rust": New("rust").Bins(),
+		"go":   New("go").Bins(),
+		"node": New("node").Bins(),
+		"ruby": New("node").Bins(),
 	}
 
 	for language, _ := range bins {
@@ -105,6 +105,10 @@ func SearchBin(name string) string {
 	}
 
 	return ""
+}
+
+func (plugin *Plugin) Bins() []string {
+	return plugin.Pkg.Bins()
 }
 
 func (plugin *Plugin) CreateProxy() (err error) {
@@ -137,7 +141,7 @@ func (plugin *Plugin) CreateProxy() (err error) {
 	bins := plugin.Pkg.Bins()
 
 	for _, bin := range bins {
-		languageExecutable := filepath.Join(variables.ExecutablePath(name), bin)
+		languageExecutable := filepath.Join(variables.DefaultInstall, bin)
 
 		err = cprf.Copy(executable, languageExecutable)
 		if err != nil {
@@ -202,13 +206,9 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return err
 	}
 
-	showMessage, err := plugin.Pkg.PostInstall(plugin.version)
+	err = plugin.Pkg.PostInstall(plugin.version)
 	if err != nil {
 		return
-	}
-
-	if showMessage {
-		printShellMessage(plugin.name)
 	}
 
 	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {

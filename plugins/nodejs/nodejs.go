@@ -16,7 +16,8 @@ import (
 
 var (
 	VersionsLink = "https://nodejs.org/dist"
-	Bins         = []string{"node", "npm"}
+
+	bins = []string{"node", "npm"}
 )
 
 type Node struct{}
@@ -29,8 +30,8 @@ func (node Node) Environment(version string) (string, error) {
 	return "", nil
 }
 
-func (node Node) PostInstall(version string) (bool, error) {
-	return false, nil
+func (node Node) PostInstall(version string) error {
+	return nil
 }
 
 func (node Node) Info(version string) (map[string]string, error) {
@@ -45,7 +46,7 @@ func (node Node) Info(version string) (map[string]string, error) {
 }
 
 func (node Node) Bins() []string {
-	return Bins
+	return bins
 }
 
 func (node Node) Current() string {

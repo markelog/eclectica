@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/markelog/cprf"
 	"github.com/markelog/release"
 
 	"github.com/markelog/eclectica/variables"
@@ -20,10 +19,9 @@ import (
 
 var (
 	VersionsLink   = "https://rvm.io/binaries"
-	home           = filepath.Join(variables.Home(), "ruby")
-	bin            = filepath.Join(variables.Prefix("ruby"), "/bin/ruby")
-	Bins           = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
 	versionPattern = "\\d+\\.\\d+\\.\\d"
+
+	bins = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
 )
 
 type Ruby struct{}
@@ -33,25 +31,17 @@ func (ruby Ruby) Environment(version string) (string, error) {
 }
 
 func (ruby Ruby) Install(version string) error {
-	var err error
-	rVersion := regexp.MustCompile(versionPattern)
-	version = rVersion.FindAllStringSubmatch(version, 1)[0][0]
+	return removeRVMArtefacts(variables.Path("ruby", version))
+}
 
-	base := filepath.Join(home, version)
+// Removes RVM artefacts (ignore errors)
+func removeRVMArtefacts(base string) error {
+	gems := filepath.Join(base, "lib/ruby/gems")
 
-	removeRVMArtefacts(base)
-
-	for _, file := range variables.Files {
-		from := filepath.Join(base, file)
-		to := variables.Prefix("ruby")
-
-		// Some versions might not have certain files
-		if _, statError := os.Stat(from); os.IsNotExist(statError) {
-			continue
-		}
-
-		err = cprf.Copy(from, to)
-
+	// Remove `cache` folder since it supposed to work with RVM cache
+	folders, _ := ioutil.ReadDir(gems)
+	for _, folder := range folders {
+		err := os.Remove(filepath.Join(gems, folder.Name(), "cache"))
 		if err != nil {
 			return err
 		}
@@ -60,18 +50,7 @@ func (ruby Ruby) Install(version string) error {
 	return nil
 }
 
-// Removes RVM artefacts (ignore errors)
-func removeRVMArtefacts(base string) {
-	gems := filepath.Join(base, "lib/ruby/gems")
-
-	// Remove `cache` folder since it supposed to work with RVM cache
-	folders, _ := ioutil.ReadDir(gems)
-	for _, folder := range folders {
-		os.Remove(filepath.Join(gems, folder.Name(), "cache"))
-	}
-}
-
-func (ruby Ruby) PostInstall(version string) (bool, error) {
+func (ruby Ruby) PostInstall(version string) error {
 	return dealWithShell()
 }
 
@@ -87,10 +66,11 @@ func (ruby Ruby) Info(version string) (map[string]string, error) {
 }
 
 func (ruby Ruby) Bins() []string {
-	return Bins
+	return bins
 }
 
 func (ruby Ruby) Current() string {
+	bin := variables.GetBin("ruby", "")
 	out, _ := exec.Command(bin, "--version").Output()
 	version := strings.TrimSpace(string(out))
 

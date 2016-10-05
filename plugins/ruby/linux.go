@@ -42,15 +42,15 @@ func checkDependencies() (has bool, deps []string, err error) {
 	return
 }
 
-func dealWithShell() (bool, error) {
+func dealWithShell() error {
 	has, deps, err := checkDependencies()
 
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if has == false {
-		return true, nil
+		return nil
 	}
 
 	start := `Ruby has been installed, but it requires global dependencies which weren't found on your system,
@@ -61,5 +61,5 @@ func dealWithShell() (bool, error) {
 
 	print.PostInstall(start, middle, end, command)
 
-	return false, nil
+	return nil
 }
