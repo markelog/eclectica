@@ -207,7 +207,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return
 	}
 
-	if showMessage && variables.NeedToRestartShell(plugin.name) {
+	if showMessage {
 		printShellMessage(plugin.name)
 	}
 
@@ -234,6 +234,10 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 		tmpDir += "/"
 	}
 
+	if _, ok := info["name"]; ok == false {
+		info["name"] = plugin.name
+	}
+
 	if _, ok := info["extension"]; ok == false {
 		info["extension"] = "tar.gz"
 	}
@@ -242,11 +246,17 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 		info["unarchive-filename"] = info["filename"]
 	}
 
-	info["name"] = plugin.name
-	info["archive-folder"] = tmpDir
-	info["archive-path"] = fmt.Sprintf("%s%s.%s", info["archive-folder"], info["filename"], info["extension"])
+	if _, ok := info["destination-folder"]; ok == false {
+		info["destination-folder"] = filepath.Join(variables.Home(), plugin.name, plugin.version)
+	}
 
-	info["destination-folder"] = filepath.Join(variables.Home(), plugin.name, plugin.version)
+	if _, ok := info["archive-folder"]; ok == false {
+		info["archive-folder"] = tmpDir
+	}
+
+	if _, ok := info["archive-path"]; ok == false {
+		info["archive-path"] = fmt.Sprintf("%s%s.%s", info["archive-folder"], info["filename"], info["extension"])
+	}
 
 	return info, nil
 }
@@ -363,6 +373,10 @@ func (plugin *Plugin) Extract() error {
 
 	// And path like this – /home/user/.eclectica/versions/go/1.7.1
 	extractionPath := plugin.info["destination-folder"]
+
+	// In case user extracts already extracted version.
+	// We will do this all over again
+	os.RemoveAll(extractionPath)
 
 	// Then rename that `tmpPath` expected path
 	err = os.Rename(tmpPath, extractionPath)

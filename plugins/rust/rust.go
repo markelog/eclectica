@@ -10,6 +10,9 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/markelog/cprf"
+
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/request"
 	"github.com/markelog/eclectica/variables"
 )
@@ -27,37 +30,35 @@ var (
 type Rust struct{}
 
 func (rust Rust) Install(version string) error {
-	pathPart := variables.Path("rust", version)
+	path := variables.Path("rust", version)
+	tmp := filepath.Join(variables.Home(), "rust", "tmp")
+	source := filepath.Join(path, "source")
+	installer := filepath.Join(source, "install.sh")
 
-	installer := filepath.Join(pathPart, "install.sh")
-	path := filepath.Join(pathPart, "..", "tmp")
+	// Just in case, tmp might not get removed if this method had an error
+	// before we could remove it
+	os.RemoveAll(tmp)
 
-	_, err := exec.Command(installer, "--prefix="+path).Output()
+	err := os.Rename(path, tmp)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.CreateDir(filepath.Join(path, "source"))
+	if err != nil {
+		return err
+	}
+
+	cprf.Copy(tmp+"/", source)
+
+	_, err = exec.Command(installer, "--prefix="+path).Output()
+	os.RemoveAll(tmp)
 
 	return err
 }
 
 func (rust Rust) PostInstall(version string) (bool, error) {
-	path := variables.Path("rust", version)
-
-	err := os.RemoveAll(path)
-	if err != nil {
-		return false, err
-	}
-
-	tmp := filepath.Join(path, "..", "tmp")
-
-	err = os.Rename(tmp, path)
-	if err != nil {
-		return false, err
-	}
-
-	err = os.RemoveAll(tmp)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return false, nil
 }
 
 func (rust Rust) Info(version string) (map[string]string, error) {

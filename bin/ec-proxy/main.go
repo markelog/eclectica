@@ -62,7 +62,7 @@ func main() {
 	pwd, err := os.Getwd()
 	print.Error(err)
 
-	versionPath := filepath.Join(pwd, fmt.Sprintf(".%s-version", name))
+	versionPath := filepath.Join(pwd, fmt.Sprintf(".%s-version", language))
 	version := getVersion(versionPath)
 
 	pathPart := filepath.Join(base, language, version)

@@ -110,12 +110,10 @@ func install(language, version string, err error) {
 	response, err := plugin.Download()
 	print.Error(err)
 
-	if response == nil {
-		conditionalInstall(plugin)
-		return
+	// response == nil means we already downloaded that thing
+	if response != nil {
+		print.Download(response, version)
 	}
-
-	print.Download(response, version)
 
 	err = plugin.Extract()
 	print.Error(err)

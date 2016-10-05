@@ -51,10 +51,6 @@ func Home() string {
 	return filepath.Join(os.Getenv("HOME"), ".eclectica/versions")
 }
 
-func NeedToRestartShell(name string) bool {
-	return ShouldBeLocalBin(name) == false && os.Getenv("ECLECTICA") != "true"
-}
-
 func Index(path string, value string) int {
 	value = filepath.Join(value, "bin")
 	bins := strings.Split(path, ":")

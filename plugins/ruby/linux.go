@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/markelog/eclectica/cmd/print"
-	"github.com/markelog/eclectica/variables"
 )
 
 var (
@@ -59,10 +58,6 @@ func dealWithShell() (bool, error) {
 	middle := " once"
 	end := "):"
 	command := "sudo apt-get install " + strings.Join(deps, " ")
-
-	if variables.NeedToRestartShell("ruby") {
-		command += " && " + variables.GetShellName()
-	}
 
 	print.PostInstall(start, middle, end, command)
 
