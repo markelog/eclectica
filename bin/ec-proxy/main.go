@@ -15,6 +15,27 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
+type Walker func(path string) bool
+
+func walkUp(path string, fn Walker) {
+	current := path
+
+	for {
+		if current == "" || current == "/" {
+			return
+		}
+
+		current = filepath.Dir(current)
+
+		stop := fn(current)
+		if stop == true {
+			return
+		}
+	}
+
+	return
+}
+
 func setCmd(cmd *exec.Cmd, name, version string) {
 	plugin := plugins.New(name)
 
@@ -54,15 +75,30 @@ func getVersion(path string) string {
 }
 
 func main() {
+	var (
+		versionPath string
+	)
+
 	_, name := path.Split(os.Args[0])
 
 	language := plugins.SearchBin(name)
 	base := variables.Home()
+	file := fmt.Sprintf(".%s-version", language)
 
 	pwd, err := os.Getwd()
 	print.Error(err)
 
-	versionPath := filepath.Join(pwd, fmt.Sprintf(".%s-version", language))
+	walkUp(pwd, func(path string) bool {
+		p := filepath.Join(path, file)
+
+		if _, err := os.Stat(p); err == nil {
+			versionPath = p
+			return true
+		}
+
+		return false
+	})
+
 	version := getVersion(versionPath)
 
 	pathPart := filepath.Join(base, language, version)
