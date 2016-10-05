@@ -317,7 +317,7 @@ var _ = Describe("main", func() {
 			fmt.Println()
 
 			fmt.Println("Install tmp version")
-			Execute("go", "run", path, "ruby@2.0.0-p451")
+			Execute("go", "run", path, "ruby@2.1.5")
 
 			fmt.Println("Removing ruby@2.2.1")
 			Execute("go", "run", path, "rm", "ruby@2.2.1")

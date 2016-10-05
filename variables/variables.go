@@ -24,13 +24,12 @@ func Path(name, version string) string {
 }
 
 func GetBin(name, version string) string {
+	base := Path(name, version)
 
 	// TODO: fix
 	if name == "rust" {
 		name = "rustc"
 	}
-
-	base := Path(name, version)
 
 	return filepath.Join(base, "bin", name)
 }
