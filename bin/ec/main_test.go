@@ -159,7 +159,7 @@ func checkRemoteUseWithLanguage(name string) (result string) {
 }
 
 var _ = Describe("main", func() {
-	if os.Getenv("TRAVIS") != "true" && os.Getenv("INT") != "true" {
+	if os.Getenv("INT") != "true" {
 		return
 	}
 
