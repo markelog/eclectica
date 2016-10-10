@@ -13,7 +13,7 @@ var (
 		"autoconf", "bison", "build-essential",
 		"libssl-dev", "libyaml-dev", "libreadline6-dev",
 		"zlib1g-dev", "libncurses5-dev", "libffi-dev",
-		"libgdbm3", "libgdbm-dev",
+		"libgdbm3", "libgdbm-dev", "libpq-dev",
 	}
 )
 
@@ -57,7 +57,7 @@ func dealWithShell() error {
   please execute following command to complete installation (you would need to do it only`
 	middle := " once"
 	end := "):"
-	command := "sudo apt-get install " + strings.Join(deps, " ")
+	command := "sudo apt-get update && apt-get install -y " + strings.Join(deps, " ")
 
 	print.PostInstall(start, middle, end, command)
 
