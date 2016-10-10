@@ -34,6 +34,40 @@ var _ = Describe("plugins", func() {
 		plugin         *Plugin
 	)
 
+	Describe("SearchBin", func() {
+		It("find all ruby bins", func() {
+			bins := New("ruby").Bins()
+
+			for _, elem := range bins {
+				Expect(SearchBin(elem)).To(Equal("ruby"))
+			}
+		})
+
+		It("find all node bins", func() {
+			bins := New("node").Bins()
+
+			for _, elem := range bins {
+				Expect(SearchBin(elem)).To(Equal("node"))
+			}
+		})
+
+		It("find all go bins", func() {
+			bins := New("go").Bins()
+
+			for _, elem := range bins {
+				Expect(SearchBin(elem)).To(Equal("go"))
+			}
+		})
+
+		It("find all rust bins", func() {
+			bins := New("rust").Bins()
+
+			for _, elem := range bins {
+				Expect(SearchBin(elem)).To(Equal("rust"))
+			}
+		})
+	})
+
 	Describe("Install", func() {
 		It("returns error if version was not defined", func() {
 			plugin := New("node")

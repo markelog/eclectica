@@ -93,13 +93,13 @@ func SearchBin(name string) string {
 		"rust": New("rust").Bins(),
 		"go":   New("go").Bins(),
 		"node": New("node").Bins(),
-		"ruby": New("node").Bins(),
+		"ruby": New("ruby").Bins(),
 	}
 
-	for language, _ := range bins {
-		for _, bin := range bins[language] {
+	for index, _ := range bins {
+		for _, bin := range bins[index] {
 			if name == bin {
-				return language
+				return index
 			}
 		}
 	}
