@@ -62,8 +62,10 @@ var _ = Describe("rust", func() {
 
 			rust.Install(version)
 
-			Expect(program).To(ContainSubstring("versions/rust/" + version + "/source/install.sh"))
-			Expect(firstArg).To(Equal("--prefix=" + variables.Path("rust", version)))
+			Expect(program).To(ContainSubstring("versions/rust/" + version + "/install.sh"))
+
+			path := filepath.Join(variables.Path("rust", version), "tmp")
+			Expect(firstArg).To(Equal("--prefix=" + path))
 
 			monkey.Unpatch(exec.Command)
 		})

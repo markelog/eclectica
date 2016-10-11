@@ -29,27 +29,24 @@ type Rust struct{}
 
 func (rust Rust) Install(version string) error {
 	path := variables.Path("rust", version)
-	tmp := filepath.Join(variables.Home(), "rust", "tmp")
-	source := filepath.Join(path, "source")
-	installer := filepath.Join(source, "install.sh")
+	tmp := filepath.Join(path, "tmp")
+	installer := filepath.Join(path, "install.sh")
 
 	// Just in case, tmp might not get removed if this method had an error
 	// before we could remove it
 	os.RemoveAll(tmp)
 
-	err := os.Rename(path, tmp)
+	_, err := io.CreateDir(tmp)
 	if err != nil {
 		return err
 	}
 
-	_, err = io.CreateDir(filepath.Join(path, "source"))
+	_, err = exec.Command(installer, "--prefix="+tmp).Output()
 	if err != nil {
 		return err
 	}
 
-	cprf.Copy(tmp+"/", source)
-
-	_, err = exec.Command(installer, "--prefix="+path).Output()
+	err = cprf.Copy(tmp+"/", path)
 	os.RemoveAll(tmp)
 
 	return err

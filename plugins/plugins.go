@@ -126,24 +126,24 @@ func (plugin *Plugin) CreateProxy() (err error) {
 	_, err = os.Stat(executable)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return errors.New("Can't find ec-proxy binary")
+			err = errors.New("Can't find ec-proxy binary")
 		}
 
 		return err
 	}
 
-	// TODO: fix, hack for rust
-	name := plugin.name
-	if name == "rust" {
-		name = "rustc"
-	}
-
-	bins := plugin.Pkg.Bins()
+	bins := plugin.Bins()
 
 	for _, bin := range bins {
-		languageExecutable := filepath.Join(variables.DefaultInstall, bin)
+		err = cprf.Copy(executable, variables.DefaultInstall)
+		if err != nil {
+			return
+		}
 
-		err = cprf.Copy(executable, languageExecutable)
+		fullProxy := filepath.Join(variables.DefaultInstall, "ec-proxy")
+		fullBin := filepath.Join(variables.DefaultInstall, bin)
+
+		err = os.Rename(fullProxy, fullBin)
 		if err != nil {
 			return
 		}
