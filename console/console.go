@@ -8,6 +8,7 @@ import (
 	"github.com/markelog/eclectica/cmd/print"
 )
 
+// Pass array to exec.Command
 func Get(args []string) *exec.Cmd {
 	fn := reflect.ValueOf(exec.Command)
 	rargs := make([]reflect.Value, len(args))
@@ -21,6 +22,7 @@ func Get(args []string) *exec.Cmd {
 	return cmd
 }
 
+// Start new shell
 func Shell() {
 
 	// Get the current working directory.

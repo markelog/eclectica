@@ -1,5 +1,6 @@
 package root
 
+// Command example for install command
 const example = `
   Install specifc version
   $ ec node@6.4.0
@@ -11,11 +12,13 @@ const example = `
   $ ec -r rust
 `
 
+// Help output
 const help = `
 {{with or .Long .Short }}{{. | trim}}
 
 {{end}}{{if or .Runnable .HasSubCommands}}{{.UsageString}}{{end}}`
 
+// Usuage output
 const usage = `Usage:{{if .Runnable}}
   {{if .HasAvailableFlags}}{{appendIfNotPresent .UseLine "[flags]"}}{{else}}{{.UseLine}}{{end}}{{end}}
   {{if .HasAvailableSubCommands}}{{ .CommandPath}} [command] [flags] [<language>@<version>]{{end}}{{if gt .Aliases 0}}

@@ -13,6 +13,7 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
+// Ask for language and version from the user
 func Ask() (language, version string, err error) {
 	language = list.GetWith("Language", plugins.Plugins)
 	version, err = AskVersion(language)
@@ -20,6 +21,7 @@ func Ask() (language, version string, err error) {
 	return
 }
 
+// Ask for version
 func AskVersion(language string) (version string, err error) {
 	versions, err := plugins.New(language).List()
 	if err != nil {
@@ -31,6 +33,7 @@ func AskVersion(language string) (version string, err error) {
 	return
 }
 
+// Ask for language and remote version
 func AskRemote() (language, version string, err error) {
 	language = list.GetWith("Language", plugins.Plugins)
 	version, err = AskRemoteVersion(language)
@@ -38,6 +41,7 @@ func AskRemote() (language, version string, err error) {
 	return
 }
 
+// Ask for list of remote versions
 func AskRemoteVersions(language string) (versions []string, err error) {
 	plugin := plugins.New(language)
 	c, _ := curse.New()
@@ -74,6 +78,7 @@ func AskRemoteVersions(language string) (versions []string, err error) {
 	return
 }
 
+// Ask for list of remote version
 func AskRemoteVersion(language string) (version string, err error) {
 	versions, err := AskRemoteVersions(language)
 
@@ -86,6 +91,7 @@ func AskRemoteVersion(language string) (version string, err error) {
 	return
 }
 
+// Get supported language from args list
 func GetLanguage(args []string) (language, version string) {
 	for _, element := range args {
 		data := strings.Split(element, "@")
@@ -105,6 +111,7 @@ func GetLanguage(args []string) (language, version string) {
 	return "", ""
 }
 
+// Get command from args list
 func GetCommand(args []string) string {
 	for _, element := range args {
 		for _, command := range variables.NonInstallCommands {
@@ -117,18 +124,21 @@ func GetCommand(args []string) string {
 	return ""
 }
 
+// Is there an langauge in args list?
 func HasLanguage(args []string) bool {
 	language, _ := GetLanguage(args)
 
 	return language != ""
 }
 
+// Is there an version in args list?
 func HasVersion(args []string) bool {
 	_, version := GetLanguage(args)
 
 	return version != ""
 }
 
+// Is this is non-install command in args list?
 func NonInstallCommand(args []string) bool {
 	return GetCommand(args) != ""
 }

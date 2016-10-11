@@ -14,6 +14,8 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
+// Pipe results of command execution to parent and
+// pass environment variables from language plugin
 func setCmd(cmd *exec.Cmd, name, version string) {
 	plugin := plugins.New(name)
 
