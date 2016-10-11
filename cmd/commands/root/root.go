@@ -1,34 +1,35 @@
-package cmd
+package root
 
 import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 
+	"github.com/markelog/eclectica/cmd/flags"
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
 )
 
-var isRemote bool
-var isLocal bool
+// Command aliases
+var aliases = []string{"eclectica"}
 
-var RootCmd = &cobra.Command{
+// Command config
+var Command = &cobra.Command{
 	Use:     "ec [<language>@<version>]",
-	Aliases: []string{"eclectica"},
+	Aliases: aliases,
 	Example: example,
 }
 
-// Execute adds all child commands to the root command sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd
+// Entry point
 func Execute() {
 	var err error
 	args := os.Args[1:]
 
 	if info.NonInstallCommand(args) {
+
 		// Initialize cobra for other commands
-		if err := RootCmd.Execute(); err != nil {
+		if err := Command.Execute(); err != nil {
 			os.Exit(1)
 		}
 
@@ -46,9 +47,7 @@ func Execute() {
 		return
 	}
 
-	pflag.BoolVarP(remoteInfo())
-	pflag.BoolVarP(localInfo())
-	pflag.Parse()
+	flags.Parse()
 
 	language, version := info.GetLanguage(args)
 	hasLanguage := info.HasLanguage(args)
@@ -63,7 +62,7 @@ func Execute() {
 	}
 
 	// If `--remote` or `-r` flag was passed
-	if isRemote {
+	if flags.IsRemote {
 
 		// In case of `ec -r`
 		if hasLanguage {
@@ -92,16 +91,17 @@ func Execute() {
 		return
 	}
 
-	RootCmd.Execute()
+	Command.Execute()
 
 	// We already know it will show an error
 	os.Exit(1)
 }
 
+// Install either globally or locally
 func conditionalInstall(plugin *plugins.Plugin) {
 	var err error
 
-	if isLocal {
+	if flags.IsLocal {
 		err = plugin.LocalInstall()
 	} else {
 		err = plugin.Install()
@@ -110,6 +110,7 @@ func conditionalInstall(plugin *plugins.Plugin) {
 	print.Error(err)
 }
 
+// Entry point for installation
 func install(language, version string) {
 	plugin := plugins.New(language, version)
 
@@ -127,17 +128,15 @@ func install(language, version string) {
 	conditionalInstall(plugin)
 }
 
-func remoteInfo() (*bool, string, string, bool, string) {
-	return &isRemote, "remote", "r", false, "Get remote versions"
+// Add command to root command
+func Register(cmd *cobra.Command) {
+	Command.AddCommand(cmd)
 }
 
-func localInfo() (*bool, string, string, bool, string) {
-	return &isLocal, "local", "l", false, "Install as local version"
-}
-
+// Init
 func init() {
-	RootCmd.SetHelpTemplate(help)
-	RootCmd.SetUsageTemplate(usage)
+	Command.SetHelpTemplate(help)
+	Command.SetUsageTemplate(usage)
 
 	cobra.OnInitialize()
 }

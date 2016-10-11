@@ -1,4 +1,4 @@
-package cmd
+package rm
 
 import (
 	"errors"
@@ -10,7 +10,16 @@ import (
 	"github.com/markelog/eclectica/plugins"
 )
 
-var rmExample = `
+// Command config
+var Command = &cobra.Command{
+	Use:     "rm [<language>@<version>]",
+	Short:   "Remove language version",
+	Example: example,
+	Run:     run,
+}
+
+// Command example
+var example = `
   Install specifc version
   $ ec rm rust@1.11.0
 
@@ -21,14 +30,8 @@ var rmExample = `
   $ ec rm
 `
 
-var rmCmd = &cobra.Command{
-	Use:     "rm [<language>@<version>]",
-	Short:   "Remove language version",
-	Example: rmExample,
-	Run:     rmRunner,
-}
-
-func rmRunner(cmd *cobra.Command, args []string) {
+// Runner
+func run(cmd *cobra.Command, args []string) {
 	var (
 		language string
 		version  string
@@ -50,23 +53,20 @@ func rmRunner(cmd *cobra.Command, args []string) {
 	if isCurrent(language, version) {
 		err = errors.New("Cannot remove active version")
 	}
-
 	print.Error(err)
 
-	remove(language, version, err)
+	remove(language, version)
 }
 
+// Check if version is used right now
 func isCurrent(language, version string) bool {
 	current := plugins.New(language).Current()
 
 	return current == version
 }
 
-func remove(language, version string, err error) {
-	err = plugins.New(language).Remove(version)
+// Try to remove
+func remove(language, version string) {
+	err := plugins.New(language).Remove(version)
 	print.Error(err)
-}
-
-func init() {
-	RootCmd.AddCommand(rmCmd)
 }

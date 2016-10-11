@@ -1,4 +1,4 @@
-package cmd
+package root
 
 const example = `
   Install specifc version
@@ -18,22 +18,22 @@ const help = `
 
 const usage = `Usage:{{if .Runnable}}
   {{if .HasAvailableFlags}}{{appendIfNotPresent .UseLine "[flags]"}}{{else}}{{.UseLine}}{{end}}{{end}}
-{{if .HasAvailableSubCommands}}{{ .CommandPath}} [command] [flags] [<language>@<version>]{{end}}{{if gt .Aliases 0}}
+  {{if .HasAvailableSubCommands}}{{ .CommandPath}} [command] [flags] [<language>@<version>]{{end}}{{if gt .Aliases 0}}
 
 Aliases:
   {{.NameAndAliases}}
 {{end}}{{if .HasExample}}
-Examples:{{ .Example }}{{end}}{{ if .HasAvailableSubCommands}}
-Available Commands:{{range .Commands}}{{if .IsAvailableCommand}}
+Examples:{{ .Example }}{{end}}
+{{ if .HasAvailableSubCommands}}Available Commands:{{range .Commands}}{{if .IsAvailableCommand}}
   {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}
-  {{end}}
-{{ if .HasAvailableLocalFlags}}Flags:
+
+{{end}}{{ if .HasAvailableLocalFlags}}Flags:
 {{.LocalFlags.FlagUsages | trimRightSpace}}
 
-{{end}}{{ if .HasAvailableInheritedFlags}}
+{{end}}{{ if .HasAvailableInheritedFlags}}Global Flags:
+{{.InheritedFlags.FlagUsages | trimRightSpace}}
 
-Global Flags:
-{{.InheritedFlags.FlagUsages | trimRightSpace}}{{end}}{{if .HasHelpSubCommands}}
+{{end}}{{if .HasHelpSubCommands}}
 
 Additional help topics:{{range .Commands}}{{if .IsHelpCommand}}
   {{rpad .CommandPath .CommandPathPadding}} {{.Short}}{{end}}{{end}}{{end}}{{ if .HasAvailableSubCommands }}Use "{{.CommandPath}} [command] --help" for more information about a command.

@@ -1,20 +1,29 @@
-package cmd
+package ls
 
 import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/markelog/list"
 	"github.com/spf13/cobra"
 
-	"github.com/markelog/list"
-
+	"github.com/markelog/eclectica/cmd/flags"
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
 )
 
-var lsExample = `
+// Command represents the ls command
+var Command = &cobra.Command{
+	Use:     "ls",
+	Short:   "List installed language versions",
+	Example: example,
+	Run:     run,
+}
+
+// Command example
+var example = `
   List local language specific versions
   $ ec ls rust
 
@@ -28,22 +37,16 @@ var lsExample = `
   $ ec ls -r
 `
 
-// lsCmd represents the ls command
-var lsCmd = &cobra.Command{
-	Use:     "ls",
-	Short:   "List installed language versions",
-	Example: lsExample,
-	Run:     lsRunner,
-}
-
-func lsRunner(cmd *cobra.Command, args []string) {
-	if isRemote {
+// Runner
+func run(cmd *cobra.Command, args []string) {
+	if flags.IsRemote {
 		remote(args)
 	} else {
 		local(args)
 	}
 }
 
+// List versions
 func listVersions(versions []string, current string) {
 	fmt.Println()
 	for _, version := range versions {
@@ -62,6 +65,7 @@ func listVersions(versions []string, current string) {
 	fmt.Println()
 }
 
+// List local ones
 func listLocalVersions(language string) {
 	plugin := plugins.New(language)
 
@@ -79,12 +83,14 @@ func listLocalVersions(language string) {
 	listVersions(versions, current)
 }
 
+// Ask for language and list local versions
 func listLocal() {
 	language := list.GetWith("Language", plugins.Plugins)
 
 	listLocalVersions(language)
 }
 
+// Ask for remote versions and list them
 func listRemoteVersions(language string) {
 	versions, err := info.AskRemoteVersions(language)
 	print.Error(err)
@@ -93,12 +99,14 @@ func listRemoteVersions(language string) {
 	listVersions(versions, current)
 }
 
+// Ask for language and list remote versions
 func listRemote() {
 	language := list.GetWith("Language", plugins.Plugins)
 
 	listRemoteVersions(language)
 }
 
+// Main entry point for remote output
 func remote(args []string) {
 	if len(args) == 0 {
 		listRemote()
@@ -115,6 +123,7 @@ func remote(args []string) {
 	}
 }
 
+// Main entry point for local output
 func local(args []string) {
 	if len(args) == 0 {
 		listLocal()
@@ -131,7 +140,7 @@ func local(args []string) {
 	}
 }
 
+// Init
 func init() {
-	RootCmd.AddCommand(lsCmd)
-	lsCmd.PersistentFlags().BoolVarP(remoteInfo())
+	Command.PersistentFlags().BoolVarP(flags.RemoteFlag())
 }
