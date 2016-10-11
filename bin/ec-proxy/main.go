@@ -20,14 +20,16 @@ func setCmd(cmd *exec.Cmd, name, version string) {
 	environment, err := plugin.Pkg.Environment(version)
 	print.Error(err)
 
-	env := os.Environ()
-	env = append(env, environment)
+	if len(environment) > 0 {
+		env := os.Environ()
+		env = append(env, environment)
+
+		cmd.Env = env
+	}
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-
-	cmd.Env = env
 }
 
 func main() {

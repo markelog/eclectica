@@ -4,7 +4,6 @@ import (
 	"os"
 	"os/exec"
 	"reflect"
-	"syscall"
 
 	"github.com/markelog/eclectica/cmd/print"
 )
@@ -18,7 +17,6 @@ func Get(args []string) *exec.Cmd {
 	}
 
 	cmd := fn.Call(rargs)[0].Interface().(*exec.Cmd)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	return cmd
 }
