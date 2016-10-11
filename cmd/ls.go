@@ -14,17 +14,34 @@ import (
 	"github.com/markelog/eclectica/plugins"
 )
 
+var lsExample = `
+  List local language specific versions
+  $ ec ls rust
+
+  List remote language specific versions
+  $ ec ls -r node
+
+  List local versions
+  $ ec ls
+
+  List remote versions
+  $ ec ls -r
+`
+
 // lsCmd represents the ls command
 var lsCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "List installed language versions",
-	Run: func(cmd *cobra.Command, args []string) {
-		if isRemote {
-			remote(args)
-		} else {
-			local(args)
-		}
-	},
+	Use:     "ls",
+	Short:   "List installed language versions",
+	Example: lsExample,
+	Run:     lsRunner,
+}
+
+func lsRunner(cmd *cobra.Command, args []string) {
+	if isRemote {
+		remote(args)
+	} else {
+		local(args)
+	}
 }
 
 func listVersions(versions []string, current string) {

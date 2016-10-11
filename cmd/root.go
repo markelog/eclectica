@@ -15,9 +15,8 @@ var isRemote bool
 var isLocal bool
 
 var RootCmd = &cobra.Command{
-	Use:     "eclectica",
-	Short:   "Version manager for any language",
-	Long:    "Cool and eclectic version manager for any language",
+	Use:     "ec [<language>@<version>]",
+	Aliases: []string{"eclectica"},
 	Example: example,
 }
 
@@ -36,12 +35,14 @@ func Execute() {
 		return
 	}
 
-	// We don't use cobra here, since we support `ec <language>@version` syntax
+	// We don't use cobra here, since we support `ec <language>@<version>` syntax
 
 	// If nothing was passed - just show list of the local versions
 	if len(args) == 0 {
 		language, version, err := info.Ask()
-		install(language, version, err)
+		print.Error(err)
+
+		install(language, version)
 		return
 	}
 
@@ -57,7 +58,7 @@ func Execute() {
 
 	// In case of `ec <language>@<version>`
 	if hasLanguage && hasVersion {
-		install(language, version, nil)
+		install(language, version)
 		return
 	}
 
@@ -67,13 +68,17 @@ func Execute() {
 		// In case of `ec -r`
 		if hasLanguage {
 			version, err = info.AskRemoteVersion(language)
-			install(language, version, err)
+			print.Error(err)
+
+			install(language, version)
 			return
 
 			// In case of `ec -r <language>` or `ec <language> -r`
 		} else {
 			language, version, err = info.AskRemote()
-			install(language, version, err)
+			print.Error(err)
+
+			install(language, version)
 			return
 		}
 	}
@@ -81,12 +86,15 @@ func Execute() {
 	// In case of `ec <language>`
 	if hasLanguage && hasVersion == false {
 		version, err = info.AskVersion(language)
-		install(language, version, err)
+		print.Error(err)
+
+		install(language, version)
 		return
 	}
 
-	// We already know it will show an error
 	RootCmd.Execute()
+
+	// We already know it will show an error
 	os.Exit(1)
 }
 
@@ -102,9 +110,7 @@ func conditionalInstall(plugin *plugins.Plugin) {
 	print.Error(err)
 }
 
-func install(language, version string, err error) {
-	print.Error(err)
-
+func install(language, version string) {
 	plugin := plugins.New(language, version)
 
 	response, err := plugin.Download()
@@ -113,10 +119,10 @@ func install(language, version string, err error) {
 	// response == nil means we already downloaded that thing
 	if response != nil {
 		print.Download(response, version)
-	}
 
-	err = plugin.Extract()
-	print.Error(err)
+		err = plugin.Extract()
+		print.Error(err)
+	}
 
 	conditionalInstall(plugin)
 }
@@ -126,10 +132,12 @@ func remoteInfo() (*bool, string, string, bool, string) {
 }
 
 func localInfo() (*bool, string, string, bool, string) {
-	return &isLocal, "local", "l", false, "Install local version"
+	return &isLocal, "local", "l", false, "Install as local version"
 }
 
 func init() {
+	RootCmd.SetHelpTemplate(help)
 	RootCmd.SetUsageTemplate(usage)
+
 	cobra.OnInitialize()
 }
