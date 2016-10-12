@@ -15,7 +15,7 @@ func Prefix(name string) string {
 	return filepath.Join(Home(), name)
 }
 
-func Path(args ...interface{}) string {
+func nameAndVersion(args []interface{}) (string, string) {
 	var (
 		name    = args[0].(string)
 		version string
@@ -26,21 +26,18 @@ func Path(args ...interface{}) string {
 	} else {
 		version = "current"
 	}
+
+	return name, version
+}
+
+func Path(args ...interface{}) string {
+	name, version := nameAndVersion(args)
 
 	return filepath.Join(Home(), name, version)
 }
 
 func GetBin(args ...interface{}) string {
-	var (
-		name    = args[0].(string)
-		version string
-	)
-
-	if len(args) == 2 {
-		version = args[1].(string)
-	} else {
-		version = "current"
-	}
+	name, version := nameAndVersion(args)
 
 	base := Path(name, version)
 
