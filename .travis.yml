@@ -11,7 +11,7 @@ before_install:
 install:
   - make install
 
-test:
+script:
   - travis_wait make test && make int-test
 
 go:
