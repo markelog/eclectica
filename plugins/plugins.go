@@ -122,13 +122,27 @@ func (plugin *Plugin) Install() error {
 	}
 
 	base := variables.Path(plugin.name, plugin.version)
+	current := variables.Path(plugin.name)
+
+	err = os.RemoveAll(current)
+	if err != nil {
+		return err
+	}
+
+	err = os.Symlink(base, current)
+	if err != nil {
+		return err
+	}
+
+	// If already installed we don't need to continue
+	if _, err := os.Stat(plugin.info["destination-folder"]); err == nil {
+		return nil
+	}
 
 	_, err = io.CreateDir(base)
 	if err != nil {
 		return err
 	}
-
-	os.RemoveAll(variables.Path(plugin.name))
 
 	err = plugin.Pkg.Install()
 	if err != nil {
@@ -139,9 +153,6 @@ func (plugin *Plugin) Install() error {
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
-	current := variables.Path(plugin.name)
-	os.Symlink(variables.Path(plugin.name, plugin.version), current)
-
 	err = plugin.Proxy()
 	if err != nil {
 		return err

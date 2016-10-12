@@ -74,11 +74,19 @@ func (ruby Ruby) Current() string {
 	bin := variables.GetBin("ruby")
 	out, _ := exec.Command(bin, "--version").Output()
 
+	if len(out) == 0 {
+		return ""
+	}
+
 	version := strings.TrimSpace(string(out))
 	rVersion := regexp.MustCompile(versionPattern)
-	version = rVersion.FindAllStringSubmatch(version, 1)[0][0]
+	testVersion := rVersion.FindAllStringSubmatch(version, 1)
 
-	return version
+	if len(testVersion) == 0 {
+		return ""
+	}
+
+	return testVersion[0][0]
 }
 
 func (ruby Ruby) ListRemote() ([]string, error) {

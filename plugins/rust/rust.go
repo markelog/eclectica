@@ -88,15 +88,15 @@ func (rust Rust) Current() string {
 	bin := variables.GetBin("rust")
 	out, _ := exec.Command(bin, "--version").Output()
 
-	vp := regexp.MustCompile(versionPattern)
 	version := strings.TrimSpace(string(out))
-	versionArr := vp.FindAllStringSubmatch(version, 1)
+	rVersion := regexp.MustCompile(versionPattern)
+	testVersion := rVersion.FindAllStringSubmatch(version, 1)
 
-	if len(versionArr) > 0 {
-		version = strings.Replace(versionArr[0][0], "v", "", 1)
+	if len(testVersion) == 0 {
+		return ""
 	}
 
-	return strings.Replace(version, "v", "", 1)
+	return strings.Replace(testVersion[0][0], "v", "", 1)
 }
 
 func (rust Rust) ListRemote() ([]string, error) {
