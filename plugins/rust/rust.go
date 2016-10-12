@@ -18,17 +18,19 @@ import (
 )
 
 var (
-	listLink       = "https://static.rust-lang.org/dist/index.txt"
-	versionsLink   = "https://static.rust-lang.org/dist"
+	VersionsLink   = "https://static.rust-lang.org/dist"
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:-(alpha|beta)(?:\\.\\d*)?)?"
+	listLink       = "https://static.rust-lang.org/dist/index.txt"
 
 	bins = []string{"cargo", "rust-gdb", "rustc", "rustdoc"}
 )
 
-type Rust struct{}
+type Rust struct {
+	Version string
+}
 
-func (rust Rust) Install(version string) error {
-	path := variables.Path("rust", version)
+func (rust Rust) Install() error {
+	path := variables.Path("rust", rust.Version)
 	tmp := filepath.Join(path, "tmp")
 	installer := filepath.Join(path, "install.sh")
 
@@ -52,11 +54,15 @@ func (rust Rust) Install(version string) error {
 	return err
 }
 
-func (rust Rust) PostInstall(version string) error {
+func (rust Rust) PostInstall() error {
 	return nil
 }
 
-func (rust Rust) Info(version string) (map[string]string, error) {
+func (rust Rust) Environment() (string, error) {
+	return "", nil
+}
+
+func (rust Rust) Info() (map[string]string, error) {
 	result := make(map[string]string)
 
 	platform, err := getPlatform()
@@ -65,10 +71,9 @@ func (rust Rust) Info(version string) (map[string]string, error) {
 		return nil, err
 	}
 
-	filename := fmt.Sprintf("rust-%s-%s", version, platform)
-	sourcesUrl := fmt.Sprintf("%s/%s", versionsLink, filename)
+	filename := fmt.Sprintf("rust-%s-%s", rust.Version, platform)
+	sourcesUrl := fmt.Sprintf("%s/%s", VersionsLink, filename)
 
-	result["version"] = version
 	result["filename"] = filename
 	result["url"] = fmt.Sprintf("%s.tar.gz", sourcesUrl)
 
@@ -80,20 +85,18 @@ func (rust Rust) Bins() []string {
 }
 
 func (rust Rust) Current() string {
-	vp := regexp.MustCompile(versionPattern)
-	out, _ := exec.Command(variables.GetBin("rust", ""), "--version").Output()
+	bin := variables.GetBin("rust")
+	out, _ := exec.Command(bin, "--version").Output()
 
+	vp := regexp.MustCompile(versionPattern)
 	version := strings.TrimSpace(string(out))
 	versionArr := vp.FindAllStringSubmatch(version, 1)
+
 	if len(versionArr) > 0 {
 		version = strings.Replace(versionArr[0][0], "v", "", 1)
 	}
 
 	return strings.Replace(version, "v", "", 1)
-}
-
-func (rust Rust) Environment(version string) (string, error) {
-	return "", nil
 }
 
 func (rust Rust) ListRemote() ([]string, error) {

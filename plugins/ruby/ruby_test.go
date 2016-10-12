@@ -80,9 +80,8 @@ var _ = Describe("ruby", func() {
 
 	Describe("Info", func() {
 		It("should get info about 2.2.3 version", func() {
-			result, _ := ruby.Info("2.2.3")
+			result, _ := (&Ruby{Version: "2.2.3"}).Info()
 
-			Expect(result["version"]).To(Equal("2.2.3"))
 			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
 
 			Expect(result["url"]).Should(ContainSubstring("https://rvm.io/binaries"))

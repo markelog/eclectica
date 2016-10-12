@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"os/exec"
-	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -22,21 +21,23 @@ var (
 	bins = []string{"go", "godoc", "gofmt"}
 )
 
-type Golang struct{}
+type Golang struct {
+	Version string
+}
 
-func (golang Golang) Install(version string) error {
+func (golang Golang) Install() error {
 	return nil
 }
 
-func (golang Golang) Environment(version string) (string, error) {
-	return "GOROOT=" + filepath.Join(variables.Home(), "go", version), nil
-}
-
-func (golang Golang) PostInstall(version string) error {
+func (golang Golang) PostInstall() error {
 	return nil
 }
 
-func (golang Golang) Info(version string) (map[string]string, error) {
+func (golang Golang) Environment() (string, error) {
+	return "GOROOT=" + variables.Path("go", golang.Version), nil
+}
+
+func (golang Golang) Info() (map[string]string, error) {
 	result := make(map[string]string)
 
 	platform, err := getPlatform()
@@ -44,10 +45,9 @@ func (golang Golang) Info(version string) (map[string]string, error) {
 		return nil, err
 	}
 
-	result["version"] = version
-	result["filename"] = fmt.Sprintf("go%s.%s", version, platform)
-	result["url"] = fmt.Sprintf("%s/%s.tar.gz", VersionsLink, result["filename"])
 	result["unarchive-filename"] = "go"
+	result["filename"] = fmt.Sprintf("go%s.%s", golang.Version, platform)
+	result["url"] = fmt.Sprintf("%s/%s.tar.gz", VersionsLink, result["filename"])
 
 	return result, nil
 }
@@ -57,10 +57,11 @@ func (rust Golang) Bins() []string {
 }
 
 func (golang Golang) Current() string {
-	rVersion := regexp.MustCompile(versionPattern)
-	out, _ := exec.Command(variables.GetBin("go", ""), "version").Output()
-	version := strings.TrimSpace(string(out))
+	bin := variables.GetBin("go")
+	out, _ := exec.Command(bin, "version").Output()
 
+	rVersion := regexp.MustCompile(versionPattern)
+	version := strings.TrimSpace(string(out))
 	testVersion := rVersion.FindAllStringSubmatch(version, 1)
 
 	if len(testVersion) == 0 {

@@ -15,15 +15,33 @@ func Prefix(name string) string {
 	return filepath.Join(Home(), name)
 }
 
-func Path(name, version string) string {
-	if version == "" {
+func Path(args ...interface{}) string {
+	var (
+		name    = args[0].(string)
+		version string
+	)
+
+	if len(args) == 2 {
+		version = args[1].(string)
+	} else {
 		version = "current"
 	}
 
 	return filepath.Join(Home(), name, version)
 }
 
-func GetBin(name, version string) string {
+func GetBin(args ...interface{}) string {
+	var (
+		name    = args[0].(string)
+		version string
+	)
+
+	if len(args) == 2 {
+		version = args[1].(string)
+	} else {
+		version = "current"
+	}
+
 	base := Path(name, version)
 
 	// TODO: fix

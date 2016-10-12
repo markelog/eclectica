@@ -8,13 +8,15 @@ import (
 	"regexp"
 	"runtime"
 
-	"github.com/bouk/monkey"
-	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/markelog/eclectica/io"
+	"github.com/bouk/monkey"
+	"github.com/jarcoal/httpmock"
+
 	. "github.com/markelog/eclectica/plugins/rust"
+
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -30,7 +32,7 @@ var _ = Describe("rust", func() {
 		err         error
 		rust        *Rust
 		version     = "1.0.0"
-		path, _     = filepath.Abs("../testdata/plugins/versions/")
+		path, _     = filepath.Abs("../../testdata/plugins/versions/")
 		versionPath = filepath.Join(path, "rust", version)
 	)
 
@@ -60,7 +62,7 @@ var _ = Describe("rust", func() {
 				return path
 			})
 
-			rust.Install(version)
+			(&Rust{Version: version}).Install()
 
 			Expect(program).To(ContainSubstring("versions/rust/" + version + "/install.sh"))
 
@@ -141,9 +143,7 @@ var _ = Describe("rust", func() {
 		})
 
 		It("should get info about nightly version", func() {
-			result, _ := rust.Info("nightly")
-
-			Expect(result["version"]).To(Equal("nightly"))
+			result, _ := (&Rust{Version: "nightly"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -155,10 +155,8 @@ var _ = Describe("rust", func() {
 			}
 		})
 
-		It("should get info about lts version", func() {
-			result, _ := rust.Info("beta")
-
-			Expect(result["version"]).To(Equal("beta"))
+		It("should get info about beta version", func() {
+			result, _ := (&Rust{Version: "beta"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -171,9 +169,7 @@ var _ = Describe("rust", func() {
 		})
 
 		It("should get info about 1.9.0 version", func() {
-			result, _ := rust.Info("1.9.0")
-
-			Expect(result["version"]).To(Equal("1.9.0"))
+			result, _ := (&Rust{Version: "1.9.0"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {

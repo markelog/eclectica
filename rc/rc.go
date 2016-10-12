@@ -23,19 +23,18 @@ type Rc struct {
 }
 
 func New(command string) *Rc {
-	rc := &Rc{
-		command: command,
-		path:    "",
-	}
+	rc := &Rc{}
 
+	rc.command = command
 	rc.path = rc.Find()
 
 	return rc
 }
 
 // Add bash configs on Linux system
-// .bashrc works when you open new bash session
+// .bashrc works when you open new bash session (open terminal)
 // .bash_profile is executed when you login
+//
 // So in order for our env variables to be consistently exposed we need to modify both of them
 // Note: on Mac, .bash_profile is executed when new bash session is opened,
 // so we don't need to this in there

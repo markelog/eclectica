@@ -24,14 +24,16 @@ var (
 	bins = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
 )
 
-type Ruby struct{}
-
-func (ruby Ruby) Environment(version string) (string, error) {
-	return "", nil
+type Ruby struct {
+	Version string
 }
 
-func (ruby Ruby) Install(version string) error {
-	return removeRVMArtefacts(variables.Path("ruby", version))
+func (ruby Ruby) Install() error {
+	return removeRVMArtefacts(variables.Path("ruby", ruby.Version))
+}
+
+func (ruby Ruby) PostInstall() error {
+	return dealWithShell()
 }
 
 // Removes RVM artefacts (ignore errors)
@@ -50,15 +52,14 @@ func removeRVMArtefacts(base string) error {
 	return nil
 }
 
-func (ruby Ruby) PostInstall(version string) error {
-	return dealWithShell()
+func (ruby Ruby) Environment() (string, error) {
+	return "", nil
 }
 
-func (ruby Ruby) Info(version string) (map[string]string, error) {
+func (ruby Ruby) Info() (map[string]string, error) {
 	result := make(map[string]string)
 
-	result["version"] = version
-	result["filename"] = fmt.Sprintf("ruby-%s", version)
+	result["filename"] = fmt.Sprintf("ruby-%s", ruby.Version)
 	result["extension"] = "tar.bz2"
 	result["url"] = fmt.Sprintf("%s/%s.%s", getUrl(), result["filename"], result["extension"])
 
@@ -70,10 +71,10 @@ func (ruby Ruby) Bins() []string {
 }
 
 func (ruby Ruby) Current() string {
-	bin := variables.GetBin("ruby", "")
+	bin := variables.GetBin("ruby")
 	out, _ := exec.Command(bin, "--version").Output()
-	version := strings.TrimSpace(string(out))
 
+	version := strings.TrimSpace(string(out))
 	rVersion := regexp.MustCompile(versionPattern)
 	version = rVersion.FindAllStringSubmatch(version, 1)[0][0]
 

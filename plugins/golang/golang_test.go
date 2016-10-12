@@ -127,9 +127,7 @@ var _ = Describe("golang", func() {
 		})
 
 		It("should get info about 1.7 version", func() {
-			result, _ := golang.Info("1.7")
-
-			Expect(result["version"]).To(Equal("1.7"))
+			result, _ := (&Golang{Version: "1.7"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {

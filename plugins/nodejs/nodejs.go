@@ -20,26 +20,27 @@ var (
 	bins = []string{"node", "npm"}
 )
 
-type Node struct{}
+type Node struct {
+	Version string
+}
 
-func (node Node) Install(version string) error {
+func (node Node) Install() error {
 	return nil
 }
 
-func (node Node) Environment(version string) (string, error) {
+func (node Node) PostInstall() error {
+	return nil
+}
+
+func (node Node) Environment() (string, error) {
 	return "", nil
 }
 
-func (node Node) PostInstall(version string) error {
-	return nil
-}
-
-func (node Node) Info(version string) (map[string]string, error) {
+func (node Node) Info() (map[string]string, error) {
 	result := make(map[string]string)
-	sourcesUrl := fmt.Sprintf("%s/v%s", VersionsLink, version)
+	sourcesUrl := fmt.Sprintf("%s/v%s", VersionsLink, node.Version)
 
-	result["version"] = version
-	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", version, runtime.GOOS)
+	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", node.Version, runtime.GOOS)
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 
 	return result, nil
@@ -50,8 +51,9 @@ func (node Node) Bins() []string {
 }
 
 func (node Node) Current() string {
-	bin := variables.GetBin("node", "")
+	bin := variables.GetBin("node")
 	out, _ := exec.Command(bin, "--version").Output()
+
 	version := strings.TrimSpace(string(out))
 
 	return strings.Replace(version, "v", "", 1)
@@ -70,6 +72,7 @@ func (node Node) ListRemote() ([]string, error) {
 
 	tmp := []string{}
 	result := []string{}
+
 	version := regexp.MustCompile("v\\d+\\.\\d+\\.\\d+$")
 	remove := regexp.MustCompile("0\\.[0-7]")
 

@@ -104,9 +104,7 @@ var _ = Describe("nodejs", func() {
 
 		It("should get info about latest version", func() {
 			Skip("Waiting on #10")
-			result, _ := node.Info("latest")
-
-			Expect(result["version"]).To(Equal("6.3.1"))
+			result, _ := (&Node{Version: "latest"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -119,9 +117,7 @@ var _ = Describe("nodejs", func() {
 		})
 
 		It("should get info about 6.3.1 version", func() {
-			result, _ := node.Info("6.3.1")
-
-			Expect(result["version"]).To(Equal("6.3.1"))
+			result, _ := (&Node{Version: "6.3.1"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {

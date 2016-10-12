@@ -11,11 +11,13 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/bouk/monkey"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/bouk/monkey"
+
 	. "github.com/markelog/eclectica/plugins"
+
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/variables"
 )
@@ -258,8 +260,6 @@ var _ = Describe("plugins", func() {
 
 		BeforeEach(func() {
 			info = map[string]string{
-				"name":     "node",
-				"version":  "5.0.0",
 				"filename": "node-arch",
 				"url":      url,
 			}
@@ -268,7 +268,7 @@ var _ = Describe("plugins", func() {
 			ptype := reflect.TypeOf(d)
 
 			guard = monkey.PatchInstanceMethod(ptype, "Info",
-				func(*nodejs.Node, string) (map[string]string, error) {
+				func(*nodejs.Node) (map[string]string, error) {
 					return info, nil
 				},
 			)
@@ -295,6 +295,8 @@ var _ = Describe("plugins", func() {
 				tmpDir += "/"
 			}
 
+			Expect(info["name"]).To(Equal("node"))
+			Expect(info["version"]).To(Equal("5.0.0"))
 			Expect(info["archive-folder"]).To(Equal(tmpDir))
 			Expect(info["archive-path"]).To(Equal(tmpDir + "node-arch.tar.gz"))
 			Expect(info["destination-folder"]).To(Equal(variables.Home() + "/node/5.0.0"))

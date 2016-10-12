@@ -36,11 +36,11 @@ var (
 
 type Pkg interface {
 	Bins() []string
-	Install(string) error
-	Environment(string) (string, error)
-	PostInstall(string) error
+	Install() error
+	Environment() (string, error)
+	PostInstall() error
 	ListRemote() ([]string, error)
-	Info(string) (map[string]string, error)
+	Info() (map[string]string, error)
 	Current() string
 }
 
@@ -52,9 +52,10 @@ type Plugin struct {
 }
 
 func New(args ...string) *Plugin {
-	var pkg Pkg
-	var version string
-	name := args[0]
+	var (
+		version string
+		name    = args[0]
+	)
 
 	if len(args) == 2 {
 		version = args[1]
@@ -69,16 +70,22 @@ func New(args ...string) *Plugin {
 
 	switch {
 	case name == "node":
-		pkg = &nodejs.Node{}
+		plugin.Pkg = &nodejs.Node{
+			Version: version,
+		}
 	case name == "rust":
-		pkg = &rust.Rust{}
+		plugin.Pkg = &rust.Rust{
+			Version: version,
+		}
 	case name == "ruby":
-		pkg = &ruby.Ruby{}
+		plugin.Pkg = &ruby.Ruby{
+			Version: version,
+		}
 	case name == "go":
-		pkg = &golang.Golang{}
+		plugin.Pkg = &golang.Golang{
+			Version: version,
+		}
 	}
-
-	plugin.Pkg = pkg
 
 	if len(args) == 2 {
 		info, _ := plugin.Info()
@@ -86,70 +93,6 @@ func New(args ...string) *Plugin {
 	}
 
 	return plugin
-}
-
-func SearchBin(name string) string {
-	bins := map[string][]string{
-		"rust": New("rust").Bins(),
-		"go":   New("go").Bins(),
-		"node": New("node").Bins(),
-		"ruby": New("ruby").Bins(),
-	}
-
-	for index, _ := range bins {
-		for _, bin := range bins[index] {
-			if name == bin {
-				return index
-			}
-		}
-	}
-
-	return ""
-}
-
-func (plugin *Plugin) Bins() []string {
-	return plugin.Pkg.Bins()
-}
-
-func (plugin *Plugin) CreateProxy() (err error) {
-	ecProxyFolder := os.Getenv("EC_PROXY_PLACE")
-
-	if ecProxyFolder == "" {
-		ecProxyFolder, err = osext.ExecutableFolder()
-		if err != nil {
-			return
-		}
-	}
-
-	executable := filepath.Join(ecProxyFolder, "ec-proxy")
-
-	_, err = os.Stat(executable)
-	if err != nil {
-		if os.IsNotExist(err) {
-			err = errors.New("Can't find ec-proxy binary")
-		}
-
-		return err
-	}
-
-	bins := plugin.Bins()
-
-	for _, bin := range bins {
-		err = cprf.Copy(executable, variables.DefaultInstall)
-		if err != nil {
-			return
-		}
-
-		fullProxy := filepath.Join(variables.DefaultInstall, "ec-proxy")
-		fullBin := filepath.Join(variables.DefaultInstall, bin)
-
-		err = os.Rename(fullProxy, fullBin)
-		if err != nil {
-			return
-		}
-	}
-
-	return nil
 }
 
 func (plugin *Plugin) LocalInstall() error {
@@ -185,10 +128,9 @@ func (plugin *Plugin) Install() error {
 		return err
 	}
 
-	currentPath := filepath.Join(variables.Prefix(plugin.name), "current")
-	os.RemoveAll(currentPath)
+	os.RemoveAll(variables.Path(plugin.name))
 
-	err = plugin.Pkg.Install(plugin.version)
+	err = plugin.Pkg.Install()
 	if err != nil {
 		return err
 	}
@@ -197,16 +139,15 @@ func (plugin *Plugin) Install() error {
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
-	currentPath := filepath.Join(variables.Prefix(plugin.name), "current")
+	current := variables.Path(plugin.name)
+	os.Symlink(variables.Path(plugin.name, plugin.version), current)
 
-	os.Symlink(variables.Path(plugin.name, plugin.version), currentPath)
-
-	err = plugin.CreateProxy()
+	err = plugin.Proxy()
 	if err != nil {
 		return err
 	}
 
-	err = plugin.Pkg.PostInstall(plugin.version)
+	err = plugin.Pkg.PostInstall()
 	if err != nil {
 		return
 	}
@@ -218,12 +159,16 @@ func (plugin *Plugin) PostInstall() (err error) {
 	return
 }
 
+func (plugin *Plugin) Environment() (string, error) {
+	return plugin.Pkg.Environment()
+}
+
 func (plugin *Plugin) Info() (map[string]string, error) {
 	if plugin.version == "" {
 		return nil, errors.New("Version was not defined")
 	}
 
-	info, err := plugin.Pkg.Info(plugin.version)
+	info, err := plugin.Pkg.Info()
 	if err != nil {
 		return nil, err
 	}
@@ -238,11 +183,17 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 		info["name"] = plugin.name
 	}
 
+	if _, ok := info["version"]; ok == false {
+		info["version"] = plugin.version
+	}
+
 	if _, ok := info["extension"]; ok == false {
 		info["extension"] = "tar.gz"
 	}
 
 	if _, ok := info["unarchive-filename"]; ok == false {
+
+		// Notice different value
 		info["unarchive-filename"] = info["filename"]
 	}
 
@@ -385,4 +336,68 @@ func (plugin *Plugin) Extract() error {
 	}
 
 	return nil
+}
+
+func (plugin *Plugin) Bins() []string {
+	return plugin.Pkg.Bins()
+}
+
+func (plugin *Plugin) Proxy() (err error) {
+	ecProxyFolder := os.Getenv("EC_PROXY_PLACE")
+
+	if ecProxyFolder == "" {
+		ecProxyFolder, err = osext.ExecutableFolder()
+		if err != nil {
+			return
+		}
+	}
+
+	executable := filepath.Join(ecProxyFolder, "ec-proxy")
+
+	_, err = os.Stat(executable)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err = errors.New("Can't find ec-proxy binary")
+		}
+
+		return err
+	}
+
+	bins := plugin.Bins()
+
+	for _, bin := range bins {
+		err = cprf.Copy(executable, variables.DefaultInstall)
+		if err != nil {
+			return
+		}
+
+		fullProxy := filepath.Join(variables.DefaultInstall, "ec-proxy")
+		fullBin := filepath.Join(variables.DefaultInstall, bin)
+
+		err = os.Rename(fullProxy, fullBin)
+		if err != nil {
+			return
+		}
+	}
+
+	return nil
+}
+
+func SearchBin(name string) string {
+	bins := map[string][]string{
+		"rust": New("rust").Bins(),
+		"go":   New("go").Bins(),
+		"node": New("node").Bins(),
+		"ruby": New("ruby").Bins(),
+	}
+
+	for index, _ := range bins {
+		for _, bin := range bins[index] {
+			if name == bin {
+				return index
+			}
+		}
+	}
+
+	return ""
 }

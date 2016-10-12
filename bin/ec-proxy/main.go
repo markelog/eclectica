@@ -17,9 +17,7 @@ import (
 // Pipe results of command execution to parent and
 // pass environment variables from language plugin
 func setCmd(cmd *exec.Cmd, name, version string) {
-	plugin := plugins.New(name)
-
-	environment, err := plugin.Pkg.Environment(version)
+	environment, err := plugins.New(name, version).Environment()
 	print.Error(err)
 
 	if len(environment) > 0 {
