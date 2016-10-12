@@ -116,32 +116,38 @@ func (plugin *Plugin) Install() error {
 		return errors.New("Version was not defined")
 	}
 
+	// If this is already current version we don't need to do anything
+	if plugin.version == plugin.Current() {
+		return nil
+	}
+
 	err := Initiate(Plugins)
 	if err != nil {
 		return err
 	}
 
-	base := variables.Path(plugin.name, plugin.version)
-	current := variables.Path(plugin.name)
+	var (
+		base    = variables.Path(plugin.name, plugin.version)
+		bin     = variables.GetBin(plugin.name, plugin.version)
+		current = variables.Path(plugin.name)
+	)
 
+	// Remove current@ symlink if it existed for previous version
 	err = os.RemoveAll(current)
 	if err != nil {
 		return err
 	}
 
+	// Set up current@ symlink
 	err = os.Symlink(base, current)
 	if err != nil {
 		return err
 	}
 
-	// If already installed we don't need to continue
-	if _, err := os.Stat(plugin.info["destination-folder"]); err == nil {
+	// If binary for this plugin already exist then we can assume it was installed before;
+	// which means we can bail at this point
+	if _, err := os.Stat(bin); err == nil {
 		return nil
-	}
-
-	_, err = io.CreateDir(base)
-	if err != nil {
-		return err
 	}
 
 	err = plugin.Pkg.Install()
@@ -163,6 +169,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return
 	}
 
+	// Start new shell from eclectica if needed
 	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
 		console.Shell()
 	}
@@ -303,24 +310,24 @@ func (plugin *Plugin) Extract() error {
 		return errors.New("Version was not defined")
 	}
 
-	// Create something folder with path something like this – /home/user/.eclectica/versions/go
+	// Create language folder with path like this – /home/user/.eclectica/versions/go
 	extractionPlace, err := io.CreateDir(variables.Prefix(plugin.name))
 	if err != nil {
 		return err
 	}
 
 	// Just in case archive was downloaded, but not extracted
-	// i.e. this issue comes up in the second run.
+	// i.e. this issue comes up at the second run.
 	// Which means we will delete folder with path like this –
 	// /home/user/.eclectica/versions/go1.7.1.linux-amd64
 	os.RemoveAll(filepath.Join(extractionPlace, plugin.info["filename"]))
 
-	// Now we will extract archive from path something
-	// like this – /tmp/go1.7.1.linux-amd64.tar.gz
-	// to 				 /home/user/.eclectica/versions/go
+	// Now we will extract archive from
+	// path like this - 					 /tmp/go1.7.1.linux-amd64.tar.gz
+	// inside folder like this -   /home/user/.eclectica/versions/go
 	//
-	// Which will give us folder with path like this –
-	// /home/user/.eclectica/versions/go/go1.7.1.linux-amd64.tar.gz
+	// Which will give us path like this –
+	// /home/user/.eclectica/versions/go/go1.7.1.linux-amd64
 	//
 	// or like this – /home/user/.eclectica/versions/go/go
 	//
@@ -330,17 +337,17 @@ func (plugin *Plugin) Extract() error {
 		return err
 	}
 
-	// Now we will need get path /home/user/.eclectica/versions/go/go1.7.1.linux-amd64.tar.gz
+	// Now we will need get path - /home/user/.eclectica/versions/go/go1.7.1.linux-amd64
 	tmpPath := filepath.Join(extractionPlace, plugin.info["unarchive-filename"])
 
-	// And path like this – /home/user/.eclectica/versions/go/1.7.1
+	// And get path like this – /home/user/.eclectica/versions/go/1.7.1
 	extractionPath := plugin.info["destination-folder"]
 
-	// In case user extracts already extracted version.
-	// We will do this all over again
+	// Clean up in case user extracts already extracted version.
+	// That might happen if this is the second pass and in first time we errored somewhere above
 	os.RemoveAll(extractionPath)
 
-	// Then rename that `tmpPath` expected path
+	// Then rename such tmp path to what we expected to see
 	err = os.Rename(tmpPath, extractionPath)
 	if err != nil {
 		return err

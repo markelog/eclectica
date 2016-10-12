@@ -226,6 +226,8 @@ var _ = Describe("main", func() {
 			Execute("go", "run", path, "rust@1.9.0")
 			command, _ := Command("go", "run", path, "ls", "rust").Output()
 
+			fmt.Println()
+
 			Expect(strings.Contains(string(command), "♥ 1.9.0")).To(Equal(true))
 		})
 
