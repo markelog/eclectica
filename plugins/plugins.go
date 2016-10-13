@@ -7,14 +7,12 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/kardianos/osext"
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"
 
-	"github.com/markelog/eclectica/console"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 
@@ -116,14 +114,17 @@ func (plugin *Plugin) Install() error {
 		return errors.New("Version was not defined")
 	}
 
-	// If this is already current version we don't need to do anything
-	if plugin.version == plugin.Current() {
-		return nil
-	}
-
-	err := Initiate(Plugins)
+	err := Initiate()
 	if err != nil {
 		return err
+	}
+
+	// Start new shell from eclectica if needed
+	StartShell()
+
+	// If this is already a current version we don't need to do anything
+	if plugin.version == plugin.Current() {
+		return nil
 	}
 
 	var (
@@ -167,11 +168,6 @@ func (plugin *Plugin) PostInstall() (err error) {
 	err = plugin.Pkg.PostInstall()
 	if err != nil {
 		return
-	}
-
-	// Start new shell from eclectica if needed
-	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
-		console.Shell()
 	}
 
 	return
