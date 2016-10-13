@@ -119,12 +119,9 @@ func (plugin *Plugin) Install() error {
 		return err
 	}
 
-	// Start new shell from eclectica if needed
-	StartShell()
-
 	// If this is already a current version we don't need to do anything
 	if plugin.version == plugin.Current() {
-		return nil
+		return plugin.PostInstall()
 	}
 
 	var (
@@ -148,7 +145,7 @@ func (plugin *Plugin) Install() error {
 	// If binary for this plugin already exist then we can assume it was installed before;
 	// which means we can bail at this point
 	if _, err := os.Stat(bin); err == nil {
-		return nil
+		return plugin.PostInstall()
 	}
 
 	err = plugin.Pkg.Install()
@@ -169,6 +166,9 @@ func (plugin *Plugin) PostInstall() (err error) {
 	if err != nil {
 		return
 	}
+
+	// Start new shell from eclectica if needed
+	StartShell()
 
 	return
 }
