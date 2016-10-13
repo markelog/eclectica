@@ -14,7 +14,7 @@ var Command = &cobra.Command{
 }
 
 // Version number
-const Version = "0.0.2"
+const Version = "0.0.4"
 
 // Runner
 func run(c *cobra.Command, args []string) {

@@ -34,7 +34,7 @@ build:
 .PHONY: build
 
 tag:
-	$(eval version := $(shell go run ec/main.go version))
+	$(eval version := $(shell go run bin/ec/main.go version))
 	@echo "[+] tagging"
 	@git tag v$(version) -a -m "Release v$(version)"
 .PHONY: tag
