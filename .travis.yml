@@ -15,4 +15,4 @@ script:
   - travis_wait make test && make int-test
 
 go:
-  - tip
+  - "1.7.1"

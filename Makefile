@@ -30,6 +30,7 @@ int-test:
 build:
 	@echo "[+] building"
 	@go get github.com/mitchellh/gox
+	@rm -rf ec_* ec-proxy_*
 	@gox -osarch="darwin/amd64 linux/amd64" ./...
 .PHONY: build
 
