@@ -1,6 +1,7 @@
 package plugins_test
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -71,8 +72,173 @@ var _ = Describe("plugins", func() {
 	})
 
 	Describe("Install", func() {
+		var (
+			initiate    = false
+			current     = false
+			postInstall = false
+			pkgInstall  = false
+			osRemoveAll = false
+			osSymlink   = false
+			osStat      = false
+		)
+
+		resCurrent := "6.7.0"
+
+		type Empty struct{}
+
+		var resInitiate error
+		var resInstall error
+		var resPostInstall error
+		var resPkgInstall error
+		var resOsRemoveAll error
+		var resOsSymlink error
+		var resOsStat os.FileInfo
+
+		resInitiate = nil
+		resInstall = nil
+		resPostInstall = nil
+		resPkgInstall = nil
+		resOsRemoveAll = nil
+		resOsSymlink = nil
+		resOsStat = nil
+
+		var guardCurrent *monkey.PatchGuard
+		var guardPostInstall *monkey.PatchGuard
+		var guardPkgInstall *monkey.PatchGuard
+
+		BeforeEach(func() {
+			var d *Plugin
+			var n *nodejs.Node
+
+			pType := reflect.TypeOf(d)
+			nodejsType := reflect.TypeOf(n)
+
+			monkey.Patch(Initiate, func() error {
+				initiate = true
+				return resInitiate
+			})
+
+			guardCurrent = monkey.PatchInstanceMethod(pType, "Current",
+				func(plugin *Plugin) string {
+					current = true
+					return resCurrent
+				},
+			)
+
+			guardPostInstall = monkey.PatchInstanceMethod(pType, "PostInstall",
+				func(plugin *Plugin) error {
+					postInstall = true
+					return resPostInstall
+				},
+			)
+
+			guardPkgInstall = monkey.PatchInstanceMethod(nodejsType, "Install",
+				func(plugin *nodejs.Node) error {
+					pkgInstall = true
+					return resInstall
+				},
+			)
+
+			monkey.Patch(os.RemoveAll, func(path string) error {
+				osRemoveAll = true
+				return resOsRemoveAll
+			})
+
+			monkey.Patch(os.Symlink, func(from, to string) error {
+				osSymlink = true
+				return resOsSymlink
+			})
+
+			monkey.Patch(os.Stat, func(path string) (os.FileInfo, error) {
+				osStat = true
+				return resOsStat, nil
+			})
+		})
+
+		AfterEach(func() {
+			initiate = false
+			current = false
+			postInstall = false
+			pkgInstall = false
+			osRemoveAll = false
+			osSymlink = false
+			osStat = false
+
+			resInitiate = nil
+			resCurrent = ""
+			resPostInstall = nil
+			resPkgInstall = nil
+			resOsRemoveAll = nil
+			resOsSymlink = nil
+			resOsStat = nil
+
+			monkey.Unpatch(Initiate)
+			monkey.Unpatch(os.Symlink)
+			monkey.Unpatch(os.Stat)
+			monkey.Unpatch(os.RemoveAll)
+
+			guardPostInstall.Unpatch()
+			guardCurrent.Unpatch()
+			guardPkgInstall.Unpatch()
+		})
+
+		It("install sequence", func() {
+			New("node", "6.8.0").Install()
+
+			Expect(initiate).To(Equal(true))
+			Expect(current).To(Equal(true))
+			Expect(postInstall).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
+			Expect(osSymlink).To(Equal(true))
+			Expect(osStat).To(Equal(true))
+			Expect(pkgInstall).To(Equal(false))
+		})
+
+		It("should return early if current version is installed one", func() {
+			resCurrent = "6.8.0"
+
+			New("node", "6.8.0").Install()
+
+			Expect(initiate).To(Equal(true))
+			Expect(current).To(Equal(true))
+			Expect(postInstall).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(false))
+			Expect(osSymlink).To(Equal(false))
+			Expect(osStat).To(Equal(false))
+			Expect(pkgInstall).To(Equal(false))
+		})
+
+		It("should return early if it couldn't RemoveAll", func() {
+			resOsRemoveAll = errors.New("something")
+
+			New("node", "6.8.0").Install()
+
+			Expect(initiate).To(Equal(true))
+			Expect(current).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
+			Expect(postInstall).To(Equal(false))
+			Expect(osSymlink).To(Equal(false))
+			Expect(osStat).To(Equal(false))
+			Expect(pkgInstall).To(Equal(false))
+		})
+
+		It("should not return early", func() {
+			resOsStat, _ = os.Stat(os.Getenv("HOME"))
+
+			New("node", "6.8.0").Install()
+
+			Expect(initiate).To(Equal(true))
+			Expect(current).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
+			Expect(osSymlink).To(Equal(true))
+			Expect(osStat).To(Equal(true))
+			Expect(postInstall).To(Equal(true))
+			Expect(pkgInstall).To(Equal(false))
+		})
+
 		It("returns error if version was not defined", func() {
 			plugin := New("node")
+
 			Expect(plugin.Install()).Should(MatchError("Version was not defined"))
 		})
 	})

@@ -1,8 +1,6 @@
 package rm
 
 import (
-	"errors"
-
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/info"
@@ -50,19 +48,9 @@ func run(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	if isCurrent(language, version) {
-		err = errors.New("Cannot remove active version")
-	}
 	print.Error(err)
 
 	remove(language, version)
-}
-
-// Check if version is used right now
-func isCurrent(language, version string) bool {
-	current := plugins.New(language).Current()
-
-	return current == version
 }
 
 // Try to remove

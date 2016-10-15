@@ -272,7 +272,16 @@ func (plugin *Plugin) Remove(version string) error {
 		return err
 	}
 
-	return nil
+	_, err = plugin.List()
+	if err == nil {
+		return nil
+	}
+
+	if err.Error() == "There is no installed versions" {
+		return plugin.removeProxy()
+	}
+
+	return err
 }
 
 func (plugin *Plugin) Download() (*grab.Response, error) {
@@ -389,6 +398,21 @@ func (plugin *Plugin) Proxy() (err error) {
 		fullBin := filepath.Join(variables.DefaultInstall, bin)
 
 		err = os.Rename(fullProxy, fullBin)
+		if err != nil {
+			return
+		}
+	}
+
+	return nil
+}
+
+func (plugin *Plugin) removeProxy() (err error) {
+	bins := plugin.Bins()
+
+	for _, bin := range bins {
+		proxy := filepath.Join(variables.DefaultInstall, bin)
+
+		err = os.RemoveAll(proxy)
 		if err != nil {
 			return
 		}
