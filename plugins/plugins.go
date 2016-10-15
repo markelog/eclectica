@@ -277,11 +277,16 @@ func (plugin *Plugin) Remove(version string) error {
 		return nil
 	}
 
-	if err.Error() == "There is no installed versions" {
-		return plugin.removeProxy()
+	if err.Error() != "There is no installed versions" {
+		return err
 	}
 
-	return err
+	err = plugin.removeProxy()
+	if err != nil {
+		return err
+	}
+
+	return os.RemoveAll(variables.Prefix(plugin.name))
 }
 
 func (plugin *Plugin) Download() (*grab.Response, error) {
