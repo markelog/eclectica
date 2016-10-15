@@ -29,10 +29,15 @@ type Ruby struct {
 }
 
 func (ruby Ruby) Install() error {
-	return removeRVMArtefacts(variables.Path("ruby", ruby.Version))
+	return nil
 }
 
 func (ruby Ruby) PostInstall() error {
+	err := removeRVMArtefacts(variables.Path("ruby", ruby.Version))
+	if err != nil {
+		return err
+	}
+
 	return dealWithShell()
 }
 
@@ -43,7 +48,8 @@ func removeRVMArtefacts(base string) error {
 	// Remove `cache` folder since it supposed to work with RVM cache
 	folders, _ := ioutil.ReadDir(gems)
 	for _, folder := range folders {
-		err := os.Remove(filepath.Join(gems, folder.Name(), "cache"))
+		fmt.Println(filepath.Join(gems, folder.Name(), "cache"))
+		err := os.RemoveAll(filepath.Join(gems, folder.Name(), "cache"))
 		if err != nil {
 			return err
 		}
