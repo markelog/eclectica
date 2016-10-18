@@ -188,15 +188,6 @@ var _ = Describe("main", func() {
 		})
 
 		Describe("ec rm", func() {
-			It("should not allow removal of current version", func() {
-				Execute("go", "run", path, "node@6.5.0")
-
-				output, _ := Command("go", "run", path, "rm", "node@6.5.0").CombinedOutput()
-				out := string(output)
-
-				Expect(strings.Contains(out, "Cannot remove active version")).To(Equal(true))
-			})
-
 			It("should remove version", func() {
 				Execute("go", "run", path, "node@6.5.0")
 				Execute("go", "run", path, "node@6.4.0")

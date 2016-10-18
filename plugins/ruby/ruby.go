@@ -48,7 +48,6 @@ func removeRVMArtefacts(base string) error {
 	// Remove `cache` folder since it supposed to work with RVM cache
 	folders, _ := ioutil.ReadDir(gems)
 	for _, folder := range folders {
-		fmt.Println(filepath.Join(gems, folder.Name(), "cache"))
 		err := os.RemoveAll(filepath.Join(gems, folder.Name(), "cache"))
 		if err != nil {
 			return err
