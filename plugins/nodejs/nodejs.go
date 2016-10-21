@@ -15,7 +15,9 @@ import (
 )
 
 var (
-	VersionsLink = "https://nodejs.org/dist"
+	VersionsLink   = "https://nodejs.org/dist"
+	versionPattern = "v\\d+\\.\\d+\\.\\d+$"
+	removePattern  = "0\\.[0-7]"
 
 	bins = []string{"node", "npm"}
 )
@@ -73,8 +75,8 @@ func (node Node) ListRemote() ([]string, error) {
 	tmp := []string{}
 	result := []string{}
 
-	version := regexp.MustCompile("v\\d+\\.\\d+\\.\\d+$")
-	remove := regexp.MustCompile("0\\.[0-7]")
+	version := regexp.MustCompile(versionPattern)
+	remove := regexp.MustCompile(removePattern)
 
 	links := doc.Find("a")
 
