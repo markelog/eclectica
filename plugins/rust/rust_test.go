@@ -98,7 +98,7 @@ var _ = Describe("rust", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := Read("../../testdata/rust/dist.txt")
+				content := Read("../../testdata/plugins/rust/dist.txt")
 
 				httpmock.Activate()
 

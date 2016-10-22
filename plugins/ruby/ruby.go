@@ -22,6 +22,7 @@ var (
 	versionPattern = "\\d+\\.\\d+\\.\\d"
 
 	bins = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
+	dots = []string{".ruby-version"}
 )
 
 type Ruby struct {
@@ -73,6 +74,10 @@ func (ruby Ruby) Info() (map[string]string, error) {
 
 func (ruby Ruby) Bins() []string {
 	return bins
+}
+
+func (ruby Ruby) Dots() []string {
+	return dots
 }
 
 func (ruby Ruby) Current() string {

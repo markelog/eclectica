@@ -40,7 +40,7 @@ var _ = Describe("golang", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := Read("../../testdata/golang/download.xml")
+				content := Read("../../testdata/plugins/golang/download.xml")
 
 				// httpmock is not incompatible with goquery :/.
 				// See https://github.com/jarcoal/httpmock/issues/18
@@ -105,7 +105,7 @@ var _ = Describe("golang", func() {
 
 	Describe("Info", func() {
 		BeforeEach(func() {
-			content := Read("../../testdata/golang/latest.txt")
+			content := Read("../../testdata/plugins/golang/latest.txt")
 
 			httpmock.Activate()
 

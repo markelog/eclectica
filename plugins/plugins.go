@@ -33,12 +33,13 @@ var (
 )
 
 type Pkg interface {
-	Bins() []string
 	Install() error
 	Environment() (string, error)
 	PostInstall() error
 	ListRemote() ([]string, error)
 	Info() (map[string]string, error)
+	Bins() []string
+	Dots() []string
 	Current() string
 }
 
@@ -370,6 +371,10 @@ func (plugin *Plugin) Bins() []string {
 	return plugin.Pkg.Bins()
 }
 
+func (plugin *Plugin) Dots() []string {
+	return plugin.Pkg.Dots()
+}
+
 func (plugin *Plugin) Proxy() (err error) {
 	ecProxyFolder := os.Getenv("EC_PROXY_PLACE")
 
@@ -443,4 +448,16 @@ func SearchBin(name string) string {
 	}
 
 	return ""
+}
+
+// This one exists only to support nvm's `.nvmrc`
+func Dots(name string) []string {
+	files := map[string][]string{
+		"rust": New("rust").Dots(),
+		"go":   New("go").Dots(),
+		"node": New("node").Dots(),
+		"ruby": New("ruby").Dots(),
+	}
+
+	return files[name]
 }

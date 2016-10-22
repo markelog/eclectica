@@ -20,6 +20,7 @@ var (
 	removePattern  = "0\\.[0-7]"
 
 	bins = []string{"node", "npm"}
+	dots = []string{".nvmrc", ".node-version"}
 )
 
 type Node struct {
@@ -50,6 +51,10 @@ func (node Node) Info() (map[string]string, error) {
 
 func (node Node) Bins() []string {
 	return bins
+}
+
+func (node Node) Dots() []string {
+	return dots
 }
 
 func (node Node) Current() string {

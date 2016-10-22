@@ -2,7 +2,6 @@ package io
 
 import (
 	"bufio"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -13,6 +12,11 @@ type Walker func(path string) bool
 func walkUp(path string, fn Walker) {
 	current := path
 
+	stop := fn(current)
+	if stop == true {
+		return
+	}
+
 	for {
 		if current == "" || current == "/" {
 			return
@@ -20,7 +24,7 @@ func walkUp(path string, fn Walker) {
 
 		current = filepath.Dir(current)
 
-		stop := fn(current)
+		stop = fn(current)
 		if stop == true {
 			return
 		}
@@ -29,8 +33,15 @@ func walkUp(path string, fn Walker) {
 	return
 }
 
-func GetVersion(language string) (version string, err error) {
-	path, err := FindDotFile(language)
+func GetVersion(args ...interface{}) (version string, err error) {
+	var path string
+
+	if len(args) > 1 {
+		path, err = FindDotFile(args[0], args[1])
+	} else {
+		path, err = FindDotFile(args[0])
+	}
+
 	if err != nil {
 		return
 	}
@@ -58,19 +69,28 @@ func GetVersion(language string) (version string, err error) {
 	return "current", nil
 }
 
-func FindDotFile(language string) (versionPath string, err error) {
-	pwd, err := os.Getwd()
-	file := fmt.Sprintf(".%s-version", language)
-	if err != nil {
-		return
+func FindDotFile(args ...interface{}) (versionPath string, err error) {
+	var path string
+	dots := args[0].([]string)
+
+	if len(args) > 1 {
+		path = args[1].(string)
+	} else {
+
+		path, err = os.Getwd()
+		if err != nil {
+			return
+		}
 	}
 
-	walkUp(pwd, func(path string) bool {
-		p := filepath.Join(path, file)
+	walkUp(path, func(path string) bool {
+		for _, file := range dots {
+			p := filepath.Join(path, file)
 
-		if _, err := os.Stat(p); err == nil {
-			versionPath = p
-			return true
+			if _, err := os.Stat(p); err == nil {
+				versionPath = p
+				return true
+			}
 		}
 
 		return false

@@ -23,6 +23,7 @@ var (
 	listLink       = "https://static.rust-lang.org/dist/index.txt"
 
 	bins = []string{"cargo", "rust-gdb", "rustc", "rustdoc"}
+	dots = []string{".rust-version"}
 )
 
 type Rust struct {
@@ -82,6 +83,10 @@ func (rust Rust) Info() (map[string]string, error) {
 
 func (rust Rust) Bins() []string {
 	return bins
+}
+
+func (node Rust) Dots() []string {
+	return dots
 }
 
 func (rust Rust) Current() string {

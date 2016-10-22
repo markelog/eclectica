@@ -36,9 +36,10 @@ func main() {
 	_, name := path.Split(os.Args[0])
 
 	language := plugins.SearchBin(name)
+	dotFiles := plugins.Dots(name)
 	base := variables.Home()
 
-	version, err := io.GetVersion(language)
+	version, err := io.GetVersion(dotFiles)
 	print.Error(err)
 
 	pathPart := filepath.Join(base, language, version)

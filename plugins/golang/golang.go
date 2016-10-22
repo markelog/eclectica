@@ -19,6 +19,7 @@ var (
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
 
 	bins = []string{"go", "godoc", "gofmt"}
+	dots = []string{".go-version"}
 )
 
 type Golang struct {
@@ -54,6 +55,10 @@ func (golang Golang) Info() (map[string]string, error) {
 
 func (rust Golang) Bins() []string {
 	return bins
+}
+
+func (rust Golang) Dots() []string {
+	return dots
 }
 
 func (golang Golang) Current() string {

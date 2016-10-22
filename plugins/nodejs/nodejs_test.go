@@ -38,7 +38,7 @@ var _ = Describe("nodejs", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := Read("../../testdata/nodejs/dist.html")
+				content := Read("../../testdata/plugins/nodejs/dist.html")
 
 				// httpmock is not incompatible with goquery :/.
 				// See https://github.com/jarcoal/httpmock/issues/18
@@ -81,7 +81,7 @@ var _ = Describe("nodejs", func() {
 
 	Describe("Info", func() {
 		BeforeEach(func() {
-			content := Read("../../testdata/nodejs/latest.txt")
+			content := Read("../../testdata/plugins/nodejs/latest.txt")
 
 			httpmock.Activate()
 
