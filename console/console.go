@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/variables"
 )
 
 // Pass array to exec.Command
@@ -22,24 +23,24 @@ func Get(args []string) *exec.Cmd {
 	return cmd
 }
 
-// Start new shell
-func Shell() {
+// Start command
+func Start(args ...string) (proc *os.Process, err error) {
+	var procAttr os.ProcAttr
 
-	// Get the current working directory.
-	cwd, err := os.Getwd()
-	print.Error(err)
-
-	// Transfer stdin, stdout, and stderr to the new process
-	// and also set target directory for the shell to start in.
-	pa := os.ProcAttr{
-		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
-		Dir:   cwd,
+	procAttr.Files = []*os.File{
+		os.Stdin,
+		os.Stdout,
+		os.Stderr,
 	}
 
-	proc, err := os.StartProcess(os.Getenv("SHELL"), []string{}, &pa)
+	return os.StartProcess(os.Getenv("SHELL"), args, &procAttr)
+}
+
+// Start Shell
+func Shell() {
+	proc, err := Start(variables.GetShellName())
 	print.Error(err)
 
-	// Wait until user exits the shell
 	_, err = proc.Wait()
 	print.Error(err)
 }

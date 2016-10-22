@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	rcs = []string{
-		".bash_profile", ".bashrc", ".profile",
-		".zshrc", ".fishrc",
+	rcs = map[string][]string{
+		"bash": []string{".bash_profile", ".bashrc", ".profile"},
+		"zsh":  []string{".zshrc"},
 	}
 )
 
@@ -116,10 +116,11 @@ func (rc *Rc) Exists() bool {
 
 func (rc *Rc) Find() string {
 	home := os.Getenv("HOME")
+	shell := variables.GetShellName()
 
 	files, _ := ioutil.ReadDir(home)
 
-	for _, possibility := range rcs {
+	for _, possibility := range rcs[shell] {
 		for _, file := range files {
 			if file.Name() == possibility {
 				return filepath.Join(home, possibility)
