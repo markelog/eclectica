@@ -23,8 +23,8 @@ func Get(args []string) *exec.Cmd {
 	return cmd
 }
 
-// Start command
-func Start(args ...string) (proc *os.Process, err error) {
+// Start Shell
+func Shell() {
 	var procAttr os.ProcAttr
 
 	procAttr.Files = []*os.File{
@@ -33,12 +33,11 @@ func Start(args ...string) (proc *os.Process, err error) {
 		os.Stderr,
 	}
 
-	return os.StartProcess(os.Getenv("SHELL"), args, &procAttr)
-}
+	args := []string{
+		variables.GetShellName(),
+	}
 
-// Start Shell
-func Shell() {
-	proc, err := Start(variables.GetShellName())
+	proc, err := os.StartProcess(os.Getenv("SHELL"), args, &procAttr)
 	print.Error(err)
 
 	_, err = proc.Wait()
