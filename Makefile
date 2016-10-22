@@ -1,4 +1,3 @@
-
 all: install test
 .PHONY: all
 
