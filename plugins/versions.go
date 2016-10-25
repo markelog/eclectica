@@ -1,8 +1,12 @@
 package plugins
 
 import (
+	"errors"
 	"regexp"
 	"sort"
+	"strings"
+
+	"github.com/blang/semver"
 )
 
 func Compose(versions []string) map[string][]string {
@@ -70,6 +74,7 @@ func GetKeys(versions map[string][]string) []string {
 		result = append(result, version)
 	}
 
+	// Not sure...
 	sort.Strings(result)
 
 	return result
@@ -77,16 +82,52 @@ func GetKeys(versions map[string][]string) []string {
 
 func GetElements(key string, versions map[string][]string) []string {
 	result := []string{}
+	semverList := []semver.Version{}
 
 	for version, _ := range versions {
 		if version == key {
 			for _, element := range versions[version] {
-				result = append(result, element)
+				parsed, _ := semver.Parse(element)
+
+				semverList = append(semverList, parsed)
 			}
 		}
 	}
 
-	sort.Strings(result)
+	semver.Sort(semverList)
+
+	for _, element := range semverList {
+		result = append(result, element.String())
+	}
 
 	return result
+}
+
+func IsPartialVersion(version string) bool {
+	return len(strings.Split(version, ".")) != 3
+}
+
+func HasMinor(version string) bool {
+	return len(strings.Split(version, ".")) == 2
+}
+
+func getLatest(version string, versions []string) (string, error) {
+	var vers map[string][]string
+
+	if HasMinor(version) {
+		vers = ComposeMinors(versions)
+	} else {
+		vers = ComposeMajors(versions)
+	}
+
+	version = version + ".x"
+
+	if _, ok := vers[version]; ok == false {
+		return "", errors.New("Incorrect version " + version)
+	}
+
+	result := GetElements(version, vers)
+	last := result[len(result)-1]
+
+	return last, nil
 }

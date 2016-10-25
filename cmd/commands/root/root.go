@@ -53,7 +53,7 @@ func Execute() {
 	hasLanguage := info.HasLanguage(args)
 	hasVersion := info.HasVersion(args)
 
-	print.LaguageOrVersion(language, version)
+	print.InStyleln("Language", language)
 
 	// In case of `ec <language>@<version>`
 	if hasLanguage && hasVersion {
@@ -114,12 +114,20 @@ func conditionalInstall(plugin *plugins.Plugin) {
 func install(language, version string) {
 	plugin := plugins.New(language, version)
 
+	remoteList, err := info.FullListRemote(language)
+	print.Error(err)
+
+	err = plugin.SetFullVersion(remoteList)
+	print.Error(err)
+
+	print.InStyleln("Version", plugin.Version)
+
 	response, err := plugin.Download()
 	print.Error(err)
 
 	// response == nil means we already downloaded that thing
 	if response != nil {
-		print.Download(response, version)
+		print.Download(response, plugin.Version)
 
 		err = plugin.Extract()
 		print.Error(err)

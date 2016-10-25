@@ -13,6 +13,8 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
+type prefixFn func()
+
 // Ask for language and version from the user
 func Ask() (language, version string, err error) {
 	language = list.GetWith("Language", plugins.Plugins)
@@ -43,31 +45,7 @@ func AskRemote() (language, version string, err error) {
 
 // Ask for list of remote versions
 func AskRemoteVersions(language string) (versions []string, err error) {
-	plugin := plugins.New(language)
-	c, _ := curse.New()
-
-	prefix := func() {
-		c.MoveUp(1)
-		c.EraseCurrentLine()
-		print.InStyle("Language", language)
-	}
-
-	postfix := func() {
-		fmt.Println()
-		time.Sleep(200 * time.Millisecond)
-	}
-
-	s := &print.Spinner{
-		Before:  func() { time.Sleep(500 * time.Millisecond) },
-		After:   func() { fmt.Println() },
-		Prefix:  prefix,
-		Postfix: postfix,
-	}
-
-	s.Start()
-	remoteList, err := plugin.ListRemote()
-	s.Stop()
-
+	remoteList, err := ListRemote(language)
 	if err != nil {
 		return
 	}
@@ -122,6 +100,52 @@ func GetCommand(args []string) string {
 	}
 
 	return ""
+}
+
+func GetSpinner(language string, prefix print.SpinnerFn) *print.Spinner {
+	postfix := func() {
+		fmt.Println()
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	return &print.Spinner{
+		Before:  func() { time.Sleep(500 * time.Millisecond) },
+		After:   func() { fmt.Println() },
+		Prefix:  prefix,
+		Postfix: postfix,
+	}
+}
+
+func ListRemote(language string) (versions map[string][]string, err error) {
+	plugin := plugins.New(language)
+	c, _ := curse.New()
+	s := GetSpinner(language, func() {
+		c.MoveUp(1)
+		c.EraseCurrentLine()
+		print.InStyle("Language", language)
+	})
+
+	s.Start()
+	versions, err = plugin.ListRemote()
+	s.Stop()
+
+	return
+}
+
+func FullListRemote(language string) (versions []string, err error) {
+	plugin := plugins.New(language)
+	c, _ := curse.New()
+	s := GetSpinner(language, func() {
+		c.MoveUp(1)
+		c.EraseCurrentLine()
+		print.InStyle("Language", language)
+	})
+
+	s.Start()
+	versions, err = plugin.Pkg.ListRemote()
+	s.Stop()
+
+	return
 }
 
 // Is there an langauge in args list?

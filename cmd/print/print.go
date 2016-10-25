@@ -22,6 +22,11 @@ func InStyle(name, entity string) {
 	color.Unset()
 }
 
+func InStyleln(name, entity string) {
+	InStyle(name, entity)
+	fmt.Println()
+}
+
 func LaguageOrVersion(language, version string) {
 	if language != "" {
 		InStyle("Language", language)

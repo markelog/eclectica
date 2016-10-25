@@ -45,7 +45,7 @@ type Pkg interface {
 
 type Plugin struct {
 	name    string
-	version string
+	Version string
 	Pkg     Pkg
 	info    map[string]string
 }
@@ -64,7 +64,7 @@ func New(args ...string) *Plugin {
 
 	plugin := &Plugin{
 		name:    name,
-		version: version,
+		Version: version,
 	}
 
 	switch {
@@ -87,8 +87,7 @@ func New(args ...string) *Plugin {
 	}
 
 	if len(args) == 2 {
-		info, _ := plugin.Info()
-		plugin.info = info
+		plugin.info, _ = plugin.Info()
 	}
 
 	return plugin
@@ -102,7 +101,7 @@ func (plugin *Plugin) LocalInstall() error {
 
 	path := filepath.Join(pwd, fmt.Sprintf(".%s-version", plugin.name))
 
-	err = io.WriteFile(path, plugin.version)
+	err = io.WriteFile(path, plugin.Version)
 	if err != nil {
 		return err
 	}
@@ -111,7 +110,7 @@ func (plugin *Plugin) LocalInstall() error {
 }
 
 func (plugin *Plugin) Install() error {
-	if plugin.version == "" {
+	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
 
@@ -121,13 +120,13 @@ func (plugin *Plugin) Install() error {
 	}
 
 	// If this is already a current version we don't need to do anything
-	if plugin.version == plugin.Current() {
+	if plugin.Version == plugin.Current() {
 		return plugin.PostInstall()
 	}
 
 	var (
-		base    = variables.Path(plugin.name, plugin.version)
-		bin     = variables.GetBin(plugin.name, plugin.version)
+		base    = variables.Path(plugin.name, plugin.Version)
+		bin     = variables.GetBin(plugin.name, plugin.Version)
 		current = variables.Path(plugin.name)
 	)
 
@@ -179,7 +178,7 @@ func (plugin *Plugin) Environment() (string, error) {
 }
 
 func (plugin *Plugin) Info() (map[string]string, error) {
-	if plugin.version == "" {
+	if plugin.Version == "" {
 		return nil, errors.New("Version was not defined")
 	}
 
@@ -199,7 +198,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 	}
 
 	if _, ok := info["version"]; ok == false {
-		info["version"] = plugin.version
+		info["version"] = plugin.Version
 	}
 
 	if _, ok := info["extension"]; ok == false {
@@ -213,7 +212,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 	}
 
 	if _, ok := info["destination-folder"]; ok == false {
-		info["destination-folder"] = filepath.Join(variables.Home(), plugin.name, plugin.version)
+		info["destination-folder"] = filepath.Join(variables.Home(), plugin.name, plugin.Version)
 	}
 
 	if _, ok := info["archive-folder"]; ok == false {
@@ -291,7 +290,7 @@ func (plugin *Plugin) Remove(version string) error {
 }
 
 func (plugin *Plugin) Download() (*grab.Response, error) {
-	if plugin.version == "" {
+	if plugin.Version == "" {
 		return nil, errors.New("Version was not defined")
 	}
 
@@ -310,14 +309,14 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
 	if resp.HTTPResponse.StatusCode == 404 {
 		grab.NewClient().CancelRequest(resp.Request)
 
-		return resp, errors.New("Incorrect version " + plugin.version)
+		return resp, errors.New("Incorrect version " + plugin.Version)
 	}
 
 	return resp, nil
 }
 
 func (plugin *Plugin) Extract() error {
-	if plugin.version == "" {
+	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
 
@@ -427,6 +426,33 @@ func (plugin *Plugin) removeProxy() (err error) {
 			return
 		}
 	}
+
+	return nil
+}
+
+func (plugin *Plugin) SetFullVersion(versions []string) error {
+	if plugin.Version == "" {
+		return errors.New("Version was not defined")
+	}
+
+	if IsPartialVersion(plugin.Version) == false {
+		return nil
+	}
+
+	// This shouldn't happen
+	if len(versions) == 0 {
+		return errors.New("No versions available")
+	}
+
+	last, err := getLatest(plugin.Version, versions)
+
+	if err != nil {
+		return err
+	}
+
+	plugin.Version = last
+	plugin.Pkg = New(plugin.name, last).Pkg
+	plugin.info, _ = plugin.Info()
 
 	return nil
 }

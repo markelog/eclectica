@@ -187,6 +187,37 @@ var _ = Describe("main", func() {
 			Expect(strings.Contains(output, "6.x")).To(Equal(true))
 		})
 
+		It("should support install with partial versions (major)", func() {
+			Execute("go", "run", path, "rm", "node@5.12.0")
+			Execute("go", "run", path, "node@5")
+
+			command, _ := Command("go", "run", path, "ls", "node").Output()
+
+			Expect(strings.Contains(string(command), "♥ 5.12.0")).To(Equal(true))
+		})
+
+		It("should support install with partial versions (minor)", func() {
+			Execute("go", "run", path, "rm", "node@5.12.0")
+			Execute("go", "run", path, "node@5.12")
+
+			command, _ := Command("go", "run", path, "ls", "node").Output()
+
+			Expect(strings.Contains(string(command), "♥ 5.12.0")).To(Equal(true))
+		})
+
+		Describe("ec rm", func() {
+			It("should remove version", func() {
+				Execute("go", "run", path, "node@6.5.0")
+				Execute("go", "run", path, "node@6.4.0")
+
+				Execute("go", "run", path, "rm", "node@6.5.0")
+
+				command, _ := Command("go", "run", path, "ls", "node").Output()
+
+				Expect(strings.Contains(string(command), "6.5.0")).To(Equal(false))
+			})
+		})
+
 		Describe("ec rm", func() {
 			It("should remove version", func() {
 				Execute("go", "run", path, "node@6.5.0")

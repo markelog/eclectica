@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -22,6 +23,12 @@ import (
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/variables"
 )
+
+func Read(path string) string {
+	bytes, _ := ioutil.ReadFile(path)
+
+	return string(bytes)
+}
 
 var _ = Describe("plugins", func() {
 	var (
@@ -240,6 +247,67 @@ var _ = Describe("plugins", func() {
 			plugin := New("node")
 
 			Expect(plugin.Install()).Should(MatchError("Version was not defined"))
+		})
+
+		Describe("partial version support", func() {
+			old := nodejs.VersionsLink
+
+			AfterEach(func() {
+				nodejs.VersionsLink = old
+			})
+
+			BeforeEach(func() {
+				content := Read("../testdata/plugins/nodejs/dist.html")
+
+				// httpmock is not incompatible with goquery :/.
+				// See https://github.com/jarcoal/httpmock/issues/18
+				ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					status := 200
+
+					if _, ok := r.URL.Query()["status"]; ok {
+						fmt.Sscanf(r.URL.Query().Get("status"), "%d", &status)
+					}
+
+					w.WriteHeader(status)
+					io.WriteString(w, content)
+				}))
+
+				nodejs.VersionsLink = ts.URL
+			})
+
+			It("support for partial major version", func() {
+				plugin := New("node", "6")
+				versions := []string{
+					"6.1.0", "5.2.0", "6.2.0", "6.8.3",
+				}
+
+				plugin.SetFullVersion(versions)
+
+				Expect(plugin.Version).To(Equal("6.8.3"))
+			})
+
+			It("support for partial minor version", func() {
+				plugin := New("node", "6.4")
+				versions := []string{
+					"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
+				}
+
+				plugin.SetFullVersion(versions)
+
+				Expect(plugin.Version).To(Equal("6.4.2"))
+			})
+
+			It("shouldn't do anything for full version", func() {
+				plugin := New("node", "6.1.1")
+				versions := []string{
+					"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
+				}
+
+				err := plugin.SetFullVersion(versions)
+
+				Expect(err).To(BeNil())
+				Expect(plugin.Version).To(Equal("6.1.1"))
+			})
 		})
 	})
 
@@ -540,6 +608,30 @@ var _ = Describe("plugins", func() {
 
 			Expect(elements[0]).To(Equal("6.3.0"))
 			Expect(elements[1]).To(Equal("6.4.2"))
+		})
+
+		It("should get sorted version elements", func() {
+			list := Compose([]string{"1.12.3", "1.12.0", "1.12.1", "1.12.2"})
+			elements := GetElements("1.x", list)
+
+			Expect(elements[0]).To(Equal("1.12.0"))
+			Expect(elements[1]).To(Equal("1.12.1"))
+			Expect(elements[2]).To(Equal("1.12.2"))
+			Expect(elements[3]).To(Equal("1.12.3"))
+		})
+	})
+
+	Describe("IsPartialVersion", func() {
+		It("Should return false for full version", func() {
+			Expect(IsPartialVersion("6.8.1")).To(Equal(false))
+		})
+
+		It("Should return true for full version without patch", func() {
+			Expect(IsPartialVersion("6.8")).To(Equal(true))
+		})
+
+		It("Should return true for full version without minor", func() {
+			Expect(IsPartialVersion("6")).To(Equal(true))
 		})
 	})
 })

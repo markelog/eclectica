@@ -7,14 +7,14 @@ import (
 	"github.com/tj/go-spin"
 )
 
-type fn func()
+type SpinnerFn func()
 
 type Spinner struct {
 	channel chan bool
-	Prefix  fn
-	Postfix fn
-	Before  fn
-	After   fn
+	Prefix  SpinnerFn
+	Postfix SpinnerFn
+	Before  SpinnerFn
+	After   SpinnerFn
 }
 
 func (spinner *Spinner) Start() {
