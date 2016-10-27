@@ -74,8 +74,9 @@ func GetKeys(versions map[string][]string) []string {
 		result = append(result, version)
 	}
 
-	// Not sure...
-	sort.Strings(result)
+	// In revese order
+	// Should we use semver sort?
+	sort.Sort(sort.Reverse(sort.StringSlice(result)))
 
 	return result
 }
@@ -87,7 +88,7 @@ func GetElements(key string, versions map[string][]string) []string {
 	for version, _ := range versions {
 		if version == key {
 			for _, element := range versions[version] {
-				parsed, _ := semver.Parse(element)
+				parsed, _ := semver.Parse(SemverVersion(element))
 
 				semverList = append(semverList, parsed)
 			}
@@ -96,7 +97,8 @@ func GetElements(key string, versions map[string][]string) []string {
 
 	semver.Sort(semverList)
 
-	for _, element := range semverList {
+	for i := len(semverList) - 1; i != -1; i-- {
+		element := semverList[i]
 		result = append(result, element.String())
 	}
 
@@ -146,7 +148,6 @@ func getLatest(version string, versions []string) (string, error) {
 	}
 
 	result := GetElements(version, vers)
-	last := result[len(result)-1]
 
-	return last, nil
+	return result[0], nil
 }

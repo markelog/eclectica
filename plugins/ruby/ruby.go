@@ -132,6 +132,7 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 func getUrl() string {
 	typa, _, version := release.All()
 	arch := "x86_64"
+
 	versions := strings.Split(version, ".")
 	version = versions[0] + "." + versions[1]
 

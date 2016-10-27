@@ -596,8 +596,8 @@ var _ = Describe("plugins", func() {
 			list := map[string][]string{"4.x": []string{}, "0.x": []string{"0.8.2"}}
 			keys := GetKeys(list)
 
-			Expect(keys[0]).To(Equal("0.x"))
-			Expect(keys[1]).To(Equal("4.x"))
+			Expect(keys[1]).To(Equal("0.x"))
+			Expect(keys[0]).To(Equal("4.x"))
 		})
 	})
 
@@ -606,18 +606,18 @@ var _ = Describe("plugins", func() {
 			list := Compose([]string{"0.8.2", "4.4.7", "6.3.0", "6.4.2"})
 			elements := GetElements("6.x", list)
 
-			Expect(elements[0]).To(Equal("6.3.0"))
-			Expect(elements[1]).To(Equal("6.4.2"))
+			Expect(elements[1]).To(Equal("6.3.0"))
+			Expect(elements[0]).To(Equal("6.4.2"))
 		})
 
 		It("should get sorted version elements", func() {
 			list := Compose([]string{"1.12.3", "1.12.0", "1.12.1", "1.12.2"})
 			elements := GetElements("1.x", list)
 
-			Expect(elements[0]).To(Equal("1.12.0"))
-			Expect(elements[1]).To(Equal("1.12.1"))
-			Expect(elements[2]).To(Equal("1.12.2"))
-			Expect(elements[3]).To(Equal("1.12.3"))
+			Expect(elements[3]).To(Equal("1.12.0"))
+			Expect(elements[2]).To(Equal("1.12.1"))
+			Expect(elements[1]).To(Equal("1.12.2"))
+			Expect(elements[0]).To(Equal("1.12.3"))
 		})
 	})
 
