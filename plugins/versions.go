@@ -111,6 +111,25 @@ func HasMinor(version string) bool {
 	return len(strings.Split(version, ".")) == 2
 }
 
+func SemverVersion(version string) string {
+	if HasMinor(version) == false {
+		return version
+	}
+
+	rp, _ := regexp.Compile("[a-z](.+)?")
+
+	if rp.MatchString(version) {
+		start := rp.ReplaceAllString(version, "")
+		end := rp.FindAllString(version, 1)[0]
+
+		return start + ".0-" + end
+	}
+
+	version += ".0"
+
+	return version
+}
+
 func getLatest(version string, versions []string) (string, error) {
 	var vers map[string][]string
 

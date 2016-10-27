@@ -634,4 +634,22 @@ var _ = Describe("plugins", func() {
 			Expect(IsPartialVersion("6")).To(Equal(true))
 		})
 	})
+
+	Describe("SemverVersion", func() {
+		It("Should do anything for valid version", func() {
+			Expect(SemverVersion("6.8.1")).To(Equal("6.8.1"))
+		})
+
+		It("Should add `.0` to the end there", func() {
+			Expect(SemverVersion("6.8")).To(Equal("6.8.0"))
+		})
+
+		It("Should add `.0` to between text and numbers", func() {
+			Expect(SemverVersion("1.7beta")).To(Equal("1.7.0-beta"))
+		})
+
+		It("Should add `.0` to between text with numbers and numbers", func() {
+			Expect(SemverVersion("1.7beta1")).To(Equal("1.7.0-beta1"))
+		})
+	})
 })
