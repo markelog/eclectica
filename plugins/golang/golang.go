@@ -4,14 +4,16 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
+	"github.com/markelog/eclectica/versions"
 )
 
 var (
@@ -46,8 +48,10 @@ func (golang Golang) Info() (map[string]string, error) {
 		return nil, err
 	}
 
+	version := versions.Unsemverify(golang.Version)
+	result["version"] = version
 	result["unarchive-filename"] = "go"
-	result["filename"] = fmt.Sprintf("go%s.%s", golang.Version, platform)
+	result["filename"] = fmt.Sprintf("go%s.%s", version, platform)
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", VersionsLink, result["filename"])
 
 	return result, nil
@@ -62,18 +66,12 @@ func (rust Golang) Dots() []string {
 }
 
 func (golang Golang) Current() string {
-	bin := variables.GetBin("go")
-	out, _ := exec.Command(bin, "version").Output()
+	path := variables.Path("go")
+	version := filepath.Join(path, "VERSION")
+	readVersion := strings.Replace(io.Read(version), "go", "", 1)
+	semverVersion := versions.Semverify(readVersion)
 
-	rVersion := regexp.MustCompile(versionPattern)
-	version := strings.TrimSpace(string(out))
-	testVersion := rVersion.FindAllStringSubmatch(version, 1)
-
-	if len(testVersion) == 0 {
-		return ""
-	}
-
-	return testVersion[0][0]
+	return semverVersion
 }
 
 func (golang Golang) ListRemote() ([]string, error) {

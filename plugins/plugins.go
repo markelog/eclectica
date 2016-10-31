@@ -15,6 +15,7 @@ import (
 
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
+	"github.com/markelog/eclectica/versions"
 
 	// plugins
 	"github.com/markelog/eclectica/plugins/golang"
@@ -230,8 +231,8 @@ func (plugin *Plugin) Current() string {
 	return plugin.Pkg.Current()
 }
 
-func (plugin *Plugin) List() (versions []string, err error) {
-	versions = []string{}
+func (plugin *Plugin) List() (vers []string, err error) {
+	vers = []string{}
 	path := filepath.Join(variables.Home(), plugin.name)
 
 	folders, _ := ioutil.ReadDir(path)
@@ -242,10 +243,10 @@ func (plugin *Plugin) List() (versions []string, err error) {
 			continue
 		}
 
-		versions = append(versions, name)
+		vers = append(vers, name)
 	}
 
-	if len(versions) == 0 {
+	if len(vers) == 0 {
 		err = errors.New("There is no installed versions")
 	}
 
@@ -253,13 +254,13 @@ func (plugin *Plugin) List() (versions []string, err error) {
 }
 
 func (plugin *Plugin) ListRemote() (map[string][]string, error) {
-	versions, err := plugin.Pkg.ListRemote()
+	vers, err := plugin.Pkg.ListRemote()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return Compose(versions), nil
+	return versions.Compose(vers), nil
 }
 
 func (plugin *Plugin) Remove(version string) error {
@@ -430,21 +431,21 @@ func (plugin *Plugin) removeProxy() (err error) {
 	return nil
 }
 
-func (plugin *Plugin) SetFullVersion(versions []string) error {
+func (plugin *Plugin) SetFullVersion(vers []string) error {
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
 
-	if IsPartialVersion(plugin.Version) == false {
+	if versions.IsPartialVersion(plugin.Version) == false {
 		return nil
 	}
 
 	// This shouldn't happen
-	if len(versions) == 0 {
+	if len(vers) == 0 {
 		return errors.New("No versions available")
 	}
 
-	last, err := getLatest(plugin.Version, versions)
+	last, err := versions.GetLatest(plugin.Version, vers)
 
 	if err != nil {
 		return err

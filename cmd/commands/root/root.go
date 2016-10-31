@@ -9,6 +9,7 @@ import (
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/versions"
 )
 
 // Command aliases
@@ -114,11 +115,13 @@ func conditionalInstall(plugin *plugins.Plugin) {
 func install(language, version string) {
 	plugin := plugins.New(language, version)
 
-	remoteList, err := info.FullListRemote(language)
-	print.Error(err)
+	if versions.IsPartialVersion(version) {
+		remoteList, err := info.FullListRemote(language)
+		print.Error(err)
 
-	err = plugin.SetFullVersion(remoteList)
-	print.Error(err)
+		err = plugin.SetFullVersion(remoteList)
+		print.Error(err)
+	}
 
 	print.InStyleln("Version", plugin.Version)
 

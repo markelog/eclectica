@@ -11,6 +11,7 @@ import (
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/variables"
+	"github.com/markelog/eclectica/versions"
 )
 
 type prefixFn func()
@@ -25,12 +26,12 @@ func Ask() (language, version string, err error) {
 
 // Ask for version
 func AskVersion(language string) (version string, err error) {
-	versions, err := plugins.New(language).List()
+	vers, err := plugins.New(language).List()
 	if err != nil {
 		return
 	}
 
-	version = list.GetWith("Version", versions)
+	version = list.GetWith("Version", vers)
 
 	return
 }
@@ -44,14 +45,14 @@ func AskRemote() (language, version string, err error) {
 }
 
 // Ask for list of remote versions
-func AskRemoteVersions(language string) (versions []string, err error) {
+func AskRemoteVersions(language string) (vers []string, err error) {
 	remoteList, err := ListRemote(language)
 	if err != nil {
 		return
 	}
 
-	key := list.GetWith("Mask", plugins.GetKeys(remoteList))
-	versions = plugins.GetElements(key, remoteList)
+	key := list.GetWith("Mask", versions.GetKeys(remoteList))
+	vers = versions.GetElements(key, remoteList)
 
 	return
 }

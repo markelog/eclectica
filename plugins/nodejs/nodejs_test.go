@@ -3,7 +3,6 @@ package nodejs_test
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"runtime"
@@ -12,14 +11,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	eio "github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/nodejs"
 )
-
-func Read(path string) string {
-	bytes, _ := ioutil.ReadFile(path)
-
-	return string(bytes)
-}
 
 var _ = Describe("nodejs", func() {
 	var (
@@ -38,7 +32,7 @@ var _ = Describe("nodejs", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := Read("../../testdata/plugins/nodejs/dist.html")
+				content := eio.Read("../../testdata/plugins/nodejs/dist.html")
 
 				// httpmock is not incompatible with goquery :/.
 				// See https://github.com/jarcoal/httpmock/issues/18
@@ -81,7 +75,7 @@ var _ = Describe("nodejs", func() {
 
 	Describe("Info", func() {
 		BeforeEach(func() {
-			content := Read("../../testdata/plugins/nodejs/latest.txt")
+			content := eio.Read("../../testdata/plugins/nodejs/latest.txt")
 
 			httpmock.Activate()
 

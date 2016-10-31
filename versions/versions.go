@@ -1,4 +1,4 @@
-package plugins
+package versions
 
 import (
 	"errors"
@@ -88,7 +88,7 @@ func GetElements(key string, versions map[string][]string) []string {
 	for version, _ := range versions {
 		if version == key {
 			for _, element := range versions[version] {
-				parsed, _ := semver.Parse(SemverVersion(element))
+				parsed, _ := semver.Parse(Semverify(element))
 
 				semverList = append(semverList, parsed)
 			}
@@ -113,7 +113,27 @@ func HasMinor(version string) bool {
 	return len(strings.Split(version, ".")) == 2
 }
 
-func SemverVersion(version string) string {
+func GetLatest(version string, versions []string) (string, error) {
+	var vers map[string][]string
+
+	if HasMinor(version) {
+		vers = ComposeMinors(versions)
+	} else {
+		vers = ComposeMajors(versions)
+	}
+
+	version = version + ".x"
+
+	if _, ok := vers[version]; ok == false {
+		return "", errors.New("Incorrect version " + version)
+	}
+
+	result := GetElements(version, vers)
+
+	return result[0], nil
+}
+
+func Semverify(version string) string {
 	if HasMinor(version) == false {
 		return version
 	}
@@ -132,22 +152,8 @@ func SemverVersion(version string) string {
 	return version
 }
 
-func getLatest(version string, versions []string) (string, error) {
-	var vers map[string][]string
+func Unsemverify(version string) string {
+	rp, _ := regexp.Compile("(\\d+\\.\\d+)\\.0(?:-)?")
 
-	if HasMinor(version) {
-		vers = ComposeMinors(versions)
-	} else {
-		vers = ComposeMajors(versions)
-	}
-
-	version = version + ".x"
-
-	if _, ok := vers[version]; ok == false {
-		return "", errors.New("Incorrect version " + version)
-	}
-
-	result := GetElements(version, vers)
-
-	return result[0], nil
+	return rp.ReplaceAllString(version, "$1")
 }

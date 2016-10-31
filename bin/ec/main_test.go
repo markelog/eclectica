@@ -471,31 +471,31 @@ var _ = Describe("main", func() {
 			fmt.Println()
 
 			fmt.Println("Install tmp version")
-			Execute("go", "run", path, "go@1.6")
+			Execute("go", "run", path, "go@1.6.0")
 
-			fmt.Println("Removing go@1.7")
-			Execute("go", "run", path, "rm", "go@1.7")
+			fmt.Println("Removing go@1.7.0")
+			Execute("go", "run", path, "rm", "go@1.7.0")
 			fmt.Println("Removed")
 		})
 
 		It("should list installed go versions", func() {
-			Execute("go", "run", path, "go@1.7")
+			Execute("go", "run", path, "go@1.7.0")
 			command, _ := Command("go", "run", path, "ls", "go").Output()
 
-			Expect(strings.Contains(string(command), "1.7")).To(Equal(true))
+			Expect(strings.Contains(string(command), "♥ 1.7.0")).To(Equal(true))
 		})
 
 		It("should use local version", func() {
 			pwd, _ := os.Getwd()
 			versionFile := filepath.Join(filepath.Dir(pwd), ".go-version")
 
-			Execute("go", "run", path, "go@1.7")
+			Execute("go", "run", path, "go@1.7.0")
 
-			io.WriteFile(versionFile, "1.6")
+			io.WriteFile(versionFile, "1.6.0")
 
 			command, _ := Command("go", "run", path, "ls", "go").Output()
 
-			Expect(strings.Contains(string(command), "♥ 1.6")).To(Equal(true))
+			Expect(strings.Contains(string(command), "♥ 1.6.0")).To(Equal(true))
 
 			err := os.RemoveAll(versionFile)
 
@@ -503,21 +503,21 @@ var _ = Describe("main", func() {
 		})
 
 		It("should list remote go versions", func() {
-			Expect(checkRemoteList("go", "1.7.x", 5)).To(Equal(true))
+			Expect(checkRemoteList("go", "1.7.x", 10)).To(Equal(true))
 		})
 
 		It("should remove go version", func() {
 			result := true
 
-			Execute("go", "run", path, "go@1.7")
-			Execute("go", "run", path, "go@1.6")
-			Command("go", "run", path, "rm", "go@1.7").Output()
+			Execute("go", "run", path, "go@1.7.0")
+			Execute("go", "run", path, "go@1.6.0")
+			Command("go", "run", path, "rm", "go@1.7.0").Output()
 
 			plugin := plugins.New("go")
 			versions, _ := plugin.List()
 
 			for _, version := range versions {
-				if version == "1.7" {
+				if version == "1.7.0" {
 					result = false
 				}
 			}
