@@ -48,21 +48,19 @@ func Execute() {
 		return
 	}
 
-	flags.Parse()
-
 	language, version := info.GetLanguage(args)
 	hasLanguage := info.HasLanguage(args)
 	hasVersion := info.HasVersion(args)
 
-	print.InStyleln("Language", language)
-
 	// In case of `ec <language>@<version>`
 	if hasLanguage && hasVersion {
+		print.InStyleln("Language", language)
 		install(language, version)
 		return
 	}
 
 	// If `--remote` or `-r` flag was passed
+	flags.Parse()
 	if flags.IsRemote {
 
 		// In case of `ec -r`
@@ -85,6 +83,8 @@ func Execute() {
 
 	// In case of `ec <language>`
 	if hasLanguage && hasVersion == false {
+		print.InStyleln("Language", language)
+
 		version, err = info.AskVersion(language)
 		print.Error(err)
 
