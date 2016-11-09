@@ -459,11 +459,10 @@ func (plugin *Plugin) SetFullVersion(vers []string) error {
 }
 
 func SearchBin(name string) string {
-	bins := map[string][]string{
-		"rust": New("rust").Bins(),
-		"go":   New("go").Bins(),
-		"node": New("node").Bins(),
-		"ruby": New("ruby").Bins(),
+	bins := map[string][]string{}
+
+	for _, language := range Plugins {
+		bins[language] = New(language).Bins()
 	}
 
 	for index, _ := range bins {
@@ -479,12 +478,5 @@ func SearchBin(name string) string {
 
 // This one exists only to support nvm's `.nvmrc`
 func Dots(name string) []string {
-	files := map[string][]string{
-		"rust": New("rust").Dots(),
-		"go":   New("go").Dots(),
-		"node": New("node").Dots(),
-		"ruby": New("ruby").Dots(),
-	}
-
-	return files[name]
+	return New(name).Dots()
 }

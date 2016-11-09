@@ -39,35 +39,22 @@ var _ = Describe("plugins", func() {
 	)
 
 	Describe("SearchBin", func() {
-		It("find all ruby bins", func() {
-			bins := New("ruby").Bins()
+		It("find all bins", func() {
+			for _, language := range Plugins {
+				bins := New(language).Bins()
 
-			for _, elem := range bins {
-				Expect(SearchBin(elem)).To(Equal("ruby"))
+				for _, elem := range bins {
+					Expect(SearchBin(elem)).To(Equal(language))
+				}
 			}
 		})
+	})
 
-		It("find all node bins", func() {
-			bins := New("node").Bins()
-
-			for _, elem := range bins {
-				Expect(SearchBin(elem)).To(Equal("node"))
-			}
-		})
-
-		It("find all go bins", func() {
-			bins := New("go").Bins()
-
-			for _, elem := range bins {
-				Expect(SearchBin(elem)).To(Equal("go"))
-			}
-		})
-
-		It("find all rust bins", func() {
-			bins := New("rust").Bins()
-
-			for _, elem := range bins {
-				Expect(SearchBin(elem)).To(Equal("rust"))
+	Describe("Dots", func() {
+		It("should return dot files for node", func() {
+			for _, language := range Plugins {
+				typa := reflect.TypeOf(Dots(language))
+				Expect(fmt.Sprintf("%s", typa)).To(Equal("[]string"))
 			}
 		})
 	})
