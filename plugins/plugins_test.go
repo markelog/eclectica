@@ -60,6 +60,103 @@ var _ = Describe("plugins", func() {
 
 	Describe("Install", func() {
 		var (
+			list        = false
+			current     = false
+			osRemoveAll = false
+		)
+
+		resCurrent := "6.7.0"
+
+		type Empty struct{}
+
+		var resList error
+		var resOsRemoveAll error
+
+		resOsRemoveAll = nil
+		resList = nil
+
+		osRemoveCount := 0
+
+		var guardCurrent *monkey.PatchGuard
+		var guardList *monkey.PatchGuard
+
+		BeforeEach(func() {
+			var d *Plugin
+
+			pType := reflect.TypeOf(d)
+
+			guardCurrent = monkey.PatchInstanceMethod(pType, "Current",
+				func(plugin *Plugin) string {
+					current = true
+					return resCurrent
+				},
+			)
+
+			guardList = monkey.PatchInstanceMethod(pType, "List",
+				func(plugin *Plugin) ([]string, error) {
+					list = true
+					return nil, resList
+				},
+			)
+
+			monkey.Patch(os.RemoveAll, func(path string) error {
+				osRemoveAll = true
+				osRemoveCount = osRemoveCount + 1
+				return resOsRemoveAll
+			})
+
+		})
+
+		AfterEach(func() {
+			current = false
+			osRemoveAll = false
+
+			resCurrent = ""
+			resList = nil
+			resOsRemoveAll = nil
+
+			osRemoveCount = 0
+
+			monkey.Unpatch(os.RemoveAll)
+
+			guardCurrent.Unpatch()
+			guardList.Unpatch()
+		})
+
+		It("remove sequence", func() {
+			resCurrent = ""
+
+			New("node", "6.8.0").Remove()
+
+			Expect(current).To(Equal(true))
+			Expect(list).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
+
+			Expect(osRemoveCount).To(Equal(1))
+		})
+
+		It("remove current version", func() {
+			resCurrent = "6.8.0"
+
+			New("node", "6.8.0").Remove()
+
+			Expect(current).To(Equal(true))
+			Expect(list).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
+
+			// Since removeProxy might have a lot of os.RemoveAll's
+			Expect(osRemoveCount).Should(BeNumerically(">", 1))
+		})
+
+		It("shouldn't remove without version", func() {
+			err := New("node").Remove()
+
+			Expect(err.Error()).To(Equal("Version was not defined"))
+		})
+	})
+
+	Describe("Install", func() {
+		var (
 			initiate    = false
 			current     = false
 			postInstall = false

@@ -257,10 +257,24 @@ func (plugin *Plugin) ListRemote() (map[string][]string, error) {
 	return versions.Compose(vers), nil
 }
 
-func (plugin *Plugin) Remove(version string) error {
-	var err error
-	home := filepath.Join(variables.Home(), plugin.name)
-	base := filepath.Join(home, version)
+func (plugin *Plugin) Remove() (err error) {
+	if plugin.Version == "" {
+		return errors.New("Version was not defined")
+	}
+
+	var (
+		home = filepath.Join(variables.Home(), plugin.name)
+		base = filepath.Join(home, plugin.Version)
+	)
+
+	// Need to remove proxies if this is a current.
+	// So we wouldn't confuse user
+	if plugin.Current() == plugin.Version {
+		err = plugin.removeProxy()
+		if err != nil {
+			return err
+		}
+	}
 
 	err = os.RemoveAll(base)
 	if err != nil {
