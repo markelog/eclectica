@@ -1,7 +1,6 @@
 package plugins_test
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -176,8 +175,8 @@ var _ = Describe("plugins", func() {
 			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
 			Expect(postInstall).To(Equal(true))
-			Expect(osRemoveAll).To(Equal(true))
-			Expect(osSymlink).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(false))
+			Expect(osSymlink).To(Equal(false))
 			Expect(osStat).To(Equal(true))
 			Expect(pkgInstall).To(Equal(false))
 		})
@@ -196,20 +195,6 @@ var _ = Describe("plugins", func() {
 			Expect(pkgInstall).To(Equal(false))
 		})
 
-		It("should return early if it couldn't RemoveAll", func() {
-			resOsRemoveAll = errors.New("something")
-
-			New("node", "6.8.0").Install()
-
-			Expect(initiate).To(Equal(true))
-			Expect(current).To(Equal(true))
-			Expect(osRemoveAll).To(Equal(true))
-			Expect(postInstall).To(Equal(false))
-			Expect(osSymlink).To(Equal(false))
-			Expect(osStat).To(Equal(false))
-			Expect(pkgInstall).To(Equal(false))
-		})
-
 		It("should not return early", func() {
 			resOsStat, _ = os.Stat(os.Getenv("HOME"))
 
@@ -217,8 +202,8 @@ var _ = Describe("plugins", func() {
 
 			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
-			Expect(osRemoveAll).To(Equal(true))
-			Expect(osSymlink).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(false))
+			Expect(osSymlink).To(Equal(false))
 			Expect(osStat).To(Equal(true))
 			Expect(postInstall).To(Equal(true))
 			Expect(pkgInstall).To(Equal(false))

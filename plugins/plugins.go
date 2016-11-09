@@ -125,23 +125,7 @@ func (plugin *Plugin) Install() error {
 		return plugin.PostInstall()
 	}
 
-	var (
-		base    = variables.Path(plugin.name, plugin.Version)
-		bin     = variables.GetBin(plugin.name, plugin.Version)
-		current = variables.Path(plugin.name)
-	)
-
-	// Remove current@ symlink if it existed for previous version
-	err = os.RemoveAll(current)
-	if err != nil {
-		return err
-	}
-
-	// Set up current@ symlink
-	err = os.Symlink(base, current)
-	if err != nil {
-		return err
-	}
+	bin := variables.GetBin(plugin.name, plugin.Version)
 
 	// If binary for this plugin already exist then we can assume it was installed before;
 	// which means we can bail at this point
@@ -158,6 +142,16 @@ func (plugin *Plugin) Install() error {
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
+	var (
+		base    = variables.Path(plugin.name, plugin.Version)
+		current = variables.Path(plugin.name)
+	)
+
+	err = symlink(current, base)
+	if err != nil {
+		return err
+	}
+
 	err = plugin.Proxy()
 	if err != nil {
 		return err
@@ -479,4 +473,20 @@ func SearchBin(name string) string {
 // This one exists only to support nvm's `.nvmrc`
 func Dots(name string) []string {
 	return New(name).Dots()
+}
+
+func symlink(current, base string) (err error) {
+	// Remove current@ symlink if it existed for previous version
+	err = os.RemoveAll(current)
+	if err != nil {
+		return err
+	}
+
+	// Set up current@ symlink
+	err = os.Symlink(base, current)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
