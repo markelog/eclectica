@@ -267,7 +267,7 @@ func (plugin *Plugin) Remove() (err error) {
 		base = filepath.Join(home, plugin.Version)
 	)
 
-	// Need to remove proxies if this is a current.
+	// Need to remove proxies if this is a current version.
 	// So we wouldn't confuse user
 	if plugin.Current() == plugin.Version {
 		err = plugin.removeProxy()
@@ -314,6 +314,10 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
 	}
 
 	resp := <-response
+
+	if resp == nil {
+		return resp, errors.New("Something went wrong with HTTP request")
+	}
 
 	if resp.HTTPResponse.StatusCode == 404 {
 		grab.NewClient().CancelRequest(resp.Request)
