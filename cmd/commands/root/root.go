@@ -1,7 +1,6 @@
 package root
 
 import (
-	// "fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -62,6 +61,7 @@ func Execute() {
 		print.InStyleln("Version", version)
 
 		install(language, version)
+		return
 
 		// In case of `ec <language>@<version>`
 	} else if hasVersion {
@@ -123,10 +123,6 @@ func getVersion(language, version string) string {
 	return version
 }
 
-func spin(plugin *plugins.Plugin) {
-
-}
-
 // Install either globally or locally
 func conditionalInstall(plugin *plugins.Plugin) {
 	var (
@@ -151,19 +147,17 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		spinner.Start()
 	})
 
+	plugin.Events().On("Installed", func() {
+		spinner.Stop()
+	})
+
 	if flags.IsLocal {
 		err = plugin.LocalInstall()
 	} else {
 		err = plugin.Install()
 	}
 
-	if spinner != nil {
-		spinner.Stop()
-	}
-
 	print.Error(err)
-
-	os.Exit(0)
 }
 
 // Entry point for installation

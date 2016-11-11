@@ -1,7 +1,6 @@
 package python
 
 import (
-	// "bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -43,10 +42,18 @@ func (python Python) Events() *emission.Emitter {
 }
 
 func (python Python) Install() error {
-	prefix := variables.Prefix("python")
 	path := variables.Path("python", python.Version)
+
+	prefix := variables.Prefix("python")
 	tmp := filepath.Join(prefix, "tmp")
 	configure := filepath.Join(tmp, "configure")
+
+	clean := func(err error) error {
+		os.RemoveAll(tmp)
+		os.RemoveAll(path)
+
+		return err
+	}
 
 	// Just in case, tmp might not get removed if this method had an error
 	// before we could remove it
@@ -54,57 +61,54 @@ func (python Python) Install() error {
 
 	_, err := io.CreateDir(tmp)
 	if err != nil {
-		return err
+		return clean(err)
 	}
 
 	err = cprf.Copy(path+"/", tmp)
 	if err != nil {
-		return err
+		return clean(err)
 	}
 
 	python.Emitter.Emit("Configuring")
 
 	err = command(configure, "--prefix="+path)
 	if err != nil {
-		os.RemoveAll(tmp)
-		os.RemoveAll(path)
-		return err
+		return clean(err)
 	}
 
 	python.Emitter.Emit("Preparing")
 
 	err = command("make")
 	if err != nil {
-		os.RemoveAll(tmp)
-		os.RemoveAll(path)
-		return err
+		return clean(err)
 	}
 
 	python.Emitter.Emit("Installing")
 
 	err = command("make", "install")
 	if err != nil {
-		os.RemoveAll(tmp)
-		os.RemoveAll(path)
-		return err
+		return clean(err)
 	}
 
 	os.RemoveAll(tmp)
 
 	chosen, err := semver.Make(python.Version)
 	if err != nil {
-		return err
+		return clean(err)
 	}
 
 	if chosen.Major < 3 {
+		python.Emitter.Emit("Installed")
 		return nil
 	}
-	//
+
 	// Since python 3.x versions are naming their binaries with 3 affix
 	err = renameLinks(python.Version)
 	if err != nil {
-		return err
+		return clean(err)
 	}
+
+	python.Emitter.Emit("Installed")
 
 	return nil
 }
@@ -232,13 +236,7 @@ func renameLinks(version string) (err error) {
 func command(args ...interface{}) (err error) {
 	var (
 		cmd *exec.Cmd
-		// errOuput = &bytes.Buffer{}
 	)
-
-	tmp := filepath.Join(variables.Prefix("python"), "tmp")
-
-	// Required for some reason
-	env := append(os.Environ(), "LC_ALL=C")
 
 	if len(args) == 1 {
 		cmd = exec.Command(args[0].(string))
@@ -249,13 +247,10 @@ func command(args ...interface{}) (err error) {
 	// Lots of needless, weird warnings in the Makefile
 	// cmd.Stderr = os.Stderr
 
-	cmd.Env = env
-	cmd.Dir = tmp
-	_, err = cmd.Output()
-
-	if err != nil {
-		return err
-	}
+	// Required for some reason
+	cmd.Env = append(os.Environ(), "LC_ALL=C")
+	cmd.Dir = filepath.Join(variables.Prefix("python"), "tmp")
+	_, err = cmd.CombinedOutput()
 
 	return
 }

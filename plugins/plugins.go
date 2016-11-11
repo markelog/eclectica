@@ -123,14 +123,14 @@ func (plugin *Plugin) LocalInstall() error {
 	return plugin.Install()
 }
 
-func (plugin *Plugin) Install() error {
+func (plugin *Plugin) Install() (err error) {
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
 
-	err := Initiate()
+	err = Initiate()
 	if err != nil {
-		return err
+		return
 	}
 
 	// If this is already a current version we don't need to do anything
@@ -148,7 +148,7 @@ func (plugin *Plugin) Install() error {
 
 	err = plugin.Pkg.Install()
 	if err != nil {
-		return err
+		return
 	}
 
 	return plugin.PostInstall()
@@ -176,7 +176,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 	}
 
 	// Start new shell from eclectica if needed
-	StartShell()
+	StartShell(plugin.name)
 
 	return
 }

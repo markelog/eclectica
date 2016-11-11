@@ -1,7 +1,9 @@
 package plugins
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -35,8 +37,19 @@ func Initiate() (err error) {
 	return rc.New(command).Add()
 }
 
-func StartShell() {
+func StartShell(language string) {
 	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
+		console.Shell()
+		return
+	}
+
+	output, _ := exec.Command("hash").Output()
+	out := string(output)
+
+	ecPath := fmt.Sprintf("/%s/%s", ".eclectica/bin", language)
+	binPath := fmt.Sprintf("/%s/%s", "bin", language)
+
+	if strings.Contains(out, binPath) && strings.Contains(out, ecPath) == false {
 		console.Shell()
 	}
 }

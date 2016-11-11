@@ -529,7 +529,7 @@ var _ = Describe("main", func() {
 	Describe("python", func() {
 		Describe("bare minimum", func() {
 			Describe("2.x", func() {
-				It("should list installed go versions", func() {
+				It("should list installed versions", func() {
 					Execute("go", "run", path, "python@2.7.12")
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
@@ -579,7 +579,7 @@ var _ = Describe("main", func() {
 			})
 
 			Describe("3.x", func() {
-				It("should list installed go versions", func() {
+				It("should list installed versions", func() {
 					Execute("go", "run", path, "python@3.5.2")
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
