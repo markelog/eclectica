@@ -20,6 +20,7 @@ import (
 	// plugins
 	"github.com/markelog/eclectica/plugins/golang"
 	"github.com/markelog/eclectica/plugins/nodejs"
+	"github.com/markelog/eclectica/plugins/python"
 	"github.com/markelog/eclectica/plugins/ruby"
 	"github.com/markelog/eclectica/plugins/rust"
 )
@@ -30,6 +31,7 @@ var (
 		"rust",
 		"ruby",
 		"go",
+		"python",
 	}
 )
 
@@ -83,6 +85,10 @@ func New(args ...string) *Plugin {
 		}
 	case name == "go":
 		plugin.Pkg = &golang.Golang{
+			Version: version,
+		}
+	case name == "python":
+		plugin.Pkg = &python.Python{
 			Version: version,
 		}
 	}

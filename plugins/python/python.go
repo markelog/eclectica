@@ -1,8 +1,10 @@
 package python
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
@@ -26,7 +28,7 @@ var (
 	// Hats off to inconsistent python developers
 	noNilVersions, _ = semver.Make("3.3.0")
 
-	bins = []string{"2to3", "idle", "pydoc", "python", "python-config"}
+	bins = []string{"2to3", "idle", "pydoc", "python", "python-config", "easy_install", "pip"}
 	dots = []string{".python-version"}
 )
 
@@ -56,7 +58,7 @@ func (python Python) Install() error {
 		return err
 	}
 
-	err = os.RemoveAll(path)
+	// err = os.RemoveAll(path)
 	if err != nil {
 		return err
 	}
@@ -96,7 +98,22 @@ func (python Python) Install() error {
 
 	os.RemoveAll(tmp)
 
-	return err
+	chosen, err := semver.Make(python.Version)
+	if err != nil {
+		return err
+	}
+
+	if chosen.Major < 3 {
+		return nil
+	}
+	//
+	// Since python 3.x versions are naming their binaries with 3 affix
+	err = renameLinks(python.Version)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (python Python) PostInstall() error {
@@ -144,12 +161,12 @@ func (rust Python) Dots() []string {
 }
 
 func (python Python) Current() string {
-	path := variables.Path("go")
-	version := filepath.Join(path, "VERSION")
-	readVersion := strings.Replace(io.Read(version), "go", "", 1)
-	semverVersion := versions.Semverify(readVersion)
+	bin := variables.GetBin("python")
+	out, _ := exec.Command(bin, "-V").Output()
+	readVersion := strings.Replace(string(out), "Python ", "", 1)
+	version := strings.TrimSpace(readVersion)
 
-	return semverVersion
+	return versions.Semverify(version)
 }
 
 func (python Python) ListRemote() ([]string, error) {
@@ -183,8 +200,45 @@ func (python Python) ListRemote() ([]string, error) {
 	return result, nil
 }
 
+// Since python 3.x versions are naming their binaries with 3 affix
+func renameLinks(version string) (err error) {
+	path := filepath.Join(variables.Path("python", version), "bin")
+	rp := regexp.MustCompile("(-?)3\\.\\w")
+
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		name := file.Name()
+		absPath := filepath.Join(path, name)
+
+		if rp.MatchString(name) {
+			pathPart := rp.ReplaceAllString(name, "")
+			newPath := filepath.Join(path, pathPart)
+
+			// Since python install creates some links with version and some without
+			if _, errStat := os.Lstat(newPath); errStat == nil {
+				continue
+			}
+
+			err = os.Symlink(absPath, newPath)
+			if err != nil {
+				fmt.Println(absPath, newPath)
+				return
+			}
+		}
+	}
+
+	return nil
+}
+
 func command(args ...interface{}) (err error) {
-	var cmd *exec.Cmd
+	var (
+		cmd    *exec.Cmd
+		errbuf bytes.Buffer
+	)
 
 	tmp := filepath.Join(variables.Prefix("python"), "tmp")
 
@@ -200,10 +254,14 @@ func command(args ...interface{}) (err error) {
 	}
 
 	// Lots of needless, weird warnings in the Makefile
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = &errbuf
 	cmd.Env = env
 	cmd.Dir = tmp
 	_, err = cmd.Output()
+
+	if err != nil {
+		return errors.New(errbuf.String())
+	}
 
 	return
 }
