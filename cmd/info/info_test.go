@@ -8,6 +8,42 @@ import (
 )
 
 var _ = Describe("info", func() {
+	Describe("GetFullVersion", func() {
+		It("support for partial major version", func() {
+			version := "6"
+			versions := []string{
+				"6.1.0", "5.2.0", "6.2.0", "6.8.3",
+			}
+
+			test, _ := info.GetFullVersion(version, versions)
+
+			Expect(test).To(Equal("6.8.3"))
+		})
+
+		It("support for partial minor version", func() {
+			version := "6.4"
+			versions := []string{
+				"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
+			}
+
+			test, _ := info.GetFullVersion(version, versions)
+
+			Expect(test).To(Equal("6.4.2"))
+		})
+
+		It("shouldn't do anything for full version", func() {
+			version := "6.1.1"
+			versions := []string{
+				"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
+			}
+
+			test, err := info.GetFullVersion(version, versions)
+
+			Expect(err).To(BeNil())
+			Expect(test).To(Equal("6.1.1"))
+		})
+	})
+
 	Describe("GetLanguage", func() {
 		It("should get language", func() {
 			language, version := info.GetLanguage([]string{"-r", "rust"})

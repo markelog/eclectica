@@ -449,33 +449,6 @@ func (plugin *Plugin) removeProxy() (err error) {
 	return nil
 }
 
-func (plugin *Plugin) SetFullVersion(vers []string) error {
-	if plugin.Version == "" {
-		return errors.New("Version was not defined")
-	}
-
-	if versions.IsPartialVersion(plugin.Version) == false {
-		return nil
-	}
-
-	// This shouldn't happen
-	if len(vers) == 0 {
-		return errors.New("No versions available")
-	}
-
-	last, err := versions.GetLatest(plugin.Version, vers)
-
-	if err != nil {
-		return err
-	}
-
-	plugin.Version = last
-	plugin.Pkg = New(plugin.name, last).Pkg
-	plugin.info, _ = plugin.Info()
-
-	return nil
-}
-
 func SearchBin(name string) string {
 	bins := map[string][]string{}
 

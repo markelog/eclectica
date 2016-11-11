@@ -52,9 +52,21 @@ func Execute() {
 	hasLanguage := info.HasLanguage(args)
 	hasVersion := info.HasVersion(args)
 
-	// In case of `ec <language>@<version>`
-	if hasLanguage && hasVersion {
+	// In case of `ec <language>@<partial-version like node@5>`
+	if hasVersion && versions.IsPartialVersion(version) {
 		print.InStyleln("Language", language)
+
+		version = getVersion(language, version)
+
+		print.InStyleln("Version", version)
+
+		install(language, version)
+
+		// In case of `ec <language>@<version>`
+	} else if hasVersion {
+		print.InStyleln("Language", language)
+		print.InStyleln("Version", version)
+
 		install(language, version)
 		return
 	}
@@ -65,6 +77,8 @@ func Execute() {
 
 		// In case of `ec -r`
 		if hasLanguage {
+			print.InStyleln("Language", language)
+
 			version, err = info.AskRemoteVersion(language)
 			print.Error(err)
 
@@ -98,6 +112,16 @@ func Execute() {
 	os.Exit(1)
 }
 
+func getVersion(language, version string) string {
+	remoteList, err := info.FullListRemote(language)
+	print.Error(err)
+
+	version, err = info.GetFullVersion(version, remoteList)
+	print.Error(err)
+
+	return version
+}
+
 // Install either globally or locally
 func conditionalInstall(plugin *plugins.Plugin) {
 	var err error
@@ -109,21 +133,12 @@ func conditionalInstall(plugin *plugins.Plugin) {
 	}
 
 	print.Error(err)
+	os.Exit(0)
 }
 
 // Entry point for installation
 func install(language, version string) {
 	plugin := plugins.New(language, version)
-
-	if versions.IsPartialVersion(version) {
-		remoteList, err := info.FullListRemote(language)
-		print.Error(err)
-
-		err = plugin.SetFullVersion(remoteList)
-		print.Error(err)
-	}
-
-	print.InStyleln("Version", plugin.Version)
 
 	response, err := plugin.Download()
 	print.Error(err)

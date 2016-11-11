@@ -18,7 +18,6 @@ import (
 
 	. "github.com/markelog/eclectica/plugins"
 
-	eio "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/variables"
 )
@@ -310,67 +309,6 @@ var _ = Describe("plugins", func() {
 			plugin := New("node")
 
 			Expect(plugin.Install()).Should(MatchError("Version was not defined"))
-		})
-
-		Describe("partial version support", func() {
-			old := nodejs.VersionsLink
-
-			AfterEach(func() {
-				nodejs.VersionsLink = old
-			})
-
-			BeforeEach(func() {
-				content := eio.Read("../testdata/plugins/nodejs/dist.html")
-
-				// httpmock is not incompatible with goquery :/.
-				// See https://github.com/jarcoal/httpmock/issues/18
-				ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					status := 200
-
-					if _, ok := r.URL.Query()["status"]; ok {
-						fmt.Sscanf(r.URL.Query().Get("status"), "%d", &status)
-					}
-
-					w.WriteHeader(status)
-					io.WriteString(w, content)
-				}))
-
-				nodejs.VersionsLink = ts.URL
-			})
-
-			It("support for partial major version", func() {
-				plugin := New("node", "6")
-				versions := []string{
-					"6.1.0", "5.2.0", "6.2.0", "6.8.3",
-				}
-
-				plugin.SetFullVersion(versions)
-
-				Expect(plugin.Version).To(Equal("6.8.3"))
-			})
-
-			It("support for partial minor version", func() {
-				plugin := New("node", "6.4")
-				versions := []string{
-					"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
-				}
-
-				plugin.SetFullVersion(versions)
-
-				Expect(plugin.Version).To(Equal("6.4.2"))
-			})
-
-			It("shouldn't do anything for full version", func() {
-				plugin := New("node", "6.1.1")
-				versions := []string{
-					"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
-				}
-
-				err := plugin.SetFullVersion(versions)
-
-				Expect(err).To(BeNil())
-				Expect(plugin.Version).To(Equal("6.1.1"))
-			})
 		})
 	})
 
