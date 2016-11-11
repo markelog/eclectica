@@ -478,7 +478,7 @@ var _ = Describe("main", func() {
 			fmt.Println("Removed")
 		})
 
-		It("should list installed go versions", func() {
+		It("should list installed versions", func() {
 			Execute("go", "run", path, "go@1.7.0")
 			command, _ := Command("go", "run", path, "ls", "go").Output()
 
@@ -502,7 +502,7 @@ var _ = Describe("main", func() {
 			Expect(err).To(BeNil())
 		})
 
-		It("should list remote go versions", func() {
+		It("should list remote versions", func() {
 			Expect(checkRemoteList("go", "1.7.x", 10)).To(Equal(true))
 		})
 
@@ -523,6 +523,110 @@ var _ = Describe("main", func() {
 			}
 
 			Expect(result).To(Equal(true))
+		})
+	})
+
+	Describe("python", func() {
+		Describe("bare minimum", func() {
+			Describe("2.x", func() {
+				It("should list installed go versions", func() {
+					Execute("go", "run", path, "python@2.7.12")
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
+				})
+
+				It("should use local version", func() {
+					pwd, _ := os.Getwd()
+					versionFile := filepath.Join(filepath.Dir(pwd), ".python-version")
+
+					Execute("go", "run", path, "python@2.7.12")
+					Execute("go", "run", path, "python@2.7.10")
+
+					io.WriteFile(versionFile, "2.7.12")
+
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
+
+					err := os.RemoveAll(versionFile)
+
+					Expect(err).To(BeNil())
+				})
+
+				It("should list remote versions", func() {
+					Expect(checkRemoteList("python", "2.x", 50)).To(Equal(true))
+				})
+
+				It("should remove version", func() {
+					result := true
+
+					Execute("go", "run", path, "python@2.7.12")
+					Execute("go", "run", path, "python@2.7.10")
+					Command("go", "run", path, "rm", "python@2.7.12").Output()
+
+					plugin := plugins.New("python")
+					versions, _ := plugin.List()
+
+					for _, version := range versions {
+						if version == "2.7.12" {
+							result = false
+						}
+					}
+
+					Expect(result).To(Equal(true))
+				})
+			})
+
+			Describe("3.x", func() {
+				It("should list installed go versions", func() {
+					Execute("go", "run", path, "python@3.5.2")
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 3.5.2")).To(Equal(true))
+				})
+
+				It("should use local version", func() {
+					pwd, _ := os.Getwd()
+					versionFile := filepath.Join(filepath.Dir(pwd), ".python-version")
+
+					Execute("go", "run", path, "python@3.5.2")
+					Execute("go", "run", path, "python@3.5.1")
+
+					io.WriteFile(versionFile, "3.5.2")
+
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 3.5.2")).To(Equal(true))
+
+					err := os.RemoveAll(versionFile)
+
+					Expect(err).To(BeNil())
+				})
+
+				It("should list remote versions", func() {
+					Expect(checkRemoteList("python", "3.x", 50)).To(Equal(true))
+				})
+
+				It("should remove version", func() {
+					result := true
+
+					Execute("go", "run", path, "python@3.5.2")
+					Execute("go", "run", path, "python@3.5.1")
+					Command("go", "run", path, "rm", "python@3.5.2").Output()
+
+					plugin := plugins.New("python")
+					versions, _ := plugin.List()
+
+					for _, version := range versions {
+						if version == "3.5.2" {
+							result = false
+						}
+					}
+
+					Expect(result).To(Equal(true))
+				})
+			})
 		})
 	})
 })

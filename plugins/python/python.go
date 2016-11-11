@@ -131,8 +131,9 @@ func (python Python) Info() (map[string]string, error) {
 		version = versions.Unsemverify(python.Version)
 	}
 
-	result["version"] = version
+	// Python 2.0 has different format and its not supported
 	result["extension"] = "tgz"
+	result["version"] = version
 	result["filename"] = "Python-" + version
 	result["url"] = fmt.Sprintf(
 		"%s/%s/%s.%s",
@@ -155,7 +156,9 @@ func (rust Python) Dots() []string {
 
 func (python Python) Current() string {
 	bin := variables.GetBin("python")
-	out, _ := exec.Command(bin, "-V").Output()
+
+	out, _ := exec.Command(bin, "--version").CombinedOutput()
+
 	readVersion := strings.Replace(string(out), "Python ", "", 1)
 	version := strings.TrimSpace(readVersion)
 
