@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chuckpreslar/emission"
 
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
@@ -26,6 +27,11 @@ var (
 
 type Golang struct {
 	Version string
+	Emitter *emission.Emitter
+}
+
+func (golang Golang) Events() *emission.Emitter {
+	return golang.Emitter
 }
 
 func (golang Golang) Install() error {

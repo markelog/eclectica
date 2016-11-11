@@ -1,7 +1,7 @@
 package python
 
 import (
-	"bytes"
+	// "bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -14,6 +14,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/blang/semver"
+	"github.com/chuckpreslar/emission"
 	"github.com/markelog/cprf"
 
 	"github.com/markelog/eclectica/io"
@@ -34,6 +35,11 @@ var (
 
 type Python struct {
 	Version string
+	Emitter *emission.Emitter
+}
+
+func (python Python) Events() *emission.Emitter {
+	return python.Emitter
 }
 
 func (python Python) Install() error {
@@ -51,48 +57,35 @@ func (python Python) Install() error {
 		return err
 	}
 
-	fmt.Println(path+"/", tmp)
-
 	err = cprf.Copy(path+"/", tmp)
 	if err != nil {
 		return err
 	}
 
-	// err = os.RemoveAll(path)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.CreateDir(path)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("Configuring")
-	fmt.Println(path)
+	python.Emitter.Emit("Configuring")
 
 	err = command(configure, "--prefix="+path)
-
 	if err != nil {
 		os.RemoveAll(tmp)
+		os.RemoveAll(path)
 		return err
 	}
 
-	fmt.Println("Preparing")
+	python.Emitter.Emit("Preparing")
 
 	err = command("make")
-
 	if err != nil {
 		os.RemoveAll(tmp)
+		os.RemoveAll(path)
 		return err
 	}
 
-	fmt.Println("Installing")
+	python.Emitter.Emit("Installing")
 
 	err = command("make", "install")
-
 	if err != nil {
 		os.RemoveAll(tmp)
+		os.RemoveAll(path)
 		return err
 	}
 
@@ -225,7 +218,6 @@ func renameLinks(version string) (err error) {
 
 			err = os.Symlink(absPath, newPath)
 			if err != nil {
-				fmt.Println(absPath, newPath)
 				return
 			}
 		}
@@ -236,8 +228,8 @@ func renameLinks(version string) (err error) {
 
 func command(args ...interface{}) (err error) {
 	var (
-		cmd    *exec.Cmd
-		errbuf bytes.Buffer
+		cmd *exec.Cmd
+		// errOuput = &bytes.Buffer{}
 	)
 
 	tmp := filepath.Join(variables.Prefix("python"), "tmp")
@@ -246,21 +238,20 @@ func command(args ...interface{}) (err error) {
 	env := append(os.Environ(), "LC_ALL=C")
 
 	if len(args) == 1 {
-		fmt.Println(args, "command")
 		cmd = exec.Command(args[0].(string))
 	} else {
-		fmt.Println(args, "command")
 		cmd = exec.Command(args[0].(string), args[1].(string))
 	}
 
 	// Lots of needless, weird warnings in the Makefile
-	cmd.Stderr = &errbuf
+	// cmd.Stderr = os.Stderr
+
 	cmd.Env = env
 	cmd.Dir = tmp
 	_, err = cmd.Output()
 
 	if err != nil {
-		return errors.New(errbuf.String())
+		return err
 	}
 
 	return

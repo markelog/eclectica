@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/chuckpreslar/emission"
 	"github.com/markelog/cprf"
 
 	"github.com/markelog/eclectica/io"
@@ -28,6 +29,11 @@ var (
 
 type Rust struct {
 	Version string
+	Emitter *emission.Emitter
+}
+
+func (rust Rust) Events() *emission.Emitter {
+	return rust.Emitter
 }
 
 func (rust Rust) Install() error {

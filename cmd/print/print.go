@@ -117,6 +117,48 @@ func Download(response *grab.Response, version string) string {
 	return response.Filename
 }
 
+func CustomSpin(header, item, message string) *Spinner {
+	c, _ := curse.New()
+
+	before := func() {}
+
+	started := false
+	prefix := func() {
+		c.MoveUp(1)
+
+		if started {
+			c.EraseCurrentLine()
+		}
+		started = true
+
+		InStyle(header, item)
+	}
+
+	postfix := func() {
+		color.Set(color.FgBlack)
+		fmt.Print(" ", message)
+		color.Unset()
+		fmt.Println()
+
+		time.Sleep(300 * time.Millisecond)
+	}
+
+	after := func() {
+		c.EraseCurrentLine()
+		InStyle(header, item)
+		fmt.Println()
+	}
+
+	s := &Spinner{
+		Before:  before,
+		After:   after,
+		Prefix:  prefix,
+		Postfix: postfix,
+	}
+
+	return s
+}
+
 func PostInstall(start, middle, end, command string) {
 	fmt.Println()
 

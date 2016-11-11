@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chuckpreslar/emission"
 	"github.com/markelog/release"
 
 	"github.com/markelog/eclectica/variables"
@@ -27,6 +28,11 @@ var (
 
 type Ruby struct {
 	Version string
+	Emitter *emission.Emitter
+}
+
+func (ruby Ruby) Events() *emission.Emitter {
+	return ruby.Emitter
 }
 
 func (ruby Ruby) Install() error {

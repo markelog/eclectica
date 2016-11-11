@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chuckpreslar/emission"
 
 	"github.com/markelog/eclectica/variables"
 )
@@ -25,6 +26,11 @@ var (
 
 type Node struct {
 	Version string
+	Emitter *emission.Emitter
+}
+
+func (node Node) Events() *emission.Emitter {
+	return node.Emitter
 }
 
 func (node Node) Install() error {

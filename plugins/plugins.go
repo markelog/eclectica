@@ -9,6 +9,7 @@ import (
 	"runtime"
 
 	"github.com/cavaliercoder/grab"
+	"github.com/chuckpreslar/emission"
 	"github.com/kardianos/osext"
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"
@@ -37,6 +38,7 @@ var (
 
 type Pkg interface {
 	Install() error
+	Events() *emission.Emitter
 	Environment() (string, error)
 	PostInstall() error
 	ListRemote() ([]string, error)
@@ -74,22 +76,27 @@ func New(args ...string) *Plugin {
 	case name == "node":
 		plugin.Pkg = &nodejs.Node{
 			Version: version,
+			Emitter: emission.NewEmitter(),
 		}
 	case name == "rust":
 		plugin.Pkg = &rust.Rust{
 			Version: version,
+			Emitter: emission.NewEmitter(),
 		}
 	case name == "ruby":
 		plugin.Pkg = &ruby.Ruby{
 			Version: version,
+			Emitter: emission.NewEmitter(),
 		}
 	case name == "go":
 		plugin.Pkg = &golang.Golang{
 			Version: version,
+			Emitter: emission.NewEmitter(),
 		}
 	case name == "python":
 		plugin.Pkg = &python.Python{
 			Version: version,
+			Emitter: emission.NewEmitter(),
 		}
 	}
 
@@ -391,6 +398,10 @@ func (plugin *Plugin) Bins() []string {
 
 func (plugin *Plugin) Dots() []string {
 	return plugin.Pkg.Dots()
+}
+
+func (plugin *Plugin) Events() *emission.Emitter {
+	return plugin.Pkg.Events()
 }
 
 func (plugin *Plugin) Proxy() (err error) {
