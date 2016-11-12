@@ -232,7 +232,7 @@ var _ = Describe("main", func() {
 		})
 	})
 
-	Describe("Rust", func() {
+	Describe("rust", func() {
 		BeforeEach(func() {
 			fmt.Println()
 

@@ -22,7 +22,7 @@ int-test:
 	@go build -v ./bin/ec-proxy
 	@mv ec-proxy $(tmp)
 
-	@env EC_PROXY_PLACE=$(tmp) INT=true go test -v ./bin/ec
+	@env EC_PROXY_PLACE=$(tmp) INT=true go test -v ./bin/ec -timeout 30m
 	@rm -rf $(tmp)
 .PHONY: int-test
 
