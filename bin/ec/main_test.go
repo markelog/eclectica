@@ -581,32 +581,32 @@ var _ = Describe("main", func() {
 					Execute("go", "run", path, "python@2.7.12")
 					command, err := Command("pip").CombinedOutput()
 
-					Expect(err).To(BeNil())
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+					Expect(err).To(BeNil())
 				})
 
-				It("should have easy_install installed for case when it delivered with binaries", func() {
+				FIt("should have easy_install installed for case when it delivered with binaries", func() {
 					Execute("go", "run", path, "python@2.7.12")
 					command, err := Command("easy_install").CombinedOutput()
 
-					Expect(err).To(BeNil())
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+					Expect(err).To(BeNil())
 				})
 
 				It("should have pip installed for case when downloaded", func() {
 					Execute("go", "run", path, "python@2.7.8")
 					command, err := Command("pip").CombinedOutput()
 
-					Expect(err).To(BeNil())
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+					Expect(err).To(BeNil())
 				})
 
 				It("should have easy_install installed for case when downloaded", func() {
 					Execute("go", "run", path, "python@2.7.8")
 					command, err := Command("easy_install").CombinedOutput()
 
-					Expect(err).To(BeNil())
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+					Expect(err).To(BeNil())
 				})
 			})
 
@@ -663,16 +663,16 @@ var _ = Describe("main", func() {
 					Execute("go", "run", path, "python@3.5.2")
 					command, err := Command("pip").CombinedOutput()
 
-					Expect(err).To(BeNil())
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+					Expect(err).To(BeNil())
 				})
 
 				It("should have easy_install installed for case when it delivered with binaries", func() {
 					Execute("go", "run", path, "python@3.5.2")
 					command, err := Command("easy_install").CombinedOutput()
 
-					Expect(err).To(BeNil())
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+					Expect(err).To(BeNil())
 				})
 			})
 		})
