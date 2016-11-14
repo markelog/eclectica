@@ -27,6 +27,9 @@ func Execute() {
 	var err error
 	args := os.Args[1:]
 
+	// If `--remote` or `-r` flag was passed
+	flags.Parse()
+
 	if info.NonInstallCommand(args) {
 
 		// Initialize cobra for other commands
@@ -72,8 +75,6 @@ func Execute() {
 		return
 	}
 
-	// If `--remote` or `-r` flag was passed
-	flags.Parse()
 	if flags.IsRemote {
 
 		// In case of `ec -r`
