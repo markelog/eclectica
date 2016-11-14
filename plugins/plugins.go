@@ -52,6 +52,7 @@ type Plugin struct {
 	name    string
 	Version string
 	Pkg     Pkg
+	emitter *emission.Emitter
 	info    map[string]string
 }
 
@@ -70,33 +71,34 @@ func New(args ...string) *Plugin {
 	plugin := &Plugin{
 		name:    name,
 		Version: version,
+		emitter: emission.NewEmitter(),
 	}
 
 	switch {
 	case name == "node":
 		plugin.Pkg = &nodejs.Node{
 			Version: version,
-			Emitter: emission.NewEmitter(),
+			Emitter: plugin.emitter,
 		}
 	case name == "rust":
 		plugin.Pkg = &rust.Rust{
 			Version: version,
-			Emitter: emission.NewEmitter(),
+			Emitter: plugin.emitter,
 		}
 	case name == "ruby":
 		plugin.Pkg = &ruby.Ruby{
 			Version: version,
-			Emitter: emission.NewEmitter(),
+			Emitter: plugin.emitter,
 		}
 	case name == "go":
 		plugin.Pkg = &golang.Golang{
 			Version: version,
-			Emitter: emission.NewEmitter(),
+			Emitter: plugin.emitter,
 		}
 	case name == "python":
 		plugin.Pkg = &python.Python{
 			Version: version,
-			Emitter: emission.NewEmitter(),
+			Emitter: plugin.emitter,
 		}
 	}
 
@@ -130,6 +132,7 @@ func (plugin *Plugin) Install() (err error) {
 
 	err = Initiate()
 	if err != nil {
+		plugin.emitter.Emit("done")
 		return
 	}
 
@@ -148,6 +151,7 @@ func (plugin *Plugin) Install() (err error) {
 
 	err = plugin.Pkg.Install()
 	if err != nil {
+		plugin.emitter.Emit("done")
 		return
 	}
 
@@ -162,21 +166,25 @@ func (plugin *Plugin) PostInstall() (err error) {
 
 	err = symlink(current, base)
 	if err != nil {
+		plugin.emitter.Emit("done")
 		return err
 	}
 
 	err = plugin.Proxy()
 	if err != nil {
+		plugin.emitter.Emit("done")
 		return err
 	}
 
 	err = plugin.Pkg.PostInstall()
 	if err != nil {
+		plugin.emitter.Emit("done")
 		return
 	}
 
 	// Start new shell from eclectica if needed
 	StartShell(plugin.name)
+	plugin.emitter.Emit("done")
 
 	return
 }

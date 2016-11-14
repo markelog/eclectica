@@ -56,6 +56,10 @@ func GetShellName() string {
 	return path[len(path)-1]
 }
 
+func Base() string {
+	return filepath.Join(os.Getenv("HOME"), ".eclectica")
+}
+
 func Home() string {
-	return filepath.Join(os.Getenv("HOME"), ".eclectica/versions")
+	return filepath.Join(Base(), "versions")
 }

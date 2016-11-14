@@ -130,25 +130,39 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		spinner *print.Spinner
 	)
 
-	plugin.Events().On("Configuring", func() {
-		spinner = print.CustomSpin("Version", plugin.Version, "Configuring")
+	plugin.Events().On("configure", func() {
+		spinner = print.CustomSpin("Version", plugin.Version, "configuring")
 		spinner.Start()
 	})
 
-	plugin.Events().On("Preparing", func() {
+	plugin.Events().On("prepare", func() {
 		spinner.Stop()
-		spinner = print.CustomSpin("Version", plugin.Version, "Preparing")
+		spinner = print.CustomSpin("Version", plugin.Version, "preparing")
 		spinner.Start()
 	})
 
-	plugin.Events().On("Installing", func() {
+	plugin.Events().On("install", func() {
 		spinner.Stop()
-		spinner = print.CustomSpin("Version", plugin.Version, "Installing")
+		spinner = print.CustomSpin("Version", plugin.Version, "installing")
 		spinner.Start()
 	})
 
-	plugin.Events().On("Installed", func() {
-		spinner.Stop()
+	plugin.Events().On("post-install", func() {
+
+		// "post-install" event might be called without others events
+		// Should we add same guard for other events?
+		if spinner != nil {
+			spinner.Stop()
+		}
+
+		spinner = print.CustomSpin("Version", plugin.Version, "post-installing")
+		spinner.Start()
+	})
+
+	plugin.Events().On("done", func() {
+		if spinner != nil {
+			spinner.Stop()
+		}
 	})
 
 	if flags.IsLocal {

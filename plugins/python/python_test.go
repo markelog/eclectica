@@ -55,8 +55,8 @@ var _ = Describe("python", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should have correct version values", func() {
-				Expect(remotes[0]).To(Equal("2.0"))
+			It("should exclude everything less then 2.6 versions", func() {
+				Expect(remotes[0]).To(Equal("2.6"))
 			})
 		})
 

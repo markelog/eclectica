@@ -10,25 +10,33 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/blang/semver"
+	"github.com/cavaliercoder/grab"
 	"github.com/chuckpreslar/emission"
-	"github.com/markelog/cprf"
 
-	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 )
 
 var (
 	VersionsLink   = "https://www.python.org/ftp/python"
-	versionPattern = "^\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
+	versionPattern = "^\\d+\\.\\d+(?:\\.\\d)?"
+
+	setuptoolsName = "ez_setup.py"
+	pipName        = "get-pip.py"
+	baseUrl        = "https://bootstrap.pypa.io/"
+	setuptoolsUrl  = baseUrl + setuptoolsName
+	pipUrl         = baseUrl + pipName
 
 	// Hats off to inconsistent python developers
 	noNilVersions, _ = semver.Make("3.3.0")
+	// When pip began to be available with binaries
+	pipAvailable, _ = semver.Make("2.7.9")
 
-	bins = []string{"2to3", "idle", "pydoc", "python", "python-config", "easy_install", "pip"}
+	bins = []string{"2to3", "idle", "pydoc", "python", "python-config", "pip", "easy_install"}
 	dots = []string{".python-version"}
 )
 
@@ -41,80 +49,144 @@ func (python Python) Events() *emission.Emitter {
 	return python.Emitter
 }
 
-func (python Python) Install() error {
+func (python Python) Install() (err error) {
 	path := variables.Path("python", python.Version)
+	configure := filepath.Join(path, "configure")
 
-	prefix := variables.Prefix("python")
-	tmp := filepath.Join(prefix, "tmp")
-	configure := filepath.Join(tmp, "configure")
+	python.Emitter.Emit("configure")
 
-	clean := func(err error) error {
-		os.RemoveAll(tmp)
+	cmd := python.getCmd(configure, "--prefix="+path)
+	cmd.Env = python.getOSXEnvs(cmd.Env)
+	_, err = cmd.CombinedOutput()
+
+	if err != nil {
 		os.RemoveAll(path)
-
-		return err
+		return
 	}
 
-	// Just in case, tmp might not get removed if this method had an error
-	// before we could remove it
-	os.RemoveAll(tmp)
+	python.Emitter.Emit("prepare")
 
-	_, err := io.CreateDir(tmp)
+	_, err = python.getCmd("make").CombinedOutput()
 	if err != nil {
-		return clean(err)
+		os.RemoveAll(path)
+		return
 	}
 
-	err = cprf.Copy(path+"/", tmp)
+	python.Emitter.Emit("install")
+
+	_, err = python.getCmd("make", "install").CombinedOutput()
 	if err != nil {
-		return clean(err)
+		os.RemoveAll(path)
+		return
 	}
 
-	python.Emitter.Emit("Configuring")
-
-	err = command(configure, "--prefix="+path)
-	if err != nil {
-		return clean(err)
-	}
-
-	python.Emitter.Emit("Preparing")
-
-	err = command("make")
-	if err != nil {
-		return clean(err)
-	}
-
-	python.Emitter.Emit("Installing")
-
-	err = command("make", "install")
-	if err != nil {
-		return clean(err)
-	}
-
-	os.RemoveAll(tmp)
-
-	chosen, err := semver.Make(python.Version)
-	if err != nil {
-		return clean(err)
-	}
-
+	// Since python 3.x versions are naming their binaries with "3" affix
+	chosen, _ := semver.Make(python.Version)
 	if chosen.Major < 3 {
-		python.Emitter.Emit("Installed")
 		return nil
 	}
 
-	// Since python 3.x versions are naming their binaries with 3 affix
 	err = renameLinks(python.Version)
 	if err != nil {
-		return clean(err)
+		os.RemoveAll(path)
+		return
 	}
-
-	python.Emitter.Emit("Installed")
 
 	return nil
 }
 
-func (python Python) PostInstall() error {
-	return nil
+func (python Python) getOSXEnvs(original []string) []string {
+	externals := []string{"readline", "openssl"}
+
+	includeFlags := ""
+	libFlags := ""
+
+	for _, name := range externals {
+		opt := "/usr/local/opt/"
+		libFlags += `-L` + filepath.Join(opt, name, "lib") + " "
+		includeFlags += "-I" + filepath.Join(opt, name, "include") + " "
+	}
+
+	// For zlib
+	// TODO: xcode required
+	output, _ := exec.Command("xcrun", "--show-sdk-path").CombinedOutput()
+	includeFlags += " -I" + filepath.Join(strings.TrimSpace(string(output)), "/usr/include")
+
+	original = append(original, "CPPFLAGS="+includeFlags)
+	original = append(original, "LDFLAGS="+libFlags)
+
+	return original
+}
+
+func (python Python) getCmd(args ...interface{}) (cmd *exec.Cmd) {
+
+	// There is gotta be a better way without reflect module, huh?
+	if len(args) == 1 {
+		cmd = exec.Command(args[0].(string))
+	} else if len(args) == 2 {
+		cmd = exec.Command(args[0].(string), args[1].(string))
+	} else {
+		cmd = exec.Command(args[0].(string), args[1].(string), args[2].(string))
+	}
+
+	// Lots of needless, Makefile weird warnings in the Makefile
+	// cmd.Stderr = os.Stderr
+	// cmd.Stdout = os.Stdout
+
+	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
+	cmd.Dir = variables.Path("python", python.Version)
+
+	return cmd
+}
+
+func (python Python) PostInstall() (err error) {
+	var (
+		errStat error
+		base    = filepath.Join(variables.Path("python", python.Version), "bin")
+		pipBin  = filepath.Join(base, "pip")
+		eIBin   = filepath.Join(base, "easy_install")
+	)
+
+	// Don't need to do anything if we already have pip and setuptools
+	if _, errStat = os.Lstat(pipBin); errStat == nil {
+		return
+	}
+	if _, errStat = os.Lstat(eIBin); errStat == nil {
+		return
+	}
+
+	python.Emitter.Emit("post-install")
+
+	// Since 2.7.9 versions we can simplify pip and setuptools install
+	semverVersion, _ := semver.Make(python.Version)
+	if semverVersion.Compare(pipAvailable) != -1 {
+		cmd := python.getCmd("python", "-m", "ensurepip")
+		_, err = cmd.CombinedOutput()
+
+		return
+	}
+
+	// Now try the "hard" way
+	path, err := downloadExternals()
+	if err != nil {
+		return
+	}
+
+	// Setup pip
+	pip := filepath.Join(path, pipName)
+	_, err = exec.Command("python", pip).CombinedOutput()
+	if err != nil {
+		return err
+	}
+
+	// Setup setuptools
+	setuptools := filepath.Join(path, setuptoolsName)
+	_, err = exec.Command("python", setuptools).CombinedOutput()
+	if err != nil {
+		return err
+	}
+
+	return
 }
 
 func (python Python) Environment() (string, error) {
@@ -181,6 +253,7 @@ func (python Python) ListRemote() ([]string, error) {
 	}
 
 	result := []string{}
+	tmp := []string{}
 	version := regexp.MustCompile(versionPattern)
 
 	links := doc.Find("a")
@@ -190,7 +263,16 @@ func (python Python) ListRemote() ([]string, error) {
 
 		content = strings.Replace(content, "/", "", 1)
 		if version.MatchString(content) {
-			result = append(result, content)
+			tmp = append(tmp, content)
+		}
+	}
+
+	// Remove < 2.7 versions
+	for _, element := range tmp {
+		smr, _ := semver.Make(versions.Semverify(element))
+
+		if smr.Major > 2 || smr.Minor > 5 {
+			result = append(result, element)
 		}
 	}
 
@@ -233,24 +315,50 @@ func renameLinks(version string) (err error) {
 	return nil
 }
 
-func command(args ...interface{}) (err error) {
-	var (
-		cmd *exec.Cmd
-	)
+func downloadExternals() (path string, err error) {
+	path = os.TempDir()
+	urls := []string{setuptoolsUrl, pipUrl}
 
-	if len(args) == 1 {
-		cmd = exec.Command(args[0].(string))
-	} else {
-		cmd = exec.Command(args[0].(string), args[1].(string))
+	respch, err := grab.GetBatch(2, path, urls...)
+	if err != nil {
+		return
 	}
 
-	// Lots of needless, weird warnings in the Makefile
-	// cmd.Stderr = os.Stderr
+	// Start a ticker to update progress every 200ms
+	ticker := time.NewTicker(200 * time.Millisecond)
 
-	// Required for some reason
-	cmd.Env = append(os.Environ(), "LC_ALL=C")
-	cmd.Dir = filepath.Join(variables.Prefix("python"), "tmp")
-	_, err = cmd.CombinedOutput()
+	// Monitor downloads
+	completed := 0
+	responses := make([]*grab.Response, 0)
+	for completed < len(urls) {
+		select {
+		case resp := <-respch:
+
+			// When done
+			if resp != nil {
+				responses = append(responses, resp)
+			}
+
+		case <-ticker.C:
+
+			// Update completed downloads
+			for i, resp := range responses {
+				if resp != nil && resp.IsComplete() {
+
+					if resp.Error != nil {
+						err = resp.Error
+						return
+					}
+
+					// Mark completed
+					responses[i] = nil
+					completed++
+				}
+			}
+		}
+	}
+
+	ticker.Stop()
 
 	return
 }
