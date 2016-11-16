@@ -66,6 +66,12 @@ func (python Python) Install() (err error) {
 
 	python.Emitter.Emit("prepare")
 
+	_, err = python.getCmd("make", "touch").CombinedOutput()
+	if err != nil {
+		os.RemoveAll(path)
+		return
+	}
+
 	_, err = python.getCmd("make").CombinedOutput()
 	if err != nil {
 		os.RemoveAll(path)
