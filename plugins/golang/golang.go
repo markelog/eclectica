@@ -34,6 +34,10 @@ func (golang Golang) Events() *emission.Emitter {
 	return golang.Emitter
 }
 
+func (golang Golang) PreInstall() error {
+	return nil
+}
+
 func (golang Golang) Install() error {
 	return nil
 }

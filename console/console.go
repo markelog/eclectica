@@ -1,9 +1,12 @@
 package console
 
 import (
+	"bytes"
+	"errors"
 	"os"
 	"os/exec"
 	"reflect"
+	"regexp"
 
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/variables"
@@ -21,6 +24,29 @@ func Get(args []string) *exec.Cmd {
 	cmd := fn.Call(rargs)[0].Interface().(*exec.Cmd)
 
 	return cmd
+}
+
+// GetError is just facade to handling a console errors
+// Is stdOut param redudant?
+func GetError(err error, stdErr, stdOut *bytes.Buffer) error {
+	strErr := stdErr.String()
+	strOut := stdOut.String()
+
+	if len(strErr) != 0 {
+		return errors.New(strErr)
+	}
+
+	if len(strOut) != 0 {
+		return errors.New(strOut)
+	}
+
+	// "Exit status" is just silly (not that following is much better)
+	r, _ := regexp.Compile("^exit status")
+	if r.MatchString(err.Error()) {
+		err = errors.New("Unknown error :/")
+	}
+
+	return err
 }
 
 // Start Shell

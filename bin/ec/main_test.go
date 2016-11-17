@@ -18,15 +18,13 @@ import (
 
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/variables"
 )
 
 var (
-	path string
-)
-
-func init() {
 	path, _ = filepath.Abs("./main.go")
-}
+	bins    = variables.DefaultInstall
+)
 
 func getCmd(args []interface{}) *exec.Cmd {
 	fn := reflect.ValueOf(exec.Command)
@@ -527,13 +525,38 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("python", func() {
+		var (
+			pipBin = filepath.Join(bins, "pip")
+			eIBin  = filepath.Join(bins, "easy_install")
+		)
+
 		Describe("bare minimum", func() {
 			Describe("2.x", func() {
+				It(`should install "old" 2.6.9 version`, func() {
+					Execute("go", "run", path, "python@2.6.9")
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 2.6.9")).To(Equal(true))
+
+					Execute("go", "run", path, "rm", "python@2.6.9")
+				})
+
+				It(`should install "old" 2.7.0 version`, func() {
+					Execute("go", "run", path, "python@2.7.0")
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 2.7.0")).To(Equal(true))
+
+					Execute("go", "run", path, "rm", "python@2.7.0")
+				})
+
 				It("should list installed versions", func() {
 					Execute("go", "run", path, "python@2.7.12")
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
 					Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
+
+					Execute("go", "run", path, "rm", "python@2.7.12")
 				})
 
 				It("should use local version", func() {
@@ -552,6 +575,9 @@ var _ = Describe("main", func() {
 					err := os.RemoveAll(versionFile)
 
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@2.7.12")
+					Execute("go", "run", path, "rm", "python@2.7.10")
 				})
 
 				It("should list remote versions", func() {
@@ -575,38 +601,48 @@ var _ = Describe("main", func() {
 					}
 
 					Expect(result).To(Equal(true))
+
+					Execute("go", "run", path, "rm", "python@2.7.10")
 				})
 
 				It("should have pip installed for case when it delivered with binaries", func() {
 					Execute("go", "run", path, "python@2.7.12")
-					command, err := Command("pip").CombinedOutput()
+					command, err := Command(pipBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@2.7.12")
 				})
 
-				FIt("should have easy_install installed for case when it delivered with binaries", func() {
+				It("should have easy_install installed for case when it delivered with binaries", func() {
 					Execute("go", "run", path, "python@2.7.12")
-					command, err := Command("easy_install").CombinedOutput()
+					command, err := Command(eIBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@2.7.12")
 				})
 
 				It("should have pip installed for case when downloaded", func() {
 					Execute("go", "run", path, "python@2.7.8")
-					command, err := Command("pip").CombinedOutput()
+					command, err := Command(pipBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@2.7.8")
 				})
 
 				It("should have easy_install installed for case when downloaded", func() {
 					Execute("go", "run", path, "python@2.7.8")
-					command, err := Command("easy_install").CombinedOutput()
+					command, err := Command(eIBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@2.7.8")
 				})
 			})
 
@@ -616,6 +652,8 @@ var _ = Describe("main", func() {
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
 					Expect(strings.Contains(string(command), "♥ 3.5.2")).To(Equal(true))
+
+					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 
 				It("should use local version", func() {
@@ -634,6 +672,9 @@ var _ = Describe("main", func() {
 					err := os.RemoveAll(versionFile)
 
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@3.5.2")
+					Execute("go", "run", path, "rm", "python@3.5.1")
 				})
 
 				It("should list remote versions", func() {
@@ -657,22 +698,29 @@ var _ = Describe("main", func() {
 					}
 
 					Expect(result).To(Equal(true))
+
+					Execute("go", "run", path, "rm", "python@3.5.1")
+					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 
 				It("should have pip installed for case when it delivered with binaries", func() {
 					Execute("go", "run", path, "python@3.5.2")
-					command, err := Command("pip").CombinedOutput()
+					command, err := Command(pipBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 
 				It("should have easy_install installed for case when it delivered with binaries", func() {
 					Execute("go", "run", path, "python@3.5.2")
-					command, err := Command("easy_install").CombinedOutput()
+					command, err := Command(eIBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
+
+					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 			})
 		})

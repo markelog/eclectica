@@ -35,6 +35,10 @@ func (ruby Ruby) Events() *emission.Emitter {
 	return ruby.Emitter
 }
 
+func (ruby Ruby) PreInstall() error {
+	return nil
+}
+
 func (ruby Ruby) Install() error {
 	return nil
 }

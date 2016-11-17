@@ -15,6 +15,12 @@ func Prefix(name string) string {
 	return filepath.Join(Home(), name)
 }
 
+// IsDebug checks if eclectica in the debug state
+// i.e. will print more info when executing commands
+func IsDebug() bool {
+	return os.Getenv("DEBUG") == "true"
+}
+
 func nameAndVersion(args []interface{}) (string, string) {
 	var (
 		name    = args[0].(string)

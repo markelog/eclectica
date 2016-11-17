@@ -33,6 +33,10 @@ func (node Node) Events() *emission.Emitter {
 	return node.Emitter
 }
 
+func (node Node) PreInstall() error {
+	return nil
+}
+
 func (node Node) Install() error {
 	return nil
 }

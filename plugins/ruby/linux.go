@@ -54,12 +54,12 @@ func dealWithShell() error {
 	}
 
 	start := `Ruby has been installed, but it requires global dependencies which weren't found on your system,
-  please execute following command to complete installation (you would need to do it only`
+  please execute following command to complete installation (you need to do it only`
 	middle := " once"
 	end := "):"
 	command := "sudo apt-get update && apt-get install -y " + strings.Join(deps, " ")
 
-	print.PostInstall(start, middle, end, command)
+	print.Install(start, middle, end, command)
 
 	return nil
 }

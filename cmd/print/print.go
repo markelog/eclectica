@@ -159,7 +159,7 @@ func CustomSpin(header, item, message string) *Spinner {
 	return s
 }
 
-func PostInstall(start, middle, end, command string) {
+func Install(start, middle, end, command string) {
 	fmt.Println()
 
 	color.Set(color.FgRed)
@@ -176,13 +176,17 @@ func PostInstall(start, middle, end, command string) {
 	fmt.Print(end)
 	color.Unset()
 
-	fmt.Println()
-	fmt.Println()
+	if command != "" {
+		fmt.Println()
+		fmt.Println()
 
-	color.Set(color.FgGreen)
-	fmt.Print("> ")
-	color.Unset()
+		color.Set(color.FgGreen)
+		fmt.Print("> ")
+		color.Unset()
 
-	fmt.Print(command)
+		fmt.Print(command)
+	}
+
+	fmt.Println()
 	fmt.Println()
 }

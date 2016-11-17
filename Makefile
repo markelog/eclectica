@@ -11,7 +11,7 @@ test:
 	@go test -v ./...
 .PHONY: test
 
-int-test:
+int-test: install
 	$(eval tmp := $(shell pwd)"/tmp")
 
 	@echo "[+] intergration testing"

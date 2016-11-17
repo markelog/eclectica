@@ -36,6 +36,10 @@ func (rust Rust) Events() *emission.Emitter {
 	return rust.Emitter
 }
 
+func (rust Rust) PreInstall() error {
+	return nil
+}
+
 func (rust Rust) Install() error {
 	path := variables.Path("rust", rust.Version)
 	tmp := filepath.Join(path, "tmp")

@@ -33,8 +33,6 @@ var _ = Describe("python", func() {
 			BeforeEach(func() {
 				content := eio.Read("../../testdata/plugins/python/index.html")
 
-				// httpmock is not incompatible with goquery :/.
-				// See https://github.com/jarcoal/httpmock/issues/18
 				ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					status := 200
 

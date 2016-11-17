@@ -37,10 +37,11 @@ var (
 )
 
 type Pkg interface {
+	PreInstall() error
 	Install() error
+	PostInstall() error
 	Events() *emission.Emitter
 	Environment() (string, error)
-	PostInstall() error
 	ListRemote() ([]string, error)
 	Info() (map[string]string, error)
 	Bins() []string
@@ -115,7 +116,8 @@ func (plugin *Plugin) LocalInstall() error {
 		return err
 	}
 
-	path := filepath.Join(pwd, fmt.Sprintf(".%s-version", plugin.name))
+	version := fmt.Sprintf(".%s-version", plugin.name)
+	path := filepath.Join(pwd, version)
 
 	err = io.WriteFile(path, plugin.Version)
 	if err != nil {
@@ -123,6 +125,10 @@ func (plugin *Plugin) LocalInstall() error {
 	}
 
 	return plugin.Install()
+}
+
+func (plugin *Plugin) PreInstall() error {
+	return plugin.Pkg.PreInstall()
 }
 
 func (plugin *Plugin) Install() (err error) {
@@ -151,6 +157,9 @@ func (plugin *Plugin) Install() (err error) {
 
 	err = plugin.Pkg.Install()
 	if err != nil {
+		// path := variables.Path(plugin.name, plugin.Version)
+		// os.RemoveAll(path)
+
 		plugin.emitter.Emit("done")
 		return
 	}

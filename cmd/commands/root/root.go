@@ -166,6 +166,9 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		}
 	})
 
+	err = plugin.PreInstall()
+	print.Error(err)
+
 	if flags.IsLocal {
 		err = plugin.LocalInstall()
 	} else {

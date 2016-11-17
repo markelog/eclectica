@@ -1,6 +1,7 @@
 package python
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -9,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -17,6 +19,8 @@ import (
 	"github.com/cavaliercoder/grab"
 	"github.com/chuckpreslar/emission"
 
+	"github.com/markelog/eclectica/console"
+	"github.com/markelog/eclectica/plugins/python/patch"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 )
@@ -49,56 +53,83 @@ func (python Python) Events() *emission.Emitter {
 	return python.Emitter
 }
 
+func (python Python) PreInstall() error {
+	return checkDependencies()
+}
+
 func (python Python) Install() (err error) {
+	err = python.configure()
+	if err != nil {
+		return
+	}
+
+	err = python.prepare()
+	if err != nil {
+		return
+	}
+
+	err = python.install()
+	if err != nil {
+		return
+	}
+
+	return python.renameLinks()
+}
+
+func (python Python) install() (err error) {
+	python.Emitter.Emit("install")
+
+	cmd, stdErr, stdOut := python.getCmd("make", "install")
+
+	err = cmd.Run()
+	if err != nil {
+		return console.GetError(err, stdErr, stdOut)
+	}
+
+	return
+}
+
+func (python Python) configure() (err error) {
 	path := variables.Path("python", python.Version)
 	configure := filepath.Join(path, "configure")
 
 	python.Emitter.Emit("configure")
 
-	cmd := python.getCmd(configure, "--prefix="+path)
-	cmd.Env = python.getOSXEnvs(cmd.Env)
-	_, err = cmd.CombinedOutput()
-
+	err = python.externals()
 	if err != nil {
-		os.RemoveAll(path)
 		return
 	}
 
+	cmd, stdErr, stdOut := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
+	cmd.Env = python.getEnvs(cmd.Env)
+
+	err = cmd.Run()
+	if err != nil {
+		return console.GetError(err, stdErr, stdOut)
+	}
+
+	return
+}
+
+func (python Python) prepare() (err error) {
 	python.Emitter.Emit("prepare")
 
-	_, err = python.getCmd("make", "touch").CombinedOutput()
+	cmd, stdErr, stdOut := python.getCmd("make")
+
+	err = cmd.Run()
 	if err != nil {
-		os.RemoveAll(path)
-		return
+		return console.GetError(err, stdErr, stdOut)
 	}
 
-	_, err = python.getCmd("make").CombinedOutput()
-	if err != nil {
-		os.RemoveAll(path)
-		return
+	return
+}
+
+func (python Python) getEnvs(original []string) (result []string) {
+	if runtime.GOOS == "darwin" {
+		result = python.getOSXEnvs(original)
 	}
 
-	python.Emitter.Emit("install")
-
-	_, err = python.getCmd("make", "install").CombinedOutput()
-	if err != nil {
-		os.RemoveAll(path)
-		return
-	}
-
-	// Since python 3.x versions are naming their binaries with "3" affix
-	chosen, _ := semver.Make(python.Version)
-	if chosen.Major < 3 {
-		return nil
-	}
-
-	err = renameLinks(python.Version)
-	if err != nil {
-		os.RemoveAll(path)
-		return
-	}
-
-	return nil
+	return
 }
 
 func (python Python) getOSXEnvs(original []string) []string {
@@ -114,7 +145,6 @@ func (python Python) getOSXEnvs(original []string) []string {
 	}
 
 	// For zlib
-	// TODO: xcode required
 	output, _ := exec.Command("xcrun", "--show-sdk-path").CombinedOutput()
 	includeFlags += " -I" + filepath.Join(strings.TrimSpace(string(output)), "/usr/include")
 
@@ -124,7 +154,12 @@ func (python Python) getOSXEnvs(original []string) []string {
 	return original
 }
 
-func (python Python) getCmd(args ...interface{}) (cmd *exec.Cmd) {
+func (python Python) getCmd(args ...interface{}) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer) {
+	var (
+		cmd    *exec.Cmd
+		stdOut bytes.Buffer
+		stdErr bytes.Buffer
+	)
 
 	// There is gotta be a better way without reflect module, huh?
 	if len(args) == 1 {
@@ -135,22 +170,26 @@ func (python Python) getCmd(args ...interface{}) (cmd *exec.Cmd) {
 		cmd = exec.Command(args[0].(string), args[1].(string), args[2].(string))
 	}
 
-	// Lots of needless, Makefile weird warnings in the Makefile
-	// cmd.Stderr = os.Stderr
-	// cmd.Stdout = os.Stdout
-
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
 	cmd.Dir = variables.Path("python", python.Version)
+	cmd.Stderr = &stdErr
+	cmd.Stdout = &stdOut
 
-	return cmd
+	if variables.IsDebug() {
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+	}
+
+	return cmd, &stdOut, &stdErr
 }
 
-func (python Python) PostInstall() (err error) {
+func (python Python) externals() (err error) {
 	var (
 		errStat error
 		base    = filepath.Join(variables.Path("python", python.Version), "bin")
 		pipBin  = filepath.Join(base, "pip")
 		eIBin   = filepath.Join(base, "easy_install")
+		path    = variables.Path("python", python.Version)
 	)
 
 	// Don't need to do anything if we already have pip and setuptools
@@ -161,38 +200,50 @@ func (python Python) PostInstall() (err error) {
 		return
 	}
 
-	python.Emitter.Emit("post-install")
-
-	// Since 2.7.9 versions we can simplify pip and setuptools install
-	semverVersion, _ := semver.Make(python.Version)
-	if semverVersion.Compare(pipAvailable) != -1 {
-		cmd := python.getCmd("python", "-m", "ensurepip")
-		_, err = cmd.CombinedOutput()
-
+	// Now try the "hard" way
+	err = python.downloadExternals()
+	if err != nil {
 		return
 	}
 
-	// Now try the "hard" way
-	path, err := downloadExternals()
+	err = patch.Apply(path)
 	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (python Python) PostInstall() (err error) {
+	path := variables.Path("python", python.Version)
+	bin := variables.GetBin("python", python.Version)
+
+	if hasTools(python.Version) {
+		cmd, stdErr, stdOut := python.getCmd(bin, "-m", "ensurepip")
+
+		err = cmd.Run()
+		if err != nil {
+			return console.GetError(err, stdErr, stdOut)
+		}
+
 		return
 	}
 
 	// Setup pip
 	pip := filepath.Join(path, pipName)
-	_, err = exec.Command("python", pip).CombinedOutput()
+	out, err := exec.Command(bin, pip).CombinedOutput()
 	if err != nil {
-		return err
+		return errors.New(string(out))
 	}
 
 	// Setup setuptools
 	setuptools := filepath.Join(path, setuptoolsName)
-	_, err = exec.Command("python", setuptools).CombinedOutput()
+	out, err = exec.Command(bin, setuptools).CombinedOutput()
 	if err != nil {
-		return err
+		return errors.New(string(out))
 	}
 
-	return
+	return nil
 }
 
 func (python Python) Environment() (string, error) {
@@ -289,8 +340,13 @@ func (python Python) ListRemote() ([]string, error) {
 }
 
 // Since python 3.x versions are naming their binaries with 3 affix
-func renameLinks(version string) (err error) {
-	path := filepath.Join(variables.Path("python", version), "bin")
+func (python Python) renameLinks() (err error) {
+	chosen, _ := semver.Make(python.Version)
+	if chosen.Major < 3 {
+		return nil
+	}
+
+	path := filepath.Join(variables.Path("python", python.Version), "bin")
 	rp := regexp.MustCompile("(-?)3\\.\\w")
 
 	files, err := ioutil.ReadDir(path)
@@ -321,11 +377,19 @@ func renameLinks(version string) (err error) {
 	return nil
 }
 
-func downloadExternals() (path string, err error) {
-	path = os.TempDir()
-	urls := []string{setuptoolsUrl, pipUrl}
+func (python Python) downloadExternals() (err error) {
+	path := variables.Path("python", python.Version)
 
-	respch, err := grab.GetBatch(2, path, urls...)
+	urls, err := patch.Urls(python.Version)
+	if err != nil {
+		return
+	}
+
+	if hasTools(python.Version) == false {
+		urls = append(urls, setuptoolsUrl, pipUrl)
+	}
+
+	respch, err := grab.GetBatch(len(urls), path, urls...)
 	if err != nil {
 		return
 	}
@@ -367,4 +431,29 @@ func downloadExternals() (path string, err error) {
 	ticker.Stop()
 
 	return
+}
+
+// Since 2.7.9 versions we can simplify pip and setuptools install
+func hasTools(version string) bool {
+	semverVersion, _ := semver.Make(version)
+
+	return semverVersion.Compare(pipAvailable) != -1
+}
+
+func checkErrors(out []byte) (err error) {
+	output := string(out)
+
+	if strings.Contains(output, "Traceback") {
+		err = errors.New(output)
+	}
+
+	return err
+}
+
+func checkDependencies() (err error) {
+	if runtime.GOOS == "linux" {
+		return dealWithLinuxShell()
+	}
+
+	return dealWithOSXShell()
 }
