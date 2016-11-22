@@ -1,160 +1,19 @@
 package main_test
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"strings"
-	"syscall"
-	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
-	"github.com/markelog/eclectica/variables"
 )
-
-var (
-	path, _ = filepath.Abs("./main.go")
-	bins    = variables.DefaultInstall
-)
-
-func getCmd(args []interface{}) *exec.Cmd {
-	fn := reflect.ValueOf(exec.Command)
-	rargs := make([]reflect.Value, len(args))
-
-	for i, a := range args {
-		rargs[i] = reflect.ValueOf(a)
-	}
-
-	cmd := fn.Call(rargs)[0].Interface().(*exec.Cmd)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-
-	return cmd
-}
-
-func Command(args ...interface{}) *exec.Cmd {
-	return getCmd(args)
-}
-
-func Execute(args ...interface{}) *exec.Cmd {
-	cmd := getCmd(args)
-
-	// Output result for testing purposes
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	cmd.Run()
-
-	return cmd
-}
-
-func Kill(cmd *exec.Cmd) {
-	pgid, _ := syscall.Getpgid(cmd.Process.Pid)
-	syscall.Kill(-pgid, 15)
-}
-
-func checkRemoteList(name, mask string, timeout int) bool {
-	cmd := Command("go", "run", path, "ls", "-r", name)
-	output := &bytes.Buffer{}
-	cmd.Stdout = output
-	result := false
-	proceed := true
-
-	timer := time.AfterFunc(time.Duration(timeout)*time.Second, func() {
-		Kill(cmd)
-		proceed = false
-	})
-
-	go func() {
-		for {
-			out := string(output.Bytes())
-			result = strings.Contains(out, mask)
-
-			if result {
-				timer.Stop()
-				Kill(cmd)
-				proceed = false
-				return
-			}
-
-			time.Sleep(200 * time.Millisecond)
-		}
-	}()
-
-	cmd.Start()
-
-	for proceed {
-		time.Sleep(200 * time.Millisecond)
-	}
-
-	return result
-}
-
-func checkRemoteUse() (result string) {
-	cmd := Command("go", "run", path, "-r")
-	output := &bytes.Buffer{}
-	cmd.Stdout = output
-	proceed := true
-
-	go func() {
-		for {
-			result = string(output.Bytes())
-
-			if len(result) > 0 {
-				Kill(cmd)
-				proceed = false
-				return
-			}
-
-			time.Sleep(200 * time.Millisecond)
-		}
-	}()
-
-	cmd.Start()
-
-	for proceed {
-		time.Sleep(200 * time.Millisecond)
-	}
-
-	return result
-}
-
-func checkRemoteUseWithLanguage(name string) (result string) {
-	cmd := Command("go", "run", path, "-r", "go")
-	output := &bytes.Buffer{}
-	cmd.Stdout = output
-	proceed := true
-
-	go func() {
-		for {
-			result = string(output.Bytes())
-
-			if len(result) > 0 && strings.Contains(result, "Mask") {
-				Kill(cmd)
-				proceed = false
-				return
-			}
-
-			time.Sleep(200 * time.Millisecond)
-		}
-	}()
-
-	cmd.Start()
-
-	for proceed {
-		time.Sleep(200 * time.Millisecond)
-	}
-
-	return result
-}
 
 var _ = Describe("main", func() {
 	if os.Getenv("INT") != "true" {
@@ -534,134 +393,119 @@ var _ = Describe("main", func() {
 			Describe("2.x", func() {
 				It(`should install "old" 2.6.9 version`, func() {
 					Execute("go", "run", path, "python@2.6.9")
+
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
 					Expect(strings.Contains(string(command), "♥ 2.6.9")).To(Equal(true))
-
-					Execute("go", "run", path, "rm", "python@2.6.9")
 				})
 
 				It(`should install "old" 2.7.0 version`, func() {
 					Execute("go", "run", path, "python@2.7.0")
+
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
 					Expect(strings.Contains(string(command), "♥ 2.7.0")).To(Equal(true))
-
-					Execute("go", "run", path, "rm", "python@2.7.0")
 				})
 
-				It("should list installed versions", func() {
-					Execute("go", "run", path, "python@2.7.12")
-					command, _ := Command("go", "run", path, "ls", "python").Output()
+				Describe("2.7 versions", func() {
+					BeforeEach(func() {
+						Execute("go", "run", path, "python@2.7.12")
+						Execute("go", "run", path, "python@2.7.10")
+					})
 
-					Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
+					It("should list installed versions", func() {
+						command, _ := Command("go", "run", path, "ls", "python").Output()
 
-					Execute("go", "run", path, "rm", "python@2.7.12")
-				})
+						Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
+					})
 
-				It("should use local version", func() {
-					pwd, _ := os.Getwd()
-					versionFile := filepath.Join(filepath.Dir(pwd), ".python-version")
+					It("should use local version", func() {
+						pwd, _ := os.Getwd()
+						versionFile := filepath.Join(filepath.Dir(pwd), ".python-version")
 
-					Execute("go", "run", path, "python@2.7.12")
-					Execute("go", "run", path, "python@2.7.10")
+						io.WriteFile(versionFile, "2.7.12")
 
-					io.WriteFile(versionFile, "2.7.12")
+						command, _ := Command("go", "run", path, "ls", "python").Output()
+						Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
 
-					command, _ := Command("go", "run", path, "ls", "python").Output()
+						err := os.RemoveAll(versionFile)
+						Expect(err).To(BeNil())
+					})
 
-					Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
+					It("should list remote versions", func() {
+						Expect(checkRemoteList("python", "2.x", 50)).To(Equal(true))
+					})
 
-					err := os.RemoveAll(versionFile)
+					It("should remove version", func() {
+						result := true
 
-					Expect(err).To(BeNil())
+						Command("go", "run", path, "rm", "python@2.7.12").Output()
 
-					Execute("go", "run", path, "rm", "python@2.7.12")
-					Execute("go", "run", path, "rm", "python@2.7.10")
-				})
+						plugin := plugins.New("python")
+						versions, _ := plugin.List()
 
-				It("should list remote versions", func() {
-					Expect(checkRemoteList("python", "2.x", 50)).To(Equal(true))
-				})
-
-				It("should remove version", func() {
-					result := true
-
-					Execute("go", "run", path, "python@2.7.12")
-					Execute("go", "run", path, "python@2.7.10")
-					Command("go", "run", path, "rm", "python@2.7.12").Output()
-
-					plugin := plugins.New("python")
-					versions, _ := plugin.List()
-
-					for _, version := range versions {
-						if version == "2.7.12" {
-							result = false
+						for _, version := range versions {
+							if version == "2.7.12" {
+								result = false
+							}
 						}
-					}
 
-					Expect(result).To(Equal(true))
+						Expect(result).To(Equal(true))
 
-					Execute("go", "run", path, "rm", "python@2.7.10")
-				})
+						Execute("go", "run", path, "python@2.7.12")
+					})
 
-				It("should have pip installed for case when it delivered with binaries", func() {
-					Execute("go", "run", path, "python@2.7.12")
-					command, err := Command(pipBin).CombinedOutput()
+					It("should have pip installed for case when it delivered with binaries", func() {
+						command, err := Command(pipBin).CombinedOutput()
 
-					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
-					Expect(err).To(BeNil())
+						Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+						Expect(err).To(BeNil())
+					})
 
-					Execute("go", "run", path, "rm", "python@2.7.12")
-				})
+					It("should have easy_install installed for case when it delivered with binaries", func() {
+						command, err := Command(eIBin).CombinedOutput()
 
-				It("should have easy_install installed for case when it delivered with binaries", func() {
-					Execute("go", "run", path, "python@2.7.12")
-					command, err := Command(eIBin).CombinedOutput()
+						Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+						Expect(err).To(BeNil())
+					})
 
-					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
-					Expect(err).To(BeNil())
+					Describe("2.7.8 version", func() {
+						BeforeEach(func() {
+							Execute("go", "run", path, "python@2.7.8")
+						})
 
-					Execute("go", "run", path, "rm", "python@2.7.12")
-				})
+						It("should have pip installed for case when downloaded", func() {
+							command, err := Command(pipBin).CombinedOutput()
 
-				It("should have pip installed for case when downloaded", func() {
-					Execute("go", "run", path, "python@2.7.8")
-					command, err := Command(pipBin).CombinedOutput()
+							Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+							Expect(err).To(BeNil())
+						})
 
-					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
-					Expect(err).To(BeNil())
+						It("should have easy_install installed for case when downloaded", func() {
+							command, err := Command(eIBin).CombinedOutput()
 
-					Execute("go", "run", path, "rm", "python@2.7.8")
-				})
-
-				It("should have easy_install installed for case when downloaded", func() {
-					Execute("go", "run", path, "python@2.7.8")
-					command, err := Command(eIBin).CombinedOutput()
-
-					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
-					Expect(err).To(BeNil())
-
-					Execute("go", "run", path, "rm", "python@2.7.8")
+							Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
+							Expect(err).To(BeNil())
+						})
+					})
 				})
 			})
 
 			Describe("3.x", func() {
-				It("should list installed versions", func() {
+				BeforeEach(func() {
 					Execute("go", "run", path, "python@3.5.2")
+					Execute("go", "run", path, "python@3.5.1")
+				})
+
+				It("should list installed versions", func() {
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
 					Expect(strings.Contains(string(command), "♥ 3.5.2")).To(Equal(true))
-
-					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 
 				It("should use local version", func() {
 					pwd, _ := os.Getwd()
 					versionFile := filepath.Join(filepath.Dir(pwd), ".python-version")
-
-					Execute("go", "run", path, "python@3.5.2")
-					Execute("go", "run", path, "python@3.5.1")
 
 					io.WriteFile(versionFile, "3.5.2")
 
@@ -672,9 +516,6 @@ var _ = Describe("main", func() {
 					err := os.RemoveAll(versionFile)
 
 					Expect(err).To(BeNil())
-
-					Execute("go", "run", path, "rm", "python@3.5.2")
-					Execute("go", "run", path, "rm", "python@3.5.1")
 				})
 
 				It("should list remote versions", func() {
@@ -683,10 +524,6 @@ var _ = Describe("main", func() {
 
 				It("should remove version", func() {
 					result := true
-
-					Execute("go", "run", path, "python@3.5.2")
-					Execute("go", "run", path, "python@3.5.1")
-					Command("go", "run", path, "rm", "python@3.5.2").Output()
 
 					plugin := plugins.New("python")
 					versions, _ := plugin.List()
@@ -698,29 +535,20 @@ var _ = Describe("main", func() {
 					}
 
 					Expect(result).To(Equal(true))
-
-					Execute("go", "run", path, "rm", "python@3.5.1")
-					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 
 				It("should have pip installed for case when it delivered with binaries", func() {
-					Execute("go", "run", path, "python@3.5.2")
 					command, err := Command(pipBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
-
-					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 
 				It("should have easy_install installed for case when it delivered with binaries", func() {
-					Execute("go", "run", path, "python@3.5.2")
 					command, err := Command(eIBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
-
-					Execute("go", "run", path, "rm", "python@3.5.2")
 				})
 			})
 		})
