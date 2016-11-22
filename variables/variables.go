@@ -21,6 +21,11 @@ func IsDebug() bool {
 	return os.Getenv("DEBUG") == "true"
 }
 
+// IsCI if we running in CI environment
+func IsCI() bool {
+	return os.Getenv("CI") == "true"
+}
+
 func nameAndVersion(args []interface{}) (string, string) {
 	var (
 		name    = args[0].(string)

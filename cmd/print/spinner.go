@@ -5,6 +5,8 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/tj/go-spin"
+
+	"github.com/markelog/eclectica/variables"
 )
 
 type SpinnerFn func()
@@ -18,7 +20,12 @@ type Spinner struct {
 }
 
 func (spinner *Spinner) Start() {
+	if variables.IsCI() {
+		return
+	}
+
 	s := spin.New()
+
 	spinner.channel = make(chan bool)
 
 	go func() {
@@ -43,5 +50,9 @@ func (spinner *Spinner) Start() {
 }
 
 func (spinner *Spinner) Stop() {
+	if variables.IsCI() {
+		return
+	}
+
 	spinner.channel <- true
 }
