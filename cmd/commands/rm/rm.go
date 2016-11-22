@@ -42,6 +42,7 @@ func run(cmd *cobra.Command, args []string) {
 
 	if hasVersion == false {
 		if hasLanguage {
+			print.InStyleln("Language", language)
 			version, err = info.AskVersion(language)
 		} else {
 			language, version, err = info.Ask()
