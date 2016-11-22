@@ -2,6 +2,7 @@ package root
 
 import (
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -21,6 +22,9 @@ var Command = &cobra.Command{
 	Aliases: aliases,
 	Example: example,
 }
+
+// Event type handler
+type handleFn func()
 
 // Entry point
 func Execute() {
@@ -131,34 +135,25 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		spinner *print.Spinner
 	)
 
-	plugin.Events().On("configure", func() {
-		spinner = print.CustomSpin("Version", plugin.Version, "configuring")
-		spinner.Start()
-	})
+	handle := func(note string) handleFn {
+		return func() {
+			if spinner != nil {
+				spinner.Stop()
+			}
 
-	plugin.Events().On("prepare", func() {
-		spinner.Stop()
-		spinner = print.CustomSpin("Version", plugin.Version, "preparing")
-		spinner.Start()
-	})
+			spinner = print.CustomSpin("Version", plugin.Version, note)
 
-	plugin.Events().On("install", func() {
-		spinner.Stop()
-		spinner = print.CustomSpin("Version", plugin.Version, "installing")
-		spinner.Start()
-	})
-
-	plugin.Events().On("post-install", func() {
-
-		// "post-install" event might be called without others events
-		// Should we add same guard for other events?
-		if spinner != nil {
-			spinner.Stop()
+			// Since spinner.Stop() is acting in the thread
+			// Stop() and Start() might overlap, so we workaround it
+			time.Sleep(200 * time.Millisecond)
+			spinner.Start()
 		}
+	}
 
-		spinner = print.CustomSpin("Version", plugin.Version, "post-installing")
-		spinner.Start()
-	})
+	plugin.Events().On("configure", handle("configuring"))
+	plugin.Events().On("prepare", handle("preparing"))
+	plugin.Events().On("install", handle("installing"))
+	plugin.Events().On("post-install", handle("post-installing"))
 
 	plugin.Events().On("done", func() {
 		if spinner != nil {
