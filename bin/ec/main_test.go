@@ -409,8 +409,8 @@ var _ = Describe("main", func() {
 
 				Describe("2.7 versions", func() {
 					BeforeEach(func() {
-						Execute("go", "run", path, "python@2.7.12")
 						Execute("go", "run", path, "python@2.7.10")
+						Execute("go", "run", path, "python@2.7.12")
 					})
 
 					It("should list installed versions", func() {
@@ -423,10 +423,10 @@ var _ = Describe("main", func() {
 						pwd, _ := os.Getwd()
 						versionFile := filepath.Join(filepath.Dir(pwd), ".python-version")
 
-						io.WriteFile(versionFile, "2.7.12")
+						io.WriteFile(versionFile, "2.7.10")
 
 						command, _ := Command("go", "run", path, "ls", "python").Output()
-						Expect(strings.Contains(string(command), "♥ 2.7.12")).To(Equal(true))
+						Expect(strings.Contains(string(command), "♥ 2.7.10")).To(Equal(true))
 
 						err := os.RemoveAll(versionFile)
 						Expect(err).To(BeNil())
@@ -493,8 +493,8 @@ var _ = Describe("main", func() {
 
 			Describe("3.x", func() {
 				BeforeEach(func() {
-					Execute("go", "run", path, "python@3.5.2")
 					Execute("go", "run", path, "python@3.5.1")
+					Execute("go", "run", path, "python@3.5.2")
 				})
 
 				It("should list installed versions", func() {
@@ -507,11 +507,11 @@ var _ = Describe("main", func() {
 					pwd, _ := os.Getwd()
 					versionFile := filepath.Join(filepath.Dir(pwd), ".python-version")
 
-					io.WriteFile(versionFile, "3.5.2")
+					io.WriteFile(versionFile, "3.5.1")
 
 					command, _ := Command("go", "run", path, "ls", "python").Output()
 
-					Expect(strings.Contains(string(command), "♥ 3.5.2")).To(Equal(true))
+					Expect(strings.Contains(string(command), "♥ 3.5.1")).To(Equal(true))
 
 					err := os.RemoveAll(versionFile)
 
