@@ -226,7 +226,7 @@ var _ = Describe("main", func() {
 			fmt.Println()
 
 			fmt.Println("Install tmp version")
-			Execute("go", "run", path, "ruby@2.1.6")
+			Execute("go", "run", path, "ruby@2.3.2")
 
 			fmt.Println("Removing ruby@2.3.3")
 			Execute("go", "run", path, "rm", "ruby@2.3.3")
@@ -239,11 +239,11 @@ var _ = Describe("main", func() {
 
 			Execute("go", "run", path, "ruby@2.3.3")
 
-			io.WriteFile(versionFile, "2.1.6")
+			io.WriteFile(versionFile, "2.3.2")
 
 			command, _ := Command("go", "run", path, "ls", "ruby").Output()
 
-			Expect(strings.Contains(string(command), "♥ 2.1.6")).To(Equal(true))
+			Expect(strings.Contains(string(command), "♥ 2.3.2")).To(Equal(true))
 
 			err := os.RemoveAll(versionFile)
 
@@ -392,7 +392,7 @@ var _ = Describe("main", func() {
 					Expect(strings.Contains(string(command), "♥ 2.7.0")).To(Equal(true))
 				})
 
-				Describe("2.7 versions", func() {
+				Describe("2.7.1x versions", func() {
 					BeforeEach(func() {
 						Execute("go", "run", path, "python@2.7.10")
 						Execute("go", "run", path, "python@2.7.12")
@@ -510,6 +510,8 @@ var _ = Describe("main", func() {
 				It("should remove version", func() {
 					result := true
 
+					Command("go", "run", path, "rm", "python@3.5.2").Output()
+
 					plugin := plugins.New("python")
 					versions, _ := plugin.List()
 
@@ -520,6 +522,7 @@ var _ = Describe("main", func() {
 					}
 
 					Expect(result).To(Equal(true))
+					Execute("go", "run", path, "python@3.5.2")
 				})
 
 				It("should have pip installed for case when it delivered with binaries", func() {

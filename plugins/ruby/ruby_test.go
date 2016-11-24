@@ -53,15 +53,7 @@ var _ = Describe("ruby", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should have correct version values (first and last)", func() {
-				if runtime.GOOS == "darwin" {
-					Expect(remotes[0]).To(Equal("2.1.5"))
-				}
-
-				if runtime.GOOS == "linux" {
-					Expect(remotes[0]).To(Equal("1.8.7"))
-				}
-
+			It("should have correct version values", func() {
 				last := len(remotes) - 1
 				Expect(remotes[last]).To(Equal("2.3.3"))
 			})
@@ -84,13 +76,14 @@ var _ = Describe("ruby", func() {
 			result, _ := (&Ruby{Version: "2.2.3"}).Info()
 
 			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
+			Expect(result["url"]).Should(ContainSubstring("ruby-2.2.3.tar.bz2"))
 
 			if runtime.GOOS == "darwin" {
-				Expect(result["url"]).To(Equal("https://s3.amazonaws.com/travis-rubies/binaries/osx/10.12/x86_64/ruby-2.2.3.tar.bz2"))
+				Expect(result["url"]).Should(ContainSubstring("https://s3.amazonaws.com/travis-rubies/binaries/osx/"))
 			}
 
 			if runtime.GOOS == "linux" {
-				Expect(result["url"]).To(Equal("https://s3.amazonaws.com/travis-rubies/binaries/ubuntu/14.04/x86_64/ruby-2.2.3.tar.bz2"))
+				Expect(result["url"]).Should(ContainSubstring("https://s3.amazonaws.com/travis-rubies/binaries/ubuntu/"))
 			}
 		})
 	})

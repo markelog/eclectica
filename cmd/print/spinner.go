@@ -2,11 +2,10 @@ package print
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/fatih/color"
 	"github.com/tj/go-spin"
-
-	"github.com/markelog/eclectica/variables"
 )
 
 type SpinnerFn func()
@@ -20,7 +19,7 @@ type Spinner struct {
 }
 
 func (spinner *Spinner) Start() {
-	if variables.IsCI() {
+	if os.Getenv("EC_WITHOUT_SPINNER") == "true" {
 		return
 	}
 
@@ -50,7 +49,7 @@ func (spinner *Spinner) Start() {
 }
 
 func (spinner *Spinner) Stop() {
-	if variables.IsCI() {
+	if os.Getenv("EC_WITHOUT_SPINNER") == "true" {
 		return
 	}
 
