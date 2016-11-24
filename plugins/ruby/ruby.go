@@ -3,11 +3,8 @@ package ruby
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -19,7 +16,7 @@ import (
 )
 
 var (
-	VersionsLink   = "https://rvm.io/binaries"
+	VersionLink    = "https://s3.amazonaws.com/travis-rubies"
 	versionPattern = "\\d+\\.\\d+\\.\\d"
 
 	bins = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
@@ -44,28 +41,7 @@ func (ruby Ruby) Install() error {
 }
 
 func (ruby Ruby) PostInstall() error {
-	err := removeRVMArtefacts(variables.Path("ruby", ruby.Version))
-	if err != nil {
-		return err
-	}
-
 	return dealWithShell()
-}
-
-// Removes RVM artefacts (ignore errors)
-func removeRVMArtefacts(base string) error {
-	gems := filepath.Join(base, "lib/ruby/gems")
-
-	// Remove `cache` folder since it supposed to work with RVM cache
-	folders, _ := ioutil.ReadDir(gems)
-	for _, folder := range folders {
-		err := os.RemoveAll(filepath.Join(gems, folder.Name(), "cache"))
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func (ruby Ruby) Environment() (string, error) {
@@ -77,7 +53,7 @@ func (ruby Ruby) Info() (map[string]string, error) {
 
 	result["filename"] = fmt.Sprintf("ruby-%s", ruby.Version)
 	result["extension"] = "tar.bz2"
-	result["url"] = fmt.Sprintf("%s/%s.%s", getUrl(), result["filename"], result["extension"])
+	result["url"] = fmt.Sprintf("%s/%s.%s", getUrl(ruby.Version), result["filename"], result["extension"])
 
 	return result, nil
 }
@@ -109,42 +85,51 @@ func (ruby Ruby) Current() string {
 	return testVersion[0][0]
 }
 
-func (ruby Ruby) ListRemote() ([]string, error) {
-	url := getUrl()
-	doc, err := goquery.NewDocument(url)
+func (ruby Ruby) ListRemote() (result []string, err error) {
+	doc, err := goquery.NewDocument(VersionLink)
 
 	if err != nil {
 		if _, ok := err.(net.Error); ok {
-			return nil, errors.New("Can't establish connection")
+			err = errors.New("Can't establish connection")
 		}
 
-		return nil, err
+		return
 	}
 
-	version := regexp.MustCompile("\\d+\\.\\d+\\.\\d+")
-	result := []string{}
-	links := doc.Find("a")
+	var (
+		regPart  = getRegUrl() + "\\/ruby-" + versionPattern + ".tar.bz"
+		rPath    = regexp.MustCompile(regPart)
+		rVersion = regexp.MustCompile(versionPattern)
+	)
 
-	for i := range links.Nodes {
-		href, _ := links.Eq(i).Attr("href")
+	doc.Find("Key").Each(func(i int, node *goquery.Selection) {
+		value := node.Text()
 
-		href = strings.Replace(href, "ruby-", "", 1)
-		href = strings.Replace(href, ".tar.bz2", "", 1)
-
-		if version.MatchString(href) {
-			result = append(result, href)
+		if rPath.MatchString(value) {
+			result = append(result, rVersion.FindAllStringSubmatch(value, 1)[0][0])
 		}
-	}
+	})
 
 	return result, nil
 }
 
-func getUrl() string {
-	typa, _, version := release.All()
-	arch := "x86_64"
+func getRelativePath() (typa, version, arch string) {
+	typa, _, version = release.All()
+	arch = "x86_64"
 
 	versions := strings.Split(version, ".")
 	version = versions[0] + "." + versions[1]
 
-	return fmt.Sprintf("%s/%s/%s/%s", VersionsLink, typa, version, arch)
+	return
+}
+
+func getUrl(version string) string {
+	typa, version, arch := getRelativePath()
+
+	return VersionLink + "/binaries/" + typa + "/" + version + "/" + arch
+}
+
+func getRegUrl() string {
+	typa, version, arch := getRelativePath()
+	return fmt.Sprintf("binaries\\/%s\\/%s\\/%s", typa, version, arch)
 }

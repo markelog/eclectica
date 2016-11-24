@@ -57,7 +57,7 @@ func dealWithShell() error {
   please execute following command to complete installation (you need to do it only`
 	middle := " once"
 	end := "):"
-	command := "sudo apt-get update && apt-get install -y " + strings.Join(deps, " ")
+	command := "sudo apt-get update && sudo apt-get install -y " + strings.Join(deps, " ")
 
 	print.Install(start, middle, end, command)
 

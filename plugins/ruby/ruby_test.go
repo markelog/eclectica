@@ -23,18 +23,16 @@ var _ = Describe("ruby", func() {
 	ruby := &Ruby{}
 
 	Describe("ListRemote", func() {
-		old := VersionsLink
+		old := VersionLink
 
 		AfterEach(func() {
-			VersionsLink = old
+			VersionLink = old
 		})
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := eio.Read("../../testdata/plugins/ruby/dist.html")
+				content := eio.Read("../../testdata/plugins/ruby/dist.xml")
 
-				// httpmock is not incompatible with goquery :/.
-				// See https://github.com/jarcoal/httpmock/issues/18
 				ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					status := 200
 
@@ -46,7 +44,7 @@ var _ = Describe("ruby", func() {
 					io.WriteString(w, content)
 				}))
 
-				VersionsLink = ts.URL
+				VersionLink = ts.URL
 
 				remotes, err = ruby.ListRemote()
 			})
@@ -55,14 +53,23 @@ var _ = Describe("ruby", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should have correct version values", func() {
-				Expect(remotes[0]).To(Equal("2.0.0-p451"))
+			It("should have correct version values (first and last)", func() {
+				if runtime.GOOS == "darwin" {
+					Expect(remotes[0]).To(Equal("2.1.5"))
+				}
+
+				if runtime.GOOS == "linux" {
+					Expect(remotes[0]).To(Equal("1.8.7"))
+				}
+
+				last := len(remotes) - 1
+				Expect(remotes[last]).To(Equal("2.3.3"))
 			})
 		})
 
 		Describe("fail", func() {
 			BeforeEach(func() {
-				VersionsLink = ""
+				VersionLink = ""
 				remotes, err = ruby.ListRemote()
 			})
 
@@ -78,16 +85,12 @@ var _ = Describe("ruby", func() {
 
 			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
 
-			Expect(result["url"]).Should(ContainSubstring("https://rvm.io/binaries"))
-			Expect(result["url"]).Should(ContainSubstring("x86_64"))
-			Expect(result["url"]).Should(ContainSubstring("ruby-2.2.3.tar.bz2"))
-
 			if runtime.GOOS == "darwin" {
-				Expect(result["url"]).Should(ContainSubstring("osx"))
+				Expect(result["url"]).To(Equal("https://s3.amazonaws.com/travis-rubies/binaries/osx/10.12/x86_64/ruby-2.2.3.tar.bz2"))
 			}
 
 			if runtime.GOOS == "linux" {
-				Expect(result["url"]).Should(ContainSubstring("ubuntu"))
+				Expect(result["url"]).To(Equal("https://s3.amazonaws.com/travis-rubies/binaries/ubuntu/14.04/x86_64/ruby-2.2.3.tar.bz2"))
 			}
 		})
 	})
