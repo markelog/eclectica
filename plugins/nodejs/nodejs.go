@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	VersionsLink   = "https://nodejs.org/dist"
+	VersionLink    = "https://nodejs.org/dist"
 	versionPattern = "v\\d+\\.\\d+\\.\\d+$"
 	removePattern  = "0\\.[0-7]"
 
@@ -51,7 +51,7 @@ func (node Node) Environment() (string, error) {
 
 func (node Node) Info() (map[string]string, error) {
 	result := make(map[string]string)
-	sourcesUrl := fmt.Sprintf("%s/v%s", VersionsLink, node.Version)
+	sourcesUrl := fmt.Sprintf("%s/v%s", VersionLink, node.Version)
 
 	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", node.Version, runtime.GOOS)
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
@@ -77,7 +77,7 @@ func (node Node) Current() string {
 }
 
 func (node Node) ListRemote() ([]string, error) {
-	doc, err := goquery.NewDocument(VersionsLink)
+	doc, err := goquery.NewDocument(VersionLink)
 
 	if err != nil {
 		if _, ok := err.(net.Error); ok {
@@ -90,24 +90,22 @@ func (node Node) ListRemote() ([]string, error) {
 	tmp := []string{}
 	result := []string{}
 
-	version := regexp.MustCompile(versionPattern)
-	remove := regexp.MustCompile(removePattern)
+	rVersion := regexp.MustCompile(versionPattern)
+	rRemove := regexp.MustCompile(removePattern)
 
-	links := doc.Find("a")
-
-	for i := range links.Nodes {
-		href, _ := links.Eq(i).Attr("href")
+	doc.Find("a").Each(func(i int, node *goquery.Selection) {
+		href, _ := node.Attr("href")
 
 		href = strings.Replace(href, "/", "", 1)
-		if version.MatchString(href) {
+		if rVersion.MatchString(href) {
 			href = strings.Replace(href, "v", "", 1)
 			tmp = append(tmp, href)
 		}
-	}
+	})
 
 	// Remove < 0.8 versions
 	for _, element := range tmp {
-		if remove.MatchString(element) == false {
+		if rRemove.MatchString(element) == false {
 			result = append(result, element)
 		}
 	}

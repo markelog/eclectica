@@ -24,10 +24,10 @@ var _ = Describe("nodejs", func() {
 	node := &Node{}
 
 	Describe("ListRemote", func() {
-		old := VersionsLink
+		old := VersionLink
 
 		AfterEach(func() {
-			VersionsLink = old
+			VersionLink = old
 		})
 
 		Describe("success", func() {
@@ -47,7 +47,7 @@ var _ = Describe("nodejs", func() {
 					io.WriteString(w, content)
 				}))
 
-				VersionsLink = ts.URL
+				VersionLink = ts.URL
 
 				remotes, err = node.ListRemote()
 			})
@@ -63,7 +63,7 @@ var _ = Describe("nodejs", func() {
 
 		Describe("fail", func() {
 			BeforeEach(func() {
-				VersionsLink = ""
+				VersionLink = ""
 				remotes, err = node.ListRemote()
 			})
 
