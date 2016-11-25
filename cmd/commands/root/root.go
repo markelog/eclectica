@@ -28,10 +28,12 @@ type handleFn func()
 
 // Entry point
 func Execute() {
-	var err error
-	args := os.Args[1:]
+	var (
+		err  error
+		args = os.Args[1:]
+	)
 
-	// If `--remote` or `-r` flag was passed
+	// If `--remote` or `-r` flag was passed (should go before any other instructions)
 	flags.Parse()
 
 	if info.NonInstallCommand(args) {
@@ -161,9 +163,6 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		}
 	})
 
-	err = plugin.PreInstall()
-	print.Error(err)
-
 	if flags.IsLocal {
 		err = plugin.LocalInstall()
 	} else {
@@ -176,6 +175,9 @@ func conditionalInstall(plugin *plugins.Plugin) {
 // Entry point for installation
 func install(language, version string) {
 	plugin := plugins.New(language, version)
+
+	err := plugin.PreInstall()
+	print.Error(err)
 
 	response, err := plugin.Download()
 	print.Error(err)

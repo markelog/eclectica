@@ -3,6 +3,7 @@ package variables
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -13,6 +14,17 @@ var (
 
 func Prefix(name string) string {
 	return filepath.Join(Home(), name)
+}
+
+// TempDir gets OS consistent folder path
+// I am crying over here :/
+func TempDir() (tmp string) {
+	tmp = os.TempDir()
+	if runtime.GOOS == "linux" {
+		tmp += "/"
+	}
+
+	return
 }
 
 // IsDebug checks if eclectica in the debug state

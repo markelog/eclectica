@@ -163,8 +163,6 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("node", func() {
-		fmt.Println(shouldRun("node"))
-
 		if shouldRun("node") == false {
 			return
 		}
@@ -241,6 +239,87 @@ var _ = Describe("main", func() {
 			}
 
 			Expect(result).To(Equal(true))
+		})
+	})
+
+	Describe("elm", func() {
+		if shouldRun("elm") == false {
+			return
+		}
+
+		BeforeEach(func() {
+		})
+
+		It("should install 0.18.0 version", func() {
+			Execute("go", "run", path, "elm@0.18.0")
+
+			command, err := Command("go", "run", path, "ls", "elm").CombinedOutput()
+
+			Expect(strings.Contains(string(command), "♥ 0.18.0")).To(Equal(true))
+			Expect(err).To(BeNil())
+		})
+
+		It("should install 0.17.1 version", func() {
+			Execute("go", "run", path, "elm@0.17.1")
+
+			command, err := Command("go", "run", path, "ls", "elm").CombinedOutput()
+
+			Expect(strings.Contains(string(command), "♥ 0.17.1")).To(Equal(true))
+			Expect(err).To(BeNil())
+		})
+
+		It("should install 0.17.0 version", func() {
+			Execute("go", "run", path, "elm@0.17.0")
+
+			command, err := Command("go", "run", path, "ls", "elm").CombinedOutput()
+
+			Expect(strings.Contains(string(command), "♥ 0.17.0")).To(Equal(true))
+			Expect(err).To(BeNil())
+		})
+
+		It("should install 0.16.0 version", func() {
+			Execute("go", "run", path, "elm@0.16.0")
+
+			command, err := Command("go", "run", path, "ls", "elm").CombinedOutput()
+
+			Expect(strings.Contains(string(command), "♥ 0.16.0")).To(Equal(true))
+			Expect(err).To(BeNil())
+		})
+
+		It("should install 0.15.1 version", func() {
+			Execute("go", "run", path, "elm@0.15.1")
+
+			command, err := Command("go", "run", path, "ls", "elm").CombinedOutput()
+
+			Expect(strings.Contains(string(command), "♥ 0.15.1")).To(Equal(true))
+			Expect(err).To(BeNil())
+		})
+
+		It("should install one version after another", func() {
+			Execute("go", "run", path, "elm@0.17.0")
+			Execute("go", "run", path, "elm@0.18.0")
+
+			command, err := Command("go", "run", path, "ls", "elm").CombinedOutput()
+
+			Expect(strings.Contains(string(command), "♥ 0.18.0")).To(Equal(true))
+			Expect(err).To(BeNil())
+		})
+
+		It("should use local version", func() {
+			pwd, _ := os.Getwd()
+			versionFile := filepath.Join(filepath.Dir(pwd), ".elm-version")
+
+			Execute("go", "run", path, "elm@0.18.0")
+
+			io.WriteFile(versionFile, "0.17.0")
+
+			command, _ := Command("go", "run", path, "ls", "elm").Output()
+
+			Expect(strings.Contains(string(command), "♥ 0.17.0")).To(Equal(true))
+
+			err := os.RemoveAll(versionFile)
+
+			Expect(err).To(BeNil())
 		})
 	})
 

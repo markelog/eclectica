@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/chuckpreslar/emission"
@@ -19,6 +18,7 @@ import (
 	"github.com/markelog/eclectica/versions"
 
 	// plugins
+	"github.com/markelog/eclectica/plugins/elm"
 	"github.com/markelog/eclectica/plugins/golang"
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/plugins/python"
@@ -33,6 +33,7 @@ var (
 		"ruby",
 		"go",
 		"python",
+		"elm",
 	}
 )
 
@@ -98,6 +99,11 @@ func New(args ...string) *Plugin {
 		}
 	case name == "python":
 		plugin.Pkg = &python.Python{
+			Version: version,
+			Emitter: plugin.emitter,
+		}
+	case name == "elm":
+		plugin.Pkg = &elm.Elm{
 			Version: version,
 			Emitter: plugin.emitter,
 		}
@@ -212,11 +218,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 		return nil, err
 	}
 
-	// I am crying over here :/
-	tmpDir := os.TempDir()
-	if runtime.GOOS == "linux" {
-		tmpDir += "/"
-	}
+	tmpDir := variables.TempDir()
 
 	if _, ok := info["name"]; ok == false {
 		info["name"] = plugin.name
