@@ -18,6 +18,18 @@ var (
 	bins    = variables.DefaultInstall
 )
 
+func shouldRun(langauge string) bool {
+	if os.Getenv("TEST_ALL") == "true" {
+		return true
+	}
+
+	if os.Getenv("EC_TEST_LANGUAGE") == langauge {
+		return true
+	}
+
+	return false
+}
+
 func getCmd(args []interface{}) *exec.Cmd {
 	fn := reflect.ValueOf(exec.Command)
 	rargs := make([]reflect.Value, len(args))

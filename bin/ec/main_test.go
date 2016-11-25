@@ -21,6 +21,10 @@ var _ = Describe("main", func() {
 	}
 
 	Describe("main logic", func() {
+		if shouldRun("main") == false {
+			return
+		}
+
 		It("should output version", func() {
 			regVersion := "\\d+\\.\\d+\\.\\d+$"
 
@@ -77,6 +81,10 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("rust", func() {
+		if shouldRun("rust") == false {
+			return
+		}
+
 		BeforeEach(func() {
 			fmt.Println()
 
@@ -146,6 +154,10 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("node", func() {
+		if shouldRun("node") == false {
+			return
+		}
+
 		BeforeEach(func() {
 			fmt.Println()
 
@@ -222,6 +234,10 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("ruby", func() {
+		if shouldRun("ruby") == false {
+			return
+		}
+
 		BeforeEach(func() {
 			fmt.Println()
 
@@ -309,6 +325,10 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("go", func() {
+		if shouldRun("go") == false {
+			return
+		}
+
 		BeforeEach(func() {
 			fmt.Println()
 
@@ -369,6 +389,10 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("python", func() {
+		if shouldRun("python") == false {
+			return
+		}
+
 		var (
 			pipBin = filepath.Join(bins, "pip")
 			eIBin  = filepath.Join(bins, "easy_install")

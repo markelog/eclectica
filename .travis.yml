@@ -12,7 +12,60 @@ install:
   - make install
 
 script:
-  - travis_wait make test && make int-test
+  - travis_wait make test && make int-ci
 
 go:
   - "1.7.1"
+
+matrix:
+  include:
+
+    # for Linux
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=main"
+      os: linux
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=node"
+      os: linux
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=rust"
+      os: linux
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=ruby"
+      os: linux
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=go"
+      os: linux
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=python"
+      os: linux
+
+    # for OSX
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=main"
+      os: osx
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=node"
+      os: osx
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=rust"
+      os: osx
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=ruby"
+      os: osx
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=go"
+      os: osx
+
+    - go: "1.7.1"
+      env: "EC_TEST_LANGUAGE=python"
+      os: osx
