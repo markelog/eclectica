@@ -37,12 +37,16 @@ func Initiate() (err error) {
 	return rc.New(command).Add()
 }
 
-func StartShell(language string) {
+func pathShell(language string) bool {
 	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
 		console.Shell()
-		return
+		return true
 	}
 
+	return false
+}
+
+func hashShell(language string) bool {
 	output, _ := exec.Command("hash").Output()
 	out := string(output)
 
@@ -51,5 +55,18 @@ func StartShell(language string) {
 
 	if strings.Contains(out, binPath) && strings.Contains(out, ecPath) == false {
 		console.Shell()
+		return true
 	}
+
+	return false
+}
+
+func StartShell(language string) {
+	pathResult := pathShell(language)
+
+	if pathResult {
+		return
+	}
+
+	hashShell()
 }
