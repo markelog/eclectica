@@ -16,10 +16,6 @@ import (
 )
 
 var _ = Describe("main", func() {
-	if os.Getenv("TEST_ALL") == "" && os.Getenv("TEST_LANGUAGE") == "" {
-		return
-	}
-
 	Describe("main logic", func() {
 		if shouldRun("main") == false {
 			return
@@ -167,6 +163,8 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("node", func() {
+		fmt.Println(shouldRun("node"))
+
 		if shouldRun("node") == false {
 			return
 		}
