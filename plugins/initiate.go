@@ -37,17 +37,13 @@ func Initiate() (err error) {
 	return rc.New(command).Add()
 }
 
-func pathShell(language string) bool {
+func StartShell(language string) {
 	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
 		console.Shell()
-		return true
+		return
 	}
 
-	return false
-}
-
-func hashShell(language string) bool {
-	output, _ := exec.Command("hash").Output()
+	output, _ := exec.Command("hash").CombinedOutput()
 	out := string(output)
 
 	ecPath := fmt.Sprintf("/%s/%s", ".eclectica/bin", language)
@@ -55,18 +51,5 @@ func hashShell(language string) bool {
 
 	if strings.Contains(out, binPath) && strings.Contains(out, ecPath) == false {
 		console.Shell()
-		return true
 	}
-
-	return false
-}
-
-func StartShell(language string) {
-	pathResult := pathShell(language)
-
-	if pathResult {
-		return
-	}
-
-	hashShell()
 }

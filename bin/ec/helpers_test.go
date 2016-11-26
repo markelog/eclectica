@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/markelog/eclectica/variables"
@@ -23,7 +22,7 @@ func shouldRun(langauge string) bool {
 		return true
 	}
 
-	if os.Getenv("EC_TEST_LANGUAGE") == langauge {
+	if os.Getenv("TEST_LANGUAGE") == langauge {
 		return true
 	}
 
@@ -39,7 +38,6 @@ func getCmd(args []interface{}) *exec.Cmd {
 	}
 
 	cmd := fn.Call(rargs)[0].Interface().(*exec.Cmd)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	return cmd
 }
@@ -61,8 +59,7 @@ func Execute(args ...interface{}) *exec.Cmd {
 }
 
 func Kill(cmd *exec.Cmd) {
-	pgid, _ := syscall.Getpgid(cmd.Process.Pid)
-	syscall.Kill(-pgid, 15)
+	cmd.Process.Kill()
 }
 
 func checkRemoteList(name, mask string, timeout int) bool {
