@@ -43,7 +43,7 @@ func StartShell(language string) {
 		return
 	}
 
-	output, _ := exec.Command("hash").CombinedOutput()
+	output, _ := exec.Command("hash", "-r").CombinedOutput()
 	out := string(output)
 
 	ecPath := fmt.Sprintf("/%s/%s", ".eclectica/bin", language)
