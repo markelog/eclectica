@@ -12,7 +12,7 @@ install:
   - make install
 
 script:
-  - travis_wait make test && make int-ci
+  - make test
 
 go:
   - "1.7.1"
@@ -20,60 +20,74 @@ go:
 matrix:
   include:
 
-# for Linux
+    # for Linux
     - go: "1.7.1"
       env: "TEST_LANGUAGE=main"
       os: linux
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=node"
       os: linux
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=rust"
       os: linux
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=ruby"
       os: linux
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=go"
       os: linux
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python"
       os: linux
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=elm"
       os: linux
+      script: "travis_wait make int-ci"
 
-# for OSX
+    # for OSX
     - go: "1.7.1"
       env: "TEST_LANGUAGE=main"
       os: osx
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=node"
       os: osx
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=rust"
       os: osx
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=ruby"
       os: osx
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=go"
       os: osx
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python"
       os: osx
+      script: "travis_wait make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=elm"
       os: linux
+      script: "travis_wait make int-ci"

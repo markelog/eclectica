@@ -22,7 +22,7 @@ func shouldRun(langauge string) bool {
 		return true
 	}
 
-	if os.Getenv("EC_TEST_LANGUAGE") == langauge {
+	if os.Getenv("TEST_LANGUAGE") == langauge {
 		return true
 	}
 

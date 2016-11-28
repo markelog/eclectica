@@ -23,6 +23,7 @@ int: install
 	@mv ec-proxy $(tmp)
 
 	@env EC_PROXY_PLACE=$(tmp) EC_WITHOUT_SPINNER=true TEST_ALL=true go test -v ./bin/ec -timeout 50m
+
 	@rm -rf $(tmp)
 .PHONY: int
 
@@ -38,6 +39,7 @@ int-ci: install
 	@mv ec-proxy $(tmp)
 
 	@env EC_PROXY_PLACE=$(tmp) EC_WITHOUT_SPINNER=true go test -v ./bin/ec -timeout 50m
+
 	@rm -rf $(tmp)
 .PHONY: int-ci
 
