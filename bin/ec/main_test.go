@@ -78,6 +78,19 @@ var _ = Describe("main", func() {
 				Expect(strings.Contains(string(command), "6.5.0")).To(Equal(false))
 			})
 		})
+
+		Describe("ec rm", func() {
+			It("should remove version", func() {
+				Execute("go", "run", path, "node@6.5.0")
+				Execute("go", "run", path, "node@6.4.0")
+
+				Execute("go", "run", path, "rm", "node@6.5.0")
+
+				command, _ := Command("go", "run", path, "ls", "node").Output()
+
+				Expect(strings.Contains(string(command), "6.5.0")).To(Equal(false))
+			})
+		})
 	})
 
 	Describe("rust", func() {
@@ -153,7 +166,7 @@ var _ = Describe("main", func() {
 		})
 	})
 
-	FDescribe("node", func() {
+	Describe("node", func() {
 		if shouldRun("node") == false {
 			return
 		}
@@ -242,10 +255,10 @@ var _ = Describe("main", func() {
 			fmt.Println()
 
 			fmt.Println("Install tmp version")
-			Execute("go", "run", path, "ruby@2.3.2")
+			Execute("go", "run", path, "ruby@2.1.5")
 
-			fmt.Println("Removing ruby@2.3.3")
-			Execute("go", "run", path, "rm", "ruby@2.3.3")
+			fmt.Println("Removing ruby@2.2.1")
+			Execute("go", "run", path, "rm", "ruby@2.2.1")
 			fmt.Println("Removed")
 		})
 
@@ -253,31 +266,31 @@ var _ = Describe("main", func() {
 			pwd, _ := os.Getwd()
 			versionFile := filepath.Join(filepath.Dir(pwd), ".ruby-version")
 
-			Execute("go", "run", path, "ruby@2.3.3")
+			Execute("go", "run", path, "ruby@2.2.1")
 
-			io.WriteFile(versionFile, "2.3.2")
+			io.WriteFile(versionFile, "2.1.5")
 
 			command, _ := Command("go", "run", path, "ls", "ruby").Output()
 
-			Expect(strings.Contains(string(command), "♥ 2.3.2")).To(Equal(true))
+			Expect(strings.Contains(string(command), "♥ 2.1.5")).To(Equal(true))
 
 			err := os.RemoveAll(versionFile)
 
 			Expect(err).To(BeNil())
 		})
 
-		It("should install ruby 2.3.3", func() {
-			Execute("go", "run", path, "ruby@2.3.3")
+		It("should install ruby 2.2.1", func() {
+			Execute("go", "run", path, "ruby@2.2.1")
 			command, _ := Command("go", "run", path, "ls", "ruby").Output()
 
-			Expect(strings.Contains(string(command), "♥ 2.3.3")).To(Equal(true))
+			Expect(strings.Contains(string(command), "♥ 2.2.1")).To(Equal(true))
 		})
 
 		It("should install bundler", func() {
 			tempDir := os.TempDir()
 			gems := filepath.Join(tempDir, "gems")
 
-			Execute("go", "run", path, "ruby@2.3.3")
+			Execute("go", "run", path, "ruby@2.2.1")
 			os.Setenv("GEM_HOME", tempDir)
 			Command("gem", "install", "bundler").Output()
 
@@ -288,11 +301,11 @@ var _ = Describe("main", func() {
 		})
 
 		It("should list installed ruby versions", func() {
-			Execute("go", "run", path, "ruby@2.3.3")
+			Execute("go", "run", path, "ruby@2.2.1")
 			command, _ := Command("go", "run", path, "ls", "ruby").Output()
 
-			Expect(strings.Contains(string(command), "♥ 2.3.3")).To(Equal(true))
-			Expect(strings.Contains(string(command), "ruby-v2.3.3")).To(Equal(false))
+			Expect(strings.Contains(string(command), "♥ 2.2.1")).To(Equal(true))
+			Expect(strings.Contains(string(command), "ruby-v2.2.1")).To(Equal(false))
 		})
 
 		It("should list remote ruby versions", func() {
@@ -308,14 +321,16 @@ var _ = Describe("main", func() {
 		It("should remove ruby version", func() {
 			result := true
 
-			Execute("go", "run", path, "ruby@2.3.3")
-			Command("go", "run", path, "rm", "ruby@2.3.3").Output()
+			Execute("go", "run", path, "ruby@2.2.1")
+			Execute("go", "run", path, "ruby@2.1.0")
+
+			Command("go", "run", path, "rm", "ruby@2.2.1").Output()
 
 			plugin := plugins.New("ruby")
 			versions, _ := plugin.List()
 
 			for _, version := range versions {
-				if version == "2.3.3" {
+				if version == "2.2.1" {
 					result = false
 				}
 			}

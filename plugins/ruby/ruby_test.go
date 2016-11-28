@@ -23,16 +23,18 @@ var _ = Describe("ruby", func() {
 	ruby := &Ruby{}
 
 	Describe("ListRemote", func() {
-		old := VersionLink
+		old := VersionsLink
 
 		AfterEach(func() {
-			VersionLink = old
+			VersionsLink = old
 		})
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := eio.Read("../../testdata/plugins/ruby/dist.xml")
+				content := eio.Read("../../testdata/plugins/ruby/dist.html")
 
+				// httpmock is not incompatible with goquery :/.
+				// See https://github.com/jarcoal/httpmock/issues/18
 				ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					status := 200
 
@@ -44,7 +46,7 @@ var _ = Describe("ruby", func() {
 					io.WriteString(w, content)
 				}))
 
-				VersionLink = ts.URL
+				VersionsLink = ts.URL
 
 				remotes, err = ruby.ListRemote()
 			})
@@ -54,14 +56,13 @@ var _ = Describe("ruby", func() {
 			})
 
 			It("should have correct version values", func() {
-				last := len(remotes) - 1
-				Expect(remotes[last]).To(Equal("2.3.3"))
+				Expect(remotes[0]).To(Equal("2.0.0-p451"))
 			})
 		})
 
 		Describe("fail", func() {
 			BeforeEach(func() {
-				VersionLink = ""
+				VersionsLink = ""
 				remotes, err = ruby.ListRemote()
 			})
 
@@ -76,14 +77,17 @@ var _ = Describe("ruby", func() {
 			result, _ := (&Ruby{Version: "2.2.3"}).Info()
 
 			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
+
+			Expect(result["url"]).Should(ContainSubstring("https://rvm.io/binaries"))
+			Expect(result["url"]).Should(ContainSubstring("x86_64"))
 			Expect(result["url"]).Should(ContainSubstring("ruby-2.2.3.tar.bz2"))
 
 			if runtime.GOOS == "darwin" {
-				Expect(result["url"]).Should(ContainSubstring("https://s3.amazonaws.com/travis-rubies/binaries/osx/"))
+				Expect(result["url"]).Should(ContainSubstring("osx"))
 			}
 
 			if runtime.GOOS == "linux" {
-				Expect(result["url"]).Should(ContainSubstring("https://s3.amazonaws.com/travis-rubies/binaries/ubuntu/"))
+				Expect(result["url"]).Should(ContainSubstring("ubuntu"))
 			}
 		})
 	})
