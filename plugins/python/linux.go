@@ -49,7 +49,7 @@ func dealWithLinuxShell() error {
 		return nil
 	}
 
-	start := `Python cannot be installed without external LinuxDependencies,
+	start := `Python cannot be installed without external Linux dependencies,
   please execute following command before trying it again (you need to do it only`
 	middle := " once"
 	end := "):"

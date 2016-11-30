@@ -62,8 +62,8 @@ func printErrForOSXDependencies(deps []string) {
 }
 
 func printErrForXCodeDependencies() {
-	start := `Python cannot be installed without external dependencies,
-  like Xcode, please download it from https://developer.apple.com/download/
+	start := `Python cannot be installed without Xcode,
+	please download it from https://developer.apple.com/download/
   before trying it again (you need to do it only`
 	middle := " once"
 	end := ")"
