@@ -2,7 +2,6 @@ package root
 
 import (
 	"os"
-	"time"
 
 	"github.com/spf13/cobra"
 
@@ -141,13 +140,10 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		return func() {
 			if spinner != nil {
 				spinner.Stop()
+				spinner = nil
 			}
 
 			spinner = print.CustomSpin("Version", plugin.Version, note)
-
-			// Since spinner.Stop() is acting in the thread
-			// Stop() and Start() might overlap, so we workaround it
-			time.Sleep(200 * time.Millisecond)
 			spinner.Start()
 		}
 	}
@@ -158,9 +154,12 @@ func conditionalInstall(plugin *plugins.Plugin) {
 	plugin.Events().On("post-install", handle("post-installing"))
 
 	plugin.Events().On("done", func() {
-		if spinner != nil {
-			spinner.Stop()
+		if spinner == nil {
+			return
 		}
+
+		spinner.Stop()
+		spinner = nil
 	})
 
 	if flags.IsLocal {

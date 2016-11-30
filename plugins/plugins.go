@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/signal"
 	"path/filepath"
 
 	"github.com/cavaliercoder/grab"
@@ -138,6 +139,17 @@ func (plugin *Plugin) PreInstall() error {
 }
 
 func (plugin *Plugin) Install() (err error) {
+	path := variables.Path(plugin.name, plugin.Version)
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+		os.RemoveAll(path)
+		plugin.emitter.Emit("done")
+		os.Exit(1)
+	}()
+
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
@@ -162,15 +174,14 @@ func (plugin *Plugin) Install() (err error) {
 	}
 
 	err = plugin.Pkg.Install()
-	if err != nil {
-		// path := variables.Path(plugin.name, plugin.Version)
-		// os.RemoveAll(path)
-
-		plugin.emitter.Emit("done")
-		return
+	if err == nil {
+		return plugin.PostInstall()
 	}
 
-	return plugin.PostInstall()
+	os.RemoveAll(path)
+	plugin.emitter.Emit("done")
+
+	return
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
