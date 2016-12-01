@@ -117,99 +117,105 @@ func New(args ...string) *Plugin {
 	return plugin
 }
 
-func (plugin *Plugin) LocalInstall() error {
-	pwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	version := fmt.Sprintf(".%s-version", plugin.name)
-	path := filepath.Join(pwd, version)
-
-	err = io.WriteFile(path, plugin.Version)
-	if err != nil {
-		return err
-	}
-
-	return plugin.Install()
-}
-
 func (plugin *Plugin) PreInstall() error {
 	return plugin.Pkg.PreInstall()
 }
 
-func (plugin *Plugin) Install() (err error) {
-	path := variables.Path(plugin.name, plugin.Version)
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		<-c
-		os.RemoveAll(path)
-		plugin.emitter.Emit("done")
-		os.Exit(1)
-	}()
+func (plugin *Plugin) LocalInstall() (err error) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return
+	}
 
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
 
-	err = Initiate()
+	var (
+		version = fmt.Sprintf(".%s-version", plugin.name)
+		path    = filepath.Join(pwd, version)
+	)
+
+	err = io.WriteFile(path, plugin.Version)
 	if err != nil {
-		plugin.emitter.Emit("done")
 		return
 	}
 
-	// If this is already a current version we don't need to do anything
+	// Handle CTRL+C signal
+	plugin.Interrupt()
+
+	err = plugin.Initiate()
+	if err != nil {
+		return
+	}
+
+	// If this is already a current version we can safely say this one is installed
 	if plugin.Version == plugin.Current() {
-		return plugin.PostInstall()
+		return nil
 	}
 
-	bin := variables.GetBin(plugin.name, plugin.Version)
-
-	// If binary for this plugin already exist then we can assume it was installed before;
-	// which means we can bail at this point
-	if _, err := os.Stat(bin); err == nil {
-		return plugin.PostInstall()
+	// If it was already installed, just bail out
+	if plugin.IsInstalled() {
+		return nil
 	}
 
-	err = plugin.Pkg.Install()
-	if err == nil {
-		return plugin.PostInstall()
+	return plugin.Finish()
+}
+
+func (plugin *Plugin) Install() (err error) {
+	if plugin.Version == "" {
+		return errors.New("Version was not defined")
 	}
 
-	os.RemoveAll(path)
-	plugin.emitter.Emit("done")
+	// If this is already a current version we can safely say this one is installed
+	if plugin.Version == plugin.Current() {
+		return nil
+	}
 
-	return
+	// Handle CTRL+C signal
+	plugin.Interrupt()
+
+	err = plugin.Initiate()
+	if err != nil {
+		return
+	}
+
+	// If it was already installed, just switch @current link if needed
+	if plugin.IsInstalled() {
+		return plugin.Link()
+	}
+
+	err = plugin.Finish()
+	if err != nil {
+		return
+	}
+
+	return plugin.Link()
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
-	var (
-		base    = variables.Path(plugin.name, plugin.Version)
-		current = variables.Path(plugin.name)
-	)
-
-	err = symlink(current, base)
-	if err != nil {
-		plugin.emitter.Emit("done")
-		return err
-	}
-
 	err = plugin.Proxy()
 	if err != nil {
-		plugin.emitter.Emit("done")
-		return err
+		plugin.Rollback()
+		return
 	}
 
 	err = plugin.Pkg.PostInstall()
 	if err != nil {
-		plugin.emitter.Emit("done")
+		plugin.Rollback()
 		return
 	}
 
 	// Start new shell from eclectica if needed
 	StartShell(plugin.name)
+
+	base := variables.Path(plugin.name, plugin.Version)
+	err = io.WriteFile(filepath.Join(base, ".done"), "")
+	if err != nil {
+		plugin.Rollback()
+		return
+	}
+
 	plugin.emitter.Emit("done")
 
 	return
@@ -264,8 +270,51 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 	return info, nil
 }
 
+// Current returns current used version
 func (plugin *Plugin) Current() string {
 	return plugin.Pkg.Current()
+}
+
+// Initiate deals with setting environment for installation
+func (plugin *Plugin) Initiate() (err error) {
+	err = Initiate()
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+// Rollback places everything back
+func (plugin *Plugin) Rollback() {
+	path := variables.Path(plugin.name, plugin.Version)
+	os.RemoveAll(path)
+
+	plugin.emitter.Emit("done")
+}
+
+// Finish finishes installation
+func (plugin *Plugin) Finish() (err error) {
+	err = plugin.Pkg.Install()
+	if err != nil {
+		plugin.Rollback()
+		return
+	}
+
+	return plugin.PostInstall()
+}
+
+// Interrupt handles interruption signals (like CTRL+C)
+func (plugin *Plugin) Interrupt() {
+	channel := make(chan os.Signal, 1)
+
+	signal.Notify(channel, os.Interrupt)
+
+	go func() {
+		<-channel
+		plugin.Rollback()
+		os.Exit(1)
+	}()
 }
 
 func (plugin *Plugin) List() (vers []string, err error) {
@@ -432,6 +481,34 @@ func (plugin *Plugin) Dots() []string {
 
 func (plugin *Plugin) Events() *emission.Emitter {
 	return plugin.Pkg.Events()
+}
+
+func (plugin *Plugin) Link() (err error) {
+	var (
+		base    = variables.Path(plugin.name, plugin.Version)
+		current = variables.Path(plugin.name)
+	)
+
+	err = symlink(current, base)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+// IsInstalled checks if this version was already installed
+func (plugin *Plugin) IsInstalled() bool {
+	base := variables.GetBin(plugin.name, plugin.Version)
+	path := filepath.Join(base, ".done")
+
+	// If binary for this plugin already exist then we can assume it was installed before;
+	// which means we can bail out this point
+	if _, err := os.Stat(path); err == nil {
+		return true
+	}
+
+	return false
 }
 
 func (plugin *Plugin) Proxy() (err error) {

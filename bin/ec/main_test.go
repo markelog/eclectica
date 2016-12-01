@@ -79,16 +79,33 @@ var _ = Describe("main", func() {
 			})
 		})
 
-		Describe("ec rm", func() {
-			It("should remove version", func() {
+		Describe("local install", func() {
+			It("should install version but don't switch to it globally", func() {
+				current := Command("go", "run", path, "ls", "node")
+
+				pwd, _ := os.Getwd()
+				upper := Command("go", "run", path, "ls", "node")
+				upper.Dir = filepath.Join(pwd, "..")
+
+				versionFile := filepath.Join(pwd, ".node-version")
+
 				Execute("go", "run", path, "node@6.5.0")
-				Execute("go", "run", path, "node@6.4.0")
+				Execute("go", "run", path, "node@6.4.0", "-l")
 
-				Execute("go", "run", path, "rm", "node@6.5.0")
+				upperRes, _ := upper.CombinedOutput()
+				currentRes, _ := current.CombinedOutput()
 
-				command, _ := Command("go", "run", path, "ls", "node").Output()
+				Expect(strings.Contains(string(currentRes), "6.5.0")).To(Equal(true))
+				Expect(strings.Contains(string(currentRes), "♥ 6.4.0")).To(Equal(true))
 
-				Expect(strings.Contains(string(command), "6.5.0")).To(Equal(false))
+				if _, err := os.Stat(versionFile); err != nil {
+					Expect(true).To(Equal(false))
+				} else {
+					os.RemoveAll(versionFile)
+				}
+
+				Expect(strings.Contains(string(upperRes), "♥ 6.5.0")).To(Equal(true))
+				Expect(strings.Contains(string(upperRes), "6.4.0")).To(Equal(true))
 			})
 		})
 	})

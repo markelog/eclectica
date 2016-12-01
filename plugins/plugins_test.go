@@ -18,6 +18,7 @@ import (
 
 	. "github.com/markelog/eclectica/plugins"
 
+	eio "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/variables"
 )
@@ -57,7 +58,7 @@ var _ = Describe("plugins", func() {
 		})
 	})
 
-	Describe("Install", func() {
+	Describe("Remove", func() {
 		var (
 			list        = false
 			current     = false
@@ -163,6 +164,7 @@ var _ = Describe("plugins", func() {
 			osRemoveAll = false
 			osSymlink   = false
 			osStat      = false
+			isInstalled = false
 		)
 
 		resCurrent := "6.7.0"
@@ -175,6 +177,7 @@ var _ = Describe("plugins", func() {
 		var resPkgInstall error
 		var resOsRemoveAll error
 		var resOsSymlink error
+		var resIsInstalled bool
 		var resOsStat os.FileInfo
 
 		resInitiate = nil
@@ -184,10 +187,12 @@ var _ = Describe("plugins", func() {
 		resOsRemoveAll = nil
 		resOsSymlink = nil
 		resOsStat = nil
+		resIsInstalled = false
 
 		var guardCurrent *monkey.PatchGuard
 		var guardPostInstall *monkey.PatchGuard
 		var guardPkgInstall *monkey.PatchGuard
+		var guardIsInstalled *monkey.PatchGuard
 
 		BeforeEach(func() {
 			var d *Plugin
@@ -205,6 +210,13 @@ var _ = Describe("plugins", func() {
 				func(plugin *Plugin) string {
 					current = true
 					return resCurrent
+				},
+			)
+
+			guardIsInstalled = monkey.PatchInstanceMethod(pType, "IsInstalled",
+				func(plugin *Plugin) bool {
+					isInstalled = true
+					return resIsInstalled
 				},
 			)
 
@@ -227,6 +239,11 @@ var _ = Describe("plugins", func() {
 				return resOsRemoveAll
 			})
 
+			monkey.Patch(os.RemoveAll, func(path string) error {
+				osRemoveAll = true
+				return resOsRemoveAll
+			})
+
 			monkey.Patch(os.Symlink, func(from, to string) error {
 				osSymlink = true
 				return resOsSymlink
@@ -235,6 +252,11 @@ var _ = Describe("plugins", func() {
 			monkey.Patch(os.Stat, func(path string) (os.FileInfo, error) {
 				osStat = true
 				return resOsStat, nil
+			})
+
+			// Nothing to check for this one
+			monkey.Patch(eio.WriteFile, func(path, content string) error {
+				return nil
 			})
 		})
 
@@ -246,6 +268,7 @@ var _ = Describe("plugins", func() {
 			osRemoveAll = false
 			osSymlink = false
 			osStat = false
+			isInstalled = false
 
 			resInitiate = nil
 			resCurrent = ""
@@ -254,41 +277,70 @@ var _ = Describe("plugins", func() {
 			resOsRemoveAll = nil
 			resOsSymlink = nil
 			resOsStat = nil
+			resIsInstalled = false
 
 			monkey.Unpatch(Initiate)
 			monkey.Unpatch(os.Symlink)
 			monkey.Unpatch(os.Stat)
 			monkey.Unpatch(os.RemoveAll)
+			monkey.Unpatch(eio.WriteFile)
 
 			guardPostInstall.Unpatch()
 			guardCurrent.Unpatch()
 			guardPkgInstall.Unpatch()
+			guardIsInstalled.Unpatch()
 		})
 
-		It("install sequence", func() {
+		It("install sequence for not installed version", func() {
 			New("node", "6.8.0").Install()
 
 			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
+			Expect(isInstalled).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
 			Expect(postInstall).To(Equal(true))
-			Expect(osRemoveAll).To(Equal(false))
-			Expect(osSymlink).To(Equal(false))
-			Expect(osStat).To(Equal(true))
+			Expect(pkgInstall).To(Equal(true))
+			Expect(osSymlink).To(Equal(true))
+		})
+
+		It("install sequence for installed version", func() {
+			resIsInstalled = true
+
+			New("node", "6.8.0").Install()
+
+			Expect(initiate).To(Equal(true))
+			Expect(current).To(Equal(true))
+			Expect(isInstalled).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
+			Expect(osSymlink).To(Equal(true))
+			Expect(postInstall).To(Equal(false))
 			Expect(pkgInstall).To(Equal(false))
 		})
 
-		It("should return early if current version is installed one", func() {
+		It("install sequence for current version", func() {
 			resCurrent = "6.8.0"
 
 			New("node", "6.8.0").Install()
 
-			Expect(initiate).To(Equal(true))
+			Expect(initiate).To(Equal(false))
 			Expect(current).To(Equal(true))
-			Expect(postInstall).To(Equal(true))
+			Expect(isInstalled).To(Equal(false))
 			Expect(osRemoveAll).To(Equal(false))
 			Expect(osSymlink).To(Equal(false))
-			Expect(osStat).To(Equal(false))
+			Expect(postInstall).To(Equal(false))
 			Expect(pkgInstall).To(Equal(false))
+		})
+
+		It("local install sequence", func() {
+			New("node", "6.8.0").LocalInstall()
+
+			Expect(initiate).To(Equal(true))
+			Expect(current).To(Equal(true))
+			Expect(isInstalled).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(false))
+			Expect(postInstall).To(Equal(true))
+			Expect(pkgInstall).To(Equal(true))
+			Expect(osSymlink).To(Equal(false))
 		})
 
 		It("should not return early", func() {
@@ -298,11 +350,11 @@ var _ = Describe("plugins", func() {
 
 			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
-			Expect(osRemoveAll).To(Equal(false))
-			Expect(osSymlink).To(Equal(false))
+			Expect(osRemoveAll).To(Equal(true))
+			Expect(osSymlink).To(Equal(true))
 			Expect(osStat).To(Equal(true))
 			Expect(postInstall).To(Equal(true))
-			Expect(pkgInstall).To(Equal(false))
+			Expect(pkgInstall).To(Equal(true))
 		})
 
 		It("returns error if version was not defined", func() {
