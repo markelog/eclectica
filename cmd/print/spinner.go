@@ -25,7 +25,6 @@ func (spinner *Spinner) Start() {
 	}
 
 	s := spin.New()
-	spinner.started = true
 	spinner.channel = make(chan bool)
 
 	go func() {
@@ -36,15 +35,10 @@ func (spinner *Spinner) Start() {
 
 			select {
 			case <-spinner.channel:
-				spinner.started = false
-
 				spinner.After()
+
 				return
 			default:
-				if spinner.started == false {
-					return
-				}
-
 				color.Set(color.FgCyan)
 				fmt.Print(s.Next())
 				color.Unset()
@@ -60,6 +54,6 @@ func (spinner *Spinner) Stop() {
 		return
 	}
 
-	spinner.started = false
 	spinner.channel <- true
+	close(spinner.channel)
 }

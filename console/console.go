@@ -1,9 +1,8 @@
 package console
 
 import (
+	"bytes"
 	"errors"
-	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"reflect"
@@ -14,7 +13,7 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
-// Pass array to exec.Command
+// Get gets cmd instance by passing array to exec.Command
 func Get(args []string) *exec.Cmd {
 	fn := reflect.ValueOf(exec.Command)
 	rargs := make([]reflect.Value, len(args))
@@ -49,13 +48,11 @@ func Shell() {
 	print.Error(err)
 }
 
-// GetError is just facade to handling a console errors
+// GetError is just facade to handling console errors
 // Is stdOut param redudant?
-func GetError(err error, stdErr, stdOut io.ReadCloser) error {
-	readErr, _ := ioutil.ReadAll(stdErr)
-	strErr := string(readErr)
-	readOut, _ := ioutil.ReadAll(stdOut)
-	strOut := string(readOut)
+func GetError(err error, stdErr, stdOut *bytes.Buffer) error {
+	strErr := stdErr.String()
+	strOut := stdOut.String()
 
 	if len(strErr) != 0 {
 		return errors.New(strErr)
@@ -74,20 +71,21 @@ func GetError(err error, stdErr, stdOut io.ReadCloser) error {
 	return err
 }
 
-func trimMessage(message string) string {
-	message = strings.TrimSpace(message)
+func trimMessage(message string) (result string) {
+	result = strings.TrimSpace(message)
+
 	messageLength := 30
 
-	messages := strings.Split(message, "\n")
+	messages := strings.Split(result, "\n")
 	last := len(messages) - 1
 
-	message = messages[last]
+	result = messages[last]
 
-	if len(message) < messageLength {
-		return message
+	if len(result) < messageLength {
+		return
 	}
 
-	message = message[:messageLength-3] + "..."
+	result = "..." + result[messageLength-3:]
 
-	return message
+	return
 }

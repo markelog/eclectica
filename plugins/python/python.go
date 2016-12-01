@@ -1,9 +1,9 @@
 package python
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net"
 	"os"
@@ -90,11 +90,6 @@ func (python Python) configure() (err error) {
 	cmd, stdErr, stdOut := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
 	cmd.Env = python.getEnvs(cmd.Env)
 
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
-		os.Exit(1)
-	}
-
 	err = cmd.Run()
 	if err != nil {
 		return console.GetError(err, stdErr, stdOut)
@@ -107,6 +102,7 @@ func (python Python) prepare() (err error) {
 	python.Emitter.Emit("prepare")
 
 	cmd, stdErr, stdOut := python.getCmd("make")
+
 	err = cmd.Run()
 	if err != nil {
 		return console.GetError(err, stdErr, stdOut)
@@ -119,6 +115,7 @@ func (python Python) install() (err error) {
 	python.Emitter.Emit("install")
 
 	cmd, stdErr, stdOut := python.getCmd("make", "install")
+
 	err = cmd.Run()
 	if err != nil {
 		return console.GetError(err, stdErr, stdOut)
@@ -148,9 +145,9 @@ func (python Python) getOSXEnvs(original []string) []string {
 	}
 
 	// For zlib
-	out, _ := exec.Command("xcrun", "--show-sdk-path").CombinedOutput()
-	output := strings.TrimSpace(string(out))
-	includeFlags += " -I" + filepath.Join(output, "/usr/include")
+	output, _ := exec.Command("xcrun", "--show-sdk-path").CombinedOutput()
+	out := strings.TrimSpace(string(output))
+	includeFlags += " -I" + filepath.Join(out, "/usr/include")
 
 	original = append(original, "CPPFLAGS="+includeFlags)
 	original = append(original, "LDFLAGS="+libFlags)
@@ -158,11 +155,11 @@ func (python Python) getOSXEnvs(original []string) []string {
 	return original
 }
 
-func (python Python) getCmd(args ...interface{}) (*exec.Cmd, io.ReadCloser, io.ReadCloser) {
+func (python Python) getCmd(args ...interface{}) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer) {
 	var (
 		cmd    *exec.Cmd
-		stdOut io.ReadCloser
-		stdErr io.ReadCloser
+		stdOut bytes.Buffer
+		stdErr bytes.Buffer
 	)
 
 	// There is gotta be a better way without reflect module, huh?
@@ -176,15 +173,15 @@ func (python Python) getCmd(args ...interface{}) (*exec.Cmd, io.ReadCloser, io.R
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
 	cmd.Dir = variables.Path("python", python.Version)
-	stdErr, _ = cmd.StderrPipe()
-	stdOut, _ = cmd.StdoutPipe()
+	cmd.Stderr = &stdErr
+	cmd.Stdout = &stdOut
 
 	if variables.IsDebug() {
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
 	}
 
-	return cmd, stdOut, stdErr
+	return cmd, &stdOut, &stdErr
 }
 
 func (python Python) externals() (err error) {

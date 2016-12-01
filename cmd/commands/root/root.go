@@ -2,6 +2,7 @@ package root
 
 import (
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -140,9 +141,9 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		return func() {
 			if spinner != nil {
 				spinner.Stop()
-				spinner = nil
 			}
 
+			time.Sleep(300 * time.Millisecond)
 			spinner = print.CustomSpin("Version", plugin.Version, note)
 			spinner.Start()
 		}
