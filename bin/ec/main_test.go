@@ -491,26 +491,33 @@ var _ = Describe("main", func() {
 		)
 
 		Describe("2.x", func() {
-			if shouldRun("python2x") == false {
-				return
-			}
-			It(`should install "old" 2.6.9 version`, func() {
-				Execute("go", "run", path, "python@2.6.9")
+			Describe("old", func() {
+				if shouldRun("python2-old") == false {
+					return
+				}
 
-				command, _ := Command("go", "run", path, "ls", "python").Output()
+				It(`should install "old" 2.6.9 version`, func() {
+					Execute("go", "run", path, "python@2.6.9")
 
-				Expect(strings.Contains(string(command), "♥ 2.6.9")).To(Equal(true))
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 2.6.9")).To(Equal(true))
+				})
+
+				It(`should install "old" 2.7.0 version`, func() {
+					Execute("go", "run", path, "python@2.7.0")
+
+					command, _ := Command("go", "run", path, "ls", "python").Output()
+
+					Expect(strings.Contains(string(command), "♥ 2.7.0")).To(Equal(true))
+				})
 			})
 
-			It(`should install "old" 2.7.0 version`, func() {
-				Execute("go", "run", path, "python@2.7.0")
+			Describe("2.7.x versions", func() {
+				if shouldRun("python2.7") == false {
+					return
+				}
 
-				command, _ := Command("go", "run", path, "ls", "python").Output()
-
-				Expect(strings.Contains(string(command), "♥ 2.7.0")).To(Equal(true))
-			})
-
-			Describe("2.7.1x versions", func() {
 				BeforeEach(func() {
 					Execute("go", "run", path, "python@2.7.10")
 					Execute("go", "run", path, "python@2.7.12")
@@ -595,9 +602,10 @@ var _ = Describe("main", func() {
 		})
 
 		Describe("3.x", func() {
-			if shouldRun("python3x") == false {
+			if shouldRun("python3") == false {
 				return
 			}
+
 			BeforeEach(func() {
 				Execute("go", "run", path, "python@3.5.1")
 				Execute("go", "run", path, "python@3.5.2")
