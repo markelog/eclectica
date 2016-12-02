@@ -18,6 +18,7 @@ import (
 
 	. "github.com/markelog/eclectica/plugins"
 
+	"github.com/markelog/eclectica/initiate"
 	eio "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/variables"
@@ -157,7 +158,6 @@ var _ = Describe("plugins", func() {
 
 	Describe("Install", func() {
 		var (
-			initiate    = false
 			current     = false
 			postInstall = false
 			pkgInstall  = false
@@ -171,7 +171,6 @@ var _ = Describe("plugins", func() {
 
 		type Empty struct{}
 
-		var resInitiate error
 		var resInstall error
 		var resPostInstall error
 		var resPkgInstall error
@@ -180,7 +179,6 @@ var _ = Describe("plugins", func() {
 		var resIsInstalled bool
 		var resOsStat os.FileInfo
 
-		resInitiate = nil
 		resInstall = nil
 		resPostInstall = nil
 		resPkgInstall = nil
@@ -194,17 +192,27 @@ var _ = Describe("plugins", func() {
 		var guardPkgInstall *monkey.PatchGuard
 		var guardIsInstalled *monkey.PatchGuard
 
+		var guardInitiate *monkey.PatchGuard
+		var guardCheckShell *monkey.PatchGuard
+
 		BeforeEach(func() {
 			var d *Plugin
 			var n *nodejs.Node
+			var i *initiate.Init
 
 			pType := reflect.TypeOf(d)
 			nodejsType := reflect.TypeOf(n)
+			initType := reflect.TypeOf(i)
 
-			monkey.Patch(Initiate, func() error {
-				initiate = true
-				return resInitiate
-			})
+			guardInitiate = monkey.PatchInstanceMethod(initType, "Initiate",
+				func(init *initiate.Init) error {
+					return nil
+				},
+			)
+
+			guardCheckShell = monkey.PatchInstanceMethod(initType, "CheckShell",
+				func(init *initiate.Init) {},
+			)
 
 			guardCurrent = monkey.PatchInstanceMethod(pType, "Current",
 				func(plugin *Plugin) string {
@@ -261,7 +269,6 @@ var _ = Describe("plugins", func() {
 		})
 
 		AfterEach(func() {
-			initiate = false
 			current = false
 			postInstall = false
 			pkgInstall = false
@@ -270,7 +277,6 @@ var _ = Describe("plugins", func() {
 			osStat = false
 			isInstalled = false
 
-			resInitiate = nil
 			resCurrent = ""
 			resPostInstall = nil
 			resPkgInstall = nil
@@ -279,11 +285,13 @@ var _ = Describe("plugins", func() {
 			resOsStat = nil
 			resIsInstalled = false
 
-			monkey.Unpatch(Initiate)
 			monkey.Unpatch(os.Symlink)
 			monkey.Unpatch(os.Stat)
 			monkey.Unpatch(os.RemoveAll)
 			monkey.Unpatch(eio.WriteFile)
+
+			guardInitiate.Unpatch()
+			guardCheckShell.Unpatch()
 
 			guardPostInstall.Unpatch()
 			guardCurrent.Unpatch()
@@ -294,7 +302,6 @@ var _ = Describe("plugins", func() {
 		It("install sequence for not installed version", func() {
 			New("node", "6.8.0").Install()
 
-			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(true))
@@ -308,7 +315,6 @@ var _ = Describe("plugins", func() {
 
 			New("node", "6.8.0").Install()
 
-			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(true))
@@ -322,7 +328,6 @@ var _ = Describe("plugins", func() {
 
 			New("node", "6.8.0").Install()
 
-			Expect(initiate).To(Equal(false))
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(false))
 			Expect(osRemoveAll).To(Equal(false))
@@ -334,7 +339,6 @@ var _ = Describe("plugins", func() {
 		It("local install sequence", func() {
 			New("node", "6.8.0").LocalInstall()
 
-			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(false))
@@ -348,7 +352,6 @@ var _ = Describe("plugins", func() {
 
 			New("node", "6.8.0").Install()
 
-			Expect(initiate).To(Equal(true))
 			Expect(current).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(true))
 			Expect(osSymlink).To(Equal(true))

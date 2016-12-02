@@ -14,6 +14,7 @@ import (
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"
 
+	"github.com/markelog/eclectica/initiate"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
@@ -136,15 +137,13 @@ func (plugin *Plugin) LocalInstall() (err error) {
 		path    = filepath.Join(pwd, version)
 	)
 
-	err = io.WriteFile(path, plugin.Version)
-	if err != nil {
-		return
-	}
-
 	// Handle CTRL+C signal
 	plugin.Interrupt()
 
-	err = plugin.Initiate()
+	init := initiate.New(plugin.name, Plugins)
+	init.CheckShell()
+
+	err = init.Initiate()
 	if err != nil {
 		return
 	}
@@ -159,7 +158,20 @@ func (plugin *Plugin) LocalInstall() (err error) {
 		return nil
 	}
 
-	return plugin.Finish()
+	err = plugin.Finish()
+	if err != nil {
+		return
+	}
+
+	err = io.WriteFile(path, plugin.Version)
+	if err != nil {
+		plugin.Rollback()
+		return
+	}
+
+	init.RestartShell()
+
+	return
 }
 
 func (plugin *Plugin) Install() (err error) {
@@ -175,7 +187,10 @@ func (plugin *Plugin) Install() (err error) {
 	// Handle CTRL+C signal
 	plugin.Interrupt()
 
-	err = plugin.Initiate()
+	init := initiate.New(plugin.name, Plugins)
+	init.CheckShell()
+
+	err = init.Initiate()
 	if err != nil {
 		return
 	}
@@ -190,7 +205,18 @@ func (plugin *Plugin) Install() (err error) {
 		return
 	}
 
-	return plugin.Link()
+	err = plugin.Link()
+	if err != nil {
+		return
+	}
+
+	plugin.emitter.Emit("done")
+
+	// Start new shell from eclectica if needed
+	// note: should be the last action
+	init.RestartShell()
+
+	return
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
@@ -206,17 +232,12 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return
 	}
 
-	// Start new shell from eclectica if needed
-	StartShell(plugin.name)
-
 	base := variables.Path(plugin.name, plugin.Version)
 	err = io.WriteFile(filepath.Join(base, ".done"), "")
 	if err != nil {
 		plugin.Rollback()
 		return
 	}
-
-	plugin.emitter.Emit("done")
 
 	return
 }
@@ -273,16 +294,6 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 // Current returns current used version
 func (plugin *Plugin) Current() string {
 	return plugin.Pkg.Current()
-}
-
-// Initiate deals with setting environment for installation
-func (plugin *Plugin) Initiate() (err error) {
-	err = Initiate()
-	if err != nil {
-		return
-	}
-
-	return
 }
 
 // Rollback places everything back
@@ -489,7 +500,7 @@ func (plugin *Plugin) Link() (err error) {
 		current = variables.Path(plugin.name)
 	)
 
-	err = symlink(current, base)
+	err = io.Symlink(current, base)
 	if err != nil {
 		return
 	}
@@ -588,20 +599,4 @@ func SearchBin(name string) string {
 // This one exists only to support nvm's `.nvmrc`
 func Dots(name string) []string {
 	return New(name).Dots()
-}
-
-func symlink(current, base string) (err error) {
-	// Remove current@ symlink if it existed for previous version
-	err = os.RemoveAll(current)
-	if err != nil {
-		return err
-	}
-
-	// Set up current@ symlink
-	err = os.Symlink(base, current)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

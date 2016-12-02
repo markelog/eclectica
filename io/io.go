@@ -129,3 +129,19 @@ func Read(path string) string {
 
 	return string(bytes)
 }
+
+func Symlink(current, base string) (err error) {
+	// Remove symlink just in case it's already present
+	err = os.RemoveAll(current)
+	if err != nil {
+		return err
+	}
+
+	// Set up new symlink
+	err = os.Symlink(base, current)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
