@@ -3,7 +3,6 @@ package ls
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/markelog/list"
 	"github.com/spf13/cobra"
 
@@ -51,15 +50,9 @@ func listVersions(versions []string, current string) {
 	fmt.Println()
 	for _, version := range versions {
 		if current == version {
-
-			color.Set(color.FgCyan)
-			fmt.Println("♥ " + version)
-			color.Unset()
-
+			print.CurrentVersion(version)
 		} else {
-			color.Set(color.FgBlack)
-			fmt.Println("  " + version)
-			color.Unset()
+			print.Version(version)
 		}
 	}
 	fmt.Println()

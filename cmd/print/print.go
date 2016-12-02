@@ -8,18 +8,20 @@ import (
 
 	"github.com/cavaliercoder/grab"
 	"github.com/dustin/go-humanize"
-	"github.com/fatih/color"
 	"github.com/markelog/curse"
+	"github.com/mgutz/ansi"
+)
+
+var (
+	gray  = ansi.ColorCode("240")
+	reset = ansi.ColorCode("reset")
 )
 
 func InStyle(name, entity string) {
-	color.Set(color.Bold)
-	fmt.Print(name)
+	name = ansi.Color(name, "white+b")
+	entity = ansi.Color(" "+entity+" ", "cyan+h")
 
-	color.Set(color.FgCyan)
-	fmt.Print(" ")
-	fmt.Print(entity + " ")
-	color.Unset()
+	fmt.Print(name, entity)
 }
 
 func InStyleln(name, entity string) {
@@ -27,16 +29,12 @@ func InStyleln(name, entity string) {
 	fmt.Println()
 }
 
-func LaguageOrVersion(language, version string) {
-	if language != "" {
-		InStyle("Language", language)
-		fmt.Println()
-	}
+func Version(version string) {
+	fmt.Println(gray, "  ", version, reset)
+}
 
-	if version != "" {
-		InStyle("Version", version)
-		fmt.Println()
-	}
+func CurrentVersion(version string) {
+	fmt.Println(ansi.Color("  ♥ "+version, "cyan"))
 }
 
 func Error(err error) {
@@ -45,9 +43,7 @@ func Error(err error) {
 	}
 
 	fmt.Println()
-	color.Set(color.FgRed)
-	fmt.Print("> ")
-	color.Unset()
+	fmt.Print(ansi.Color("> ", "red"))
 
 	fmt.Fprintf(os.Stderr, "%v", err)
 	fmt.Println()
@@ -78,21 +74,17 @@ func Download(response *grab.Response, version string) string {
 			c.EraseCurrentLine()
 		}
 		started = true
+		text := fmt.Sprintf("(%s/%s ", transfered, size)
 
 		InStyle("Version", version)
-
-		color.Set(color.FgBlack)
-		fmt.Print("(")
-		fmt.Printf("%s/%s ", transfered, size)
-		color.Unset()
+		fmt.Print(gray, text, reset)
 	}
 
 	postfix := func() {
-		color.Set(color.FgBlack)
-		fmt.Printf(" %d%%", int(100*response.Progress()))
-		fmt.Print(")")
-		fmt.Println()
-		color.Unset()
+		progress := int(100 * response.Progress())
+		text := fmt.Sprintf("%d%%)", progress)
+
+		fmt.Println(gray, text, reset)
 
 		time.Sleep(200 * time.Millisecond)
 	}
@@ -137,10 +129,7 @@ func CustomSpin(header, item, message string) *Spinner {
 	}
 
 	postfix := func() {
-		color.Set(color.FgBlack)
-		fmt.Print(" ", message)
-		color.Unset()
-		fmt.Println()
+		fmt.Println(gray, message, reset)
 
 		time.Sleep(300 * time.Millisecond)
 	}
@@ -161,32 +150,16 @@ func CustomSpin(header, item, message string) *Spinner {
 	return s
 }
 
-func Install(start, middle, end, command string) {
+func Warning(message, command string) {
 	fmt.Println()
-
-	color.Set(color.FgRed)
-	fmt.Print("> ")
-	color.Unset()
-
-	color.Set(color.Bold)
-	fmt.Print(start)
-	color.Set(color.FgRed)
-	fmt.Print(middle)
-	color.Unset()
-
-	color.Set(color.Bold)
-	fmt.Print(end)
-	color.Unset()
+	fmt.Print(ansi.Color("> ", "red"))
+	fmt.Print(message)
 
 	if command != "" {
 		fmt.Println()
 		fmt.Println()
 
-		color.Set(color.FgGreen)
-		fmt.Print("> ")
-		color.Unset()
-
-		fmt.Print(command)
+		fmt.Print(ansi.Color("> ", "green") + command)
 	}
 
 	fmt.Println()

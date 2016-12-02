@@ -5,6 +5,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/mgutz/ansi"
+
 	"github.com/markelog/eclectica/cmd/print"
 )
 
@@ -51,25 +53,20 @@ func checkOSXDependencies() (has bool, deps []string, err error) {
 }
 
 func printErrForOSXDependencies(deps []string) {
-	start := `Python cannot be installed without external dependencies,
-  please execute following command before trying it again (you need to do it only`
-	middle := " once"
-	end := "):"
+	message := `Python cannot be installed without external dependencies,
+  please execute following command before trying it again (you need to do it only ` + ansi.Color("once", "red") + "):"
 	command := "brew update && brew install " + strings.Join(deps, " ")
 
-	print.Install(start, middle, end, command)
+	print.Warning(message, command)
 	os.Exit(1)
 }
 
 func printErrForXCodeDependencies() {
-	start := `Python cannot be installed without Xcode,
+	message := `Python cannot be installed without Xcode,
 	please download it from https://developer.apple.com/download/
-  before trying it again (you need to do it only`
-	middle := " once"
-	end := ")"
-	command := ""
+  before trying it again (you need to do it only ` + ansi.Color("once", "red") + "):"
 
-	print.Install(start, middle, end, command)
+	print.Warning(message, "")
 	os.Exit(1)
 }
 

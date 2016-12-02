@@ -5,6 +5,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/mgutz/ansi"
+
 	"github.com/markelog/eclectica/cmd/print"
 )
 
@@ -53,13 +55,11 @@ func dealWithShell() error {
 		return nil
 	}
 
-	start := `Ruby has been installed, but it requires global dependencies which weren't found on your system,
-  please execute following command to complete installation (you need to do it only`
-	middle := " once"
-	end := "):"
+	message := `Ruby has been installed, but it requires global dependencies which weren't found on your system,
+  please execute following command to complete installation (you need to do it only ` + ansi.Color("once", "red") + "):"
 	command := "sudo apt-get update && sudo apt-get install -y " + strings.Join(deps, " ")
 
-	print.Install(start, middle, end, command)
+	print.Warning(message, command)
 
 	return nil
 }

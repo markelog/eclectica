@@ -5,6 +5,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/mgutz/ansi"
+
 	"github.com/markelog/eclectica/cmd/print"
 )
 
@@ -49,13 +51,11 @@ func dealWithLinuxShell() error {
 		return nil
 	}
 
-	start := `Python cannot be installed without external Linux dependencies,
-  please execute following command before trying it again (you need to do it only`
-	middle := " once"
-	end := "):"
+	message := `Python cannot be installed without external Linux dependencies,
+  please execute following command before trying it again (you need to do it only ` + ansi.Color("once", "red") + "):"
 	command := "sudo apt-get update && sudo apt-get install -y " + strings.Join(deps, " ")
 
-	print.Install(start, middle, end, command)
+	print.Warning(message, command)
 	os.Exit(1)
 
 	return nil
