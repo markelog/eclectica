@@ -34,7 +34,7 @@ matrix:
     - go: "1.7.1"
       env: "TEST_LANGUAGE=rust"
       os: linux
-      script: "travis_wait make int-ci"
+      script: "travis_wait 40 make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=ruby"
@@ -49,17 +49,17 @@ matrix:
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python2.7"
       os: linux
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python2-old"
       os: linux
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python3"
       os: linux
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=elm"
@@ -95,17 +95,17 @@ matrix:
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python2.7"
       os: osx
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python2-old"
       os: osx
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=python3"
       os: osx
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
       env: "TEST_LANGUAGE=elm"
