@@ -4,6 +4,7 @@
 
 - [go get](#go-get)
 - [npm](#npm)
+- [pip](#pip)
 - [gem](#gem)
 - [cargo](#cargo)
 - [curl](#curl)
@@ -19,6 +20,12 @@ go get github.com/markelog/eclectica/bin/{ec,ec-proxy}
 
 ```sh
 [sudo] npm install -g eclectica
+```
+
+## npm
+
+```sh
+sudo -H pip install -v eclectica
 ```
 
 ## gem
