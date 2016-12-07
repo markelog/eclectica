@@ -43,7 +43,7 @@ func (golang Golang) Install() error {
 }
 
 func (golang Golang) PostInstall() error {
-	return nil
+	return dealWithShell()
 }
 
 func (golang Golang) Environment() (string, error) {

@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os/exec"
 	"runtime"
 
 	"github.com/bouk/monkey"
@@ -12,6 +13,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/markelog/eclectica/cmd/print"
 	. "github.com/markelog/eclectica/plugins/golang"
 
 	eio "github.com/markelog/eclectica/io"
@@ -169,6 +171,36 @@ var _ = Describe("golang", func() {
 			Expect(result).To(Equal("1.6.2"))
 
 			monkey.Unpatch(eio.Read)
+		})
+	})
+
+	Describe("PostInstall", func() {
+		BeforeEach(func() {
+			monkey.Patch(exec.Command, func(name string, arg ...string) *exec.Cmd {
+				return &exec.Cmd{}
+			})
+		})
+
+		It("should print warning for absent git", func() {
+			var msg, cmd string
+
+			monkey.Patch(print.Warning, func(message, command string) {
+				msg = message
+				cmd = command
+			})
+
+			golang.PostInstall()
+
+			Expect(msg).Should(ContainSubstring("Golang has been installed"))
+			Expect(msg).Should(ContainSubstring("you need to do it only"))
+
+			if runtime.GOOS == "linux" {
+				Expect(cmd).To(Equal("sudo apt-get update && sudo apt-get install -y git"))
+			}
+
+			if runtime.GOOS == "darwin" {
+				Expect(cmd).To(Equal("brew update && brew install git"))
+			}
 		})
 	})
 })
