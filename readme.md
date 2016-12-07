@@ -22,7 +22,7 @@ go get github.com/markelog/eclectica/bin/{ec,ec-proxy}
 [sudo] npm install -g eclectica
 ```
 
-## npm
+## pip
 
 ```sh
 sudo -H pip install -v eclectica
