@@ -8,7 +8,7 @@
 - [gem](#gem)
 - [cargo](#cargo)
 - [curl](#curl)
-- [wget](#wget)
+<!-- - [wget](#wget) -->
 
 ## go get
 
@@ -58,7 +58,7 @@ if you need to install it to your `$HOME` for example, do this
 curl -s https://raw.githubusercontent.com/markelog/ec-install/master/scripts/install.sh | EC_DEST=~/bin sh
 ```
 
-## wget
+<!-- ## wget
 
 ```sh
 wget -qO- https://raw.githubusercontent.com/markelog/ec-install/master/scripts/install.sh | sh
@@ -74,5 +74,5 @@ if you need to install it to your `$HOME` for example, do this
 
 ```sh
 wget -qO- https://raw.githubusercontent.com/markelog/ec-install/master/scripts/install.sh | EC_DEST=~/bin sh
-```
+``` -->
 
