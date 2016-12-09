@@ -49,14 +49,14 @@ func (node Node) Environment() (result []string, err error) {
 	return
 }
 
-func (node Node) Info() (map[string]string, error) {
+func (node Node) Info() map[string]string {
 	result := make(map[string]string)
 	sourcesUrl := fmt.Sprintf("%s/v%s", VersionLink, node.Version)
 
 	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", node.Version, runtime.GOOS)
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 
-	return result, nil
+	return result
 }
 
 func (node Node) Bins() []string {

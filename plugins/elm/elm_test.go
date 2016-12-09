@@ -73,7 +73,7 @@ var _ = Describe("elm", func() {
 	Describe("Info", func() {
 		It("should get info about latest version", func() {
 			Skip("Waiting on #10")
-			result, _ := (&Elm{Version: "latest"}).Info()
+			result := (&Elm{Version: "latest"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -86,7 +86,7 @@ var _ = Describe("elm", func() {
 		})
 
 		It("should get info about 0.18.0 version", func() {
-			result, _ := (&Elm{Version: "0.18.0"}).Info()
+			result := (&Elm{Version: "0.18.0"}).Info()
 
 			Expect(result["archive-folder"]).Should(ContainSubstring("elm-archive-0.18.0/"))
 
@@ -103,7 +103,7 @@ var _ = Describe("elm", func() {
 		})
 
 		It("should get info about 0.17.1 version", func() {
-			result, _ := (&Elm{Version: "0.17.1"}).Info()
+			result := (&Elm{Version: "0.17.1"}).Info()
 
 			Expect(result["archive-folder"]).Should(ContainSubstring("elm-archive-0.17.1/"))
 
@@ -120,7 +120,7 @@ var _ = Describe("elm", func() {
 		})
 
 		It("should get info about 0.17.0 version", func() {
-			result, _ := (&Elm{Version: "0.17.0"}).Info()
+			result := (&Elm{Version: "0.17.0"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -133,7 +133,7 @@ var _ = Describe("elm", func() {
 		})
 
 		It("should get info about 0.15.1 version", func() {
-			result, _ := (&Elm{Version: "0.15.1"}).Info()
+			result := (&Elm{Version: "0.15.1"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {

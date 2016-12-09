@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,7 +27,8 @@ import (
 )
 
 var (
-	VersionsLink   = "https://www.python.org/ftp/python"
+	VersionsLink   = "https://hg.python.org/cpython/tags"
+	remoteVersion  = "https://www.python.org/ftp/python"
 	versionPattern = "^\\d+\\.\\d+(?:\\.\\d)?"
 
 	setuptoolsName = "ez_setup.py"
@@ -112,18 +114,20 @@ func (python Python) Environment() (result []string, err error) {
 	return
 }
 
-func (python Python) Info() (map[string]string, error) {
-	result := make(map[string]string)
-	version := python.Version
-	chosen, err := semver.Make(python.Version)
-
-	if err != nil {
-		return nil, err
-	}
+func (python Python) Info() map[string]string {
+	var (
+		result    = make(map[string]string)
+		version   = python.Version
+		chosen, _ = semver.Make(python.Version)
+		urlPart   = strconv.Itoa(int(chosen.Major)) + "." + strconv.Itoa(int(chosen.Minor)) + "." + strconv.Itoa(int(chosen.Patch))
+	)
 
 	// Hats off to inconsistent python developers
 	if chosen.LT(noNilVersions) {
-		version = versions.Unsemverify(python.Version)
+		version = versions.Unsemverify(version)
+		version = strings.Replace(version, "-", "", 1)
+
+		urlPart = versions.Unsemverify(urlPart)
 	}
 
 	// Python 2.0 has different format and its not supported
@@ -132,13 +136,13 @@ func (python Python) Info() (map[string]string, error) {
 	result["filename"] = "Python-" + version
 	result["url"] = fmt.Sprintf(
 		"%s/%s/%s.%s",
-		VersionsLink,
-		version,
+		remoteVersion,
+		urlPart,
 		result["filename"],
 		result["extension"],
 	)
 
-	return result, nil
+	return result
 }
 
 func (rust Python) Bins() []string {
@@ -160,7 +164,7 @@ func (python Python) Current() string {
 	return versions.Semverify(version)
 }
 
-func (python Python) ListRemote() ([]string, error) {
+func (python Python) ListRemote() (result []string, err error) {
 	doc, err := goquery.NewDocument(VersionsLink)
 
 	if err != nil {
@@ -168,37 +172,42 @@ func (python Python) ListRemote() ([]string, error) {
 			return nil, errors.New("Can't establish connection")
 		}
 
-		return nil, err
+		return
 	}
 
-	result := []string{}
 	tmp := []string{}
 	version := regexp.MustCompile(versionPattern)
-
-	links := doc.Find("a")
+	links := doc.Find(".bigtable td:first-child a")
 
 	for i := range links.Nodes {
 		content := links.Eq(i).Text()
 
-		content = strings.Replace(content, "/", "", 1)
+		content = strings.TrimSpace(content)
+		content = strings.Replace(content, "v", "", 1)
+
 		if version.MatchString(content) {
 			tmp = append(tmp, content)
 		}
 	}
 
-	// Remove < 2.7 versions
+	// Remove < 2.7 versions and Pre versions
 	for _, element := range tmp {
 		smr, _ := semver.Make(versions.Semverify(element))
 
-		if smr.Major > 2 || smr.Minor > 5 {
-			result = append(result, element)
+		if len(smr.Pre) > 0 {
+			continue
 		}
+		if smr.Major < 2 {
+			continue
+		}
+		if smr.Major == 2 && smr.Minor < 7 {
+			continue
+		}
+
+		result = append(result, element)
 	}
 
-	// Latest version is a development one
-	result = result[:len(result)-1]
-
-	return result, nil
+	return
 }
 
 func (python Python) configure() (err error) {

@@ -72,14 +72,14 @@ func (ruby Ruby) Environment() (result []string, err error) {
 	return
 }
 
-func (ruby Ruby) Info() (map[string]string, error) {
+func (ruby Ruby) Info() map[string]string {
 	result := make(map[string]string)
 
 	result["filename"] = fmt.Sprintf("ruby-%s", ruby.Version)
 	result["extension"] = "tar.bz2"
 	result["url"] = fmt.Sprintf("%s/%s.%s", getUrl(), result["filename"], result["extension"])
 
-	return result, nil
+	return result
 }
 
 func (ruby Ruby) Bins() []string {

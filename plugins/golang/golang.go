@@ -57,18 +57,13 @@ func (golang Golang) Environment() (result []string, err error) {
 		result = append(result, "GOPATH="+filepath.Join(os.Getenv("HOME"), "go"))
 	}
 
-	fmt.Println(result)
-
 	return
 }
 
-func (golang Golang) Info() (map[string]string, error) {
+func (golang Golang) Info() map[string]string {
 	result := make(map[string]string)
 
-	platform, err := getPlatform()
-	if err != nil {
-		return nil, err
-	}
+	platform, _ := getPlatform()
 
 	version := versions.Unsemverify(golang.Version)
 	result["version"] = version
@@ -76,7 +71,7 @@ func (golang Golang) Info() (map[string]string, error) {
 	result["filename"] = fmt.Sprintf("go%s.%s", version, platform)
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", VersionsLink, result["filename"])
 
-	return result, nil
+	return result
 }
 
 func (rust Golang) Bins() []string {

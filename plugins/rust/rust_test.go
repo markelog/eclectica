@@ -143,7 +143,7 @@ var _ = Describe("rust", func() {
 		})
 
 		It("should get info about nightly version", func() {
-			result, _ := (&Rust{Version: "nightly"}).Info()
+			result := (&Rust{Version: "nightly"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -156,7 +156,7 @@ var _ = Describe("rust", func() {
 		})
 
 		It("should get info about beta version", func() {
-			result, _ := (&Rust{Version: "beta"}).Info()
+			result := (&Rust{Version: "beta"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -169,7 +169,7 @@ var _ = Describe("rust", func() {
 		})
 
 		It("should get info about 1.9.0 version", func() {
-			result, _ := (&Rust{Version: "1.9.0"}).Info()
+			result := (&Rust{Version: "1.9.0"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {

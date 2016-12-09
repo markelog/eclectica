@@ -73,22 +73,16 @@ func (rust Rust) Environment() (result []string, err error) {
 	return
 }
 
-func (rust Rust) Info() (map[string]string, error) {
+func (rust Rust) Info() map[string]string {
 	result := make(map[string]string)
-
-	platform, err := getPlatform()
-
-	if err != nil {
-		return nil, err
-	}
-
+	platform, _ := getPlatform()
 	filename := fmt.Sprintf("rust-%s-%s", rust.Version, platform)
 	sourcesUrl := fmt.Sprintf("%s/%s", VersionsLink, filename)
 
 	result["filename"] = filename
 	result["url"] = fmt.Sprintf("%s.tar.gz", sourcesUrl)
 
-	return result, nil
+	return result
 }
 
 func (rust Rust) Bins() []string {

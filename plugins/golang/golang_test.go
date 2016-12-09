@@ -124,7 +124,7 @@ var _ = Describe("golang", func() {
 		})
 
 		It("should get info about 1.7 version", func() {
-			result, _ := (&Golang{Version: "1.7"}).Info()
+			result := (&Golang{Version: "1.7"}).Info()
 
 			// :/
 			if runtime.GOOS == "darwin" {
@@ -137,13 +137,13 @@ var _ = Describe("golang", func() {
 		})
 
 		It("should get info about 1.7.0 version", func() {
-			result, _ := (&Golang{Version: "1.7.0"}).Info()
+			result := (&Golang{Version: "1.7.0"}).Info()
 
 			Expect(result["version"]).To(Equal("1.7"))
 		})
 
 		It("should get info about 1.7beta1 version", func() {
-			result, _ := (&Golang{Version: "1.7.0-beta1"}).Info()
+			result := (&Golang{Version: "1.7.0-beta1"}).Info()
 
 			Expect(result["version"]).To(Equal("1.7beta1"))
 		})

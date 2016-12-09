@@ -74,7 +74,7 @@ var _ = Describe("ruby", func() {
 
 	Describe("Info", func() {
 		It("should get info about 2.2.3 version", func() {
-			result, _ := (&Ruby{Version: "2.2.3"}).Info()
+			result := (&Ruby{Version: "2.2.3"}).Info()
 
 			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
 

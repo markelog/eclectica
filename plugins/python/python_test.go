@@ -53,8 +53,11 @@ var _ = Describe("python", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should exclude everything less then 2.6 versions", func() {
-				Expect(remotes[0]).To(Equal("2.6"))
+			It("should exclude some version", func() {
+				Expect(remotes[0]).To(Equal("3.4.5"))
+
+				last := len(remotes) - 1
+				Expect(remotes[last]).To(Equal("3.0"))
 			})
 		})
 
@@ -95,13 +98,29 @@ var _ = Describe("python", func() {
 
 		It("should get info about latest version", func() {
 			Skip("Waiting on #10")
-			// result, _ := (&Python{Version: "latest"}).Info()
+			// result := (&Python{Version: "latest"}).Info()
 
 			// TODO
 		})
 
+		It("should get info about rc version", func() {
+			result := (&Python{Version: "2.7.13-rc1"}).Info()
+
+			Expect(result["version"]).To(Equal("2.7.13rc1"))
+			Expect(result["filename"]).To(Equal("Python-2.7.13rc1"))
+			Expect(result["url"]).To(Equal("https://www.python.org/ftp/python/2.7.13/Python-2.7.13rc1.tgz"))
+		})
+
+		It("should get info about rc version with nil at the end", func() {
+			result := (&Python{Version: "2.7.0-rc1"}).Info()
+
+			Expect(result["version"]).To(Equal("2.7rc1"))
+			Expect(result["filename"]).To(Equal("Python-2.7rc1"))
+			Expect(result["url"]).To(Equal("https://www.python.org/ftp/python/2.7/Python-2.7rc1.tgz"))
+		})
+
 		It("should get info about 2.0 version", func() {
-			result, _ := (&Python{Version: "3.0.0"}).Info()
+			result := (&Python{Version: "3.0.0"}).Info()
 
 			Expect(result["version"]).To(Equal("3.0"))
 			Expect(result["filename"]).To(Equal("Python-3.0"))
@@ -109,7 +128,7 @@ var _ = Describe("python", func() {
 		})
 
 		It("should get info about 3.0 version", func() {
-			result, _ := (&Python{Version: "3.0.0"}).Info()
+			result := (&Python{Version: "3.0.0"}).Info()
 
 			Expect(result["version"]).To(Equal("3.0"))
 			Expect(result["filename"]).To(Equal("Python-3.0"))
@@ -117,7 +136,7 @@ var _ = Describe("python", func() {
 		})
 
 		It("up the not ante for 3.2", func() {
-			result, _ := (&Python{Version: "3.2.0"}).Info()
+			result := (&Python{Version: "3.2.0"}).Info()
 
 			Expect(result["version"]).To(Equal("3.2"))
 			Expect(result["filename"]).To(Equal("Python-3.2"))
@@ -125,7 +144,7 @@ var _ = Describe("python", func() {
 		})
 
 		It("up the ante for 3.3", func() {
-			result, _ := (&Python{Version: "3.3.0"}).Info()
+			result := (&Python{Version: "3.3.0"}).Info()
 
 			Expect(result["version"]).To(Equal("3.3.0"))
 			Expect(result["filename"]).To(Equal("Python-3.3.0"))

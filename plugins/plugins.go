@@ -46,7 +46,7 @@ type Pkg interface {
 	Events() *emission.Emitter
 	Environment() ([]string, error)
 	ListRemote() ([]string, error)
-	Info() (map[string]string, error)
+	Info() map[string]string
 	Bins() []string
 	Dots() []string
 	Current() string
@@ -251,11 +251,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 		return nil, errors.New("Version was not defined")
 	}
 
-	info, err := plugin.Pkg.Info()
-	if err != nil {
-		return nil, err
-	}
-
+	info := plugin.Pkg.Info()
 	tmpDir := variables.TempDir()
 
 	if _, ok := info["name"]; ok == false {

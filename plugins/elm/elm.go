@@ -80,7 +80,7 @@ func (elm Elm) Environment() (result []string, err error) {
 	return
 }
 
-func (elm Elm) Info() (map[string]string, error) {
+func (elm Elm) Info() map[string]string {
 	result := make(map[string]string)
 	sourcesUrl := fmt.Sprintf("%s/%s", VersionLink, elm.Version)
 	chosen, _ := semver.Make(elm.Version)
@@ -103,7 +103,7 @@ func (elm Elm) Info() (map[string]string, error) {
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
 	result["archive-folder"] = filepath.Join(variables.TempDir(), "elm-archive-"+elm.Version) + "/"
 
-	return result, nil
+	return result
 }
 
 func (elm Elm) Bins() []string {

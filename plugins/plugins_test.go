@@ -558,8 +558,8 @@ var _ = Describe("plugins", func() {
 			ptype := reflect.TypeOf(d)
 
 			guard = monkey.PatchInstanceMethod(ptype, "Info",
-				func(*nodejs.Node) (map[string]string, error) {
-					return info, nil
+				func(*nodejs.Node) map[string]string {
+					return info
 				},
 			)
 
