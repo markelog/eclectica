@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -46,8 +47,19 @@ func (golang Golang) PostInstall() error {
 	return dealWithShell()
 }
 
-func (golang Golang) Environment() (string, error) {
-	return "GOROOT=" + variables.Path("go", golang.Version), nil
+func (golang Golang) Environment() (result []string, err error) {
+	result = append(result, "GOROOT="+variables.Path("go", golang.Version))
+
+	// Go versions lower then 1.7 do not have default `GOPATH` environment variable.
+	// Starting from 1.7 `GOPATH` is now set to `~/go` path (see `go help gopath` for more)
+	// We do the same if for other versions as a default, but only if user didn't set themselves
+	if os.Getenv("GOPATH") == "" {
+		result = append(result, "GOPATH="+filepath.Join(os.Getenv("HOME"), "go"))
+	}
+
+	fmt.Println(result)
+
+	return
 }
 
 func (golang Golang) Info() (map[string]string, error) {

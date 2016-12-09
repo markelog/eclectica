@@ -443,14 +443,14 @@ var _ = Describe("main", func() {
 		}
 
 		BeforeEach(func() {
-			fmt.Println()
+			// fmt.Println()
 
-			fmt.Println("Install tmp version")
-			Execute("go", "run", path, "go@1.6.0")
+			// fmt.Println("Install tmp version")
+			// Execute("go", "run", path, "go@1.6.0")
 
-			fmt.Println("Removing go@1.7.0")
-			Execute("go", "run", path, "rm", "go@1.7.0")
-			fmt.Println("Removed")
+			// fmt.Println("Removing go@1.7.0")
+			// Execute("go", "run", path, "rm", "go@1.7.0")
+			// fmt.Println("Removed")
 		})
 
 		It("should list installed versions", func() {

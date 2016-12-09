@@ -76,8 +76,8 @@ func (elm Elm) PostInstall() error {
 	return nil
 }
 
-func (elm Elm) Environment() (string, error) {
-	return "", nil
+func (elm Elm) Environment() (result []string, err error) {
+	return
 }
 
 func (elm Elm) Info() (map[string]string, error) {

@@ -68,8 +68,8 @@ func removeRVMArtefacts(base string) error {
 	return nil
 }
 
-func (ruby Ruby) Environment() (string, error) {
-	return "", nil
+func (ruby Ruby) Environment() (result []string, err error) {
+	return
 }
 
 func (ruby Ruby) Info() (map[string]string, error) {

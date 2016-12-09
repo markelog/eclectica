@@ -44,7 +44,7 @@ type Pkg interface {
 	Install() error
 	PostInstall() error
 	Events() *emission.Emitter
-	Environment() (string, error)
+	Environment() ([]string, error)
 	ListRemote() ([]string, error)
 	Info() (map[string]string, error)
 	Bins() []string
@@ -242,7 +242,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 	return
 }
 
-func (plugin *Plugin) Environment() (string, error) {
+func (plugin *Plugin) Environment() ([]string, error) {
 	return plugin.Pkg.Environment()
 }
 

@@ -45,8 +45,8 @@ func (node Node) PostInstall() error {
 	return nil
 }
 
-func (node Node) Environment() (string, error) {
-	return "", nil
+func (node Node) Environment() (result []string, err error) {
+	return
 }
 
 func (node Node) Info() (map[string]string, error) {

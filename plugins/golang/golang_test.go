@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"os/exec"
 	"runtime"
 
@@ -201,6 +202,38 @@ var _ = Describe("golang", func() {
 			if runtime.GOOS == "darwin" {
 				Expect(cmd).To(Equal("brew update && brew install git"))
 			}
+		})
+	})
+
+	Describe("Environment", func() {
+		It("should set GOROOT and GOPATH environment variables", func() {
+			monkey.Patch(os.Getenv, func(name string) string {
+				return ""
+			})
+
+			result, _ := golang.Environment()
+
+			Expect(result[0]).To(Equal("GOROOT=.eclectica/versions/go"))
+			Expect(result[1]).To(Equal("GOPATH=go"))
+
+			monkey.Unpatch(os.Getenv)
+		})
+
+		It("should set GOROOT and GOPATH environment variables", func() {
+			monkey.Patch(os.Getenv, func(name string) string {
+				if name == "GOPATH" {
+					return "test"
+				}
+
+				return ""
+			})
+
+			result, _ := golang.Environment()
+
+			Expect(len(result)).To(Equal(1))
+			Expect(result[0]).To(Equal("GOROOT=.eclectica/versions/go"))
+
+			monkey.Unpatch(os.Getenv)
 		})
 	})
 })

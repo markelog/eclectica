@@ -69,8 +69,8 @@ func (rust Rust) PostInstall() error {
 	return nil
 }
 
-func (rust Rust) Environment() (string, error) {
-	return "", nil
+func (rust Rust) Environment() (result []string, err error) {
+	return
 }
 
 func (rust Rust) Info() (map[string]string, error) {

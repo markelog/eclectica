@@ -74,6 +74,9 @@ func (init *Init) needRestartShell() bool {
 func (init *Init) composeCommand() string {
 	result := "# Eclectic stuff\n"
 
+	// For golang
+	result += "export PATH=" + variables.Path("go") + "/bin:$PATH\n"
+
 	for _, language := range init.plugins {
 		result += "export PATH=" +
 			filepath.Join(variables.Home(), language, "current/bin") + ":$PATH\n"

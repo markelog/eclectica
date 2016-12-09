@@ -22,7 +22,7 @@ func setCmd(cmd *exec.Cmd, name, version string) {
 
 	if len(environment) > 0 {
 		env := os.Environ()
-		env = append(env, environment)
+		env = append(env, environment...)
 
 		cmd.Env = env
 	}

@@ -76,6 +76,131 @@ func (python Python) Install() (err error) {
 	return python.renameLinks()
 }
 
+func (python Python) PostInstall() (err error) {
+	path := variables.Path("python", python.Version)
+	bin := variables.GetBin("python", python.Version)
+
+	if hasTools(python.Version) {
+		cmd, stdErr, stdOut := python.getCmd(bin, "-m", "ensurepip")
+
+		err = cmd.Run()
+		if err != nil {
+			return console.GetError(err, stdErr, stdOut)
+		}
+
+		return
+	}
+
+	// Setup pip
+	pip := filepath.Join(path, pipName)
+	out, err := exec.Command(bin, pip).CombinedOutput()
+	if err != nil {
+		return errors.New(string(out))
+	}
+
+	// Setup setuptools
+	setuptools := filepath.Join(path, setuptoolsName)
+	out, err = exec.Command(bin, setuptools).CombinedOutput()
+	if err != nil {
+		return errors.New(string(out))
+	}
+
+	return nil
+}
+
+func (python Python) Environment() (result []string, err error) {
+	return
+}
+
+func (python Python) Info() (map[string]string, error) {
+	result := make(map[string]string)
+	version := python.Version
+	chosen, err := semver.Make(python.Version)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Hats off to inconsistent python developers
+	if chosen.LT(noNilVersions) {
+		version = versions.Unsemverify(python.Version)
+	}
+
+	// Python 2.0 has different format and its not supported
+	result["extension"] = "tgz"
+	result["version"] = version
+	result["filename"] = "Python-" + version
+	result["url"] = fmt.Sprintf(
+		"%s/%s/%s.%s",
+		VersionsLink,
+		version,
+		result["filename"],
+		result["extension"],
+	)
+
+	return result, nil
+}
+
+func (rust Python) Bins() []string {
+	return bins
+}
+
+func (rust Python) Dots() []string {
+	return dots
+}
+
+func (python Python) Current() string {
+	bin := variables.GetBin("python")
+
+	out, _ := exec.Command(bin, "--version").CombinedOutput()
+
+	readVersion := strings.Replace(string(out), "Python ", "", 1)
+	version := strings.TrimSpace(readVersion)
+
+	return versions.Semverify(version)
+}
+
+func (python Python) ListRemote() ([]string, error) {
+	doc, err := goquery.NewDocument(VersionsLink)
+
+	if err != nil {
+		if _, ok := err.(net.Error); ok {
+			return nil, errors.New("Can't establish connection")
+		}
+
+		return nil, err
+	}
+
+	result := []string{}
+	tmp := []string{}
+	version := regexp.MustCompile(versionPattern)
+
+	links := doc.Find("a")
+
+	for i := range links.Nodes {
+		content := links.Eq(i).Text()
+
+		content = strings.Replace(content, "/", "", 1)
+		if version.MatchString(content) {
+			tmp = append(tmp, content)
+		}
+	}
+
+	// Remove < 2.7 versions
+	for _, element := range tmp {
+		smr, _ := semver.Make(versions.Semverify(element))
+
+		if smr.Major > 2 || smr.Minor > 5 {
+			result = append(result, element)
+		}
+	}
+
+	// Latest version is a development one
+	result = result[:len(result)-1]
+
+	return result, nil
+}
+
 func (python Python) configure() (err error) {
 	path := variables.Path("python", python.Version)
 	configure := filepath.Join(path, "configure")
@@ -213,131 +338,6 @@ func (python Python) externals() (err error) {
 	}
 
 	return
-}
-
-func (python Python) PostInstall() (err error) {
-	path := variables.Path("python", python.Version)
-	bin := variables.GetBin("python", python.Version)
-
-	if hasTools(python.Version) {
-		cmd, stdErr, stdOut := python.getCmd(bin, "-m", "ensurepip")
-
-		err = cmd.Run()
-		if err != nil {
-			return console.GetError(err, stdErr, stdOut)
-		}
-
-		return
-	}
-
-	// Setup pip
-	pip := filepath.Join(path, pipName)
-	out, err := exec.Command(bin, pip).CombinedOutput()
-	if err != nil {
-		return errors.New(string(out))
-	}
-
-	// Setup setuptools
-	setuptools := filepath.Join(path, setuptoolsName)
-	out, err = exec.Command(bin, setuptools).CombinedOutput()
-	if err != nil {
-		return errors.New(string(out))
-	}
-
-	return nil
-}
-
-func (python Python) Environment() (string, error) {
-	return "", nil
-}
-
-func (python Python) Info() (map[string]string, error) {
-	result := make(map[string]string)
-	version := python.Version
-	chosen, err := semver.Make(python.Version)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// Hats off to inconsistent python developers
-	if chosen.LT(noNilVersions) {
-		version = versions.Unsemverify(python.Version)
-	}
-
-	// Python 2.0 has different format and its not supported
-	result["extension"] = "tgz"
-	result["version"] = version
-	result["filename"] = "Python-" + version
-	result["url"] = fmt.Sprintf(
-		"%s/%s/%s.%s",
-		VersionsLink,
-		version,
-		result["filename"],
-		result["extension"],
-	)
-
-	return result, nil
-}
-
-func (rust Python) Bins() []string {
-	return bins
-}
-
-func (rust Python) Dots() []string {
-	return dots
-}
-
-func (python Python) Current() string {
-	bin := variables.GetBin("python")
-
-	out, _ := exec.Command(bin, "--version").CombinedOutput()
-
-	readVersion := strings.Replace(string(out), "Python ", "", 1)
-	version := strings.TrimSpace(readVersion)
-
-	return versions.Semverify(version)
-}
-
-func (python Python) ListRemote() ([]string, error) {
-	doc, err := goquery.NewDocument(VersionsLink)
-
-	if err != nil {
-		if _, ok := err.(net.Error); ok {
-			return nil, errors.New("Can't establish connection")
-		}
-
-		return nil, err
-	}
-
-	result := []string{}
-	tmp := []string{}
-	version := regexp.MustCompile(versionPattern)
-
-	links := doc.Find("a")
-
-	for i := range links.Nodes {
-		content := links.Eq(i).Text()
-
-		content = strings.Replace(content, "/", "", 1)
-		if version.MatchString(content) {
-			tmp = append(tmp, content)
-		}
-	}
-
-	// Remove < 2.7 versions
-	for _, element := range tmp {
-		smr, _ := semver.Make(versions.Semverify(element))
-
-		if smr.Major > 2 || smr.Minor > 5 {
-			result = append(result, element)
-		}
-	}
-
-	// Latest version is a development one
-	result = result[:len(result)-1]
-
-	return result, nil
 }
 
 // Since python 3.x versions are naming their binaries with 3 affix
