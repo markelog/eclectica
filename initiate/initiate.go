@@ -77,6 +77,10 @@ func (init *Init) composeCommand() string {
 	// For golang
 	result += "export PATH=" + variables.Path("go") + "/bin:$PATH\n"
 
+	// For shared modules
+	shared := filepath.Join(variables.Home(), "shared")
+	result += "export PATH=" + shared + "/bin:$PATH\n"
+
 	for _, language := range init.plugins {
 		result += "export PATH=" +
 			filepath.Join(variables.Home(), language, "current/bin") + ":$PATH\n"

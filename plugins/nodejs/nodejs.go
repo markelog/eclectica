@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
 
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -42,7 +44,18 @@ func (node Node) Install() error {
 }
 
 func (node Node) PostInstall() error {
-	return nil
+	shared := filepath.Join(variables.Base(), "shared")
+	text := "prefix=" + shared + "\n"
+
+	etc := filepath.Join(variables.Path("node", node.Version), "etc")
+	npmrc := filepath.Join(etc, "npmrc")
+
+	_, err := io.CreateDir(etc)
+	if err != nil {
+		return err
+	}
+
+	return io.WriteFile(npmrc, text)
 }
 
 func (node Node) Environment() (result []string, err error) {
