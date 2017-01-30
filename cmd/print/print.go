@@ -5,10 +5,12 @@ import (
 	"os"
 	"strings"
 	"time"
+	"runtime/debug"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/dustin/go-humanize"
 	"github.com/markelog/curse"
+	"github.com/markelog/eclectica/variables"
 	"github.com/mgutz/ansi"
 )
 
@@ -46,6 +48,11 @@ func Error(err error) {
 	fmt.Print(ansi.Color("> ", "red"))
 
 	fmt.Fprintf(os.Stderr, "%v", err)
+
+	if variables.IsDebug() {
+		debug.PrintStack()
+	}
+
 	fmt.Println()
 	fmt.Println()
 
