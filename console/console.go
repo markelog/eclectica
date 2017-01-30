@@ -11,6 +11,8 @@ import (
 
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/variables"
+
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // Get gets cmd instance by passing array to exec.Command
@@ -29,6 +31,12 @@ func Get(args []string) *exec.Cmd {
 
 // Start Shell
 func Shell() {
+
+	// If shell is not output - get out
+	if terminal.IsTerminal(int(os.Stdout.Fd())) == false {
+		return
+	}
+
 	var procAttr os.ProcAttr
 
 	procAttr.Files = []*os.File{
@@ -41,7 +49,7 @@ func Shell() {
 		variables.GetShellName(),
 	}
 
-	proc, err := os.StartProcess(os.Getenv("SHELL"), args, &procAttr)
+	proc, err := os.StartProcess(variables.GetShellPath(), args, &procAttr)
 	print.Error(err)
 
 	_, err = proc.Wait()

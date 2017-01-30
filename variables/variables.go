@@ -69,16 +69,20 @@ func GetBin(args ...interface{}) string {
 }
 
 func GetShellName() string {
-	name := os.Getenv("SHELL")
-	path := strings.Split(name, "/")
-	intermidiate := path[len(path)-1]
+	path := GetShellPath()
+	parts := strings.Split(path, "/")
 
-	// Since $SHELL might not be set, assume bash otherwise
-	if len(intermidiate) == 0 {
-		return "bash"
+	return parts[len(parts)-1]
+}
+
+func GetShellPath() string {
+	path := os.Getenv("SHELL")
+
+	if len(path) == 0 {
+		return "/bin/bash"
 	}
 
-	return intermidiate
+	return path
 }
 
 func Base() string {
