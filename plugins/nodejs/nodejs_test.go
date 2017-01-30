@@ -6,13 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"runtime"
-	"strings"
 
+	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"github.com/bouk/monkey"
-	"github.com/jarcoal/httpmock"
 
 	eio "github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/nodejs"
@@ -25,52 +22,6 @@ var _ = Describe("nodejs", func() {
 	)
 
 	node := &Node{}
-
-	Describe("PostInstall", func() {
-		var (
-			CreateDirFirst  = ""
-			WriteFileFirst  = ""
-			WriteFileSecond = ""
-		)
-
-		BeforeEach(func() {
-			monkey.Patch(eio.CreateDir, func(path string) (string, error) {
-				CreateDirFirst = path
-				return path, nil
-			})
-
-			monkey.Patch(eio.WriteFile, func(path, text string) error {
-				WriteFileFirst = path
-				WriteFileSecond = text
-				return nil
-			})
-		})
-
-		AfterEach(func() {
-			CreateDirFirst = ""
-			WriteFileFirst = ""
-			WriteFileSecond = ""
-
-			monkey.Unpatch(eio.CreateDir)
-			monkey.Unpatch(eio.WriteFile)
-		})
-
-		It("should correctly creates 'etc' dir", func() {
-			(&Node{Version: "1"}).PostInstall()
-
-			Expect(strings.Contains(CreateDirFirst, "versions/node/1/etc")).To(Equal(true))
-		})
-
-		It("should writes npmrc with prefix data", func() {
-			(&Node{Version: "1"}).PostInstall()
-
-			Expect(strings.Contains(WriteFileFirst, "versions/node/1/etc/npmrc")).To(Equal(true))
-
-			Expect(strings.Contains(WriteFileSecond, "prefix=")).To(Equal(true))
-			Expect(strings.Contains(WriteFileSecond, "\n")).To(Equal(true))
-			Expect(strings.Contains(WriteFileSecond, ".eclectica/shared")).To(Equal(true))
-		})
-	})
 
 	Describe("ListRemote", func() {
 		old := VersionLink
