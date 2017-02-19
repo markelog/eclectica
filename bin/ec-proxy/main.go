@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"syscall"
 
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/console"
@@ -43,19 +44,26 @@ func main() {
 	print.Error(err)
 
 	pathPart := filepath.Join(base, language, version)
-	path := filepath.Join(pathPart, "bin", name)
+	binPath := filepath.Join(pathPart, "bin", name)
 
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	if _, err := os.Stat(binPath); os.IsNotExist(err) {
 		err = errors.New("Version " + version + " has not been established")
 		print.Error(err)
 	}
 
-	args := []string{path}
+	args := []string{binPath}
 	args = append(args, os.Args[1:]...)
 
 	cmd := console.Get(args)
 
 	setCmd(cmd, language, version)
 
-	cmd.Run()
+	err = cmd.Run()
+	if sysErr, ok := err.(*exec.ExitError); ok {
+		if status, ok := sysErr.Sys().(syscall.WaitStatus); ok {
+			os.Exit(status.ExitStatus())
+		} else {
+			os.Exit(1)
+		}
+	}
 }
