@@ -13,6 +13,7 @@ import (
 
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/variables"
 )
 
 var _ = Describe("main", func() {
@@ -222,6 +223,14 @@ var _ = Describe("main", func() {
 			command, _ := Command("go", "run", path, "ls", "node").Output()
 
 			Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
+		})
+
+		It("test presence of the npmrc config", func() {
+			npmrcPath := filepath.Join(variables.Path("node", "5.1.0"), "/etc/npmrc")
+
+			data := Read(npmrcPath)
+
+			Expect(data).To(Equal("scripts-prepend-node-path=false"))
 		})
 
 		It("should install node 6.4.0", func() {

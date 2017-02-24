@@ -8,11 +8,13 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"path/filepath"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
 
 	"github.com/markelog/eclectica/variables"
+	"github.com/markelog/eclectica/io"
 )
 
 var (
@@ -42,6 +44,14 @@ func (node Node) Install() error {
 }
 
 func (node Node) PostInstall() error {
+	path := variables.Path("node", node.Version)
+	etc := filepath.Join(path, "etc")
+	npmrc := filepath.Join(etc, "npmrc")
+
+	// Remove needless warnings from npm output
+	io.CreateDir(etc)
+	io.WriteFile(npmrc, "scripts-prepend-node-path=false")
+
 	return nil
 }
 

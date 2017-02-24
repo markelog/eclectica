@@ -48,13 +48,13 @@ func nameAndVersion(args []interface{}) (string, string) {
 	return name, version
 }
 
-// Path gives full path to parent of "bin" folder
 func Path(args ...interface{}) string {
 	name, version := nameAndVersion(args)
 
 	return filepath.Join(Home(), name, version)
 }
 
+// Path gives full path to parent of "bin" folder
 func GetBin(args ...interface{}) string {
 	name, version := nameAndVersion(args)
 
