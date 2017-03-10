@@ -228,7 +228,7 @@ var _ = Describe("main", func() {
 		It("test presence of the npmrc config", func() {
 			npmrcPath := filepath.Join(variables.Path("node", "5.1.0"), "/etc/npmrc")
 
-			data := Read(npmrcPath)
+			data := io.Read(npmrcPath)
 
 			Expect(data).To(Equal("scripts-prepend-node-path=false"))
 		})
