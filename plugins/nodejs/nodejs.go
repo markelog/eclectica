@@ -5,22 +5,24 @@ import (
 	"fmt"
 	"net"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
-	"path/filepath"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/blang/semver"
 	"github.com/chuckpreslar/emission"
 
-	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/io"
+	"github.com/markelog/eclectica/variables"
 )
 
 var (
 	VersionLink    = "https://nodejs.org/dist"
 	versionPattern = "v\\d+\\.\\d+\\.\\d+$"
-	removePattern  = "0\\.[0-7]"
+
+	minimalVersion, _ = semver.Make("0.10.0")
 
 	bins = []string{"node", "npm"}
 	dots = []string{".nvmrc", ".node-version"}
@@ -101,7 +103,6 @@ func (node Node) ListRemote() ([]string, error) {
 	result := []string{}
 
 	rVersion := regexp.MustCompile(versionPattern)
-	rRemove := regexp.MustCompile(removePattern)
 
 	doc.Find("a").Each(func(i int, node *goquery.Selection) {
 		href, _ := node.Attr("href")
@@ -113,9 +114,11 @@ func (node Node) ListRemote() ([]string, error) {
 		}
 	})
 
-	// Remove < 0.8 versions
+	// Remove outdated versions
 	for _, element := range tmp {
-		if rRemove.MatchString(element) == false {
+		version, _ := semver.Make(element)
+
+		if version.GTE(minimalVersion) {
 			result = append(result, element)
 		}
 	}

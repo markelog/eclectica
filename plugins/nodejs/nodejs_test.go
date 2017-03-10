@@ -56,8 +56,24 @@ var _ = Describe("nodejs", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should have correct version values", func() {
-				Expect(remotes[0]).To(Equal("6.4.0"))
+			It("should have have 6.x versions", func() {
+				Expect(remotes).To(ContainElement("6.4.0"))
+			})
+
+			It("should contain 0.10.x versions", func() {
+				Expect(remotes).To(ContainElement("0.10.13"))
+			})
+
+			It("should contain 0.12.x versions", func() {
+				Expect(remotes).To(ContainElement("0.12.6"))
+			})
+
+			It("should not contain 0.8.x versions", func() {
+				Expect(remotes).NotTo(ContainElement("0.8.12"))
+			})
+
+			It("should not contain 0.1.x versions", func() {
+				Expect(remotes).NotTo(ContainElement("0.1.14"))
 			})
 		})
 
