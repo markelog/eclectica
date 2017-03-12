@@ -63,17 +63,88 @@ var _ = Describe("versions", func() {
 		})
 	})
 
-	Describe("IsPartialVersion", func() {
+	Describe("Complete", func() {
+		It("support for 'latest' keyword for semver version structure", func() {
+			version := "latest"
+			versions := []string{
+				"6.1.0", "5.2.0", "6.2.0", "6.8.3", "7.7.0", "7.3.0",
+			}
+
+			test, _ := Complete(version, versions)
+
+			Expect(test).To(Equal("7.7.0"))
+		})
+
+		It("support for 'latest' keyword for incomplete version structure", func() {
+			version := "latest"
+			versions := []string{
+				"1.4.3", "1.5.1", "1.5.2", "1.5.3",
+				"1.5.4", "1.5", "1.5beta1", "1.5beta2",
+				"1.5beta3", "1.5rc1", "1.6.1", "1.6.2",
+				"1.6.3", "1.6.4", "1.6", "1.6beta1",
+				"1.6beta2", "1.6rc1", "1.6rc2",
+				"1.7.1", "1.7.2", "1.7.3", "1.7.4",
+				"1.7.5", "1.7", "1.7beta1", "1.7beta2",
+				"1.7rc1", "1.7rc2", "1.7rc3", "1.7rc4",
+				"1.7rc5", "1.7rc6", "1.8", "1.8beta1",
+				"1.8beta2", "1.8rc1", "1.8rc2",
+			}
+
+			test, _ := Complete(version, versions)
+
+			Expect(test).To(Equal("1.8.0"))
+		})
+
+		It("support for partial major version", func() {
+			version := "6"
+			versions := []string{
+				"6.1.0", "5.2.0", "6.2.0", "6.8.3",
+			}
+
+			test, _ := Complete(version, versions)
+
+			Expect(test).To(Equal("6.8.3"))
+		})
+
+		It("support for partial minor version", func() {
+			version := "6.4"
+			versions := []string{
+				"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
+			}
+
+			test, _ := Complete(version, versions)
+
+			Expect(test).To(Equal("6.4.2"))
+		})
+
+		It("shouldn't do anything for full version", func() {
+			version := "6.1.1"
+			versions := []string{
+				"6.1.0", "5.2.0", "6.2.0", "6.8.3", "6.4.2", "6.4.0",
+			}
+
+			test, err := Complete(version, versions)
+
+			Expect(err).To(BeNil())
+			Expect(test).To(Equal("6.1.1"))
+		})
+	})
+
+	Describe("IsPartial", func() {
+		It("Should return true for 'latest' keyword", func() {
+			Expect(IsPartial("latest")).To(Equal(true))
+		})
+
 		It("Should return false for full version", func() {
-			Expect(IsPartialVersion("6.8.1")).To(Equal(false))
+			Expect(IsPartial("6.8.1")).To(Equal(false))
 		})
 
 		It("Should return true for full version without patch", func() {
-			Expect(IsPartialVersion("6.8")).To(Equal(true))
+			Expect(IsPartial("6.8")).To(Equal(true))
 		})
 
 		It("Should return true for full version without minor", func() {
-			Expect(IsPartialVersion("6")).To(Equal(true))
+			Expect(IsPartial("6")).To(Equal(true))
 		})
 	})
 

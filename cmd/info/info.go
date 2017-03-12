@@ -1,7 +1,6 @@
 package info
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -132,19 +131,6 @@ func ListRemote(language string) (versions map[string][]string, err error) {
 	s.Stop()
 
 	return
-}
-
-func GetFullVersion(version string, vers []string) (string, error) {
-	if versions.IsPartialVersion(version) == false {
-		return version, nil
-	}
-
-	// This shouldn't happen
-	if len(vers) == 0 {
-		return "", errors.New("No versions available")
-	}
-
-	return versions.GetLatest(version, vers)
 }
 
 func FullListRemote(language string) (versions []string, err error) {

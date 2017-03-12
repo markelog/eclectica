@@ -62,7 +62,7 @@ func Execute() {
 	hasVersion := info.HasVersion(args)
 
 	// In case of `ec <language>@<partial-version like node@5>`
-	if hasVersion && versions.IsPartialVersion(version) {
+	if hasVersion && versions.IsPartial(version) {
 		print.InStyleln("Language", language)
 
 		version = getVersion(language, version)
@@ -124,7 +124,7 @@ func getVersion(language, version string) string {
 	remoteList, err := info.FullListRemote(language)
 	print.Error(err)
 
-	version, err = info.GetFullVersion(version, remoteList)
+	version, err = versions.Complete(version, remoteList)
 	print.Error(err)
 
 	return version
