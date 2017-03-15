@@ -33,9 +33,7 @@ func walkUp(path string, fn Walker) {
 	return
 }
 
-func GetVersion(args ...interface{}) (version string, err error) {
-	var path string
-
+func GetVersion(args ...interface{}) (version, path string, err error) {
 	if len(args) > 1 {
 		path, err = FindDotFile(args[0], args[1])
 	} else {
@@ -47,7 +45,7 @@ func GetVersion(args ...interface{}) (version string, err error) {
 	}
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return "current", nil
+		return "current", "", nil
 	}
 
 	file, err := os.Open(path)
@@ -59,14 +57,14 @@ func GetVersion(args ...interface{}) (version string, err error) {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		return scanner.Text(), nil
+		return scanner.Text(), path, nil
 	}
 
 	if scannerErr := scanner.Err(); scannerErr != nil {
-		return "", scannerErr
+		return "", "", scannerErr
 	}
 
-	return "current", nil
+	return "current", "", nil
 }
 
 func FindDotFile(args ...interface{}) (versionPath string, err error) {

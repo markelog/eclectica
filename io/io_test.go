@@ -26,8 +26,9 @@ var _ = Describe("io", func() {
 		It("Should get version for node from .nvmrc file", func() {
 			dots := plugins.Dots("node")
 			path, _ := filepath.Abs("../testdata/io/node-with-nvm/")
-			result, _ := GetVersion(dots, path)
+			result, dotPath, _ := GetVersion(dots, path)
 
+			Expect(dotPath).To(ContainSubstring("io/node-with-nvm/.nvmrc"))
 			Expect(result).To(Equal("6.8.0"))
 		})
 	})

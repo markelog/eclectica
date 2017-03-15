@@ -65,7 +65,7 @@ func listLocalVersions(language string) {
 	versions, err := plugin.List()
 	print.Error(err)
 
-	current, err := io.GetVersion(plugin.Dots())
+	current, _, err := io.GetVersion(plugin.Dots())
 	print.Error(err)
 
 	// In case we could find `.<language>-version` file i.e. there is no local version

@@ -33,6 +33,17 @@ func setCmd(cmd *exec.Cmd, name, version string) {
 	cmd.Stdin = os.Stdin
 }
 
+// Get relative path to the dot file
+func getRelativePath(dotPath string) string {
+	cwd, err := os.Getwd()
+	print.Error(err)
+
+	dir, err := filepath.Rel(filepath.Dir(cwd), cwd)
+	print.Error(err)
+
+	return "./" + filepath.Join(dir, filepath.Base(dotPath))
+}
+
 func main() {
 	_, name := path.Split(os.Args[0])
 
@@ -40,14 +51,15 @@ func main() {
 	dotFiles := plugins.Dots(language)
 	base := variables.Home()
 
-	version, err := io.GetVersion(dotFiles)
+	version, dotPath, err := io.GetVersion(dotFiles)
 	print.Error(err)
 
 	pathPart := filepath.Join(base, language, version)
 	binPath := filepath.Join(pathPart, "bin", name)
 
 	if _, err := os.Stat(binPath); os.IsNotExist(err) {
-		err = errors.New("Version " + version + " has not been established")
+		err = errors.New("Version \"" + version + "\" was defined on \"" +
+			getRelativePath(dotPath) + "\" path but this version is not installed")
 		print.Error(err)
 	}
 

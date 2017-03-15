@@ -80,7 +80,7 @@ var _ = Describe("main", func() {
 			})
 		})
 
-		Describe("local install", func() {
+		Describe("local", func() {
 			It("should install version but don't switch to it globally", func() {
 				current := Command("go", "run", path, "ls", "node")
 
@@ -107,6 +107,24 @@ var _ = Describe("main", func() {
 
 				Expect(strings.Contains(string(upperRes), "♥ 6.5.0")).To(Equal(true))
 				Expect(strings.Contains(string(upperRes), "6.4.0")).To(Equal(true))
+			})
+
+			It("should provide more or less error message if local install is not there", func() {
+				pwd, _ := os.Getwd()
+				versionFile := filepath.Join(pwd, ".node-version")
+
+				Command("go", "run", path, "rm", "node@6.3.0")
+
+				io.WriteFile(versionFile, "6.3.0")
+
+				result, _ := Command("node", "-v").CombinedOutput()
+
+				expected := string(result)
+				actual := "Version \"6.3.0\" was defined on \"./ec/.node-version\" path but this version is not installed"
+
+				Expect(expected).To(ContainSubstring(actual))
+
+				os.RemoveAll(versionFile)
 			})
 		})
 	})
