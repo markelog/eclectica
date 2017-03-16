@@ -45,14 +45,16 @@ func (node Node) Install() error {
 	return nil
 }
 
-func (node Node) PostInstall() error {
-	path := variables.Path("node", node.Version)
-	etc := filepath.Join(path, "etc")
-	npmrc := filepath.Join(etc, "npmrc")
+func (node Node) PostInstall() (err error) {
+	err = node.setNpm()
+	if err != nil {
+		return err
+	}
 
-	// Remove needless warnings from npm output
-	io.CreateDir(etc)
-	io.WriteFile(npmrc, "scripts-prepend-node-path=false")
+	ok, err := node.Yarn()
+	if err != nil && ok == false {
+		return err
+	}
 
 	return nil
 }
@@ -124,4 +126,23 @@ func (node Node) ListRemote() ([]string, error) {
 	}
 
 	return result, nil
+}
+
+// Removes needless warnings from npm output
+func (node Node) setNpm() (err error) {
+	path := variables.Path("node", node.Version)
+	etc := filepath.Join(path, "etc")
+	npmrc := filepath.Join(etc, "npmrc")
+
+	_, err = io.CreateDir(etc)
+	if err != nil {
+		return
+	}
+
+	err = io.WriteFile(npmrc, "scripts-prepend-node-path=false")
+	if err != nil {
+		return
+	}
+
+	return nil
 }

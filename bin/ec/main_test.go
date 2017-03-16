@@ -212,7 +212,7 @@ var _ = Describe("main", func() {
 
 			fmt.Println("Removing node@6.4.0")
 
-			fmt.Println("Install tmp version")
+			fmt.Println("Install 5.1.0 version")
 			Execute("go", "run", path, "node@5.1.0")
 
 			Execute("go", "run", path, "rm", "node@6.4.0")
@@ -287,6 +287,14 @@ var _ = Describe("main", func() {
 			}
 
 			Expect(result).To(Equal(true))
+		})
+
+		It("should install yarn", func() {
+			yarnBin := filepath.Join(variables.Path("node", "5.1.0"), "bin/yarn")
+
+			bytes, _ := Command(yarnBin, "--help").CombinedOutput()
+
+			Expect(string(bytes)).To(ContainSubstring("Usage: yarn [command] [flags]"))
 		})
 	})
 
