@@ -96,13 +96,6 @@ var _ = Describe("python", func() {
 			defer httpmock.DeactivateAndReset()
 		})
 
-		It("should get info about latest version", func() {
-			Skip("Waiting on #10")
-			// result := (&Python{Version: "latest"}).Info()
-
-			// TODO
-		})
-
 		It("should get info about rc version", func() {
 			result := (&Python{Version: "2.7.13-rc1"}).Info()
 

@@ -112,20 +112,6 @@ var _ = Describe("nodejs", func() {
 			defer httpmock.DeactivateAndReset()
 		})
 
-		It("should get info about latest version", func() {
-			Skip("Waiting on #10")
-			result := (&Node{Version: "latest"}).Info()
-
-			// :/
-			if runtime.GOOS == "darwin" {
-				Expect(result["filename"]).To(Equal("node-v6.3.1-darwin-x64"))
-				Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-darwin-x64.tar.gz"))
-			} else if runtime.GOOS == "linux" {
-				Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
-				Expect(result["url"]).To(Equal("https://nodejs.org/dist/latest/node-v6.3.1-linux-x64.tar.gz"))
-			}
-		})
-
 		It("should get info about 6.3.1 version", func() {
 			result := (&Node{Version: "6.3.1"}).Info()
 

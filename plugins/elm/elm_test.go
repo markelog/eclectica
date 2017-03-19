@@ -71,20 +71,6 @@ var _ = Describe("elm", func() {
 	})
 
 	Describe("Info", func() {
-		It("should get info about latest version", func() {
-			Skip("Waiting on #10")
-			result := (&Elm{Version: "latest"}).Info()
-
-			// :/
-			if runtime.GOOS == "darwin" {
-				Expect(result["filename"]).To(Equal("elm-v6.3.1-darwin-x64"))
-				Expect(result["url"]).To(Equal("https://elmjs.org/dist/latest/elm-v6.3.1-darwin-x64.tar.gz"))
-			} else if runtime.GOOS == "linux" {
-				Expect(result["filename"]).To(Equal("elm-v6.3.1-linux-x64"))
-				Expect(result["url"]).To(Equal("https://elmjs.org/dist/latest/elm-v6.3.1-linux-x64.tar.gz"))
-			}
-		})
-
 		It("should get info about 0.18.0 version", func() {
 			result := (&Elm{Version: "0.18.0"}).Info()
 
