@@ -9,7 +9,7 @@ import (
 
 var (
 	NonInstallCommands = []string{"ls", "rm", "version", "init", "--help", "-h"}
-	DefaultInstall     = filepath.Join(os.Getenv("HOME"), ".eclectica/bin")
+	DefaultInstall     = filepath.Join(Base(), "bin")
 )
 
 func Prefix(name string) string {

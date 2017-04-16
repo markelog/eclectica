@@ -128,6 +128,24 @@ func Read(path string) string {
 	return string(bytes)
 }
 
+func ListVersions(path string) (vers []string) {
+	vers = []string{}
+
+	folders, _ := ioutil.ReadDir(path)
+
+	for _, folder := range folders {
+		name := folder.Name()
+
+		if name == "current" {
+			continue
+		}
+
+		vers = append(vers, name)
+	}
+
+	return
+}
+
 func Symlink(current, base string) (err error) {
 	// Remove symlink just in case it's already present
 	err = os.RemoveAll(current)

@@ -39,13 +39,17 @@ func (elm Elm) Events() *emission.Emitter {
 	return elm.Emitter
 }
 
-func (elm Elm) PreInstall() (err error) {
+func (elm Elm) PreDownload() (err error) {
 	path := elm.getTmpPath()
 
 	if _, errStat := os.Stat(path); os.IsNotExist(errStat) {
 		_, err = io.CreateDir(path)
 	}
 
+	return
+}
+
+func (elm Elm) PreInstall() (err error) {
 	return
 }
 
@@ -73,6 +77,14 @@ func (elm Elm) PostInstall() error {
 		}
 	}
 
+	return nil
+}
+
+func (elm Elm) Switch() error {
+	return nil
+}
+
+func (elm Elm) Link() error {
 	return nil
 }
 

@@ -36,6 +36,10 @@ func (rust Rust) Events() *emission.Emitter {
 	return rust.Emitter
 }
 
+func (rust Rust) PreDownload() error {
+	return nil
+}
+
 func (rust Rust) PreInstall() error {
 	return nil
 }
@@ -66,6 +70,14 @@ func (rust Rust) Install() error {
 }
 
 func (rust Rust) PostInstall() error {
+	return nil
+}
+
+func (rust Rust) Switch() error {
+	return nil
+}
+
+func (rust Rust) Link() error {
 	return nil
 }
 

@@ -35,6 +35,10 @@ func (ruby Ruby) Events() *emission.Emitter {
 	return ruby.Emitter
 }
 
+func (ruby Ruby) PreDownload() error {
+	return nil
+}
+
 func (ruby Ruby) PreInstall() error {
 	return nil
 }
@@ -50,6 +54,14 @@ func (ruby Ruby) PostInstall() error {
 	}
 
 	return dealWithShell()
+}
+
+func (ruby Ruby) Switch() error {
+	return nil
+}
+
+func (ruby Ruby) Link() error {
+	return nil
 }
 
 // Removes RVM artefacts (ignore errors)

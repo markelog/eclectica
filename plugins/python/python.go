@@ -55,6 +55,10 @@ func (python Python) Events() *emission.Emitter {
 	return python.Emitter
 }
 
+func (python Python) PreDownload() (err error) {
+	return
+}
+
 func (python Python) PreInstall() error {
 	return checkDependencies()
 }
@@ -107,6 +111,14 @@ func (python Python) PostInstall() (err error) {
 		return errors.New(string(out))
 	}
 
+	return nil
+}
+
+func (python Python) Switch() error {
+	return nil
+}
+
+func (python Python) Link() error {
 	return nil
 }
 

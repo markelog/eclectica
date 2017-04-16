@@ -28,10 +28,13 @@ func (node Node) download(path string) (err error) {
 	return
 }
 
-func (node Node) Yarn() (ok bool, err error) {
+func (node Node) isYarnPossible() bool {
 	version, _ := semver.Make(node.Version)
-	ok = false
 
+	return version.GTE(minimalForYarn)
+}
+
+func (node Node) Yarn() (ok bool, err error) {
 	path := variables.Path("node", node.Version)
 	modules := filepath.Join(path, "lib/node_modules")
 	dist := filepath.Join(modules, "yarn-archive")
@@ -39,7 +42,7 @@ func (node Node) Yarn() (ok bool, err error) {
 	from := filepath.Join(temp, "dist/")
 	dest := filepath.Join(modules, "yarn")
 
-	if version.LT(minimalForYarn) {
+	if node.isYarnPossible() == false {
 		return true, errors.New("\"" + node.Version + "\" version is not supported by yarn")
 	}
 

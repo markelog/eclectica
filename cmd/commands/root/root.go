@@ -176,7 +176,7 @@ func conditionalInstall(plugin *plugins.Plugin) {
 func install(language, version string) {
 	plugin := plugins.New(language, version)
 
-	err := plugin.PreInstall()
+	err := plugin.PreDownload()
 	print.Error(err)
 
 	response, err := plugin.Download()

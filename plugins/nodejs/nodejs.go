@@ -29,16 +29,23 @@ var (
 )
 
 type Node struct {
-	Version string
-	Emitter *emission.Emitter
+	Version  string
+	previous string
+	Emitter  *emission.Emitter
 }
 
 func (node Node) Events() *emission.Emitter {
 	return node.Emitter
 }
 
-func (node Node) PreInstall() error {
-	return nil
+func (node Node) PreDownload() (err error) {
+	return
+}
+
+func (node *Node) PreInstall() (err error) {
+	node.previous = node.Current()
+
+	return
 }
 
 func (node Node) Install() error {
@@ -56,6 +63,28 @@ func (node Node) PostInstall() (err error) {
 		return err
 	}
 
+	return nil
+}
+
+func (node Node) Switch() (err error) {
+	previous := node.previous
+
+	if len(previous) == 0 {
+		return
+	}
+
+	node.Emitter.Emit("configure")
+
+	modulesPath := node.modulesPath(previous)
+
+	if node.sameMajors() {
+		return node.copyModules(modulesPath)
+	}
+
+	return node.installModules(modulesPath)
+}
+
+func (node Node) Link() (err error) {
 	return nil
 }
 

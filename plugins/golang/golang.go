@@ -35,6 +35,10 @@ func (golang Golang) Events() *emission.Emitter {
 	return golang.Emitter
 }
 
+func (golang Golang) PreDownload() error {
+	return nil
+}
+
 func (golang Golang) PreInstall() error {
 	return nil
 }
@@ -45,6 +49,14 @@ func (golang Golang) Install() error {
 
 func (golang Golang) PostInstall() error {
 	return dealWithShell()
+}
+
+func (golang Golang) Switch() error {
+	return nil
+}
+
+func (golang Golang) Link() error {
+	return nil
 }
 
 func (golang Golang) Environment() (result []string, err error) {

@@ -203,6 +203,8 @@ var _ = Describe("main", func() {
 	})
 
 	Describe("node", func() {
+		mainVersion := "5.1.0"
+
 		if shouldRun("node") == false {
 			return
 		}
@@ -212,11 +214,50 @@ var _ = Describe("main", func() {
 
 			fmt.Println("Removing node@6.4.0")
 
-			fmt.Println("Install 5.1.0 version")
-			Execute("go", "run", path, "node@5.1.0")
+			fmt.Println("Install" + mainVersion + " version")
+			Execute("go", "run", path, "node@"+mainVersion)
 
 			Execute("go", "run", path, "rm", "node@6.4.0")
 			fmt.Println("Removed")
+		})
+
+		Describe("preserve globally installed modules", func() {
+			It("between major versions", func() {
+				Execute("npm", "install", "--global", "ojm")
+
+				Execute("go", "run", path, "node@6.0.0")
+
+				command, _ := Command("ojm").Output()
+
+				expected := "Check if site is down through isup.com"
+
+				Expect(string(command)).Should(ContainSubstring(expected))
+			})
+
+			It("between minor versions", func() {
+				Execute("npm", "install", "--global", "ojm")
+
+				Execute("go", "run", path, "node@5.0.0")
+
+				command, _ := Command("ojm").Output()
+
+				expected := "Check if site is down through isup.com"
+
+				Expect(string(command)).Should(ContainSubstring(expected))
+			})
+
+			It("doesn't try to install global module if its already exist", func() {
+				Execute("npm", "install", "--global", "ojm")
+
+				Execute("go", "run", path, "node@5.0.0")
+				Execute("go", "run", path, "node@"+mainVersion)
+
+				command, _ := Command("ojm").Output()
+
+				expected := "Check if site is down through isup.com"
+
+				Expect(string(command)).Should(ContainSubstring(expected))
+			})
 		})
 
 		It("should use local version", func() {
@@ -225,7 +266,7 @@ var _ = Describe("main", func() {
 
 			Execute("go", "run", path, "node@6.4.0")
 
-			io.WriteFile(versionFile, "5.1.0")
+			io.WriteFile(versionFile, mainVersion)
 
 			command, _ := Command("go", "run", path, "ls", "node").Output()
 
@@ -244,7 +285,7 @@ var _ = Describe("main", func() {
 		})
 
 		It("test presence of the npmrc config", func() {
-			npmrcPath := filepath.Join(variables.Path("node", "5.1.0"), "/etc/npmrc")
+			npmrcPath := filepath.Join(variables.Path("node", mainVersion), "/etc/npmrc")
 
 			data := io.Read(npmrcPath)
 
@@ -274,7 +315,7 @@ var _ = Describe("main", func() {
 			result := true
 
 			Execute("go", "run", path, "node@6.4.0")
-			Execute("go", "run", path, "node@5.1.0")
+			Execute("go", "run", path, "node@"+mainVersion)
 			Command("go", "run", path, "rm", "node@6.4.0").Output()
 
 			plugin := plugins.New("node")
@@ -290,7 +331,7 @@ var _ = Describe("main", func() {
 		})
 
 		It("should install yarn", func() {
-			yarnBin := filepath.Join(variables.Path("node", "5.1.0"), "bin/yarn")
+			yarnBin := filepath.Join(variables.Path("node", mainVersion), "bin/yarn")
 
 			bytes, _ := Command(yarnBin, "--help").CombinedOutput()
 

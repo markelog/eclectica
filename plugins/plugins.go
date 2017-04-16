@@ -3,7 +3,6 @@ package plugins
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -40,9 +39,12 @@ var (
 )
 
 type Pkg interface {
+	PreDownload() error
 	PreInstall() error
 	Install() error
 	PostInstall() error
+	Switch() error
+	Link() error
 	Events() *emission.Emitter
 	Environment() ([]string, error)
 	ListRemote() ([]string, error)
@@ -118,6 +120,10 @@ func New(args ...string) *Plugin {
 	return plugin
 }
 
+func (plugin *Plugin) PreDownload() error {
+	return plugin.Pkg.PreDownload()
+}
+
 func (plugin *Plugin) PreInstall() error {
 	return plugin.Pkg.PreInstall()
 }
@@ -153,8 +159,13 @@ func (plugin *Plugin) LocalInstall() (err error) {
 		return nil
 	}
 
-	// If it was already installed, just bail out
+	// If it was already installed, just switch and bail out
 	if plugin.IsInstalled() {
+		err = plugin.Switch()
+		if err != nil {
+			return
+		}
+
 		return nil
 	}
 
@@ -175,6 +186,11 @@ func (plugin *Plugin) LocalInstall() (err error) {
 }
 
 func (plugin *Plugin) Install() (err error) {
+	err = plugin.Pkg.PreInstall()
+	if err != nil {
+		return
+	}
+
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
@@ -197,10 +213,20 @@ func (plugin *Plugin) Install() (err error) {
 
 	// If it was already installed, just switch @current link if needed
 	if plugin.IsInstalled() {
+		err = plugin.Switch()
+		if err != nil {
+			return
+		}
+
 		return plugin.Link()
 	}
 
 	err = plugin.Finish()
+	if err != nil {
+		return
+	}
+
+	err = plugin.Switch()
 	if err != nil {
 		return
 	}
@@ -234,6 +260,16 @@ func (plugin *Plugin) PostInstall() (err error) {
 
 	base := variables.Path(plugin.name, plugin.Version)
 	err = io.WriteFile(filepath.Join(base, ".done"), "")
+	if err != nil {
+		plugin.Rollback()
+		return
+	}
+
+	return
+}
+
+func (plugin *Plugin) Switch() (err error) {
+	err = plugin.Pkg.Switch()
 	if err != nil {
 		plugin.Rollback()
 		return
@@ -325,19 +361,8 @@ func (plugin *Plugin) Interrupt() {
 }
 
 func (plugin *Plugin) List() (vers []string, err error) {
-	vers = []string{}
-	path := filepath.Join(variables.Home(), plugin.name)
-
-	folders, _ := ioutil.ReadDir(path)
-	for _, folder := range folders {
-		name := folder.Name()
-
-		if name == "current" {
-			continue
-		}
-
-		vers = append(vers, name)
-	}
+	path := variables.Prefix(plugin.name)
+	vers = io.ListVersions(path)
 
 	if len(vers) == 0 {
 		err = errors.New("There is no installed versions")
@@ -501,7 +526,7 @@ func (plugin *Plugin) Link() (err error) {
 		return
 	}
 
-	return
+	return plugin.Pkg.Link()
 }
 
 // IsInstalled checks if this version was already installed
