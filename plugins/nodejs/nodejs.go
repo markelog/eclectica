@@ -52,6 +52,8 @@ func (node Node) Install() error {
 }
 
 func (node Node) PostInstall() (err error) {
+	node.Emitter.Emit("post-install")
+
 	err = node.setNpm()
 	if err != nil {
 		return err
@@ -72,7 +74,7 @@ func (node Node) Switch() (err error) {
 		return
 	}
 
-	node.Emitter.Emit("configure")
+	node.Emitter.Emit("reapply modules")
 
 	modulesPath := node.modulesPath(previous)
 

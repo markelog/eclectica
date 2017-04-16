@@ -158,27 +158,32 @@ var _ = Describe("plugins", func() {
 
 	Describe("Install", func() {
 		var (
-			current     = false
-			postInstall = false
-			pkgInstall  = false
-			osRemoveAll = false
-			osSymlink   = false
-			osStat      = false
-			isInstalled = false
+			pluginSwitch = false
+			current      = false
+			postInstall  = false
+			pkgInstall   = false
+			osRemoveAll  = false
+			osSymlink    = false
+			osStat       = false
+			isInstalled  = false
 		)
 
 		resCurrent := "6.7.0"
 
 		type Empty struct{}
 
-		var resInstall error
-		var resPostInstall error
-		var resPkgInstall error
-		var resOsRemoveAll error
-		var resOsSymlink error
-		var resIsInstalled bool
-		var resOsStat os.FileInfo
+		var (
+			resPluginsSwitch error
+			resInstall       error
+			resPostInstall   error
+			resPkgInstall    error
+			resOsRemoveAll   error
+			resOsSymlink     error
+			resIsInstalled   bool
+			resOsStat        os.FileInfo
+		)
 
+		resPluginsSwitch = nil
 		resInstall = nil
 		resPostInstall = nil
 		resPkgInstall = nil
@@ -187,13 +192,15 @@ var _ = Describe("plugins", func() {
 		resOsStat = nil
 		resIsInstalled = false
 
-		var guardCurrent *monkey.PatchGuard
-		var guardPostInstall *monkey.PatchGuard
-		var guardPkgInstall *monkey.PatchGuard
-		var guardIsInstalled *monkey.PatchGuard
-
-		var guardInitiate *monkey.PatchGuard
-		var guardCheckShell *monkey.PatchGuard
+		var (
+			guardPluginSwitch *monkey.PatchGuard
+			guardCurrent      *monkey.PatchGuard
+			guardPostInstall  *monkey.PatchGuard
+			guardPkgInstall   *monkey.PatchGuard
+			guardIsInstalled  *monkey.PatchGuard
+			guardInitiate     *monkey.PatchGuard
+			guardCheckShell   *monkey.PatchGuard
+		)
 
 		BeforeEach(func() {
 			var d *Plugin
@@ -235,6 +242,13 @@ var _ = Describe("plugins", func() {
 				},
 			)
 
+			guardPluginSwitch = monkey.PatchInstanceMethod(nodejsType, "Switch",
+				func(plugin *nodejs.Node) error {
+					pluginSwitch = true
+					return resPluginsSwitch
+				},
+			)
+
 			guardPkgInstall = monkey.PatchInstanceMethod(nodejsType, "Install",
 				func(plugin *nodejs.Node) error {
 					pkgInstall = true
@@ -269,6 +283,7 @@ var _ = Describe("plugins", func() {
 		})
 
 		AfterEach(func() {
+			pluginSwitch = false
 			current = false
 			postInstall = false
 			pkgInstall = false
@@ -293,6 +308,7 @@ var _ = Describe("plugins", func() {
 			guardInitiate.Unpatch()
 			guardCheckShell.Unpatch()
 
+			guardPluginSwitch.Unpatch()
 			guardPostInstall.Unpatch()
 			guardCurrent.Unpatch()
 			guardPkgInstall.Unpatch()
@@ -304,6 +320,7 @@ var _ = Describe("plugins", func() {
 
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(true))
+			Expect(pluginSwitch).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(true))
 			Expect(postInstall).To(Equal(true))
 			Expect(pkgInstall).To(Equal(true))
@@ -316,7 +333,8 @@ var _ = Describe("plugins", func() {
 			New("node", "6.8.0").Install()
 
 			Expect(current).To(Equal(true))
-			Expect(isInstalled).To(Equal(true))
+			Expect(osRemoveAll).To(Equal(true))
+			Expect(pluginSwitch).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(true))
 			Expect(osSymlink).To(Equal(true))
 			Expect(postInstall).To(Equal(false))
@@ -329,6 +347,7 @@ var _ = Describe("plugins", func() {
 			New("node", "6.8.0").Install()
 
 			Expect(current).To(Equal(true))
+			Expect(pluginSwitch).To(Equal(false))
 			Expect(isInstalled).To(Equal(false))
 			Expect(osRemoveAll).To(Equal(false))
 			Expect(osSymlink).To(Equal(false))
@@ -341,6 +360,7 @@ var _ = Describe("plugins", func() {
 
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(true))
+			Expect(pluginSwitch).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(false))
 			Expect(postInstall).To(Equal(true))
 			Expect(pkgInstall).To(Equal(true))

@@ -173,6 +173,11 @@ func (plugin *Plugin) LocalInstall() (err error) {
 		return
 	}
 
+	err = plugin.Switch()
+	if err != nil {
+		return
+	}
+
 	err = io.WriteFile(path, plugin.Version)
 	if err != nil {
 		plugin.Rollback()
@@ -212,20 +217,15 @@ func (plugin *Plugin) Install() (err error) {
 
 	// If it was already installed, just switch @current link if needed
 	if plugin.IsInstalled() {
-		err = plugin.Switch()
+		err = plugin.Link()
 		if err != nil {
 			return
 		}
 
-		return plugin.Link()
+		return plugin.Switch()
 	}
 
 	err = plugin.Finish()
-	if err != nil {
-		return
-	}
-
-	err = plugin.Switch()
 	if err != nil {
 		return
 	}
@@ -235,7 +235,10 @@ func (plugin *Plugin) Install() (err error) {
 		return
 	}
 
-	plugin.emitter.Emit("done")
+	err = plugin.Switch()
+	if err != nil {
+		return
+	}
 
 	// Start new shell from eclectica if needed
 	// note: should be the last action
@@ -520,7 +523,13 @@ func (plugin *Plugin) Link() (err error) {
 		return
 	}
 
-	return plugin.Pkg.Link()
+	err = plugin.Pkg.Link()
+	if err != nil {
+		return
+	}
+
+	plugin.emitter.Emit("done")
+	return
 }
 
 // IsInstalled checks if this version was already installed

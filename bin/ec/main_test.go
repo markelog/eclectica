@@ -222,7 +222,7 @@ var _ = Describe("main", func() {
 		})
 
 		Describe("preserve globally installed modules", func() {
-			It("between major versions", func() {
+			It("between major versions (ojm module)", func() {
 				Execute("npm", "install", "--global", "ojm")
 
 				Execute("go", "run", path, "node@6.0.0")
@@ -234,7 +234,7 @@ var _ = Describe("main", func() {
 				Expect(string(command)).Should(ContainSubstring(expected))
 			})
 
-			It("between minor versions", func() {
+			It("between minor versions (ojm module)", func() {
 				Execute("npm", "install", "--global", "ojm")
 
 				Execute("go", "run", path, "node@5.0.0")
@@ -246,7 +246,7 @@ var _ = Describe("main", func() {
 				Expect(string(command)).Should(ContainSubstring(expected))
 			})
 
-			It("doesn't try to install global module if its already exist", func() {
+			It("doesn't try to install global module if its already exist (ojm module)", func() {
 				Execute("npm", "install", "--global", "ojm")
 
 				Execute("go", "run", path, "node@5.0.0")
@@ -255,6 +255,43 @@ var _ = Describe("main", func() {
 				command, _ := Command("ojm").Output()
 
 				expected := "Check if site is down through isup.com"
+
+				Expect(string(command)).Should(ContainSubstring(expected))
+			})
+
+			It("between major versions (nodemon module)", func() {
+				Execute("npm", "install", "--global", "nodemon")
+
+				Execute("go", "run", path, "node@6.0.0")
+
+				command, _ := Command("nodemon").Output()
+
+				expected := "Usage: nodemon [nodemon options] [script.js] [args]"
+
+				Expect(string(command)).Should(ContainSubstring(expected))
+			})
+
+			It("between minor versions (nodemon module)", func() {
+				Execute("npm", "install", "--global", "nodemon")
+
+				Execute("go", "run", path, "node@5.0.0")
+
+				command, _ := Command("nodemon").Output()
+
+				expected := "Usage: nodemon [nodemon options] [script.js] [args]"
+
+				Expect(string(command)).Should(ContainSubstring(expected))
+			})
+
+			It("doesn't try to install global module if its already exist (nodemon module)", func() {
+				Execute("npm", "install", "--global", "nodemon")
+
+				Execute("go", "run", path, "node@5.0.0")
+				Execute("go", "run", path, "node@"+mainVersion)
+
+				command, _ := Command("nodemon").Output()
+
+				expected := "Usage: nodemon [nodemon options] [script.js] [args]"
 
 				Expect(string(command)).Should(ContainSubstring(expected))
 			})

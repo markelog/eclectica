@@ -14,6 +14,7 @@ import (
 
 func (node Node) installModules(modules string) (err error) {
 	folders, _ := ioutil.ReadDir(modules)
+
 	for _, folder := range folders {
 		name := folder.Name()
 

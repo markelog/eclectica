@@ -149,10 +149,11 @@ func conditionalInstall(plugin *plugins.Plugin) {
 		}
 	}
 
-	plugin.Events().On("configure", handle("configuring"))
-	plugin.Events().On("prepare", handle("preparing"))
-	plugin.Events().On("install", handle("installing"))
-	plugin.Events().On("post-install", handle("post-installing"))
+	plugin.Events().On("configure", handle("configure"))
+	plugin.Events().On("prepare", handle("prepare"))
+	plugin.Events().On("install", handle("install"))
+	plugin.Events().On("post-install", handle("post-install"))
+	plugin.Events().On("reapply modules", handle("reapply global modules"))
 
 	plugin.Events().On("done", func() {
 		if spinner == nil {
