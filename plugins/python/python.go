@@ -165,17 +165,6 @@ func (rust Python) Dots() []string {
 	return dots
 }
 
-func (python Python) Current() string {
-	bin := variables.GetBin("python")
-
-	out, _ := exec.Command(bin, "--version").CombinedOutput()
-
-	readVersion := strings.Replace(string(out), "Python ", "", 1)
-	version := strings.TrimSpace(readVersion)
-
-	return versions.Semverify(version)
-}
-
 func (python Python) ListRemote() (result []string, err error) {
 	doc, err := goquery.NewDocument(VersionsLink)
 

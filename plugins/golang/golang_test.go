@@ -149,32 +149,6 @@ var _ = Describe("golang", func() {
 		})
 	})
 
-	Describe("Current", func() {
-		It("should handle empty output", func() {
-			monkey.Patch(eio.Read, func(path string) string {
-				return ""
-			})
-
-			current := golang.Current()
-
-			Expect(current).To(Equal(""))
-
-			monkey.Unpatch(eio.Read)
-		})
-
-		It("should report correct version", func() {
-			monkey.Patch(eio.Read, func(path string) string {
-				return "go1.6.2"
-			})
-
-			result := golang.Current()
-
-			Expect(result).To(Equal("1.6.2"))
-
-			monkey.Unpatch(eio.Read)
-		})
-	})
-
 	Describe("PostInstall", func() {
 		BeforeEach(func() {
 			monkey.Patch(exec.Command, func(name string, arg ...string) *exec.Cmd {

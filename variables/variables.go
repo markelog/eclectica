@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/markelog/eclectica/io"
 )
 
 var (
@@ -87,6 +89,34 @@ func GetShellPath() string {
 
 func Base() string {
 	return filepath.Join(os.Getenv("HOME"), ".eclectica")
+}
+
+func CurrentVersion(name string) string {
+	base := Path(name)
+	path := filepath.Join(base, ".eclectica")
+
+	return io.Read(path)
+}
+
+func WriteVersion(name, version string) error {
+	base := Path(name, version)
+	path := filepath.Join(base, ".eclectica")
+
+	return io.WriteFile(path, version)
+}
+
+// IsInstalled checks if this version was already installed
+func IsInstalled(name, version string) bool {
+	base := Path(name, version)
+	path := filepath.Join(base, ".eclectica")
+
+	// If binary for this plugin already exist then we can assume it was installed before;
+	// which means we can bail out this point
+	if _, err := os.Stat(path); err == nil {
+		return true
+	}
+
+	return false
 }
 
 func Home() string {

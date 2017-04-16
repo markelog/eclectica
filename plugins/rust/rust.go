@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strings"
 
 	"github.com/chuckpreslar/emission"
 	"github.com/markelog/cprf"
@@ -103,21 +102,6 @@ func (rust Rust) Bins() []string {
 
 func (node Rust) Dots() []string {
 	return dots
-}
-
-func (rust Rust) Current() string {
-	bin := variables.GetBin("rust")
-	out, _ := exec.Command(bin, "--version").Output()
-
-	version := strings.TrimSpace(string(out))
-	rVersion := regexp.MustCompile(versionPattern)
-	testVersion := rVersion.FindAllStringSubmatch(version, 1)
-
-	if len(testVersion) == 0 {
-		return ""
-	}
-
-	return strings.Replace(testVersion[0][0], "v", "", 1)
 }
 
 func (rust Rust) ListRemote() ([]string, error) {

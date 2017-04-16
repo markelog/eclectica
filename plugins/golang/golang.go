@@ -8,12 +8,10 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
 
-	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 )
@@ -92,15 +90,6 @@ func (rust Golang) Bins() []string {
 
 func (rust Golang) Dots() []string {
 	return dots
-}
-
-func (golang Golang) Current() string {
-	path := variables.Path("go")
-	version := filepath.Join(path, "VERSION")
-	readVersion := strings.Replace(io.Read(version), "go", "", 1)
-	semverVersion := versions.Semverify(readVersion)
-
-	return semverVersion
 }
 
 func (golang Golang) ListRemote() ([]string, error) {

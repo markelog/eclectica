@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -124,21 +123,6 @@ func (elm Elm) Bins() []string {
 
 func (elm Elm) Dots() []string {
 	return dots
-}
-
-func (elm Elm) Current() string {
-	bin := variables.GetBin("elm")
-	out, _ := exec.Command(bin).Output()
-
-	version := strings.TrimSpace(string(out))
-	rVersion := regexp.MustCompile(versionPattern)
-	testVersion := rVersion.FindAllStringSubmatch(version, 1)
-
-	if len(testVersion) == 0 {
-		return ""
-	}
-
-	return testVersion[0][0]
 }
 
 func (elm Elm) ListRemote() ([]string, error) {

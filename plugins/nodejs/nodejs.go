@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -43,7 +42,7 @@ func (node Node) PreDownload() (err error) {
 }
 
 func (node *Node) PreInstall() (err error) {
-	node.previous = node.Current()
+	node.previous = variables.CurrentVersion("node")
 
 	return
 }
@@ -108,15 +107,6 @@ func (node Node) Bins() []string {
 
 func (node Node) Dots() []string {
 	return dots
-}
-
-func (node Node) Current() string {
-	bin := variables.GetBin("node")
-	out, _ := exec.Command(bin, "--version").Output()
-
-	version := strings.TrimSpace(string(out))
-
-	return strings.Replace(version, "v", "", 1)
 }
 
 func (node Node) ListRemote() ([]string, error) {

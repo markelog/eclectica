@@ -51,7 +51,6 @@ type Pkg interface {
 	Info() map[string]string
 	Bins() []string
 	Dots() []string
-	Current() string
 }
 
 type Plugin struct {
@@ -258,12 +257,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 		return
 	}
 
-	base := variables.Path(plugin.name, plugin.Version)
-	err = io.WriteFile(filepath.Join(base, ".done"), "")
-	if err != nil {
-		plugin.Rollback()
-		return
-	}
+	variables.WriteVersion(plugin.name, plugin.Version)
 
 	return
 }
@@ -325,7 +319,7 @@ func (plugin *Plugin) Info() (map[string]string, error) {
 
 // Current returns current used version
 func (plugin *Plugin) Current() string {
-	return plugin.Pkg.Current()
+	return variables.CurrentVersion(plugin.name)
 }
 
 // Rollback places everything back
@@ -531,16 +525,7 @@ func (plugin *Plugin) Link() (err error) {
 
 // IsInstalled checks if this version was already installed
 func (plugin *Plugin) IsInstalled() bool {
-	base := variables.GetBin(plugin.name, plugin.Version)
-	path := filepath.Join(base, ".done")
-
-	// If binary for this plugin already exist then we can assume it was installed before;
-	// which means we can bail out this point
-	if _, err := os.Stat(path); err == nil {
-		return true
-	}
-
-	return false
+	return variables.IsInstalled(plugin.name, plugin.Version)
 }
 
 func (plugin *Plugin) Proxy() (err error) {

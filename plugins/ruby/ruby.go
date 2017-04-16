@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -100,25 +99,6 @@ func (ruby Ruby) Bins() []string {
 
 func (ruby Ruby) Dots() []string {
 	return dots
-}
-
-func (ruby Ruby) Current() string {
-	bin := variables.GetBin("ruby")
-	out, _ := exec.Command(bin, "--version").Output()
-
-	if len(out) == 0 {
-		return ""
-	}
-
-	version := strings.TrimSpace(string(out))
-	rVersion := regexp.MustCompile(versionPattern)
-	testVersion := rVersion.FindAllStringSubmatch(version, 1)
-
-	if len(testVersion) == 0 {
-		return ""
-	}
-
-	return testVersion[0][0]
 }
 
 func (ruby Ruby) ListRemote() ([]string, error) {
