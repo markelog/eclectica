@@ -128,19 +128,9 @@ func (plugin *Plugin) PreInstall() error {
 }
 
 func (plugin *Plugin) LocalInstall() (err error) {
-	pwd, err := os.Getwd()
-	if err != nil {
-		return
-	}
-
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
 	}
-
-	var (
-		version = fmt.Sprintf(".%s-version", plugin.name)
-		path    = filepath.Join(pwd, version)
-	)
 
 	// Handle CTRL+C signal
 	plugin.Interrupt()
@@ -160,18 +150,27 @@ func (plugin *Plugin) LocalInstall() (err error) {
 
 	// If it was already installed, just switch and bail out
 	if plugin.IsInstalled() {
-		err = plugin.Switch()
-		if err != nil {
-			return
-		}
-
-		return nil
+		return plugin.finishLocal()
 	}
 
-	err = plugin.Finish()
+	err = plugin.Done()
 	if err != nil {
 		return
 	}
+
+	return plugin.finishLocal()
+}
+
+func (plugin Plugin) finishLocal() (err error) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return
+	}
+
+	var (
+		version = fmt.Sprintf(".%s-version", plugin.name)
+		path    = filepath.Join(pwd, version)
+	)
 
 	err = plugin.Switch()
 	if err != nil {
@@ -221,19 +220,18 @@ func (plugin *Plugin) Install() (err error) {
 
 	// If it was already installed, just switch @current link if needed
 	if plugin.IsInstalled() {
-		err = plugin.Link()
-		if err != nil {
-			return
-		}
-
-		return plugin.Switch()
+		return plugin.finishInstall()
 	}
 
-	err = plugin.Finish()
+	err = plugin.Done()
 	if err != nil {
 		return
 	}
 
+	return plugin.finishInstall()
+}
+
+func (plugin Plugin) finishInstall() (err error) {
 	err = plugin.Link()
 	if err != nil {
 		return
@@ -339,8 +337,8 @@ func (plugin *Plugin) Rollback() {
 	plugin.emitter.Emit("done")
 }
 
-// Finish finishes installation
-func (plugin *Plugin) Finish() (err error) {
+// Done finishes installation
+func (plugin *Plugin) Done() (err error) {
 	err = plugin.Pkg.Install()
 	if err != nil {
 		plugin.Rollback()

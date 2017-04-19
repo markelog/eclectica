@@ -96,17 +96,18 @@ var _ = Describe("main", func() {
 				upperRes, _ := upper.CombinedOutput()
 				currentRes, _ := current.CombinedOutput()
 
-				Expect(strings.Contains(string(currentRes), "6.5.0")).To(Equal(true))
-				Expect(strings.Contains(string(currentRes), "♥ 6.4.0")).To(Equal(true))
-
 				if _, err := os.Stat(versionFile); err != nil {
 					Expect(true).To(Equal(false))
 				} else {
 					os.RemoveAll(versionFile)
 				}
 
+				Expect(strings.Contains(string(currentRes), "6.5.0")).To(Equal(true))
+				Expect(strings.Contains(string(currentRes), "♥ 6.4.0")).To(Equal(true))
+
 				Expect(strings.Contains(string(upperRes), "♥ 6.5.0")).To(Equal(true))
 				Expect(strings.Contains(string(upperRes), "6.4.0")).To(Equal(true))
+
 			})
 
 			It("should provide more or less error message if local install is not there", func() {
