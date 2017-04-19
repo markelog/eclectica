@@ -184,7 +184,11 @@ func (plugin *Plugin) LocalInstall() (err error) {
 		return
 	}
 
-	init.RestartShell()
+	plugin.emitter.Emit("done")
+
+	// Start new shell from eclectica if needed
+	// note: should be the last action
+	// init.RestartShell()
 
 	return
 }
@@ -240,9 +244,11 @@ func (plugin *Plugin) Install() (err error) {
 		return
 	}
 
+	plugin.emitter.Emit("done")
+
 	// Start new shell from eclectica if needed
 	// note: should be the last action
-	init.RestartShell()
+	// init.RestartShell()
 
 	return
 }
@@ -348,6 +354,7 @@ func (plugin *Plugin) Finish() (err error) {
 func (plugin *Plugin) Interrupt() {
 	channel := make(chan os.Signal, 1)
 
+	plugin.emitter.Emit("done")
 	signal.Notify(channel, os.Interrupt)
 
 	go func() {
@@ -528,7 +535,6 @@ func (plugin *Plugin) Link() (err error) {
 		return
 	}
 
-	plugin.emitter.Emit("done")
 	return
 }
 
