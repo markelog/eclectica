@@ -486,10 +486,10 @@ func (plugin *Plugin) Extract() error {
 		return err
 	}
 
-	// Now we will need get path - /home/user/.eclectica/versions/go/go1.7.1.linux-amd64
+	// Now we will need get path, for example - /home/user/.eclectica/versions/go/go1.7.1.linux-amd64
 	tmpPath := filepath.Join(extractionPlace, plugin.info["unarchive-filename"])
 
-	// And get path like this – /home/user/.eclectica/versions/go/1.7.1
+	// And get path like this, for example – /home/user/.eclectica/versions/go/1.7.1
 	extractionPath := plugin.info["destination-folder"]
 
 	// Clean up in case user extracts already extracted version.

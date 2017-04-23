@@ -142,7 +142,7 @@ func (python Python) Info() map[string]string {
 		urlPart = versions.Unsemverify(urlPart)
 	}
 
-	// Python 2.0 has different format and its not supported
+	// Python 2.0 has different format and it's not supported
 	result["extension"] = "tgz"
 	result["version"] = version
 	result["filename"] = "Python-" + version

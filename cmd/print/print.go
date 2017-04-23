@@ -5,7 +5,8 @@ import (
 	"os"
 	"strings"
 	"time"
-	"runtime/debug"
+
+	"github.com/go-errors/errors"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/dustin/go-humanize"
@@ -50,7 +51,7 @@ func Error(err error) {
 	fmt.Fprintf(os.Stderr, "%v", err)
 
 	if variables.IsDebug() {
-		debug.PrintStack()
+		fmt.Println(errors.Wrap(err, 2).ErrorStack())
 	}
 
 	fmt.Println()
