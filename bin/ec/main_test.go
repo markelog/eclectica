@@ -213,11 +213,10 @@ var _ = Describe("main", func() {
 		BeforeEach(func() {
 			fmt.Println()
 
-			fmt.Println("Removing node@6.4.0")
-
-			fmt.Println("Install" + mainVersion + " version")
+			fmt.Println("Install " + mainVersion + " version")
 			Execute("go", "run", path, "node@"+mainVersion)
 
+			fmt.Println("Removing node@6.4.0")
 			Execute("go", "run", path, "rm", "node@6.4.0")
 			fmt.Println("Removed")
 		})

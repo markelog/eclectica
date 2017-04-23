@@ -50,7 +50,7 @@ func (node Node) installModule(name string) (err error) {
 }
 
 func (node Node) copyModules(modules string) (err error) {
-	dest := node.modulesPath(node.Version)
+	dest := filepath.Dir(node.modulesPath(node.Version))
 
 	err = cprf.Copy(modules, dest)
 	if err != nil {
@@ -79,20 +79,25 @@ func (node Node) copyModules(modules string) (err error) {
 		linkPath := filepath.Join(previousBin, name)
 		newLink := filepath.Join(currentBin, name)
 
-		if _, err := os.Stat(newLink); err == nil {
+		_, statErr := os.Stat(newLink)
+		if statErr == nil {
 			continue
 		}
 
 		link, errLink := os.Readlink(linkPath)
-
 		if errLink != nil {
 			return errLink
 		}
 
 		newBin := filepath.Join(currentBin, name)
 
-		err = os.Symlink(link, newBin)
-		if err != nil {
+		removeErr := os.RemoveAll(newBin)
+		if removeErr != nil {
+			return removeErr
+		}
+
+		symErr := os.Symlink(link, newBin)
+		if symErr != nil {
 			return
 		}
 	}
