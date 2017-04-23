@@ -233,8 +233,22 @@ func (python Python) configure() (err error) {
 	return
 }
 
+func (python Python) touch() (err error) {
+	cmd, stdErr, stdOut := python.getCmd("make", "touch")
+
+	err = cmd.Run()
+	if err != nil {
+		return console.GetError(err, stdErr, stdOut)
+	}
+
+	return
+}
+
 func (python Python) prepare() (err error) {
 	python.Emitter.Emit("prepare")
+
+	// Ignore touch error since newest python makefile doesn't have this task
+	python.touch()
 
 	cmd, stdErr, stdOut := python.getCmd("make")
 

@@ -17,6 +17,8 @@ before_install:
   - export PATH=~/.eclectica/bin:$PATH
   - export PATH=~/.eclectica/shared/bin:$PATH
 
+  - export DEBUG=true
+
 install:
   - make install
 
@@ -56,17 +58,17 @@ matrix:
       script: "travis_wait make int-ci"
 
     - go: "1.7.1"
-      env: "TEST_LANGUAGE=python2.7"
+      env: "DEBUG=false TEST_LANGUAGE=python2.7"
       os: linux
       script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
-      env: "TEST_LANGUAGE=python2-old"
+      env: "DEBUG=false TEST_LANGUAGE=python2-old"
       os: linux
       script: "travis_wait 400 make int-ci"
 
     - go: "1.7.1"
-      env: "TEST_LANGUAGE=python3"
+      env: "DEBUG=false TEST_LANGUAGE=python3"
       os: linux
       script: "travis_wait 400 make int-ci"
 
