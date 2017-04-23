@@ -32,8 +32,17 @@ func InStyleln(name, entity string) {
 	fmt.Println()
 }
 
-func Version(version string) {
-	fmt.Println(gray, "  ", version, reset)
+func Version(args ...interface{}) {
+	var color string
+	version := args[0].(string)
+
+	if len(args) == 1 {
+		color = gray
+	} else {
+		color = ansi.ColorCode(args[1].(string))
+	}
+
+	fmt.Println(color, "  ", version, reset)
 }
 
 func CurrentVersion(version string) {

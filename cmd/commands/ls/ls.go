@@ -45,16 +45,30 @@ func run(cmd *cobra.Command, args []string) {
 	}
 }
 
+func removeIndex(s []string, index int) []string {
+	return append(s[:index], s[index+1:]...)
+}
+
 // List versions
 func listVersions(versions []string, current string) {
 	fmt.Println()
-	for _, version := range versions {
+	for i, version := range versions {
 		if current == version {
+			removeIndex(versions, i)
 			print.CurrentVersion(version)
-		} else {
-			print.Version(version)
+			break
 		}
 	}
+
+	for i, version := range versions {
+		print.Version(version)
+
+		if i == 9 {
+			print.Version("...", "white")
+			break
+		}
+	}
+
 	fmt.Println()
 }
 
