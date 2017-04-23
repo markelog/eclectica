@@ -8,6 +8,15 @@ before_install:
   - echo $PATH
   - echo $HOME
 
+  - export PATH=~/.eclectica/versions/node/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/go/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/python/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
+  - export PATH=~/.eclectica/bin:$PATH
+  - export PATH=~/.eclectica/shared/bin:$PATH
+
 install:
   - make install
 
