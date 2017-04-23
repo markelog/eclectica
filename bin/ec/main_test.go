@@ -120,10 +120,10 @@ var _ = Describe("main", func() {
 
 				result, _ := Command("node", "-v").CombinedOutput()
 
-				expected := string(result)
-				actual := "Version \"6.3.0\" was defined on \"./ec/.node-version\" path but this version is not installed"
+				actual := string(result)
+				expected := `Version "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
 
-				Expect(expected).To(ContainSubstring(actual))
+				Expect(actual).To(ContainSubstring(expected))
 
 				os.RemoveAll(versionFile)
 			})
