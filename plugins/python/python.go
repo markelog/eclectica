@@ -191,7 +191,7 @@ func (python Python) ListRemote() (result []string, err error) {
 		}
 	}
 
-	// Remove < 2.7 versions and Pre versions
+	// Remove < 2.7 versions and "Pre" versions
 	for _, element := range tmp {
 		smr, _ := semver.Make(versions.Semverify(element))
 
@@ -247,7 +247,7 @@ func (python Python) touch() (err error) {
 func (python Python) prepare() (err error) {
 	python.Emitter.Emit("prepare")
 
-	// Ignore touch error since newest python makefile doesn't have this task
+	// Ignore touch errors since newest python makefile doesn't have this task
 	python.touch()
 
 	cmd, stdErr, stdOut := python.getCmd("make")

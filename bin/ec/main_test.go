@@ -695,18 +695,21 @@ var _ = Describe("main", func() {
 					Execute("go", "run", path, "python@2.7.12")
 				})
 
-				It("should have pip installed for case when it delivered with binaries", func() {
+				It("should have pip installed when it delivered with binaries", func() {
 					command, err := Command(pipBin).CombinedOutput()
 
 					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 					Expect(err).To(BeNil())
 				})
 
-				It("should have easy_install installed for case when it delivered with binaries", func() {
-					command, err := Command(eIBin).CombinedOutput()
+				It("should have easy_install installed when it delivered with binaries", func() {
+					command, _ := Command(eIBin).CombinedOutput()
 
-					Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
-					Expect(err).To(BeNil())
+					expected := "error: No urls, filenames, or requirements specified (see --help)"
+					actual := string(command)
+
+					Expect(actual).ToNot(ContainSubstring("has not been established"))
+					Expect(actual).To(ContainSubstring(expected))
 				})
 
 				Describe("2.7.8 version", func() {
@@ -714,18 +717,21 @@ var _ = Describe("main", func() {
 						Execute("go", "run", path, "python@2.7.8")
 					})
 
-					It("should have pip installed for case when downloaded", func() {
+					It("should have pip installed when downloaded", func() {
 						command, err := Command(pipBin).CombinedOutput()
 
 						Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 						Expect(err).To(BeNil())
 					})
 
-					It("should have easy_install installed for case when downloaded", func() {
-						command, err := Command(eIBin).CombinedOutput()
+					It("should have easy_install installed when downloaded", func() {
+						command, _ := Command(eIBin).CombinedOutput()
 
-						Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
-						Expect(err).To(BeNil())
+						expected := "error: No urls, filenames, or requirements specified (see --help)"
+						actual := string(command)
+
+						Expect(actual).ToNot(ContainSubstring("has not been established"))
+						Expect(actual).To(ContainSubstring(expected))
 					})
 				})
 			})
@@ -784,18 +790,21 @@ var _ = Describe("main", func() {
 				Execute("go", "run", path, "python@3.5.2")
 			})
 
-			It("should have pip installed for case when it delivered with binaries", func() {
+			It("should have pip installed when it delivered with binaries", func() {
 				command, err := Command(pipBin).CombinedOutput()
 
 				Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
 				Expect(err).To(BeNil())
 			})
 
-			It("should have easy_install installed for case when it delivered with binaries", func() {
-				command, err := Command(eIBin).CombinedOutput()
+			It("should have easy_install installed when it delivered with binaries", func() {
+				command, _ := Command(eIBin).CombinedOutput()
 
-				Expect(strings.Contains(string(command), "has not been established")).To(Equal(false))
-				Expect(err).To(BeNil())
+				expected := "error: No urls, filenames, or requirements specified (see --help)"
+				actual := string(command)
+
+				Expect(actual).ToNot(ContainSubstring("has not been established"))
+				Expect(actual).To(ContainSubstring(expected))
 			})
 		})
 	})
