@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/markelog/eclectica/variables"
@@ -38,7 +37,7 @@ func New(command string) *Rc {
 // So in order for our env variables to be consistently exposed we need to modify both of them
 // Note: on Mac, .bash_profile is executed when new bash session is opened,
 // so we don't need to this in there
-func (rc *Rc) addLinux() error {
+func (rc *Rc) Add() error {
 	shell := variables.GetShellName()
 
 	if shell != "bash" {
@@ -77,14 +76,6 @@ func (rc *Rc) addLinux() error {
 	}
 
 	return nil
-}
-
-func (rc *Rc) Add() error {
-	if runtime.GOOS == "linux" {
-		return rc.addLinux()
-	}
-
-	return rc.add()
 }
 
 func (rc *Rc) add() error {
