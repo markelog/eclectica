@@ -341,8 +341,20 @@ func (plugin *Plugin) Current() string {
 
 // Rollback places everything back
 func (plugin *Plugin) Rollback() {
-	// path := variables.Path(plugin.name, plugin.Version)
-	// os.RemoveAll(path)
+	path := variables.Path(plugin.name, plugin.Version)
+	os.RemoveAll(path)
+
+	_, err := plugin.List()
+	if err != nil {
+		plugin.emitter.Emit("done")
+		return
+	}
+
+	bins := plugin.Bins()
+	for _, bin := range bins {
+		path = filepath.Join(variables.DefaultInstall, bin)
+		os.RemoveAll(path)
+	}
 
 	plugin.emitter.Emit("done")
 }

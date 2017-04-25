@@ -1,6 +1,7 @@
 package plugins_test
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -639,6 +640,97 @@ var _ = Describe("plugins", func() {
 			info, _ := New("node", "5.0.0").Info()
 
 			Expect(info["extension"]).To(Equal("test"))
+		})
+	})
+
+	Describe("Rollback", func() {
+		var (
+			bins              = false
+			osRemoveAll       = false
+			lastRemoveAllPath = ""
+			osRemoveCount     = 0
+
+			d         *Plugin
+			guardList *monkey.PatchGuard
+			guardBins *monkey.PatchGuard
+			pType     = reflect.TypeOf(d)
+		)
+
+		BeforeEach(func() {
+
+			guardBins = monkey.PatchInstanceMethod(pType, "Bins",
+				func(plugin *Plugin) []string {
+					bins = true
+					return []string{"test"}
+				},
+			)
+
+			monkey.Patch(os.RemoveAll, func(path string) error {
+				lastRemoveAllPath = path
+				osRemoveAll = true
+				osRemoveCount = osRemoveCount + 1
+				return nil
+			})
+
+		})
+
+		AfterEach(func() {
+			bins = false
+			osRemoveAll = false
+			lastRemoveAllPath = ""
+			osRemoveCount = 0
+
+			monkey.Unpatch(os.RemoveAll)
+
+			guardList.Unpatch()
+			guardBins.Unpatch()
+			guardList.Unpatch()
+		})
+
+		It("doesn't try to remove binaries when there is a version to fallback on", func() {
+			version := "6.8.0"
+			eventCalled := false
+
+			guardList = monkey.PatchInstanceMethod(pType, "List",
+				func(plugin *Plugin) ([]string, error) {
+					return nil, errors.New("test")
+				},
+			)
+
+			p := New("node", version)
+			p.Events().On("done", func() {
+				eventCalled = true
+			})
+
+			p.Rollback()
+
+			Expect(eventCalled).To(Equal(true))
+			Expect(bins).To(Equal(false))
+			Expect(osRemoveCount).To(Equal(1))
+			Expect(lastRemoveAllPath).Should(ContainSubstring("versions/node/" + version))
+		})
+
+		It("removes binaries when there is no version to fallback on", func() {
+			version := "6.8.0"
+			eventCalled := false
+
+			guardList = monkey.PatchInstanceMethod(pType, "List",
+				func(plugin *Plugin) ([]string, error) {
+					return []string{"test"}, nil
+				},
+			)
+
+			p := New("node", version)
+			p.Events().On("done", func() {
+				eventCalled = true
+			})
+
+			p.Rollback()
+
+			Expect(eventCalled).To(Equal(true))
+			Expect(bins).To(Equal(true))
+			Expect(osRemoveCount).To(Equal(2))
+			Expect(lastRemoveAllPath).Should(ContainSubstring(".eclectica/bin/test"))
 		})
 	})
 })
