@@ -158,7 +158,16 @@ func (plugin *Plugin) LocalInstall() (err error) {
 		return
 	}
 
-	return plugin.finishLocal()
+	err = plugin.finishLocal()
+	if err != nil {
+		return
+	}
+
+	// Start new shell from eclectica if needed
+	// note: should be the last action
+	init.RestartShell()
+
+	return
 }
 
 func (plugin Plugin) finishLocal() (err error) {
@@ -184,10 +193,6 @@ func (plugin Plugin) finishLocal() (err error) {
 	}
 
 	plugin.emitter.Emit("done")
-
-	// Start new shell from eclectica if needed
-	// note: should be the last action
-	// init.RestartShell()
 
 	return
 }
@@ -228,7 +233,16 @@ func (plugin *Plugin) Install() (err error) {
 		return
 	}
 
-	return plugin.finishInstall()
+	err = plugin.finishInstall()
+	if err != nil {
+		return
+	}
+
+	// Start new shell from eclectica if needed
+	// note: should be the last action
+	init.RestartShell()
+
+	return
 }
 
 func (plugin Plugin) finishInstall() (err error) {
@@ -243,10 +257,6 @@ func (plugin Plugin) finishInstall() (err error) {
 	}
 
 	plugin.emitter.Emit("done")
-
-	// Start new shell from eclectica if needed
-	// note: should be the last action
-	// init.RestartShell()
 
 	return
 }

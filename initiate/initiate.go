@@ -1,9 +1,7 @@
 package initiate
 
 import (
-	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -59,15 +57,6 @@ func (init *Init) needRestartShell() bool {
 	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
 		return true
 	}
-
-	ecPath := fmt.Sprintf("/%s/%s", ".eclectica/bin", init.language)
-	output, _ := exec.Command("type", init.language).Output()
-	out := string(output)
-
-	if strings.Contains(out, ecPath) == false {
-		return true
-	}
-
 	return false
 }
 
