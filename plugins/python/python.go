@@ -31,11 +31,9 @@ var (
 	remoteVersion  = "https://www.python.org/ftp/python"
 	versionPattern = "^\\d+\\.\\d+(?:\\.\\d)?"
 
-	setuptoolsName = "ez_setup.py"
-	pipName        = "get-pip.py"
-	baseUrl        = "https://bootstrap.pypa.io/"
-	setuptoolsUrl  = baseUrl + setuptoolsName
-	pipUrl         = baseUrl + pipName
+	pipName = "get-pip.py"
+	baseUrl = "https://bootstrap.pypa.io/"
+	pipUrl  = baseUrl + pipName
 
 	// Hats off to inconsistent python developers
 	noNilVersions, _ = semver.Make("3.3.0")
@@ -104,9 +102,9 @@ func (python Python) PostInstall() (err error) {
 		return errors.New(string(out))
 	}
 
-	// Setup setuptools
-	setuptools := filepath.Join(path, setuptoolsName)
-	out, err = exec.Command(bin, setuptools).CombinedOutput()
+	// Install setuptools with "pip" apparently, this is best way to do it
+	pipBin := filepath.Join(variables.Path("python", python.Version), "bin", "pip")
+	out, err = exec.Command(pipBin, "install", "setuptools", "--upgrade").CombinedOutput()
 	if err != nil {
 		return errors.New(string(out))
 	}
@@ -334,19 +332,10 @@ func (python Python) getCmd(args ...interface{}) (*exec.Cmd, *bytes.Buffer, *byt
 }
 
 func (python Python) externals() (err error) {
-	var (
-		errStat error
-		base    = filepath.Join(variables.Path("python", python.Version), "bin")
-		pipBin  = filepath.Join(base, "pip")
-		eIBin   = filepath.Join(base, "easy_install")
-		path    = variables.Path("python", python.Version)
-	)
+	path := variables.Path("python", python.Version)
 
 	// Don't need to do anything if we already have pip and setuptools
-	if _, errStat = os.Lstat(pipBin); errStat == nil {
-		return
-	}
-	if _, errStat = os.Lstat(eIBin); errStat == nil {
+	if hasTools(python.Version) {
 		return
 	}
 
@@ -411,7 +400,7 @@ func (python Python) downloadExternals() (err error) {
 	}
 
 	if hasTools(python.Version) == false {
-		urls = append(urls, setuptoolsUrl, pipUrl)
+		urls = append(urls, pipUrl)
 	}
 
 	respch, err := grab.GetBatch(len(urls), path, urls...)
