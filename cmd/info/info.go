@@ -1,6 +1,7 @@
 package info
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -26,8 +27,10 @@ func Ask() (language, version string, err error) {
 
 // Ask for version
 func AskVersion(language string) (version string, err error) {
-	vers, err := plugins.New(language).List()
-	if err != nil {
+	vers := plugins.New(language).List()
+
+	if len(vers) == 0 {
+		err = errors.New("There is no installed versions")
 		return
 	}
 

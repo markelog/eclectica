@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/markelog/list"
@@ -76,8 +77,11 @@ func listVersions(versions []string, current string) {
 func listLocalVersions(language string) {
 	plugin := plugins.New(language)
 
-	versions, err := plugin.List()
-	print.Error(err)
+	versions := plugin.List()
+	if len(versions) == 0 {
+		err := errors.New("There is no installed versions")
+		print.Error(err)
+	}
 
 	current, _, err := io.GetVersion(plugin.Dots())
 	print.Error(err)
@@ -122,8 +126,7 @@ func remote(args []string) {
 
 	for _, plugin := range plugins.Plugins {
 		if args[0] == plugin {
-			print.InStyle("Language", plugin)
-			fmt.Println()
+			print.InStyleln("Language", plugin)
 			listRemoteVersions(plugin)
 			return
 		}
@@ -139,8 +142,7 @@ func local(args []string) {
 
 	for _, plugin := range plugins.Plugins {
 		if args[0] == plugin {
-			print.InStyle("Language", plugin)
-			fmt.Println()
+			print.InStyleln("Language", plugin)
 			listLocalVersions(plugin)
 			return
 		}

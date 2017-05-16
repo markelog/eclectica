@@ -107,10 +107,9 @@ var _ = Describe("main", func() {
 
 				Expect(strings.Contains(string(upperRes), "♥ 6.5.0")).To(Equal(true))
 				Expect(strings.Contains(string(upperRes), "6.4.0")).To(Equal(true))
-
 			})
 
-			It("should provide more or less error message if local install is not there", func() {
+			It("should provide more or less complete error message if local install is not there", func() {
 				pwd, _ := os.Getwd()
 				versionFile := filepath.Join(pwd, ".node-version")
 
@@ -122,6 +121,43 @@ var _ = Describe("main", func() {
 
 				actual := string(result)
 				expected := `Version "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
+
+				Expect(actual).To(ContainSubstring(expected))
+
+				os.RemoveAll(versionFile)
+			})
+
+			It("should provide more or less complete error message if mask is not satisfactory", func() {
+				pwd, _ := os.Getwd()
+				versionFile := filepath.Join(pwd, ".node-version")
+
+				Command("go", "run", path, "rm", "node@6.3.0")
+
+				io.WriteFile(versionFile, "5")
+
+				result, _ := Command("node", "-v").CombinedOutput()
+
+				actual := string(result)
+				expected := `Mask "5" was defined on "./ec/.node-version" path but none of these versions were installed`
+
+				Expect(actual).To(ContainSubstring(expected))
+
+				os.RemoveAll(versionFile)
+			})
+
+			It("should choose latest available version", func() {
+				pwd, _ := os.Getwd()
+				versionFile := filepath.Join(pwd, ".node-version")
+
+				Execute("go", "run", path, "node@5.11.0")
+				Execute("go", "run", path, "node@5.12.0")
+
+				io.WriteFile(versionFile, "5")
+
+				result, _ := Command("node", "-v").CombinedOutput()
+
+				actual := string(result)
+				expected := `v5.12.0`
 
 				Expect(actual).To(ContainSubstring(expected))
 
@@ -191,7 +227,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "rust@1.9.0").Output()
 
 			plugin := plugins.New("rust")
-			versions, _ := plugin.List()
+			versions := plugin.List()
 
 			for _, version := range versions {
 				if version == "1.9.0" {
@@ -356,7 +392,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "node@6.4.0").Output()
 
 			plugin := plugins.New("node")
-			versions, _ := plugin.List()
+			versions := plugin.List()
 
 			for _, version := range versions {
 				if version == "6.4.0" {
@@ -538,7 +574,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "ruby@2.2.1").Output()
 
 			plugin := plugins.New("ruby")
-			versions, _ := plugin.List()
+			versions := plugin.List()
 
 			for _, version := range versions {
 				if version == "2.2.1" {
@@ -602,7 +638,7 @@ var _ = Describe("main", func() {
 			Command("go", "run", path, "rm", "go@1.7.0").Output()
 
 			plugin := plugins.New("go")
-			versions, _ := plugin.List()
+			versions := plugin.List()
 
 			for _, version := range versions {
 				if version == "1.7.0" {
@@ -682,7 +718,7 @@ var _ = Describe("main", func() {
 					Command("go", "run", path, "rm", "python@2.7.12").Output()
 
 					plugin := plugins.New("python")
-					versions, _ := plugin.List()
+					versions := plugin.List()
 
 					for _, version := range versions {
 						if version == "2.7.12" {
@@ -778,7 +814,7 @@ var _ = Describe("main", func() {
 				Command("go", "run", path, "rm", "python@3.5.2").Output()
 
 				plugin := plugins.New("python")
-				versions, _ := plugin.List()
+				versions := plugin.List()
 
 				for _, version := range versions {
 					if version == "3.5.2" {

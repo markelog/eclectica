@@ -13,6 +13,7 @@ import (
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/variables"
+	"github.com/markelog/eclectica/versions"
 )
 
 // Pipe results of command execution to parent and
@@ -44,23 +45,63 @@ func getRelativePath(dotPath string) string {
 	return "./" + filepath.Join(dir, filepath.Base(dotPath))
 }
 
+func getVersion(language string) (version, dotPath string) {
+	plugin := plugins.New(language)
+	dotFiles := plugin.Dots()
+
+	version, dotPath, err := io.GetVersion(dotFiles)
+	print.Error(err)
+
+	if version == "current" {
+		return
+	}
+
+	if versions.IsPartial(version) == false {
+		return version, dotPath
+	}
+
+	vers := plugin.List()
+	if len(vers) == 0 {
+		notInstalled(version, dotPath)
+	}
+
+	found, err := versions.Latest(version, vers)
+	if err != nil {
+		notInstalled(version, dotPath)
+	}
+
+	return found, dotPath
+}
+
+func notInstalled(version, dotPath string) {
+	var (
+		start  = "Version \"" + version + "\" "
+		ending = "path but this version is not installed"
+	)
+
+	// Different error message for the partial version
+	if versions.IsPartial(version) {
+		start = "Mask \"" + version + "\" "
+		ending = "path but none of these versions were installed"
+	}
+
+	err := errors.New(start + "was defined on \"" + getRelativePath(dotPath) + "\" " + ending)
+
+	print.Error(err)
+}
+
 func main() {
 	_, name := path.Split(os.Args[0])
 
 	language := plugins.SearchBin(name)
-	dotFiles := plugins.Dots(language)
+	version, dotPath := getVersion(language)
 	base := variables.Home()
-
-	version, dotPath, err := io.GetVersion(dotFiles)
-	print.Error(err)
 
 	pathPart := filepath.Join(base, language, version)
 	binPath := filepath.Join(pathPart, "bin", name)
 
 	if _, err := os.Stat(binPath); os.IsNotExist(err) {
-		err = errors.New("Version \"" + version + "\" was defined on \"" +
-			getRelativePath(dotPath) + "\" path but this version is not installed")
-		print.Error(err)
+		notInstalled(version, dotPath)
 	}
 
 	args := []string{binPath}
@@ -70,7 +111,9 @@ func main() {
 
 	setCmd(cmd, language, version)
 
-	err = cmd.Run()
+	err := cmd.Run()
+
+	// Pass the exit code back
 	if sysErr, ok := err.(*exec.ExitError); ok {
 		if status, ok := sysErr.Sys().(syscall.WaitStatus); ok {
 			os.Exit(status.ExitStatus())

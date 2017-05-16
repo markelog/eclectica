@@ -14,7 +14,7 @@ import (
 var _ = Describe("io", func() {
 	Describe("FindDotFile", func() {
 		It("Should find .nvmrc file for nodejs", func() {
-			dots := plugins.Dots("node")
+			dots := plugins.New("node").Dots()
 			path, _ := filepath.Abs("../testdata/io/node-with-nvm/")
 			result, _ := FindDotFile(dots, path)
 
@@ -24,7 +24,7 @@ var _ = Describe("io", func() {
 
 	Describe("GetVersion", func() {
 		It("Should get version for node from .nvmrc file", func() {
-			dots := plugins.Dots("node")
+			dots := plugins.New("node").Dots()
 			path, _ := filepath.Abs("../testdata/io/node-with-nvm/")
 			result, dotPath, _ := GetVersion(dots, path)
 

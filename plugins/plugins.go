@@ -339,22 +339,20 @@ func (plugin *Plugin) Current() string {
 	return variables.CurrentVersion(plugin.name)
 }
 
-// Rollback places everything back
+// Rollback places everything back as it was for this language & version
 func (plugin *Plugin) Rollback() {
 	path := variables.Path(plugin.name, plugin.Version)
 	os.RemoveAll(path)
 
-	_, err := plugin.List()
-	if err != nil {
+	// If before there was more versions installed, then we can exit right here
+	versions := plugin.List()
+	if len(versions) > 0 {
 		plugin.emitter.Emit("done")
 		return
 	}
 
-	bins := plugin.Bins()
-	for _, bin := range bins {
-		path = filepath.Join(variables.DefaultInstall, bin)
-		os.RemoveAll(path)
-	}
+	// If before there was no versions installed, then we have also remove bin proxy
+	plugin.removeProxy()
 
 	plugin.emitter.Emit("done")
 }
@@ -384,13 +382,9 @@ func (plugin *Plugin) Interrupt() {
 	}()
 }
 
-func (plugin *Plugin) List() (vers []string, err error) {
+func (plugin *Plugin) List() (vers []string) {
 	path := variables.Prefix(plugin.name)
 	vers = io.ListVersions(path)
-
-	if len(vers) == 0 {
-		err = errors.New("There is no installed versions")
-	}
 
 	return
 }
@@ -429,13 +423,11 @@ func (plugin *Plugin) Remove() (err error) {
 		return err
 	}
 
-	_, err = plugin.List()
-	if err == nil {
+	// If there more installed versions of the same language,
+	// do not remove base + bin proxy for this language and exit early
+	versions := plugin.List()
+	if len(versions) > 0 {
 		return nil
-	}
-
-	if err.Error() != "There is no installed versions" {
-		return err
 	}
 
 	err = plugin.removeProxy()
@@ -635,9 +627,4 @@ func SearchBin(name string) string {
 	}
 
 	return ""
-}
-
-// This one exists only to support nvm's `.nvmrc`
-func Dots(name string) []string {
-	return New(name).Dots()
 }

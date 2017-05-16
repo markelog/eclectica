@@ -1,7 +1,6 @@
 package plugins_test
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -51,15 +50,6 @@ var _ = Describe("plugins", func() {
 		})
 	})
 
-	Describe("Dots", func() {
-		It("should return dot files for node", func() {
-			for _, language := range Plugins {
-				typa := reflect.TypeOf(Dots(language))
-				Expect(fmt.Sprintf("%s", typa)).To(Equal("[]string"))
-			}
-		})
-	})
-
 	Describe("Remove", func() {
 		var (
 			list        = false
@@ -95,9 +85,9 @@ var _ = Describe("plugins", func() {
 			)
 
 			guardList = monkey.PatchInstanceMethod(pType, "List",
-				func(plugin *Plugin) ([]string, error) {
+				func(plugin *Plugin) []string {
 					list = true
-					return nil, resList
+					return []string{"test"}
 				},
 			)
 
@@ -560,9 +550,9 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("returns error if there is no installed versions", func() {
-			_, err := plugin.List()
+			vers := plugin.List()
 
-			Expect(err).Should(MatchError("There is no installed versions"))
+			Expect(len(vers)).To(Equal(0))
 		})
 	})
 
@@ -692,8 +682,8 @@ var _ = Describe("plugins", func() {
 			eventCalled := false
 
 			guardList = monkey.PatchInstanceMethod(pType, "List",
-				func(plugin *Plugin) ([]string, error) {
-					return nil, errors.New("test")
+				func(plugin *Plugin) []string {
+					return []string{"test"}
 				},
 			)
 
@@ -715,8 +705,8 @@ var _ = Describe("plugins", func() {
 			eventCalled := false
 
 			guardList = monkey.PatchInstanceMethod(pType, "List",
-				func(plugin *Plugin) ([]string, error) {
-					return []string{"test"}, nil
+				func(plugin *Plugin) []string {
+					return []string{}
 				},
 			)
 
