@@ -46,18 +46,13 @@ func run(cmd *cobra.Command, args []string) {
 	}
 }
 
-func removeIndex(s []string, index int) []string {
-	return append(s[:index], s[index+1:]...)
-}
-
 // List versions
 func listVersions(versions []string, current string) {
 	fmt.Println()
 	for i, version := range versions {
 		if current == version {
-			removeIndex(versions, i)
 			print.CurrentVersion(version)
-			break
+			continue
 		}
 
 		print.Version(version)
@@ -76,6 +71,7 @@ func listLocalVersions(language string) {
 	plugin := plugins.New(language)
 
 	versions := plugin.List()
+
 	if len(versions) == 0 {
 		err := errors.New("There is no installed versions")
 		print.Error(err)
