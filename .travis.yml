@@ -24,99 +24,99 @@ script:
   - make test
 
 go:
-  - "1.7.1"
+  - "1.8.1"
 
 matrix:
   include:
 
     # for Linux
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=main"
       os: linux
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=node"
       os: linux
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=rust"
       os: linux
       script: "travis_wait 40 make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=ruby"
       os: linux
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=go"
       os: linux
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=python2.7"
       os: linux
       script: "travis_wait 400 make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=python2-old"
       os: linux
       script: "travis_wait 400 make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=python3"
       os: linux
       script: "travis_wait 400 make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=elm"
       os: linux
       script: "travis_wait make int-ci"
 
     # for OSX
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=main"
       os: osx
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=node"
       os: osx
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=rust"
       os: osx
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=ruby"
       os: osx
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=go"
       os: osx
       script: "travis_wait make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=python2.7"
       os: osx
       script: "travis_wait 400 make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=python2-old"
       os: osx
       script: "travis_wait 400 make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=python3"
       os: osx
       script: "travis_wait 400 make int-ci"
 
-    - go: "1.7.1"
+    - go: "1.8.1"
       env: "TEST_LANGUAGE=elm"
       os: osx
       script: "travis_wait make int-ci"
