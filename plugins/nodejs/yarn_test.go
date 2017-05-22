@@ -13,6 +13,7 @@ import (
 
 	"github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/nodejs"
+	"github.com/markelog/eclectica/variables"
 )
 
 var _ = Describe("yarn", func() {
@@ -79,6 +80,12 @@ var _ = Describe("yarn", func() {
 	})
 
 	It("installs yarn", func() {
+		monkey.Patch(variables.TempDir, func() string {
+			path, _ := os.Getwd()
+
+			return path
+		})
+
 		working, err := (&Node{Version: "6.10.0"}).Yarn()
 
 		Expect(grabGet).To(Equal(true))
@@ -89,5 +96,7 @@ var _ = Describe("yarn", func() {
 
 		Expect(working).To(Equal(true))
 		Expect(err).To(BeNil())
+
+		monkey.Unpatch(variables.TempDir())
 	})
 })

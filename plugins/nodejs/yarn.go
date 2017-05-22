@@ -35,15 +35,21 @@ func (node Node) isYarnPossible() bool {
 }
 
 func (node Node) Yarn() (ok bool, err error) {
-	path := variables.Path("node", node.Version)
-	modules := filepath.Join(path, "lib/node_modules")
-	dist := filepath.Join(modules, "yarn-archive")
-	temp := filepath.Join(modules, "yarn-temp")
-	from := filepath.Join(temp, "dist/")
-	dest := filepath.Join(modules, "yarn")
+	var (
+		path    = variables.Path("node", node.Version)
+		modules = filepath.Join(path, "lib/node_modules")
+		dist    = filepath.Join(variables.TempDir(), "yarn")
+		temp    = filepath.Join(modules, "yarn-temp")
+		from    = filepath.Join(temp, "dist/")
+		dest    = filepath.Join(modules, "yarn")
+	)
 
 	if node.isYarnPossible() == false {
 		return true, errors.New("\"" + node.Version + "\" version is not supported by yarn")
+	}
+
+	if _, statErr := os.Stat(dist); statErr == nil {
+		return
 	}
 
 	err = node.download(dist)
@@ -61,7 +67,6 @@ func (node Node) Yarn() (ok bool, err error) {
 		return
 	}
 
-	os.RemoveAll(dist)
 	os.RemoveAll(temp)
 
 	current := filepath.Join(modules, "yarn/bin/yarn.js")
