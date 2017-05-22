@@ -59,9 +59,7 @@ func listVersions(versions []string, current string) {
 			print.CurrentVersion(version)
 			break
 		}
-	}
 
-	for i, version := range versions {
 		print.Version(version)
 
 		if i == 9 {

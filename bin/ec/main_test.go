@@ -80,6 +80,18 @@ var _ = Describe("main", func() {
 			})
 		})
 
+		Describe("ec ls", func() {
+			It("should not double list the package", func() {
+				Execute("go", "run", path, "rm", "node@5.12.0")
+				Execute("go", "run", path, "node@5")
+
+				command, _ := Command("go", "run", path, "ls", "node").Output()
+
+				Expect(string(command)).To(ContainSubstring("♥ 5.12.0"))
+				Expect(string(command)).ToNot(ContainSubstring("  5.12.0"))
+			})
+		})
+
 		Describe("local", func() {
 			It("should install version but don't switch to it globally", func() {
 				current := Command("go", "run", path, "ls", "node")
