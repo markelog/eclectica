@@ -17,8 +17,8 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/blang/semver"
-	"github.com/cavaliercoder/grab"
 	"github.com/chuckpreslar/emission"
+	"gopkg.in/cavaliercoder/grab.v1"
 
 	"github.com/markelog/eclectica/console"
 	"github.com/markelog/eclectica/plugins/python/patch"

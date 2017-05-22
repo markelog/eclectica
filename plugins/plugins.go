@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"path/filepath"
 
-	"github.com/cavaliercoder/grab"
 	"github.com/chuckpreslar/emission"
 	"github.com/kardianos/osext"
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"
+	"gopkg.in/cavaliercoder/grab.v1"
 
 	"github.com/markelog/eclectica/initiate"
 	"github.com/markelog/eclectica/io"

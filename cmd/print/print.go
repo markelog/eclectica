@@ -8,11 +8,11 @@ import (
 
 	"github.com/go-errors/errors"
 
-	"github.com/cavaliercoder/grab"
 	"github.com/dustin/go-humanize"
 	"github.com/markelog/curse"
 	"github.com/markelog/eclectica/variables"
 	"github.com/mgutz/ansi"
+	"gopkg.in/cavaliercoder/grab.v1"
 )
 
 var (

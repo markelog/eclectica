@@ -7,9 +7,9 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/bouk/monkey"
-	"github.com/cavaliercoder/grab"
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"
+	"gopkg.in/cavaliercoder/grab.v1"
 
 	"github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/nodejs"
