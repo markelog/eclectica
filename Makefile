@@ -62,6 +62,7 @@ tag:
 
 release:
 	@echo "[+] releasing"
+	@$(MAKE) clean
 	@$(MAKE) test
 	@$(MAKE) build
 	@$(MAKE) tag
