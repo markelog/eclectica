@@ -49,31 +49,39 @@ var _ = Describe("main", func() {
 			Expect(strings.Contains(output, "6.x")).To(Equal(true))
 		})
 
-		It("should support install with partial versions (major)", func() {
-			Execute("go", "run", path, "rm", "node@5.12.0")
-			Execute("go", "run", path, "node@5")
+		Describe("partial install", func() {
+			BeforeEach(func() {
+				Execute("go", "run", path, "rm", "node@5.12.0")
+			})
 
-			command, _ := Command("go", "run", path, "ls", "node").Output()
+			AfterEach(func() {
+				Execute("go", "run", path, "rm", "node@5.12.0")
+			})
 
-			Expect(strings.Contains(string(command), "♥ 5.12.0")).To(Equal(true))
-		})
+			It("should support install with partial versions (major)", func() {
+				Execute("go", "run", path, "node@5")
 
-		It("should support install with partial versions (minor)", func() {
-			Execute("go", "run", path, "rm", "node@5.12.0")
-			Execute("go", "run", path, "node@5.12")
+				command, _ := Command("go", "run", path, "ls", "node").Output()
 
-			command, _ := Command("go", "run", path, "ls", "node").Output()
+				Expect(strings.Contains(string(command), "♥ 5.12.0")).To(Equal(true))
+			})
 
-			Expect(strings.Contains(string(command), "♥ 5.12.0")).To(Equal(true))
+			It("should support install with partial versions (minor)", func() {
+				Execute("go", "run", path, "node@5.12")
+
+				command, _ := Command("go", "run", path, "ls", "node").Output()
+
+				Expect(strings.Contains(string(command), "♥ 5.12.0")).To(Equal(true))
+			})
 		})
 
 		Describe("ec rm", func() {
-			It("should remove version", func() {
+			BeforeEach(func() {
 				Execute("go", "run", path, "node@6.5.0")
-				Execute("go", "run", path, "node@6.4.0")
+			})
 
+			It("should remove version", func() {
 				Execute("go", "run", path, "rm", "node@6.5.0")
-
 				command, _ := Command("go", "run", path, "ls", "node").Output()
 
 				Expect(strings.Contains(string(command), "6.5.0")).To(Equal(false))
@@ -81,6 +89,15 @@ var _ = Describe("main", func() {
 		})
 
 		Describe("ec ls", func() {
+			BeforeEach(func() {
+				Execute("go", "run", path, "rm", "node@5.12.0")
+				Execute("go", "run", path, "node@5")
+			})
+
+			AfterEach(func() {
+				Execute("go", "run", path, "rm", "node@5.12.0")
+			})
+
 			It("should not double list the package", func() {
 				Execute("go", "run", path, "rm", "node@5.12.0")
 				Execute("go", "run", path, "node@5")
@@ -93,87 +110,122 @@ var _ = Describe("main", func() {
 		})
 
 		Describe("local", func() {
-			It("should install version but don't switch to it globally", func() {
-				current := Command("go", "run", path, "ls", "node")
+			Describe("vs global for 6.x versions", func() {
+				var (
+					pwd         string
+					versionFile string
+				)
 
-				pwd, _ := os.Getwd()
-				upper := Command("go", "run", path, "ls", "node")
-				upper.Dir = filepath.Join(pwd, "..")
+				BeforeEach(func() {
+					pwd, _ = os.Getwd()
+					versionFile = filepath.Join(pwd, ".node-version")
+				})
 
-				versionFile := filepath.Join(pwd, ".node-version")
+				AfterEach(func() {
+					Execute("go", "run", path, "rm", "node@6.5.0")
+					Execute("go", "run", path, "rm", "node@6.4.0")
 
-				Execute("go", "run", path, "node@6.5.0")
-				Execute("go", "run", path, "node@6.4.0", "-l")
+					if _, err := os.Stat(versionFile); err == nil {
+						os.RemoveAll(versionFile)
+					}
+				})
 
-				upperRes, _ := upper.CombinedOutput()
-				currentRes, _ := current.CombinedOutput()
+				It("should install version but don't switch to it globally", func() {
+					current := Command("go", "run", path, "ls", "node")
 
-				if _, err := os.Stat(versionFile); err != nil {
-					Expect(true).To(Equal(false))
-				} else {
+					upper := Command("go", "run", path, "ls", "node")
+					upper.Dir = filepath.Join(pwd, "..")
+
+					Execute("go", "run", path, "node@6.5.0")
+					Execute("go", "run", path, "node@6.4.0", "-l")
+
+					upperRes, _ := upper.CombinedOutput()
+					currentRes, _ := current.CombinedOutput()
+
+					_, err := os.Stat(versionFile)
+					Expect(err).To(BeNil())
+
+					Expect(strings.Contains(string(currentRes), "6.5.0")).To(Equal(true))
+					Expect(strings.Contains(string(currentRes), "♥ 6.4.0")).To(Equal(true))
+
+					Expect(strings.Contains(string(upperRes), "♥ 6.5.0")).To(Equal(true))
+					Expect(strings.Contains(string(upperRes), "6.4.0")).To(Equal(true))
+				})
+			})
+
+			Describe("useful error messages", func() {
+				var (
+					pwd         string
+					versionFile string
+				)
+
+				BeforeEach(func() {
+					pwd, _ = os.Getwd()
+					versionFile = filepath.Join(pwd, ".node-version")
+
+					Execute("go", "run", path, "node@4.0.0")
+				})
+
+				AfterEach(func() {
+					Execute("go", "run", path, "rm", "node@4.0.0")
+
 					os.RemoveAll(versionFile)
-				}
+				})
 
-				Expect(strings.Contains(string(currentRes), "6.5.0")).To(Equal(true))
-				Expect(strings.Contains(string(currentRes), "♥ 6.4.0")).To(Equal(true))
+				It("should provide more or less complete error message if local install is not there", func() {
+					io.WriteFile(versionFile, "6.3.0")
 
-				Expect(strings.Contains(string(upperRes), "♥ 6.5.0")).To(Equal(true))
-				Expect(strings.Contains(string(upperRes), "6.4.0")).To(Equal(true))
+					result, _ := Command("node", "-v").CombinedOutput()
+
+					actual := string(result)
+
+					expected := `Version "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
+
+					Expect(actual).To(ContainSubstring(expected))
+				})
+
+				It("should provide more or less complete error message if mask is not satisfactory", func() {
+					pwd, _ := os.Getwd()
+					versionFile := filepath.Join(pwd, ".node-version")
+
+					io.WriteFile(versionFile, "5")
+
+					result, _ := Command("node", "-v").CombinedOutput()
+
+					actual := string(result)
+					expected := `Mask "5" was defined on "./ec/.node-version" path but none of these versions were installed`
+
+					Expect(actual).To(ContainSubstring(expected))
+				})
+
 			})
 
-			It("should provide more or less complete error message if local install is not there", func() {
-				pwd, _ := os.Getwd()
-				versionFile := filepath.Join(pwd, ".node-version")
+			Describe("mask of 5 versions", func() {
+				BeforeEach(func() {
+					Execute("go", "run", path, "node@5.11.0")
+					Execute("go", "run", path, "node@5.12.0")
+				})
 
-				Command("go", "run", path, "rm", "node@6.3.0")
+				AfterEach(func() {
+					Execute("go", "run", path, "rm", "node@5.11.0")
+					Execute("go", "run", path, "rm", "node@5.12.0")
+				})
 
-				io.WriteFile(versionFile, "6.3.0")
+				It("should choose latest available version", func() {
+					pwd, _ := os.Getwd()
+					versionFile := filepath.Join(pwd, ".node-version")
 
-				result, _ := Command("node", "-v").CombinedOutput()
+					io.WriteFile(versionFile, "5")
 
-				actual := string(result)
-				expected := `Version "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
+					result, _ := Command("node", "-v").CombinedOutput()
 
-				Expect(actual).To(ContainSubstring(expected))
+					actual := string(result)
+					expected := `v5.12.0`
 
-				os.RemoveAll(versionFile)
-			})
+					Expect(actual).To(ContainSubstring(expected))
 
-			It("should provide more or less complete error message if mask is not satisfactory", func() {
-				pwd, _ := os.Getwd()
-				versionFile := filepath.Join(pwd, ".node-version")
-
-				Command("go", "run", path, "rm", "node@6.3.0")
-
-				io.WriteFile(versionFile, "5")
-
-				result, _ := Command("node", "-v").CombinedOutput()
-
-				actual := string(result)
-				expected := `Mask "5" was defined on "./ec/.node-version" path but none of these versions were installed`
-
-				Expect(actual).To(ContainSubstring(expected))
-
-				os.RemoveAll(versionFile)
-			})
-
-			It("should choose latest available version", func() {
-				pwd, _ := os.Getwd()
-				versionFile := filepath.Join(pwd, ".node-version")
-
-				Execute("go", "run", path, "node@5.11.0")
-				Execute("go", "run", path, "node@5.12.0")
-
-				io.WriteFile(versionFile, "5")
-
-				result, _ := Command("node", "-v").CombinedOutput()
-
-				actual := string(result)
-				expected := `v5.12.0`
-
-				Expect(actual).To(ContainSubstring(expected))
-
-				os.RemoveAll(versionFile)
+					os.RemoveAll(versionFile)
+				})
 			})
 		})
 	})
