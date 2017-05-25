@@ -474,6 +474,16 @@ var _ = Describe("main", func() {
 
 			Expect(string(bytes)).To(ContainSubstring("Usage: yarn [command] [flags]"))
 		})
+
+		It("should still have yarn after additional installation", func() {
+			Execute("go", "run", path, "node@6.4.0")
+
+			yarnBin := filepath.Join(variables.Path("node", "6.4.0"), "bin/yarn")
+
+			bytes, _ := Command(yarnBin, "--help").CombinedOutput()
+
+			Expect(string(bytes)).To(ContainSubstring("Usage: yarn [command] [flags]"))
+		})
 	})
 
 	Describe("elm", func() {

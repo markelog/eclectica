@@ -36,30 +36,28 @@ func (node Node) isYarnPossible() bool {
 
 func (node Node) Yarn() (ok bool, err error) {
 	var (
-		path    = variables.Path("node", node.Version)
-		modules = filepath.Join(path, "lib/node_modules")
-		dist    = filepath.Join(variables.TempDir(), "yarn")
-		temp    = filepath.Join(modules, "yarn-temp")
-		from    = filepath.Join(temp, "dist/")
-		dest    = filepath.Join(modules, "yarn")
+		path       = variables.Path("node", node.Version)
+		modules    = filepath.Join(path, "lib/node_modules")
+		archived   = filepath.Join(variables.TempDir(), "yarn-archived")
+		unarchived = filepath.Join(variables.TempDir(), "yarn-unarchived")
+		from       = filepath.Join(unarchived, "dist/")
+		dest       = filepath.Join(modules, "yarn")
 	)
 
 	if node.isYarnPossible() == false {
 		return true, errors.New("\"" + node.Version + "\" version is not supported by yarn")
 	}
 
-	if _, statErr := os.Stat(dist); statErr == nil {
-		return
-	}
+	if _, statErr := os.Stat(unarchived); statErr != nil {
+		err = node.download(archived)
+		if err != nil {
+			return
+		}
 
-	err = node.download(dist)
-	if err != nil {
-		return
-	}
-
-	err = archive.Extract(dist, temp)
-	if err != nil {
-		return
+		err = archive.Extract(archived, unarchived)
+		if err != nil {
+			return
+		}
 	}
 
 	err = cprf.Copy(from+"/", dest)
@@ -67,7 +65,7 @@ func (node Node) Yarn() (ok bool, err error) {
 		return
 	}
 
-	os.RemoveAll(temp)
+	os.RemoveAll(archived)
 
 	current := filepath.Join(modules, "yarn/bin/yarn.js")
 	base := filepath.Join(path, "bin/yarn")
