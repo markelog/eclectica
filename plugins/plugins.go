@@ -207,11 +207,6 @@ func (plugin *Plugin) Install() (err error) {
 		return errors.New("Version was not defined")
 	}
 
-	// If this is already a current version we can safely say this one is installed
-	if plugin.Version == plugin.Current() {
-		return nil
-	}
-
 	// Handle CTRL+C signal
 	plugin.Interrupt()
 
@@ -223,9 +218,21 @@ func (plugin *Plugin) Install() (err error) {
 		return
 	}
 
+	// If this is already a current version we can safely say this one is installed
+	if plugin.Version == plugin.Current() {
+		init.RestartShell()
+		return nil
+	}
+
 	// If it was already installed, just switch @current link if needed
 	if plugin.IsInstalled() {
-		return plugin.finishInstall()
+		err = plugin.finishInstall()
+		if err != nil {
+			return
+		}
+
+		init.RestartShell()
+		return
 	}
 
 	err = plugin.Done()

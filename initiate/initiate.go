@@ -14,21 +14,31 @@ import (
 type Init struct {
 	language           string
 	plugins            []string
+	command            string
 	shouldRestartShell bool
+	rc                 *rc.Rc
 }
 
 func New(language string, plugins []string) *Init {
 	init := &Init{
-		language:           language,
-		plugins:            plugins,
+		language: language,
+		plugins:  plugins,
+		command: `
+
+#eclectica start
+export PATH="$(ec path)"
+#eclectica end
+
+`,
 		shouldRestartShell: false,
+		rc:                 nil,
 	}
 
 	return init
 }
 
 func (init *Init) CheckShell() {
-	init.shouldRestartShell = init.needRestartShell()
+	init.shouldRestartShell = init.isShellRestart()
 }
 
 func (init *Init) Initiate() (err error) {
@@ -37,9 +47,9 @@ func (init *Init) Initiate() (err error) {
 		return
 	}
 
-	command := init.composeCommand()
+	init.rc = rc.New(init.command)
 
-	err = rc.New(command).Add()
+	err = init.rc.Add()
 	if err != nil {
 		return
 	}
@@ -53,27 +63,27 @@ func (init *Init) RestartShell() {
 	}
 }
 
-func (init *Init) needRestartShell() bool {
-	if strings.Contains(os.Getenv("PATH"), variables.DefaultInstall) == false {
+func (init *Init) isShellRestart() bool {
+	if strings.Contains(os.Getenv("PATH"), Compose(init.plugins)) == false {
 		return true
 	}
+
 	return false
 }
 
-func (init *Init) composeCommand() string {
-	result := "# Eclectic stuff\n"
+func Compose(plugins []string) string {
+	result := ""
 
-	for _, language := range init.plugins {
-		result += "export PATH=" +
-			filepath.Join(variables.Home(), language, "current/bin") + ":$PATH\n"
+	for _, language := range plugins {
+		result += ":" + filepath.Join(variables.Home(), language, "current/bin")
 	}
 
 	// Eclectica binaries
-	result += "export PATH=" + variables.DefaultInstall + ":$PATH\n"
+	result += ":" + variables.DefaultInstall
 
 	// For shared modules
 	shared := filepath.Join(variables.Base(), "shared")
-	result += "export PATH=" + shared + "/bin:$PATH\n"
+	result += ":" + filepath.Join(shared, "bin")
 
 	return result
 }
