@@ -71,19 +71,18 @@ func (init *Init) isShellRestart() bool {
 	return false
 }
 
-func Compose(plugins []string) string {
-	result := ""
+// Composes plugin paths
+func Compose(plugins []string) (result string) {
+	// First eclectica binaries
+	result = ":" + variables.DefaultInstall
 
 	for _, language := range plugins {
 		result += ":" + filepath.Join(variables.Home(), language, "current/bin")
 	}
 
-	// Eclectica binaries
-	result += ":" + variables.DefaultInstall
-
 	// For shared modules
 	shared := filepath.Join(variables.Base(), "shared")
 	result += ":" + filepath.Join(shared, "bin")
 
-	return result
+	return
 }
