@@ -29,6 +29,13 @@ type Golang struct {
 	Emitter *emission.Emitter
 }
 
+func New(version string, emitter *emission.Emitter) *Golang {
+	return &Golang{
+		Version: version,
+		Emitter: emitter,
+	}
+}
+
 func (golang Golang) Events() *emission.Emitter {
 	return golang.Emitter
 }

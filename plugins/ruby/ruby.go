@@ -30,6 +30,13 @@ type Ruby struct {
 	Emitter *emission.Emitter
 }
 
+func New(version string, emitter *emission.Emitter) *Ruby {
+	return &Ruby{
+		Version: version,
+		Emitter: emitter,
+	}
+}
+
 func (ruby Ruby) Events() *emission.Emitter {
 	return ruby.Emitter
 }

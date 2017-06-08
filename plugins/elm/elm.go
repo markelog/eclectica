@@ -34,6 +34,13 @@ type Elm struct {
 	Emitter *emission.Emitter
 }
 
+func New(version string, emitter *emission.Emitter) *Elm {
+	return &Elm{
+		Version: version,
+		Emitter: emitter,
+	}
+}
+
 func (elm Elm) Events() *emission.Emitter {
 	return elm.Emitter
 }

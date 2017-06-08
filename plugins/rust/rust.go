@@ -31,6 +31,13 @@ type Rust struct {
 	Emitter *emission.Emitter
 }
 
+func New(version string, emitter *emission.Emitter) *Rust {
+	return &Rust{
+		Version: version,
+		Emitter: emitter,
+	}
+}
+
 func (rust Rust) Events() *emission.Emitter {
 	return rust.Emitter
 }

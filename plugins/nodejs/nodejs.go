@@ -33,6 +33,13 @@ type Node struct {
 	Emitter  *emission.Emitter
 }
 
+func New(version string, emitter *emission.Emitter) *Node {
+	return &Node{
+		Version: version,
+		Emitter: emitter,
+	}
+}
+
 func (node Node) Events() *emission.Emitter {
 	return node.Emitter
 }

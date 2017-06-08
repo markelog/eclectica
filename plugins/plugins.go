@@ -27,17 +27,6 @@ import (
 	"github.com/markelog/eclectica/plugins/rust"
 )
 
-var (
-	Plugins = []string{
-		"node",
-		"rust",
-		"ruby",
-		"go",
-		"python",
-		"elm",
-	}
-)
-
 type Pkg interface {
 	PreDownload() error
 	PreInstall() error
@@ -61,6 +50,17 @@ type Plugin struct {
 	info    map[string]string
 }
 
+var (
+	Plugins = []string{
+		"node",
+		"rust",
+		"ruby",
+		"go",
+		"python",
+		"elm",
+	}
+)
+
 func New(args ...string) *Plugin {
 	var (
 		version string
@@ -81,35 +81,17 @@ func New(args ...string) *Plugin {
 
 	switch {
 	case name == "node":
-		plugin.Pkg = &nodejs.Node{
-			Version: version,
-			Emitter: plugin.emitter,
-		}
+		plugin.Pkg = nodejs.New(version, plugin.emitter)
 	case name == "rust":
-		plugin.Pkg = &rust.Rust{
-			Version: version,
-			Emitter: plugin.emitter,
-		}
+		plugin.Pkg = rust.New(version, plugin.emitter)
 	case name == "ruby":
-		plugin.Pkg = &ruby.Ruby{
-			Version: version,
-			Emitter: plugin.emitter,
-		}
+		plugin.Pkg = ruby.New(version, plugin.emitter)
 	case name == "go":
-		plugin.Pkg = &golang.Golang{
-			Version: version,
-			Emitter: plugin.emitter,
-		}
+		plugin.Pkg = golang.New(version, plugin.emitter)
 	case name == "python":
-		plugin.Pkg = &python.Python{
-			Version: version,
-			Emitter: plugin.emitter,
-		}
+		plugin.Pkg = python.New(version, plugin.emitter)
 	case name == "elm":
-		plugin.Pkg = &elm.Elm{
-			Version: version,
-			Emitter: plugin.emitter,
-		}
+		plugin.Pkg = elm.New(version, plugin.emitter)
 	}
 
 	if len(args) == 2 {

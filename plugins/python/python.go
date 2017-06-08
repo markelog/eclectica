@@ -49,6 +49,13 @@ type Python struct {
 	Emitter *emission.Emitter
 }
 
+func New(version string, emitter *emission.Emitter) *Python {
+	return &Python{
+		Version: version,
+		Emitter: emitter,
+	}
+}
+
 func (python Python) Events() *emission.Emitter {
 	return python.Emitter
 }
