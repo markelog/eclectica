@@ -21,8 +21,8 @@ import (
 )
 
 var (
-	Link    = "https://github.com/yyuu/pyenv/tree/master/plugins/python-build/share/python-build/patches"
-	RawLink = "https://raw.githubusercontent.com/yyuu/pyenv/master/plugins/python-build/share/python-build/patches"
+	Link    = "https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build/patches"
+	RawLink = "https://raw.githubusercontent.com/pyenv/pyenv/master/plugins/python-build/share/python-build/patches"
 )
 
 func Urls(version string) (result []string, err error) {

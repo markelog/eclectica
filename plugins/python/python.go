@@ -129,7 +129,12 @@ func (python Python) Info() map[string]string {
 		result    = make(map[string]string)
 		version   = python.Version
 		chosen, _ = semver.Make(python.Version)
-		urlPart   = strconv.Itoa(int(chosen.Major)) + "." + strconv.Itoa(int(chosen.Minor)) + "." + strconv.Itoa(int(chosen.Patch))
+
+		patch = strconv.Itoa(int(chosen.Patch))
+		minor = strconv.Itoa(int(chosen.Minor))
+		major = strconv.Itoa(int(chosen.Major))
+
+		urlPart = major + "." + minor + "." + patch
 	)
 
 	// Hats off to inconsistent python developers
