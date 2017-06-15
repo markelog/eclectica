@@ -23,10 +23,10 @@ var _ = Describe("ruby", func() {
 	ruby := &Ruby{}
 
 	Describe("ListRemote", func() {
-		old := VersionsLink
+		old := VersionLink
 
 		AfterEach(func() {
-			VersionsLink = old
+			VersionLink = old
 		})
 
 		Describe("success", func() {
@@ -46,7 +46,7 @@ var _ = Describe("ruby", func() {
 					io.WriteString(w, content)
 				}))
 
-				VersionsLink = ts.URL
+				VersionLink = ts.URL
 
 				remotes, err = ruby.ListRemote()
 			})
@@ -55,14 +55,18 @@ var _ = Describe("ruby", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should have correct version values", func() {
-				Expect(remotes[0]).To(Equal("2.0.0-p451"))
+			It("should have correct first version", func() {
+				Expect(remotes).To(ContainElement("1.8.5"))
+			})
+
+			It("should have correct last version", func() {
+				Expect(remotes).To(ContainElement("2.4.1"))
 			})
 		})
 
 		Describe("fail", func() {
 			BeforeEach(func() {
-				VersionsLink = ""
+				VersionLink = ""
 				remotes, err = ruby.ListRemote()
 			})
 
