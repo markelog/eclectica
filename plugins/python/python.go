@@ -27,7 +27,7 @@ import (
 )
 
 var (
-	VersionsLink   = "https://hg.python.org/cpython/tags"
+	VersionLink    = "https://hg.python.org/cpython/tags"
 	remoteVersion  = "https://www.python.org/ftp/python"
 	versionPattern = "^\\d+\\.\\d+(?:\\.\\d)?"
 
@@ -176,7 +176,7 @@ func (rust Python) Dots() []string {
 }
 
 func (python Python) ListRemote() (result []string, err error) {
-	doc, err := goquery.NewDocument(VersionsLink)
+	doc, err := goquery.NewDocument(VersionLink)
 
 	if err != nil {
 		if _, ok := err.(net.Error); ok {

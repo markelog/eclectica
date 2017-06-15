@@ -23,10 +23,10 @@ var _ = Describe("python", func() {
 	python := &Python{}
 
 	Describe("ListRemote", func() {
-		old := VersionsLink
+		old := VersionLink
 
 		AfterEach(func() {
-			VersionsLink = old
+			VersionLink = old
 		})
 
 		Describe("success", func() {
@@ -44,7 +44,7 @@ var _ = Describe("python", func() {
 					io.WriteString(w, content)
 				}))
 
-				VersionsLink = ts.URL
+				VersionLink = ts.URL
 
 				remotes, err = python.ListRemote()
 			})
@@ -63,7 +63,7 @@ var _ = Describe("python", func() {
 
 		Describe("fail", func() {
 			BeforeEach(func() {
-				VersionsLink = ""
+				VersionLink = ""
 				remotes, err = python.ListRemote()
 			})
 
