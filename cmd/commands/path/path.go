@@ -27,7 +27,7 @@ func run(c *cobra.Command, args []string) {
 	if strings.Contains(path, addition) {
 		fmt.Print(path)
 	} else {
-		fmt.Print(path + ":" + addition)
+		fmt.Print(addition + ":" + path)
 	}
 
 	os.Exit(0)

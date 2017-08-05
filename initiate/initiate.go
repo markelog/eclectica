@@ -20,7 +20,7 @@ type Init struct {
 }
 
 func New(language string, plugins []string) *Init {
-	GOROOT := filepath.Join(variables.Home(), "go", "current/bin")
+	GOROOT := filepath.Join(variables.Home(), "go", "current")
 
 	init := &Init{
 		language: language,
