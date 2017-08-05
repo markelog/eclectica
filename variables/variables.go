@@ -32,7 +32,7 @@ func TempDir() (tmp string) {
 // IsDebug checks if eclectica in the debug state
 // i.e. will print more info when executing commands
 func IsDebug() bool {
-	return os.Getenv("DEBUG") == "true"
+	return os.Getenv("EC_DEBUG") == "true"
 }
 
 func nameAndVersion(args []interface{}) (string, string) {
