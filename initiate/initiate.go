@@ -20,6 +20,8 @@ type Init struct {
 }
 
 func New(language string, plugins []string) *Init {
+	GOROOT := filepath.Join(variables.Home(), "go", "current/bin")
+
 	init := &Init{
 		language: language,
 		plugins:  plugins,
@@ -27,6 +29,7 @@ func New(language string, plugins []string) *Init {
 
 #eclectica start
 export PATH="$(ec path)"
+export GOROOT=` + GOROOT + `
 #eclectica end
 
 `,
