@@ -48,7 +48,7 @@ var _ = Describe("ruby", func() {
 		Expect(err).To(BeNil())
 	})
 
-	FIt("should install ruby 2.2.1", func() {
+	It("should install ruby 2.2.1", func() {
 		Execute("go", "run", path, "ruby@2.2.1")
 
 		ruby, _ := Command("ruby", "--version").Output()

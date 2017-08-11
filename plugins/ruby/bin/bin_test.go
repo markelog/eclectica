@@ -55,7 +55,7 @@ var _ = Describe("bin ruby", func() {
 				Expect(err).To(BeNil())
 			})
 
-			FIt("should contain 2.3.3 version", func() {
+			It("should contain 2.3.3 version", func() {
 				Expect(remotes).To(ContainElement("2.3.3"))
 			})
 		})

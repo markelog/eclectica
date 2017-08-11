@@ -241,6 +241,10 @@ func (plugin Plugin) finishInstall() (err error) {
 }
 
 func (plugin *Plugin) PostInstall() (err error) {
+	if plugin.IsInstalled() {
+		return nil
+	}
+
 	err = plugin.Proxy()
 	if err != nil {
 		plugin.Rollback()
