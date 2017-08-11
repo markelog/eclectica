@@ -339,7 +339,7 @@ var _ = Describe("plugins", func() {
 
 			Expect(current).To(Equal(true))
 			Expect(pluginSwitch).To(Equal(false))
-			Expect(isInstalled).To(Equal(false))
+			Expect(isInstalled).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(false))
 			Expect(osSymlink).To(Equal(false))
 			Expect(postInstall).To(Equal(false))

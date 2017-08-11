@@ -1,4 +1,4 @@
-package ruby_test
+package bin_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -9,5 +9,5 @@ import (
 
 func TestRuby(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Ruby Suite")
+	RunSpecs(t, "Ruby Bin Suite")
 }

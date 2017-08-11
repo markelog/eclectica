@@ -48,7 +48,7 @@ matrix:
     - go: "1.8.1"
       env: "TEST_LANGUAGE=ruby"
       os: linux
-      script: "travis_wait make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.8.1"
       env: "TEST_LANGUAGE=go"
@@ -94,7 +94,7 @@ matrix:
     - go: "1.8.1"
       env: "TEST_LANGUAGE=ruby"
       os: osx
-      script: "travis_wait make int-ci"
+      script: "travis_wait 400 make int-ci"
 
     - go: "1.8.1"
       env: "TEST_LANGUAGE=go"

@@ -1,20 +1,19 @@
-package ruby_test
+package compile_test
 
 import (
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"runtime"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	eio "github.com/markelog/eclectica/io"
-	. "github.com/markelog/eclectica/plugins/ruby"
+	. "github.com/markelog/eclectica/plugins/ruby/compile"
 )
 
-var _ = Describe("ruby", func() {
+var _ = Describe("compile ruby", func() {
 	var (
 		remotes []string
 		err     error
@@ -31,7 +30,7 @@ var _ = Describe("ruby", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := eio.Read("../../testdata/plugins/ruby/dist.html")
+				content := eio.Read("../../../testdata/plugins/ruby/compile-dist.html")
 
 				// httpmock is not incompatible with goquery :/.
 				// See https://github.com/jarcoal/httpmock/issues/18
@@ -55,12 +54,8 @@ var _ = Describe("ruby", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should have correct first version", func() {
-				Expect(remotes).To(ContainElement("1.8.5"))
-			})
-
-			It("should have correct last version", func() {
-				Expect(remotes).To(ContainElement("2.4.1"))
+			It("should contain 2.3.3 version", func() {
+				Expect(remotes).To(ContainElement("2.3.3"))
 			})
 		})
 
@@ -81,18 +76,7 @@ var _ = Describe("ruby", func() {
 			result := (&Ruby{Version: "2.2.3"}).Info()
 
 			Expect(result["filename"]).To(Equal("ruby-2.2.3"))
-
-			Expect(result["url"]).Should(ContainSubstring("https://rvm.io/binaries"))
-			Expect(result["url"]).Should(ContainSubstring("x86_64"))
-			Expect(result["url"]).Should(ContainSubstring("ruby-2.2.3.tar.bz2"))
-
-			if runtime.GOOS == "darwin" {
-				Expect(result["url"]).Should(ContainSubstring("osx"))
-			}
-
-			if runtime.GOOS == "linux" {
-				Expect(result["url"]).Should(ContainSubstring("ubuntu"))
-			}
+			Expect(result["url"]).To(Equal("https://cache.ruby-lang.org/pub/ruby/ruby-2.2.3.tar.gz"))
 		})
 	})
 })

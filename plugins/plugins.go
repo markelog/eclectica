@@ -15,6 +15,7 @@ import (
 
 	"github.com/markelog/eclectica/initiate"
 	"github.com/markelog/eclectica/io"
+	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 
@@ -27,25 +28,10 @@ import (
 	"github.com/markelog/eclectica/plugins/rust"
 )
 
-type Pkg interface {
-	PreDownload() error
-	PreInstall() error
-	Install() error
-	PostInstall() error
-	Switch() error
-	Link() error
-	Events() *emission.Emitter
-	Environment() ([]string, error)
-	ListRemote() ([]string, error)
-	Info() map[string]string
-	Bins() []string
-	Dots() []string
-}
-
 type Plugin struct {
 	name    string
 	Version string
-	Pkg     Pkg
+	Pkg     pkg.Pkg
 	emitter *emission.Emitter
 	info    map[string]string
 }
@@ -106,6 +92,10 @@ func (plugin *Plugin) PreDownload() error {
 }
 
 func (plugin *Plugin) PreInstall() error {
+	if plugin.IsInstalled() {
+		return nil
+	}
+
 	return plugin.Pkg.PreInstall()
 }
 
@@ -180,7 +170,7 @@ func (plugin Plugin) finishLocal() (err error) {
 }
 
 func (plugin *Plugin) Install() (err error) {
-	err = plugin.Pkg.PreInstall()
+	err = plugin.PreInstall()
 	if err != nil {
 		return
 	}

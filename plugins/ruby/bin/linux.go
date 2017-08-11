@@ -1,4 +1,4 @@
-package ruby
+package bin
 
 import (
 	"os/exec"

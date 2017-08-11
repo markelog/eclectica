@@ -602,9 +602,32 @@ var _ = Describe("main", func() {
 
 		It("should install ruby 2.2.1", func() {
 			Execute("go", "run", path, "ruby@2.2.1")
-			command, _ := Command("go", "run", path, "ls", "ruby").Output()
 
-			Expect(strings.Contains(string(command), "♥ 2.2.1")).To(Equal(true))
+			ruby, _ := Command("ruby", "--version").Output()
+			ec, _ := Command("go", "run", path, "ls", "ruby").Output()
+
+			Expect(strings.Contains(string(ruby), "♥ 2.2.1")).To(Equal(true))
+			Expect(strings.Contains(string(ec), "2.2.1")).To(Equal(true))
+		})
+
+		It("should install ruby 2.1.5", func() {
+			Execute("go", "run", path, "ruby@2.1.5")
+
+			ruby, _ := Command("ruby", "--version").Output()
+			ec, _ := Command("go", "run", path, "ls", "ruby").Output()
+
+			Expect(strings.Contains(string(ruby), "♥ 2.1.5")).To(Equal(true))
+			Expect(strings.Contains(string(ec), "2.1.5")).To(Equal(true))
+		})
+
+		It("should install ruby 2.4.1", func() {
+			Execute("go", "run", path, "ruby@2.4.1")
+
+			ruby, _ := Command("ruby", "--version").Output()
+			ec, _ := Command("go", "run", path, "ls", "ruby").Output()
+
+			Expect(strings.Contains(string(ruby), "♥ 2.4.1")).To(Equal(true))
+			Expect(strings.Contains(string(ec), "2.4.1")).To(Equal(true))
 		})
 
 		It("should install bundler", func() {

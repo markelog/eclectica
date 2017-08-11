@@ -105,6 +105,18 @@ func WriteVersion(name, version string) error {
 	return io.WriteFile(path, version)
 }
 
+func Support() string {
+	return filepath.Join(Base(), "support")
+}
+
+func InstallPath() string {
+	return filepath.Join(Support(), "install")
+}
+
+func InstallLanguage(language, version string) string {
+	return filepath.Join(InstallPath(), language, version)
+}
+
 // IsInstalled checks if this version was already installed
 func IsInstalled(name, version string) bool {
 	base := Path(name, version)
