@@ -260,7 +260,7 @@ func (python Python) prepare() (err error) {
 	// Ignore touch errors since newest python makefile doesn't have this task
 	python.touch()
 
-	cmd, stdErr, stdOut := python.getCmd("make")
+	cmd, stdErr, stdOut := python.getCmd("make", "-j", "2")
 
 	err = cmd.Run()
 	if err != nil {
