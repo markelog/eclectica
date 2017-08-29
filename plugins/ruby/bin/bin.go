@@ -12,8 +12,8 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
-	"github.com/markelog/release"
 
+	"github.com/markelog/eclectica/plugins/ruby/rvm"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -95,7 +95,7 @@ func (ruby Ruby) Info() map[string]string {
 
 	result["filename"] = fmt.Sprintf("ruby-%s", ruby.Version)
 	result["extension"] = "tar.bz2"
-	result["url"] = fmt.Sprintf("%s/%s.%s", getUrl(), result["filename"], result["extension"])
+	result["url"] = fmt.Sprintf("%s/%s.%s", rvm.GetUrl(VersionLink), result["filename"], result["extension"])
 
 	return result
 }
@@ -109,7 +109,7 @@ func (ruby Ruby) Dots() []string {
 }
 
 func (ruby Ruby) ListRemote() ([]string, error) {
-	url := getUrl()
+	url := rvm.GetUrl(VersionLink)
 	doc, err := goquery.NewDocument(url)
 
 	if err != nil {
@@ -136,14 +136,4 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 	}
 
 	return result, nil
-}
-
-func getUrl() string {
-	typa, _, version := release.All()
-	arch := "x86_64"
-
-	versions := strings.Split(version, ".")
-	version = versions[0] + "." + versions[1]
-
-	return fmt.Sprintf("%s/%s/%s/%s", VersionLink, typa, version, arch)
 }

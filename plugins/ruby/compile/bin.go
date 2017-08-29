@@ -1,10 +1,9 @@
 package compile
 
 import (
-	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/markelog/archive"
 	"github.com/markelog/eclectica/io"
@@ -14,37 +13,22 @@ import (
 )
 
 var (
-	binUbuntuRubyUrl = "https://rvm.io/binaries/ubuntu/16.10/x86_64/ruby-2.2.5.tar.bz2"
-	binOSXRubyUrl    = "https://rvm.io/binaries/osx/10.12/x86_64/ruby-2.2.5.tar.bz2"
+	versionLink = "https://rvm.io/binaries"
 )
-
-func getUrl() (path string, err error) {
-	if runtime.GOOS == "linux" {
-		return binUbuntuRubyUrl, nil
-	}
-
-	if runtime.GOOS == "darwin" {
-		return binOSXRubyUrl, nil
-	}
-
-	err = errors.New("Not supported environment")
-
-	return "", err
-}
 
 func supportBin() string {
 	support := variables.Support()
 
-	return filepath.Join(support, "ruby/2.2.5/bin/ruby")
+	return filepath.Join(support, "ruby/2.1.5/bin/ruby")
 }
 
 func binRuby() (bin string, err error) {
 	var (
 		tmp        = variables.TempDir()
-		archived   = filepath.Join(tmp, "ruby-2.2.5.tar.bz2")
-		unarchived = filepath.Join(tmp, "ruby-2.2.5")
+		archived   = filepath.Join(tmp, "ruby-2.1.5.tar.bz2")
+		unarchived = filepath.Join(tmp, "ruby-2.1.5")
 		support    = filepath.Join(variables.Support(), "ruby")
-		dest       = filepath.Join(support, "2.2.5")
+		dest       = filepath.Join(support, "2.1.5")
 	)
 
 	bin = supportBin()
@@ -58,12 +42,13 @@ func binRuby() (bin string, err error) {
 		return
 	}
 
-	binRubyUrl, err := getUrl()
+	url := fmt.Sprintf("%s/ruby-2.1.5.tar.bz2", rvm.GetUrl(VersionLink))
+
 	if err != nil {
 		return
 	}
 
-	_, err = grab.Get(tmp, binRubyUrl)
+	_, err = grab.Get(tmp, url)
 	if err != nil {
 		return
 	}

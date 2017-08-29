@@ -1,9 +1,13 @@
 package rvm
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/markelog/release"
 )
 
 // RemoveArtefacts removes RVM artefacts (ignore errors)
@@ -23,4 +27,14 @@ func RemoveArtefacts(base string) (err error) {
 	}
 
 	return nil
+}
+
+func GetUrl(versionLink string) string {
+	typa, _, version := release.All()
+	arch := "x86_64"
+
+	versions := strings.Split(version, ".")
+	version = versions[0] + "." + versions[1]
+
+	return fmt.Sprintf("%s/%s/%s/%s", versionLink, typa, version, arch)
 }
