@@ -12,7 +12,7 @@ import (
 
 var (
 	LinuxDependencies = []string{
-		"make", "autoconf",
+		"make", "autoconf", "gcc-6",
 		"bison", "build-essential", "libssl-dev",
 		"libyaml-dev", "libreadline6-dev", "zlib1g-dev",
 		"libncurses5-dev", "libffi-dev", "libgdbm3",
@@ -54,7 +54,7 @@ func dealWithLinuxShell() error {
 
 	message := `Ruby cannot be installed without external Linux dependencies,
   please execute following command before trying it again (you need to do it only ` + ansi.Color("once", "red") + "):"
-	command := "sudo apt-get update && sudo apt-get install -y " + strings.Join(deps, " ")
+	command := "sudo add-apt-repository ppa:ubuntu-toolchain-r/test && sudo apt-get update && sudo apt-get install -y " + strings.Join(deps, " ")
 
 	print.Warning(message, command)
 	os.Exit(1)

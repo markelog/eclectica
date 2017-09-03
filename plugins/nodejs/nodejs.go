@@ -14,6 +14,7 @@ import (
 	"github.com/chuckpreslar/emission"
 
 	"github.com/markelog/eclectica/io"
+	"github.com/markelog/eclectica/plugins/nodejs/modules"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -83,13 +84,12 @@ func (node Node) Switch() (err error) {
 
 	node.Emitter.Emit("reapply modules")
 
-	modulesPath := node.modulesPath(previous)
-
-	if node.sameMajors() {
-		return node.copyModules(modulesPath)
+	err = modules.New(node.previous, node.Version).Install()
+	if err != nil {
+		return
 	}
 
-	return node.installModules(modulesPath)
+	return
 }
 
 func (node Node) Link() (err error) {

@@ -38,7 +38,7 @@ var _ = Describe("node", func() {
 
 			Execute("go", "run", path, "node@6.0.0")
 
-			command, _ := Command("ojm").Output()
+			command, _ := Command("ojm").CombinedOutput()
 
 			expected := "Check if site is down through isup.com"
 
@@ -50,59 +50,9 @@ var _ = Describe("node", func() {
 
 			Execute("go", "run", path, "node@5.0.0")
 
-			command, _ := Command("ojm").Output()
+			command, _ := Command("ojm").CombinedOutput()
 
 			expected := "Check if site is down through isup.com"
-
-			Expect(string(command)).Should(ContainSubstring(expected))
-		})
-
-		It("doesn't try to install global module if its already exist (ojm module)", func() {
-			Execute("npm", "install", "--global", "ojm")
-
-			Execute("go", "run", path, "node@5.0.0")
-			Execute("go", "run", path, "node@"+mainVersion)
-
-			command, _ := Command("ojm").Output()
-
-			expected := "Check if site is down through isup.com"
-
-			Expect(string(command)).Should(ContainSubstring(expected))
-		})
-
-		It("between major versions (nodemon module)", func() {
-			Execute("npm", "install", "--global", "nodemon")
-
-			Execute("go", "run", path, "node@6.0.0")
-
-			command, _ := Command("nodemon").Output()
-
-			expected := "Usage: nodemon [nodemon options] [script.js] [args]"
-
-			Expect(string(command)).Should(ContainSubstring(expected))
-		})
-
-		It("between minor versions (nodemon module)", func() {
-			Execute("npm", "install", "--global", "nodemon")
-
-			Execute("go", "run", path, "node@5.0.0")
-
-			command, _ := Command("nodemon").Output()
-
-			expected := "Usage: nodemon [nodemon options] [script.js] [args]"
-
-			Expect(string(command)).Should(ContainSubstring(expected))
-		})
-
-		It("doesn't try to install global module if its already exist (nodemon module)", func() {
-			Execute("npm", "install", "--global", "nodemon")
-
-			Execute("go", "run", path, "node@5.0.0")
-			Execute("go", "run", path, "node@"+mainVersion)
-
-			command, _ := Command("nodemon").Output()
-
-			expected := "Usage: nodemon [nodemon options] [script.js] [args]"
 
 			Expect(string(command)).Should(ContainSubstring(expected))
 		})
@@ -116,7 +66,7 @@ var _ = Describe("node", func() {
 
 		io.WriteFile(versionFile, mainVersion)
 
-		command, _ := Command("go", "run", path, "ls", "node").Output()
+		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
 		Expect(strings.Contains(string(command), "♥ 5.1.0")).To(Equal(true))
 
@@ -127,7 +77,7 @@ var _ = Describe("node", func() {
 
 	It("should install node 6.4.0", func() {
 		Execute("go", "run", path, "node@6.4.0")
-		command, _ := Command("go", "run", path, "ls", "node").Output()
+		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
 		Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
 	})
@@ -142,14 +92,14 @@ var _ = Describe("node", func() {
 
 	It("should install node 6.4.0", func() {
 		Execute("go", "run", path, "node@6.4.0")
-		command, _ := Command("go", "run", path, "ls", "node").Output()
+		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
 		Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
 	})
 
 	It("should list installed node versions", func() {
 		Execute("go", "run", path, "node@6.4.0")
-		command, _ := Command("go", "run", path, "ls", "node").Output()
+		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
 		Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
 		Expect(strings.Contains(string(command), "node-v6.4.0-darwin-x64")).To(Equal(false))
@@ -164,7 +114,7 @@ var _ = Describe("node", func() {
 
 		Execute("go", "run", path, "node@6.4.0")
 		Execute("go", "run", path, "node@"+mainVersion)
-		Command("go", "run", path, "rm", "node@6.4.0").Output()
+		Command("go", "run", path, "rm", "node@6.4.0").CombinedOutput()
 
 		plugin := plugins.New("node")
 		versions := plugin.List()

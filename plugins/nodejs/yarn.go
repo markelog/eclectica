@@ -2,6 +2,7 @@ package nodejs
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -16,7 +17,8 @@ import (
 
 var (
 	minimalForYarn, _ = semver.Make("4.0.0")
-	yarnUrl           = "https://yarnpkg.com/latest.tar.gz"
+	version           = "1.0.1"
+	yarnUrl           = fmt.Sprintf("https://yarnpkg.com/downloads/%s/yarn-v%s.tar.gz", version, version)
 )
 
 func (node Node) download(path string) (err error) {
@@ -40,7 +42,7 @@ func (node Node) Yarn() (ok bool, err error) {
 		modules    = filepath.Join(path, "lib/node_modules")
 		archived   = filepath.Join(variables.TempDir(), "yarn-archived")
 		unarchived = filepath.Join(variables.TempDir(), "yarn-unarchived")
-		from       = filepath.Join(unarchived, "dist/")
+		from       = filepath.Join(unarchived, fmt.Sprintf("yarn-v%s/", version))
 		dest       = filepath.Join(modules, "yarn")
 	)
 
