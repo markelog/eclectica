@@ -37,7 +37,7 @@ var _ = Describe("golang", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := eio.Read("../../testdata/plugins/golang/download.xml")
+				content := eio.Read("./testdata/dl.html")
 
 				// httpmock is not incompatible with goquery :/.
 				// See https://github.com/jarcoal/httpmock/issues/18
@@ -62,14 +62,7 @@ var _ = Describe("golang", func() {
 			})
 
 			It("should have correct version values", func() {
-				// :/
-				if runtime.GOOS == "darwin" {
-					Expect(remotes[0]).To(Equal("1.4.3"))
-				}
-
-				if runtime.GOOS == "linux" {
-					Expect(remotes[0]).To(Equal("1.2.2"))
-				}
+				Expect(remotes[0]).To(Equal("1.9.0"))
 			})
 
 			It("shouldn't have duplicates", func() {
@@ -80,6 +73,9 @@ var _ = Describe("golang", func() {
 					for _, secondRound := range remotes {
 						if element == secondRound {
 							i++
+							if i > 1 {
+								println(element)
+							}
 						}
 					}
 

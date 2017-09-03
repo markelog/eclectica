@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
@@ -17,7 +18,8 @@ import (
 )
 
 var (
-	VersionsLink   = "https://storage.googleapis.com/golang"
+	VersionsLink   = "https://golang.org/dl"
+	DownloadLink   = "https://storage.googleapis.com/golang"
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
 
 	bins = []string{"go", "godoc", "gofmt"}
@@ -86,7 +88,7 @@ func (golang Golang) Info() map[string]string {
 	result["version"] = version
 	result["unarchive-filename"] = "go"
 	result["filename"] = fmt.Sprintf("go%s.%s", version, platform)
-	result["url"] = fmt.Sprintf("%s/%s.tar.gz", VersionsLink, result["filename"])
+	result["url"] = fmt.Sprintf("%s/%s.tar.gz", DownloadLink, result["filename"])
 
 	return result
 }
@@ -113,21 +115,17 @@ func (golang Golang) ListRemote() ([]string, error) {
 	result := []string{}
 	rVersion := regexp.MustCompile(versionPattern)
 
-	links := doc.Find("Key")
-	platform, err := getPlatform()
-	if err != nil {
-		return nil, err
-	}
-	platform += "\\.tar\\.gz$"
-	rPlatform := regexp.MustCompile(platform)
+	doc.Find("tr:first-of-type td:first-of-type.filename a").Each(func(i int, node *goquery.Selection) {
+		text := node.Text()
 
-	for i := range links.Nodes {
-		value := links.Eq(i).Text()
-
-		if rPlatform.MatchString(value) {
-			result = append(result, rVersion.FindAllStringSubmatch(value, 1)[0][0])
+		if strings.Contains(text, "bootstrap") {
+			return
 		}
-	}
+
+		// We not checking for duplicates, since it just might create more errors
+		version := rVersion.FindAllStringSubmatch(text, 1)[0][0]
+		result = append(result, versions.Semverify(version))
+	})
 
 	return result, nil
 }
