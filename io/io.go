@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/go-errors/errors"
 )
 
 type Walker func(path string) bool
@@ -50,6 +52,7 @@ func GetVersion(args ...interface{}) (version, path string, err error) {
 
 	file, err := os.Open(path)
 	if err != nil {
+		err = errors.New(err)
 		return
 	}
 
@@ -77,6 +80,7 @@ func FindDotFile(args ...interface{}) (versionPath string, err error) {
 
 		path, err = os.Getwd()
 		if err != nil {
+			err = errors.New(err)
 			return
 		}
 	}
@@ -101,7 +105,7 @@ func CreateDir(path string) (string, error) {
 	err := os.MkdirAll(path, 0700)
 
 	if err != nil {
-		return "", err
+		return "", errors.New(err)
 	}
 
 	return path, nil
@@ -112,7 +116,7 @@ func WriteFile(path, content string) error {
 
 	err := ioutil.WriteFile(path, data, 0700)
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	return nil
@@ -150,13 +154,13 @@ func Symlink(current, base string) (err error) {
 	// Remove symlink just in case it's already present
 	err = os.RemoveAll(current)
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	// Set up new symlink
 	err = os.Symlink(base, current)
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	return nil

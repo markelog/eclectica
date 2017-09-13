@@ -2,6 +2,8 @@ package base
 
 import (
 	"github.com/chuckpreslar/emission"
+
+	"github.com/markelog/eclectica/pkg"
 )
 
 var (
@@ -12,38 +14,7 @@ var (
 type Ruby struct {
 	Version string
 	Emitter *emission.Emitter
-}
-
-func (ruby Ruby) PreDownload() error {
-	return nil
-}
-
-func (ruby Ruby) PreInstall() error {
-	return nil
-}
-
-func (ruby Ruby) Install() error {
-	return nil
-}
-
-func (ruby Ruby) PostInstall() error {
-	return nil
-}
-
-func (ruby Ruby) Switch() error {
-	return nil
-}
-
-func (ruby Ruby) Link() error {
-	return nil
-}
-
-func (ruby Ruby) Environment() (result []string, err error) {
-	return
-}
-
-func (ruby Ruby) Info() (result map[string]string) {
-	return
+	pkg.Base
 }
 
 func (ruby Ruby) Bins() []string {
@@ -52,8 +23,4 @@ func (ruby Ruby) Bins() []string {
 
 func (ruby Ruby) Dots() []string {
 	return dots
-}
-
-func (ruby Ruby) ListRemote() (result []string, err error) {
-	return
 }

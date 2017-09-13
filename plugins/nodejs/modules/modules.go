@@ -8,6 +8,7 @@ import (
 	"regexp"
 
 	"github.com/blang/semver"
+	"github.com/go-errors/errors"
 	"github.com/markelog/cprf"
 	"github.com/markelog/eclectica/variables"
 )
@@ -58,13 +59,13 @@ func (modules Modules) Install() (err error) {
 
 	packages, err := modules.List()
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	for _, name := range packages {
 		err = modules.install(name)
 		if err != nil {
-			return
+			return errors.New(err)
 		}
 	}
 
@@ -91,7 +92,7 @@ func (modules Modules) Copy() (err error) {
 
 	err = cprf.Copy(packages, dest)
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	previousBin := filepath.Join(variables.Path("node", modules.previous), "bin")

@@ -4,6 +4,7 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/go-errors/errors"
 	"github.com/mgutz/ansi"
 
 	"github.com/markelog/eclectica/cmd/print"
@@ -28,7 +29,7 @@ func dealWithShell() (err error) {
 	)
 
 	if has {
-		return
+		return errors.New(err)
 	}
 
 	message = `Golang has been installed, but it requires for git to be` +

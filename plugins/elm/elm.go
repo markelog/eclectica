@@ -1,7 +1,6 @@
 package elm
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -13,9 +12,11 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/blang/semver"
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 	"github.com/markelog/cprf"
 
 	"github.com/markelog/eclectica/io"
+	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -32,6 +33,7 @@ var (
 type Elm struct {
 	Version string
 	Emitter *emission.Emitter
+	pkg.Base
 }
 
 func New(version string, emitter *emission.Emitter) *Elm {
@@ -55,14 +57,6 @@ func (elm Elm) PreDownload() (err error) {
 	return
 }
 
-func (elm Elm) PreInstall() (err error) {
-	return
-}
-
-func (elm Elm) Install() error {
-	return nil
-}
-
 func (elm Elm) PostInstall() error {
 	path := variables.Path("elm", elm.Version)
 	binPath := filepath.Join(path, "bin")
@@ -84,18 +78,6 @@ func (elm Elm) PostInstall() error {
 	}
 
 	return nil
-}
-
-func (elm Elm) Switch() error {
-	return nil
-}
-
-func (elm Elm) Link() error {
-	return nil
-}
-
-func (elm Elm) Environment() (result []string, err error) {
-	return
 }
 
 func (elm Elm) Info() map[string]string {

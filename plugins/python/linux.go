@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/go-errors/errors"
 	"github.com/mgutz/ansi"
 
 	"github.com/markelog/eclectica/cmd/print"
@@ -22,6 +23,7 @@ var (
 func checkLinuxDependencies() (has bool, deps []string, err error) {
 	out, err := exec.Command("dpkg", "-l").Output()
 	if err != nil {
+		err = errors.New(err)
 		return
 	}
 
@@ -44,7 +46,7 @@ func dealWithLinuxShell() error {
 	has, deps, err := checkLinuxDependencies()
 
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	if has == false {

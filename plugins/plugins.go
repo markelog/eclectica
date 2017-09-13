@@ -1,13 +1,13 @@
 package plugins
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/signal"
 	"path/filepath"
 
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 	"github.com/kardianos/osext"
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"

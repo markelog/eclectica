@@ -2,7 +2,6 @@ package patch
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -13,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/console"
 	eio "github.com/markelog/eclectica/io"
@@ -36,7 +36,7 @@ func Urls(version string) (result []string, err error) {
 			return nil, errors.New("Can't establish connection")
 		}
 
-		return
+		return nil, errors.New(err)
 	}
 
 	// github API has pretty low limits :/
@@ -70,7 +70,7 @@ func Apply(path string) (err error) {
 	)
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	for _, file := range files {

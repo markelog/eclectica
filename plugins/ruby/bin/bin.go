@@ -1,7 +1,6 @@
 package bin
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -12,7 +11,9 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 
+	"github.com/markelog/eclectica/plugins/ruby/base"
 	"github.com/markelog/eclectica/plugins/ruby/rvm"
 	"github.com/markelog/eclectica/variables"
 )
@@ -28,6 +29,7 @@ var (
 type Ruby struct {
 	Version string
 	Emitter *emission.Emitter
+	base.Ruby
 }
 
 func New(version string, emitter *emission.Emitter) *Ruby {
@@ -41,33 +43,13 @@ func (ruby Ruby) Events() *emission.Emitter {
 	return ruby.Emitter
 }
 
-func (ruby Ruby) PreDownload() error {
-	return nil
-}
-
-func (ruby Ruby) PreInstall() error {
-	return nil
-}
-
-func (ruby Ruby) Install() error {
-	return nil
-}
-
 func (ruby Ruby) PostInstall() error {
 	err := removeRVMArtefacts(variables.Path("ruby", ruby.Version))
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	return dealWithShell()
-}
-
-func (ruby Ruby) Switch() error {
-	return nil
-}
-
-func (ruby Ruby) Link() error {
-	return nil
 }
 
 // Removes RVM artefacts (ignore errors)
@@ -79,17 +61,12 @@ func removeRVMArtefacts(base string) error {
 	for _, folder := range folders {
 		err := os.RemoveAll(filepath.Join(gems, folder.Name(), "cache"))
 		if err != nil {
-			return err
+			return errors.New(err)
 		}
 	}
 
 	return nil
 }
-
-func (ruby Ruby) Environment() (result []string, err error) {
-	return
-}
-
 func (ruby Ruby) Info() map[string]string {
 	result := make(map[string]string)
 
@@ -98,14 +75,6 @@ func (ruby Ruby) Info() map[string]string {
 	result["url"] = fmt.Sprintf("%s/%s.%s", rvm.GetUrl(VersionLink), result["filename"], result["extension"])
 
 	return result
-}
-
-func (ruby Ruby) Bins() []string {
-	return bins
-}
-
-func (ruby Ruby) Dots() []string {
-	return dots
 }
 
 func (ruby Ruby) ListRemote() ([]string, error) {

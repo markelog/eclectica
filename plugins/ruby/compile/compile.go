@@ -2,7 +2,6 @@ package compile
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/console"
 	"github.com/markelog/eclectica/io"

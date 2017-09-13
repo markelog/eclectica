@@ -1,7 +1,6 @@
 package rust
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,9 +9,11 @@ import (
 	"runtime"
 
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 	"github.com/markelog/cprf"
 
 	"github.com/markelog/eclectica/io"
+	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/request"
 	"github.com/markelog/eclectica/variables"
 )
@@ -29,6 +30,7 @@ var (
 type Rust struct {
 	Version string
 	Emitter *emission.Emitter
+	pkg.Base
 }
 
 func New(version string, emitter *emission.Emitter) *Rust {
@@ -40,14 +42,6 @@ func New(version string, emitter *emission.Emitter) *Rust {
 
 func (rust Rust) Events() *emission.Emitter {
 	return rust.Emitter
-}
-
-func (rust Rust) PreDownload() error {
-	return nil
-}
-
-func (rust Rust) PreInstall() error {
-	return nil
 }
 
 func (rust Rust) Install() error {
@@ -66,29 +60,13 @@ func (rust Rust) Install() error {
 
 	_, err = exec.Command(installer, "--prefix="+tmp).Output()
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	err = cprf.Copy(tmp+"/", path)
 	os.RemoveAll(tmp)
 
 	return err
-}
-
-func (rust Rust) PostInstall() error {
-	return nil
-}
-
-func (rust Rust) Switch() error {
-	return nil
-}
-
-func (rust Rust) Link() error {
-	return nil
-}
-
-func (rust Rust) Environment() (result []string, err error) {
-	return
 }
 
 func (rust Rust) Info() map[string]string {

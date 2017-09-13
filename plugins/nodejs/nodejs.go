@@ -1,7 +1,6 @@
 package nodejs
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"path/filepath"
@@ -12,8 +11,10 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/blang/semver"
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/io"
+	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/plugins/nodejs/modules"
 	"github.com/markelog/eclectica/variables"
 )
@@ -32,12 +33,14 @@ type Node struct {
 	Version  string
 	previous string
 	Emitter  *emission.Emitter
+	pkg.Base
 }
 
 func New(version string, emitter *emission.Emitter) *Node {
 	return &Node{
-		Version: version,
-		Emitter: emitter,
+		Version:  version,
+		Emitter:  emitter,
+		previous: variables.CurrentVersion("node"),
 	}
 }
 
@@ -45,31 +48,17 @@ func (node Node) Events() *emission.Emitter {
 	return node.Emitter
 }
 
-func (node Node) PreDownload() (err error) {
-	return
-}
-
-func (node *Node) PreInstall() (err error) {
-	node.previous = variables.CurrentVersion("node")
-
-	return
-}
-
-func (node Node) Install() error {
-	return nil
-}
-
 func (node Node) PostInstall() (err error) {
 	node.Emitter.Emit("post-install")
 
 	err = node.setNpm()
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	ok, err := node.Yarn()
 	if err != nil && ok == false {
-		return err
+		return errors.New(err)
 	}
 
 	return nil
@@ -89,14 +78,6 @@ func (node Node) Switch() (err error) {
 		return
 	}
 
-	return
-}
-
-func (node Node) Link() (err error) {
-	return nil
-}
-
-func (node Node) Environment() (result []string, err error) {
 	return
 }
 
@@ -126,7 +107,7 @@ func (node Node) ListRemote() ([]string, error) {
 			return nil, errors.New("Can't establish connection")
 		}
 
-		return nil, err
+		return nil, errors.New(err)
 	}
 
 	tmp := []string{}

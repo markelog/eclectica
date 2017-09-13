@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/go-errors/errors"
 	"github.com/mgutz/ansi"
 
 	"github.com/markelog/eclectica/cmd/print"
@@ -34,6 +35,7 @@ func checkXCodeDependencies() bool {
 func checkOSXDependencies() (has bool, deps []string, err error) {
 	out, err := exec.Command("brew", "list").Output()
 	if err != nil {
+		err = errors.New(err)
 		return
 	}
 

@@ -1,7 +1,6 @@
 package golang
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"

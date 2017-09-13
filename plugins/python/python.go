@@ -2,7 +2,6 @@ package python
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -18,9 +17,11 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/blang/semver"
 	"github.com/chuckpreslar/emission"
+	"github.com/go-errors/errors"
 	"gopkg.in/cavaliercoder/grab.v1"
 
 	"github.com/markelog/eclectica/console"
+	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/plugins/python/patch"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
@@ -47,6 +48,7 @@ var (
 type Python struct {
 	Version string
 	Emitter *emission.Emitter
+	pkg.Base
 }
 
 func New(version string, emitter *emission.Emitter) *Python {
@@ -58,10 +60,6 @@ func New(version string, emitter *emission.Emitter) *Python {
 
 func (python Python) Events() *emission.Emitter {
 	return python.Emitter
-}
-
-func (python Python) PreDownload() (err error) {
-	return
 }
 
 func (python Python) PreInstall() error {
@@ -119,18 +117,6 @@ func (python Python) PostInstall() (err error) {
 	return nil
 }
 
-func (python Python) Switch() error {
-	return nil
-}
-
-func (python Python) Link() error {
-	return nil
-}
-
-func (python Python) Environment() (result []string, err error) {
-	return
-}
-
 func (python Python) Info() map[string]string {
 	var (
 		result    = make(map[string]string)
@@ -183,7 +169,7 @@ func (python Python) ListRemote() (result []string, err error) {
 			return nil, errors.New("Can't establish connection")
 		}
 
-		return
+		return nil, errors.New(err)
 	}
 
 	tmp := []string{}
@@ -229,7 +215,7 @@ func (python Python) configure() (err error) {
 
 	err = python.externals()
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	cmd, stdErr, stdOut := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
@@ -354,12 +340,12 @@ func (python Python) externals() (err error) {
 	// Now try the "hard" way
 	err = python.downloadExternals()
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	err = patch.Apply(path)
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	return
@@ -377,7 +363,7 @@ func (python Python) renameLinks() (err error) {
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	for _, file := range files {
@@ -395,7 +381,7 @@ func (python Python) renameLinks() (err error) {
 
 			err = os.Symlink(absPath, newPath)
 			if err != nil {
-				return
+				return errors.New(err)
 			}
 		}
 	}
@@ -408,7 +394,7 @@ func (python Python) downloadExternals() (err error) {
 
 	urls, err := patch.Urls(python.Version)
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	if hasTools(python.Version) == false {
@@ -417,7 +403,7 @@ func (python Python) downloadExternals() (err error) {
 
 	respch, err := grab.GetBatch(len(urls), path, urls...)
 	if err != nil {
-		return
+		return errors.New(err)
 	}
 
 	// Start a ticker to update progress every 200ms
@@ -443,7 +429,7 @@ func (python Python) downloadExternals() (err error) {
 
 					if resp.Error != nil {
 						err = resp.Error
-						return
+						return errors.New(err)
 					}
 
 					// Mark completed
