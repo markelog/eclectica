@@ -62,17 +62,15 @@ func (modules Modules) Install() (err error) {
 		return errors.New(err)
 	}
 
-	for _, name := range packages {
-		err = modules.install(name)
-		if err != nil {
-			return errors.New(err)
-		}
+	err = modules.install(packages...)
+	if err != nil {
+		return errors.New(err)
 	}
 
 	return
 }
 
-func (modules Modules) install(name string) (err error) {
+func (modules Modules) install(names ...string) (err error) {
 	// Doesn't work with yarn 0.22.x and 0.23.x
 	// if node.isYarnPossible() {
 	// bin := variables.Path("node", modules.version)
@@ -81,7 +79,9 @@ func (modules Modules) install(name string) (err error) {
 	// return
 	// }
 
-	_, err = exec.Command("npm", "install", "--global", name).CombinedOutput()
+	names = append([]string{"install", "--global"}, names...)
+
+	_, err = exec.Command("npm", names...).CombinedOutput()
 
 	return
 }
