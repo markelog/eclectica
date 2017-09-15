@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	. "github.com/onsi/ginkgo"
@@ -101,13 +100,7 @@ var _ = Describe("ruby", func() {
 	})
 
 	It("should list remote ruby versions", func() {
-		if runtime.GOOS == "darwin" {
-			Expect(checkRemoteList("ruby", "2.1.x", 5)).To(Equal(true))
-		}
-
-		if runtime.GOOS == "linux" {
-			Expect(checkRemoteList("ruby", "2.x", 5)).To(Equal(true))
-		}
+		Expect(checkRemoteList("ruby", "2.x", 5)).To(Equal(true))
 	})
 
 	It("should remove ruby version", func() {

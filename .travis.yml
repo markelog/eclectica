@@ -28,7 +28,7 @@ script:
 matrix:
   include:
 
-    # trusty
+    # ubuntu trusty
     - env: "TEST_LANGUAGE=main"
       os: linux
       dist: trusty
@@ -96,7 +96,7 @@ matrix:
       dist: trusty
       script: "travis_wait make int-ci"
 
-    # precise
+    # ubuntu precise
     - env: "TEST_LANGUAGE=main"
       os: linux
       dist: precise
@@ -164,39 +164,94 @@ matrix:
       dist: precise
       script: "travis_wait make int-ci"
 
-    # osx
+    # MacOS Sierra
     - env: "TEST_LANGUAGE=main"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait make int-ci"
 
     - env: "TEST_LANGUAGE=node"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait make int-ci"
 
     - env: "TEST_LANGUAGE=rust"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait make int-ci"
 
     - env: "TEST_LANGUAGE=ruby"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait make int-ci"
 
     - env: "TEST_LANGUAGE=go"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait make int-ci"
 
     - env: "TEST_LANGUAGE=python2.7"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait 400 make int-ci"
 
     - env: "TEST_LANGUAGE=python2-old"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait 400 make int-ci"
 
     - env: "TEST_LANGUAGE=python3"
       os: osx
+      osx_image: xcode8.3.3
       script: "travis_wait 400 make int-ci"
 
     - env: "TEST_LANGUAGE=elm"
       os: osx
+      osx_image: xcode8.3.3
+      script: "travis_wait make int-ci"
+
+    # OS X El Capitan
+    - env: "TEST_LANGUAGE=main"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait make int-ci"
+
+    - env: "TEST_LANGUAGE=node"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait make int-ci"
+
+    - env: "TEST_LANGUAGE=rust"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait make int-ci"
+
+    - env: "TEST_LANGUAGE=ruby"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait make int-ci"
+
+    - env: "TEST_LANGUAGE=go"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait make int-ci"
+
+    - env: "TEST_LANGUAGE=python2.7"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait 400 make int-ci"
+
+    - env: "TEST_LANGUAGE=python2-old"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait 400 make int-ci"
+
+    - env: "TEST_LANGUAGE=python3"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait 400 make int-ci"
+
+    - env: "TEST_LANGUAGE=elm"
+      os: osx
+      osx_image: xcode8
       script: "travis_wait make int-ci"
