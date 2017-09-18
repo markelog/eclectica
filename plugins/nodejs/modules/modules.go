@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 
 	"github.com/blang/semver"
 	"github.com/go-errors/errors"
@@ -25,44 +24,17 @@ func New(previous, current string) *Modules {
 	}
 }
 
-func (modules Modules) List() (packages []string, err error) {
-	path := filepath.Dir(modules.Path(modules.previous))
-	prefix := "--prefix=" + path
-
-	bytes, _ := exec.Command("npm", "list", prefix, "--depth=0").Output()
-	output := string(bytes)
-
-	rPackages, _ := regexp.Compile(`\s(\w+)@`)
-	tmp := rPackages.FindAllStringSubmatch(output, -1)
-
-	for _, pack := range tmp {
-		name := pack[1]
-
-		if name == "npm" {
-			continue
-		}
-
-		if name == "yarn" {
-			continue
-		}
-
-		packages = append(packages, name)
-	}
-
-	return
-}
-
 func (modules Modules) Install() (err error) {
-	if modules.SameMajors() {
-		return modules.Copy()
-	}
-
-	packages, err := modules.List()
+	err = modules.copy()
 	if err != nil {
-		return errors.New(err)
+		return
 	}
 
-	err = modules.install(packages...)
+	if modules.SameMajors() == false {
+		return
+	}
+
+	err = modules.rebuild()
 	if err != nil {
 		return errors.New(err)
 	}
@@ -70,25 +42,23 @@ func (modules Modules) Install() (err error) {
 	return
 }
 
-func (modules Modules) install(names ...string) (err error) {
-	// Doesn't work with yarn 0.22.x and 0.23.x
-	// if node.isYarnPossible() {
-	// bin := variables.Path("node", modules.version)
-	// _, err = exec.Command("yarn", "global", "add", name, "--prefix", bin).CombinedOutput()
-	//
-	// return
-	// }
-
-	names = append([]string{"install", "--global"}, names...)
-
-	_, err = exec.Command("npm", names...).CombinedOutput()
+func (modules Modules) rebuild() (err error) {
+	dest := filepath.Join(modules.getDest(), "!(npm|yarn)")
+	output, err := exec.Command("npm", "rebuild", "--global", "--verbose", dest).CombinedOutput()
+	if err != nil {
+		return errors.New(string(output))
+	}
 
 	return
 }
 
-func (modules Modules) Copy() (err error) {
+func (modules Modules) getDest() string {
+	return filepath.Dir(modules.Path(modules.current))
+}
+
+func (modules Modules) copy() (err error) {
 	packages := modules.Path(modules.previous)
-	dest := filepath.Dir(modules.Path(modules.current))
+	dest := modules.getDest()
 
 	err = cprf.Copy(packages, dest)
 	if err != nil {

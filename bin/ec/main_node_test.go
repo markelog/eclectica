@@ -16,6 +16,7 @@ import (
 
 var _ = Describe("node", func() {
 	mainVersion := "5.1.0"
+	secondaryVersion := "6.4.0"
 
 	if shouldRun("node") == false {
 		return
@@ -27,22 +28,24 @@ var _ = Describe("node", func() {
 		fmt.Println("Install " + mainVersion + " version")
 		Execute("go", "run", path, "node@"+mainVersion)
 
-		fmt.Println("Removing node@6.4.0")
-		Execute("go", "run", path, "rm", "node@6.4.0")
-		fmt.Println("Removed")
+		fmt.Println("Removing node@" + secondaryVersion)
+		Execute("go", "run", path, "rm", "node@"+secondaryVersion)
 	})
 
 	Describe("preserve globally installed modules", func() {
 		It("between major versions (ojm module)", func() {
 			Execute("npm", "install", "--global", "ojm")
 
-			Execute("go", "run", path, "node@6.0.0")
+			Execute("go", "run", path, "node@"+secondaryVersion)
 
 			command, _ := Command("ojm").CombinedOutput()
 
 			expected := "Check if site is down through isup.com"
 
 			Expect(string(command)).Should(ContainSubstring(expected))
+
+			Execute("go", "run", path, "node@"+mainVersion)
+			Execute("npm", "remove", "--global", "ojm")
 		})
 
 		It("between minor versions (ojm module)", func() {
@@ -55,6 +58,8 @@ var _ = Describe("node", func() {
 			expected := "Check if site is down through isup.com"
 
 			Expect(string(command)).Should(ContainSubstring(expected))
+			Execute("go", "run", path, "node@"+mainVersion)
+			Execute("go", "run", path, "rm", "node@5.0.0")
 		})
 	})
 
@@ -90,18 +95,12 @@ var _ = Describe("node", func() {
 		Expect(data).To(Equal("scripts-prepend-node-path=false"))
 	})
 
-	It("should install node 6.4.0", func() {
-		Execute("go", "run", path, "node@6.4.0")
-		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
-
-		Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
-	})
-
 	It("should list installed node versions", func() {
 		Execute("go", "run", path, "node@6.4.0")
 		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
 		Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), mainVersion)).To(Equal(true))
 		Expect(strings.Contains(string(command), "node-v6.4.0-darwin-x64")).To(Equal(false))
 	})
 
@@ -110,7 +109,7 @@ var _ = Describe("node", func() {
 	})
 
 	It("should remove node version", func() {
-		result := true
+		success := true
 
 		Execute("go", "run", path, "node@6.4.0")
 		Execute("go", "run", path, "node@"+mainVersion)
@@ -121,11 +120,11 @@ var _ = Describe("node", func() {
 
 		for _, version := range versions {
 			if version == "6.4.0" {
-				result = false
+				success = false
 			}
 		}
 
-		Expect(result).To(Equal(true))
+		Expect(success).To(Equal(true))
 	})
 
 	It("should install yarn", func() {
