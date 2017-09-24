@@ -30,11 +30,11 @@ func (modules Modules) Install() (err error) {
 		return
 	}
 
-	if modules.SameMajors() == false {
+	if modules.SameMajors() {
 		return
 	}
 
-	err = modules.rebuild()
+	err = modules.reinstall()
 	if err != nil {
 		return errors.New(err)
 	}
@@ -42,9 +42,43 @@ func (modules Modules) Install() (err error) {
 	return
 }
 
-func (modules Modules) rebuild() (err error) {
-	dest := filepath.Join(modules.getDest(), "!(npm|yarn)")
-	output, err := exec.Command("npm", "rebuild", "--global", "--verbose", dest).CombinedOutput()
+func (modules Modules) read() (result []string, err error) {
+	dest := filepath.Join(modules.getDest(), "node_modules")
+
+	files, err := ioutil.ReadDir(dest)
+	if err != nil {
+		return
+	}
+
+	for _, file := range files {
+		name := file.Name()
+
+		if name == "npm" {
+			continue
+		}
+
+		if name == "yarn" {
+			continue
+		}
+
+		result = append(result, filepath.Join(dest, name))
+	}
+
+	return
+}
+
+func (modules Modules) reinstall() (err error) {
+	install, err := modules.read()
+	if err != nil {
+		return
+	}
+
+	if len(install) == 0 {
+		return
+	}
+
+	install = append([]string{"install", "--offline", "--global", "--verbose"}, install...)
+	output, err := exec.Command("npm", install...).CombinedOutput()
 	if err != nil {
 		return errors.New(string(output))
 	}

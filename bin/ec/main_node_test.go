@@ -25,14 +25,17 @@ var _ = Describe("node", func() {
 	BeforeEach(func() {
 		fmt.Println()
 
+		Execute("go", "run", path, "rm", "node@"+mainVersion)
 		fmt.Println("Install " + mainVersion + " version")
 		Execute("go", "run", path, "node@"+mainVersion)
 
-		fmt.Println("Removing node@" + secondaryVersion)
 		Execute("go", "run", path, "rm", "node@"+secondaryVersion)
 	})
 
 	Describe("preserve globally installed modules", func() {
+		dir, _ := os.Getwd()
+		testdata := filepath.Join(dir, "../../testdata/plugins/nodejs/example.scss")
+
 		It("between major versions (ojm module)", func() {
 			Execute("npm", "install", "--global", "ojm")
 
@@ -43,9 +46,17 @@ var _ = Describe("node", func() {
 			expected := "Check if site is down through isup.com"
 
 			Expect(string(command)).Should(ContainSubstring(expected))
+		})
 
-			Execute("go", "run", path, "node@"+mainVersion)
-			Execute("npm", "remove", "--global", "ojm")
+		It("between major versions (node-sass module)", func() {
+			Execute("npm", "install", "--global", "node-sass")
+
+			Execute("go", "run", path, "node@"+secondaryVersion)
+
+			command, _ := Command("node-sass", testdata).CombinedOutput()
+			expected := "background: #eeffcc;"
+
+			Expect(string(command)).Should(ContainSubstring(expected))
 		})
 
 		It("between minor versions (ojm module)", func() {
@@ -54,11 +65,23 @@ var _ = Describe("node", func() {
 			Execute("go", "run", path, "node@5.0.0")
 
 			command, _ := Command("ojm").CombinedOutput()
-
 			expected := "Check if site is down through isup.com"
 
 			Expect(string(command)).Should(ContainSubstring(expected))
-			Execute("go", "run", path, "node@"+mainVersion)
+
+			Execute("go", "run", path, "rm", "node@5.0.0")
+		})
+
+		It("between minor versions (node-sass module)", func() {
+			Execute("npm", "install", "--global", "node-sass")
+
+			Execute("go", "run", path, "node@5.0.0")
+
+			command, _ := Command("node-sass", testdata).CombinedOutput()
+			expected := "background: #eeffcc;"
+
+			Expect(string(command)).Should(ContainSubstring(expected))
+
 			Execute("go", "run", path, "rm", "node@5.0.0")
 		})
 	})
@@ -67,7 +90,7 @@ var _ = Describe("node", func() {
 		pwd, _ := os.Getwd()
 		versionFile := filepath.Join(filepath.Dir(pwd), ".node-version")
 
-		Execute("go", "run", path, "node@6.4.0")
+		Execute("go", "run", path, "node@"+secondaryVersion)
 
 		io.WriteFile(versionFile, mainVersion)
 
@@ -80,11 +103,11 @@ var _ = Describe("node", func() {
 		Expect(err).To(BeNil())
 	})
 
-	It("should install node 6.4.0", func() {
-		Execute("go", "run", path, "node@6.4.0")
+	It("should install node "+secondaryVersion, func() {
+		Execute("go", "run", path, "node@"+secondaryVersion)
 		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
-		Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "♥ "+secondaryVersion)).To(Equal(true))
 	})
 
 	It("test presence of the npmrc config", func() {
@@ -96,12 +119,12 @@ var _ = Describe("node", func() {
 	})
 
 	It("should list installed node versions", func() {
-		Execute("go", "run", path, "node@6.4.0")
+		Execute("go", "run", path, "node@"+secondaryVersion)
 		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
-		Expect(strings.Contains(string(command), "♥ 6.4.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "♥ "+secondaryVersion)).To(Equal(true))
 		Expect(strings.Contains(string(command), mainVersion)).To(Equal(true))
-		Expect(strings.Contains(string(command), "node-v6.4.0-darwin-x64")).To(Equal(false))
+		Expect(strings.Contains(string(command), "node-v"+secondaryVersion+"-darwin-x64")).To(Equal(false))
 	})
 
 	It("should list remote node versions", func() {
@@ -111,15 +134,15 @@ var _ = Describe("node", func() {
 	It("should remove node version", func() {
 		success := true
 
-		Execute("go", "run", path, "node@6.4.0")
+		Execute("go", "run", path, "node@"+secondaryVersion)
 		Execute("go", "run", path, "node@"+mainVersion)
-		Command("go", "run", path, "rm", "node@6.4.0").CombinedOutput()
+		Command("go", "run", path, "rm", "node@"+secondaryVersion).CombinedOutput()
 
 		plugin := plugins.New("node")
 		versions := plugin.List()
 
 		for _, version := range versions {
-			if version == "6.4.0" {
+			if version == secondaryVersion {
 				success = false
 			}
 		}
@@ -136,9 +159,9 @@ var _ = Describe("node", func() {
 	})
 
 	It("should still have yarn after additional installation", func() {
-		Execute("go", "run", path, "node@6.4.0")
+		Execute("go", "run", path, "node@"+secondaryVersion)
 
-		yarnBin := filepath.Join(variables.Path("node", "6.4.0"), "bin/yarn")
+		yarnBin := filepath.Join(variables.Path("node", secondaryVersion), "bin/yarn")
 
 		bytes, _ := Command(yarnBin, "--help").CombinedOutput()
 
