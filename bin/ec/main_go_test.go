@@ -54,7 +54,7 @@ var _ = Describe("go", func() {
 	})
 
 	It("should list remote versions", func() {
-		Expect(checkRemoteList("go", "1.7.x", 10)).To(Equal(true))
+		Expect(checkRemoteList("go", "1.7.x", 20)).To(Equal(true))
 	})
 
 	It("should remove go version", func() {
