@@ -2,17 +2,17 @@ package console
 
 import (
 	"bytes"
-	"errors"
 	"os"
 	"os/exec"
 	"reflect"
 	"regexp"
 	"strings"
 
+	"github.com/go-errors/errors"
+	"golang.org/x/crypto/ssh/terminal"
+
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/variables"
-
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 // Get gets cmd instance by passing array to exec.Command

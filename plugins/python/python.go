@@ -63,7 +63,11 @@ func (python Python) Events() *emission.Emitter {
 }
 
 func (python Python) PreInstall() error {
-	return checkDependencies()
+	if runtime.GOOS == "linux" {
+		return dealWithLinuxShell()
+	}
+
+	return dealWithOSXShell()
 }
 
 func (python Python) Install() (err error) {
@@ -460,12 +464,4 @@ func checkErrors(out []byte) (err error) {
 	}
 
 	return err
-}
-
-func checkDependencies() (err error) {
-	if runtime.GOOS == "linux" {
-		return dealWithLinuxShell()
-	}
-
-	return dealWithOSXShell()
 }

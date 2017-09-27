@@ -16,7 +16,7 @@ import (
 	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/console"
-	"github.com/markelog/eclectica/io"
+	eio "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins/ruby/base"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
@@ -45,15 +45,15 @@ func (ruby Ruby) Events() *emission.Emitter {
 }
 
 func (ruby Ruby) PreInstall() (err error) {
-	// Just in case
 	install := variables.InstallLanguage("ruby", ruby.Version)
 	parent := filepath.Dir(install)
 	current := variables.Path("ruby", ruby.Version)
 
+	// Just in case
 	os.RemoveAll(install)
 
 	if _, err = os.Stat(install); err != nil {
-		_, err = io.CreateDir(parent)
+		_, err = eio.CreateDir(parent)
 		if err != nil {
 			return
 		}
@@ -64,11 +64,15 @@ func (ruby Ruby) PreInstall() (err error) {
 		}
 	}
 
-	if runtime.GOOS != "linux" {
-		return nil
+	if runtime.GOOS == "linux" {
+		return dealWithLinuxShell()
 	}
 
-	return dealWithLinuxShell()
+	if runtime.GOOS == "darwin" {
+		return dealWithOSXShell()
+	}
+
+	return
 }
 
 func (ruby Ruby) Install() (err error) {
@@ -143,22 +147,12 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 }
 
 func (ruby Ruby) configure() (err error) {
-	var (
-		path      = variables.InstallLanguage("ruby", ruby.Version)
-		configure = filepath.Join(path, "configure")
-		prefix    = "--prefix=" + variables.Path("ruby", ruby.Version)
-		baseruby  = "--with-baseruby="
-	)
-
 	ruby.Emitter.Emit("configure")
 
-	bin, err := binRuby()
+	err, cmd, stdErr, stdOut := ruby.configureArgs()
 	if err != nil {
 		return
 	}
-	baseruby = baseruby + bin
-
-	cmd, stdErr, stdOut := ruby.getCmd(configure, prefix, baseruby)
 
 	err = cmd.Run()
 	if err != nil {
@@ -194,7 +188,7 @@ func (ruby Ruby) install() (err error) {
 	return
 }
 
-func (ruby Ruby) getCmd(args ...interface{}) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer) {
+func (ruby Ruby) getCmd(args ...string) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer) {
 	var (
 		cmd    *exec.Cmd
 		stdOut bytes.Buffer
@@ -202,13 +196,7 @@ func (ruby Ruby) getCmd(args ...interface{}) (*exec.Cmd, *bytes.Buffer, *bytes.B
 	)
 
 	// There is gotta be a better way without reflect module, huh?
-	if len(args) == 1 {
-		cmd = exec.Command(args[0].(string))
-	} else if len(args) == 2 {
-		cmd = exec.Command(args[0].(string), args[1].(string))
-	} else {
-		cmd = exec.Command(args[0].(string), args[1].(string), args[2].(string))
-	}
+	cmd = exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
 	cmd.Dir = variables.InstallLanguage("ruby", ruby.Version)
@@ -271,4 +259,51 @@ func remoteMap(version string) string {
 	}
 
 	return version
+}
+
+func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out *bytes.Buffer, outErr *bytes.Buffer) {
+	var (
+		path      = variables.InstallLanguage("ruby", ruby.Version)
+		configure = filepath.Join(path, "configure")
+		prefix    = "--prefix=" + variables.Path("ruby", ruby.Version)
+		baseruby  = "--with-baseruby="
+	)
+
+	bin, err := binRuby()
+	if err != nil {
+		return
+	}
+	baseruby = baseruby + bin
+
+	if runtime.GOOS != "darwin" {
+		cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby)
+		return
+	}
+
+	err, libyaml, openssl := brewDependencies()
+	if err != nil {
+		return
+	}
+
+	opensslDir := "--with-openssl-dir=" + openssl
+	libyamlDir := "--with-libyaml-dir=" + libyaml
+
+	cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby, libyamlDir, opensslDir)
+	return
+}
+
+func brewDependencies() (err error, libyaml string, openssl string) {
+	out, err := exec.Command("brew", "--prefix", "libyaml").Output()
+	libyaml = strings.TrimSpace(string(out))
+	if err != nil {
+		return
+	}
+
+	out, err = exec.Command("brew", "--prefix", "openssl").Output()
+	openssl = strings.TrimSpace(string(out))
+	if err != nil {
+		return
+	}
+
+	return
 }
