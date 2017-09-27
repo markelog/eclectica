@@ -13,6 +13,7 @@ import (
 	"github.com/chuckpreslar/emission"
 	"github.com/go-errors/errors"
 
+	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 )
@@ -29,6 +30,7 @@ var (
 type Golang struct {
 	Version string
 	Emitter *emission.Emitter
+	pkg.Base
 }
 
 func New(version string, emitter *emission.Emitter) *Golang {
@@ -42,28 +44,8 @@ func (golang Golang) Events() *emission.Emitter {
 	return golang.Emitter
 }
 
-func (golang Golang) PreDownload() error {
-	return nil
-}
-
-func (golang Golang) PreInstall() error {
-	return nil
-}
-
-func (golang Golang) Install() error {
-	return nil
-}
-
 func (golang Golang) PostInstall() error {
 	return dealWithShell()
-}
-
-func (golang Golang) Switch() error {
-	return nil
-}
-
-func (golang Golang) Link() error {
-	return nil
 }
 
 func (golang Golang) Environment() (result []string, err error) {
