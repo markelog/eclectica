@@ -9,6 +9,7 @@ type Pkg interface {
 	PostInstall() error
 	Switch() error
 	Link() error
+	Rollback() error
 	Events() *emission.Emitter
 	Environment() ([]string, error)
 	ListRemote() ([]string, error)
@@ -43,6 +44,10 @@ func (base Base) Switch() error {
 }
 
 func (base Base) Link() error {
+	return nil
+}
+
+func (base Base) Rollback() error {
 	return nil
 }
 

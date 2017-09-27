@@ -327,6 +327,8 @@ func (plugin *Plugin) Rollback() {
 	path := variables.Path(plugin.name, plugin.Version)
 	os.RemoveAll(path)
 
+	plugin.Pkg.Rollback()
+
 	// If before there was more versions installed, then we can exit right here
 	versions := plugin.List()
 	if len(versions) > 0 {
@@ -393,7 +395,7 @@ func (plugin *Plugin) Remove() (err error) {
 	)
 
 	// Need to remove proxies if this is a current version.
-	// So we wouldn't confuse user
+	// So we wouldn't confuse the user
 	if plugin.Current() == plugin.Version {
 		err = plugin.removeProxy()
 		if err != nil {
@@ -580,6 +582,21 @@ func (plugin *Plugin) Proxy() (err error) {
 }
 
 func (plugin *Plugin) removeProxy() (err error) {
+	bins := plugin.Bins()
+
+	for _, bin := range bins {
+		proxy := filepath.Join(variables.DefaultInstall, bin)
+
+		err = os.RemoveAll(proxy)
+		if err != nil {
+			return
+		}
+	}
+
+	return nil
+}
+
+func (plugin *Plugin) removeSupport() (err error) {
 	bins := plugin.Bins()
 
 	for _, bin := range bins {

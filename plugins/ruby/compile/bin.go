@@ -41,7 +41,6 @@ func binRuby() (bin string, err error) {
 	}
 
 	if _, statErr := os.Stat(bin); statErr == nil {
-		err = errors.New(err)
 		return
 	}
 

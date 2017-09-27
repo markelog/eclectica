@@ -77,6 +77,17 @@ var _ = Describe("ruby", func() {
 		Expect(strings.Contains(string(ec), "♥ 2.4.1")).To(Equal(true))
 	})
 
+	It("should install two versions of ruby", func() {
+		Execute("go", "run", path, "ruby@2.4.2")
+		Execute("go", "run", path, "ruby@2.4.1")
+
+		ruby, _ := Command("ruby", "--version").Output()
+		ec, _ := Command("go", "run", path, "ls", "ruby").Output()
+
+		Expect(strings.Contains(string(ruby), "2.4.1")).To(Equal(true))
+		Expect(strings.Contains(string(ec), "♥ 2.4.1")).To(Equal(true))
+	})
+
 	It("should install bundler", func() {
 		tempDir := os.TempDir()
 		gems := filepath.Join(tempDir, "gems")

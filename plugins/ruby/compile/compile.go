@@ -86,7 +86,11 @@ func (ruby Ruby) Install() (err error) {
 }
 
 func (ruby Ruby) PostInstall() (err error) {
-	return os.RemoveAll(variables.InstallLanguage("ruby", ruby.Version))
+	return os.RemoveAll(filepath.Join(variables.InstallPath(), "ruby"))
+}
+
+func (ruby Ruby) Rollback() (err error) {
+	return os.RemoveAll(filepath.Join(variables.InstallPath(), "ruby"))
 }
 
 func (ruby Ruby) Info() map[string]string {
