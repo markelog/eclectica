@@ -104,7 +104,7 @@ func (node Node) ListRemote() ([]string, error) {
 
 	if err != nil {
 		if _, ok := err.(net.Error); ok {
-			return nil, errors.New("Can't establish connection")
+			return nil, errors.New("Connection cannot be established")
 		}
 
 		return nil, errors.New(err)

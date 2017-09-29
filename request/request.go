@@ -17,7 +17,7 @@ func Body(url string) (string, error) {
 	}
 
 	if response.StatusCode != 200 {
-		return "", errors.New("Can't establish connection")
+		return "", errors.New("Connection cannot be established")
 	}
 
 	defer response.Body.Close()

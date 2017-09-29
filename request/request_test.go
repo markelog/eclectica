@@ -62,7 +62,7 @@ var _ = Describe("request", func() {
 
 				_, err = Body("https://somewhere")
 
-				Expect(err).Should(MatchError("Can't establish connection"))
+				Expect(err).Should(MatchError("Connection cannot be established"))
 			})
 		})
 

@@ -65,7 +65,7 @@ var _ = Describe("elm", func() {
 			})
 
 			It("should return an error", func() {
-				Expect(err).Should(MatchError("Can't establish connection"))
+				Expect(err).Should(MatchError("Connection cannot be established"))
 			})
 		})
 	})
