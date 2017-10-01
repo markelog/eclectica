@@ -4,6 +4,8 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/markelog/eclectica/variables"
 )
 
 var (
@@ -17,7 +19,7 @@ func Body(url string) (string, error) {
 	}
 
 	if response.StatusCode != 200 {
-		return "", errors.New("Connection cannot be established")
+		return "", errors.New(variables.ConnectionError)
 	}
 
 	defer response.Body.Close()

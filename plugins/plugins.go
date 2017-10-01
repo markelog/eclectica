@@ -441,7 +441,11 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
 	resp := <-response
 
 	if resp == nil {
-		return resp, errors.New("Something went wrong with HTTP request")
+		return resp, errors.New(variables.ConnectionError)
+	}
+
+	if resp.HTTPResponse == nil {
+		return resp, errors.New(variables.ConnectionError)
 	}
 
 	if resp.HTTPResponse.StatusCode == 404 {

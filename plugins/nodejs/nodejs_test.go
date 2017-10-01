@@ -13,6 +13,7 @@ import (
 
 	eio "github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/nodejs"
+	"github.com/markelog/eclectica/variables"
 )
 
 var _ = Describe("nodejs", func() {
@@ -84,7 +85,7 @@ var _ = Describe("nodejs", func() {
 			})
 
 			It("should return an error", func() {
-				Expect(err).Should(MatchError("Connection cannot be established"))
+				Expect(err).Should(MatchError(variables.ConnectionError))
 			})
 		})
 	})

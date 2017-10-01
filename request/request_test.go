@@ -12,6 +12,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	. "github.com/markelog/eclectica/request"
+
+	"github.com/markelog/eclectica/variables"
 )
 
 var _ = Describe("request", func() {
@@ -62,7 +64,7 @@ var _ = Describe("request", func() {
 
 				_, err = Body("https://somewhere")
 
-				Expect(err).Should(MatchError("Connection cannot be established"))
+				Expect(err).Should(MatchError(variables.ConnectionError))
 			})
 		})
 

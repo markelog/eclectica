@@ -92,7 +92,7 @@ var _ = Describe("rust", func() {
 			It("should return an error", func() {
 				remotes, err = rust.ListRemote()
 
-				Expect(err).Should(MatchError("Connection cannot be established"))
+				Expect(err).Should(MatchError(variables.ConnectionError))
 			})
 		})
 

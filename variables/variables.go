@@ -12,6 +12,7 @@ import (
 var (
 	NonInstallCommands = []string{"ls", "rm", "version", "init", "--help", "-h"}
 	DefaultInstall     = filepath.Join(Base(), "bin")
+	ConnectionError    = "Connection cannot be established"
 )
 
 func Prefix(name string) string {
