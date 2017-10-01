@@ -1,7 +1,6 @@
 package patch
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -64,10 +63,6 @@ func getStrip(path string) string {
 }
 
 func Apply(path string) (err error) {
-	var (
-		stdErr bytes.Buffer
-		stdOut bytes.Buffer
-	)
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return errors.New(err)
@@ -86,17 +81,26 @@ func Apply(path string) (err error) {
 
 		cmd := exec.Command("patch", "-p", strip, "--force", "-i", target)
 		cmd.Dir = path
-		cmd.Stderr = &stdErr
-		cmd.Stdout = &stdOut
 
 		if variables.IsDebug() {
 			cmd.Stderr = os.Stderr
 			cmd.Stdout = os.Stdout
+			return
+		}
+
+		stdout, err := cmd.StdoutPipe()
+		if err != nil {
+			return errors.New(err)
+		}
+
+		stderr, err := cmd.StderrPipe()
+		if err != nil {
+			return errors.New(err)
 		}
 
 		err = cmd.Run()
 		if err != nil {
-			return console.GetError(err, &stdErr, &stdOut)
+			return console.GetError(err, stdout, stderr)
 		}
 	}
 

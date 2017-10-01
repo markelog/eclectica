@@ -1,7 +1,8 @@
 package console
 
 import (
-	"bytes"
+	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"reflect"
@@ -57,17 +58,28 @@ func Shell() {
 }
 
 // GetError is just facade to handling console errors
-// Is stdOut param redudant?
-func GetError(err error, stdErr, stdOut *bytes.Buffer) error {
-	strErr := stdErr.String()
-	strOut := stdOut.String()
+func GetError(err error, stdout, stderr io.ReadCloser) error {
+	if stdout == nil || stderr == nil {
+		return nil
+	}
+
+	strErr, errRead := ioutil.ReadAll(stdout)
+	if err != nil {
+		return errors.New(errRead)
+	}
+	strOut, errOut := ioutil.ReadAll(stderr)
+	if err != nil {
+		return errors.New(errOut)
+	}
 
 	if len(strErr) != 0 {
-		return errors.New(strErr)
+		str := string(strErr)
+		return errors.New(str)
 	}
 
 	if len(strOut) != 0 {
-		return errors.New(trimMessage(strOut))
+		str := string(strOut)
+		return errors.New(str)
 	}
 
 	// "Exit status" is just silly (not that following is much better)

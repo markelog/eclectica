@@ -1,8 +1,8 @@
 package python
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"os"
@@ -94,14 +94,17 @@ func (python Python) PostInstall() (err error) {
 	bin := variables.GetBin("python", python.Version)
 
 	if hasTools(python.Version) {
-		cmd, stdErr, stdOut := python.getCmd(bin, "-m", "ensurepip")
+		err, cmd, stdErr, stdOut := python.getCmd(bin, "-m", "ensurepip")
+		if err != nil {
+			return err
+		}
 
 		err = cmd.Run()
 		if err != nil {
 			return console.GetError(err, stdErr, stdOut)
 		}
 
-		return
+		return err
 	}
 
 	// Setup pip
@@ -222,7 +225,10 @@ func (python Python) configure() (err error) {
 		return errors.New(err)
 	}
 
-	cmd, stdErr, stdOut := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
+	err, cmd, stdErr, stdOut := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
+	if err != nil {
+		return err
+	}
 	cmd.Env = python.getEnvs(cmd.Env)
 
 	err = cmd.Run()
@@ -234,7 +240,10 @@ func (python Python) configure() (err error) {
 }
 
 func (python Python) touch() (err error) {
-	cmd, stdErr, stdOut := python.getCmd("make", "touch")
+	err, cmd, stdErr, stdOut := python.getCmd("make", "touch")
+	if err != nil {
+		return err
+	}
 
 	err = cmd.Run()
 	if err != nil {
@@ -250,7 +259,10 @@ func (python Python) prepare() (err error) {
 	// Ignore touch errors since newest python makefile doesn't have this task
 	python.touch()
 
-	cmd, stdErr, stdOut := python.getCmd("make", "-j", "2")
+	err, cmd, stdErr, stdOut := python.getCmd("make", "-j", "2")
+	if err != nil {
+		return err
+	}
 
 	err = cmd.Run()
 	if err != nil {
@@ -263,7 +275,10 @@ func (python Python) prepare() (err error) {
 func (python Python) install() (err error) {
 	python.Emitter.Emit("install")
 
-	cmd, stdErr, stdOut := python.getCmd("make", "install")
+	err, cmd, stdErr, stdOut := python.getCmd("make", "install")
+	if err != nil {
+		return err
+	}
 
 	err = cmd.Run()
 	if err != nil {
@@ -304,33 +319,31 @@ func (python Python) getOSXEnvs(original []string) []string {
 	return original
 }
 
-func (python Python) getCmd(args ...interface{}) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer) {
-	var (
-		cmd    *exec.Cmd
-		stdOut bytes.Buffer
-		stdErr bytes.Buffer
-	)
-
-	// There is gotta be a better way without reflect module, huh?
-	if len(args) == 1 {
-		cmd = exec.Command(args[0].(string))
-	} else if len(args) == 2 {
-		cmd = exec.Command(args[0].(string), args[1].(string))
-	} else {
-		cmd = exec.Command(args[0].(string), args[1].(string), args[2].(string))
-	}
+func (python Python) getCmd(args ...string) (err error, cmd *exec.Cmd, stdout, stderr io.ReadCloser) {
+	cmd = exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
 	cmd.Dir = variables.Path("python", python.Version)
-	cmd.Stderr = &stdErr
-	cmd.Stdout = &stdOut
 
 	if variables.IsDebug() {
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
+		return
 	}
 
-	return cmd, &stdOut, &stdErr
+	stdout, err = cmd.StdoutPipe()
+	if err != nil {
+		err = errors.New(err)
+		return
+	}
+
+	stderr, err = cmd.StderrPipe()
+	if err != nil {
+		err = errors.New(err)
+		return
+	}
+
+	return
 }
 
 func (python Python) externals() (err error) {

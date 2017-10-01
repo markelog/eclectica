@@ -1,8 +1,8 @@
 package compile
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"os/exec"
@@ -165,7 +165,10 @@ func (ruby Ruby) configure() (err error) {
 func (ruby Ruby) prepare() (err error) {
 	ruby.Emitter.Emit("prepare")
 
-	cmd, stdErr, stdOut := ruby.getCmd("make", "-j", "2")
+	err, cmd, stdErr, stdOut := ruby.getCmd("make", "-j", "2")
+	if err != nil {
+		return
+	}
 
 	err = cmd.Run()
 	if err != nil {
@@ -178,7 +181,10 @@ func (ruby Ruby) prepare() (err error) {
 func (ruby Ruby) install() (err error) {
 	ruby.Emitter.Emit("install")
 
-	cmd, stdErr, stdOut := ruby.getCmd("make", "install")
+	err, cmd, stdErr, stdOut := ruby.getCmd("make", "install")
+	if err != nil {
+		return
+	}
 
 	err = cmd.Run()
 	if err != nil {
@@ -188,27 +194,31 @@ func (ruby Ruby) install() (err error) {
 	return
 }
 
-func (ruby Ruby) getCmd(args ...string) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer) {
-	var (
-		cmd    *exec.Cmd
-		stdOut bytes.Buffer
-		stdErr bytes.Buffer
-	)
-
-	// There is gotta be a better way without reflect module, huh?
+func (ruby Ruby) getCmd(args ...string) (err error, cmd *exec.Cmd, stdout, stderr io.ReadCloser) {
 	cmd = exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
 	cmd.Dir = variables.InstallLanguage("ruby", ruby.Version)
-	cmd.Stderr = &stdErr
-	cmd.Stdout = &stdOut
 
 	if variables.IsDebug() {
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
+		return
 	}
 
-	return cmd, &stdOut, &stdErr
+	stdout, err = cmd.StdoutPipe()
+	if err != nil {
+		err = errors.New(err)
+		return
+	}
+
+	stderr, err = cmd.StderrPipe()
+	if err != nil {
+		err = errors.New(err)
+		return
+	}
+
+	return
 }
 
 func getRemoteVersions() ([]string, error) {
@@ -261,7 +271,7 @@ func remoteMap(version string) string {
 	return version
 }
 
-func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out *bytes.Buffer, outErr *bytes.Buffer) {
+func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out, outErr io.ReadCloser) {
 	var (
 		path      = variables.InstallLanguage("ruby", ruby.Version)
 		configure = filepath.Join(path, "configure")
@@ -276,7 +286,7 @@ func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out *bytes.Buffer, o
 	baseruby = baseruby + bin
 
 	if runtime.GOOS != "darwin" {
-		cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby)
+		err, cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby)
 		return
 	}
 
@@ -288,7 +298,7 @@ func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out *bytes.Buffer, o
 	opensslDir := "--with-openssl-dir=" + openssl
 	libyamlDir := "--with-libyaml-dir=" + libyaml
 
-	cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby, libyamlDir, opensslDir)
+	err, cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby, libyamlDir, opensslDir)
 	return
 }
 
