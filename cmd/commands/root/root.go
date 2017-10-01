@@ -39,7 +39,7 @@ func Execute() {
 	if info.NonInstallCommand(args) {
 
 		// Initialize cobra for other commands
-		if err := Command.Execute(); err != nil {
+		if err = Command.Execute(); err != nil {
 			os.Exit(1)
 		}
 
@@ -50,8 +50,8 @@ func Execute() {
 
 	// If nothing was passed - just show list of the local versions
 	if len(args) == 0 {
-		language, version, err := info.Ask()
-		print.Error(err)
+		language, version, errAsk := info.Ask()
+		print.Error(errAsk)
 
 		install(language, version)
 		return
