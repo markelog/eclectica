@@ -13,6 +13,8 @@ import (
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
+
+	"github.com/markelog/eclectica/cmd/print/spinner"
 )
 
 type prefixFn func()
@@ -106,15 +108,23 @@ func GetCommand(args []string) string {
 	return ""
 }
 
-func GetSpinner(language string, prefix print.SpinnerFn) *print.Spinner {
+func GetSpinner(language string, prefix spinner.SpinnerFn) *spinner.Spinner {
+	c, _ := curse.New()
+
 	postfix := func() {
 		fmt.Println()
 		time.Sleep(200 * time.Millisecond)
 	}
 
-	return &print.Spinner{
-		Before:  func() { time.Sleep(500 * time.Millisecond) },
-		After:   func() { fmt.Println() },
+	after := func() {
+		c.MoveUp(1)
+		c.EraseCurrentLine()
+		print.InStyleln("Language", language)
+	}
+
+	return &spinner.Spinner{
+		Before:  func() {},
+		After:   after,
 		Prefix:  prefix,
 		Postfix: postfix,
 	}

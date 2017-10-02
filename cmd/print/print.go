@@ -6,18 +6,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-errors/errors"
-
 	"github.com/dustin/go-humanize"
+	"github.com/go-errors/errors"
 	"github.com/markelog/curse"
-	"github.com/markelog/eclectica/variables"
 	"github.com/mgutz/ansi"
 	"gopkg.in/cavaliercoder/grab.v1"
+
+	"github.com/markelog/eclectica/cmd/print/spinner"
+	"github.com/markelog/eclectica/variables"
 )
 
 var (
-	gray  = ansi.ColorCode("240")
-	reset = ansi.ColorCode("reset")
+	Gray    = ansi.ColorCode("240")
+	White   = ansi.ColorCode("white+b")
+	Reset   = ansi.ColorCode("reset")
+	Timeout = 200 * time.Millisecond
 )
 
 func InStyle(name, entity string) {
@@ -37,12 +40,12 @@ func Version(args ...interface{}) {
 	version := args[0].(string)
 
 	if len(args) == 1 {
-		color = gray
+		color = Gray
 	} else {
 		color = ansi.ColorCode(args[1].(string))
 	}
 
-	fmt.Println(color, "  ", version, reset)
+	fmt.Println(color, "  ", version, Reset)
 }
 
 func CurrentVersion(version string) {
@@ -72,105 +75,67 @@ func Error(err error) {
 func Download(response *grab.Response, version string) string {
 	Error(response.Error)
 
-	c, _ := curse.New()
+	cursed, _ := curse.New()
 
-	before := func() {
-		time.Sleep(500 * time.Millisecond)
+	sizeAndTransfer := func() (size, transfer string) {
+		size = humanize.Bytes(response.Size)
+
+		transfer = humanize.Bytes(response.BytesTransferred())
+		transfer = strings.Replace(transfer, " MB", "", 1)
+
+		return
 	}
 
-	started := false
+	before := func() {}
+
 	prefix := func() {
 		Error(response.Error)
-		size := humanize.Bytes(response.Size)
-		transfered := humanize.Bytes(response.BytesTransferred())
-		transfered = strings.Replace(transfered, " MB", "", 1)
 
-		c.MoveUp(1)
+		cursed.MoveUp(1)
+		cursed.EraseCurrentLine()
 
-		if started {
-			c.EraseCurrentLine()
-		}
-		started = true
-		text := fmt.Sprintf("(%s/%s ", transfered, size)
+		size, transfer := sizeAndTransfer()
+		text := fmt.Sprintf("(%s/%s ", transfer, size)
 
 		InStyle("Version", version)
-		fmt.Print(gray, text, reset)
+		fmt.Print(Gray, text, Reset)
 	}
 
 	postfix := func() {
 		progress := int(100 * response.Progress())
 		text := fmt.Sprintf("%d%%)", progress)
 
-		fmt.Println(gray, text, reset)
+		fmt.Println(Gray, text, Reset)
 
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(Timeout)
 	}
 
 	after := func() {
-		c.EraseCurrentLine()
-		InStyle("Version", version)
-		fmt.Println()
+		cursed.MoveUp(1)
+		cursed.EraseCurrentLine()
+		InStyleln("Version", version)
 	}
 
-	s := &Spinner{
+	spin := &spinner.Spinner{
 		Before:  before,
 		After:   after,
 		Prefix:  prefix,
 		Postfix: postfix,
 	}
 
-	s.Start()
+	spin.Start()
 	for response.IsComplete() == false {
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(time.Millisecond * 100)
 	}
-	s.Stop()
+	spin.Stop()
 
 	return response.Filename
 }
 
-func CustomSpin(header, item, message string) *Spinner {
-	c, _ := curse.New()
-
-	before := func() {}
-
-	started := false
-	prefix := func() {
-		c.MoveUp(1)
-
-		if started {
-			c.EraseCurrentLine()
-		}
-		started = true
-
-		InStyle(header, item)
-	}
-
-	postfix := func() {
-		fmt.Println(gray, message, reset)
-
-		time.Sleep(300 * time.Millisecond)
-	}
-
-	after := func() {
-		c.EraseCurrentLine()
-		InStyle(header, item)
-		fmt.Println()
-	}
-
-	s := &Spinner{
-		Before:  before,
-		After:   after,
-		Prefix:  prefix,
-		Postfix: postfix,
-	}
-
-	return s
-}
-
-func Warning(message, command string) {
+func Warning(note, command string) {
 	fmt.Println()
 	fmt.Print(ansi.Color("> ", "red"))
-	fmt.Print(message)
+	fmt.Print(note)
 
 	if command != "" {
 		fmt.Println()

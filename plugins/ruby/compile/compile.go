@@ -1,6 +1,7 @@
 package compile
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net"
@@ -14,6 +15,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
 	"github.com/go-errors/errors"
+	"github.com/kr/pty"
 
 	"github.com/markelog/eclectica/console"
 	eio "github.com/markelog/eclectica/io"
@@ -149,14 +151,16 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 func (ruby Ruby) configure() (err error) {
 	ruby.Emitter.Emit("configure")
 
-	err, cmd, stdErr, stdOut := ruby.configureArgs()
+	err, cmd, stderr, stdout := ruby.configureArgs()
 	if err != nil {
 		return
 	}
 
+	ruby.listen("configure", stdout)
+
 	err = cmd.Run()
 	if err != nil {
-		return console.GetError(err, stdErr, stdOut)
+		return console.GetError(err, stderr, stdout)
 	}
 
 	return
@@ -165,14 +169,16 @@ func (ruby Ruby) configure() (err error) {
 func (ruby Ruby) prepare() (err error) {
 	ruby.Emitter.Emit("prepare")
 
-	err, cmd, stdErr, stdOut := ruby.getCmd("make", "-j", "2")
+	err, cmd, stderr, stdout := ruby.getCmd("make", "-j", "2")
 	if err != nil {
 		return
 	}
 
+	ruby.listen("prepare", stdout)
+
 	err = cmd.Run()
 	if err != nil {
-		return console.GetError(err, stdErr, stdOut)
+		return console.GetError(err, stderr, stdout)
 	}
 
 	return
@@ -181,20 +187,53 @@ func (ruby Ruby) prepare() (err error) {
 func (ruby Ruby) install() (err error) {
 	ruby.Emitter.Emit("install")
 
-	err, cmd, stdErr, stdOut := ruby.getCmd("make", "install")
+	err, cmd, stderr, stdout := ruby.getCmd("make", "install")
 	if err != nil {
 		return
 	}
 
+	ruby.listen("install", stdout)
+
 	err = cmd.Run()
 	if err != nil {
-		return console.GetError(err, stdErr, stdOut)
+		return console.GetError(err, stderr, stdout)
 	}
 
 	return
 }
 
-func (ruby Ruby) getCmd(args ...string) (err error, cmd *exec.Cmd, stdout, stderr io.ReadCloser) {
+func truncateString(str string, num int) string {
+	bnoden := str
+	if len(str) > num {
+		if num > 3 {
+			num -= 3
+		}
+		bnoden = str[0:num] + "..."
+	}
+	return bnoden
+}
+
+func (ruby Ruby) listen(event string, pipe io.ReadCloser) {
+	if pipe == nil {
+		return
+	}
+
+	scanner := bufio.NewScanner(pipe)
+	go func() {
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if len(line) == 0 {
+				continue
+			}
+
+			line = truncateString(line, 80)
+
+			ruby.Emitter.Emit(event, line)
+		}
+	}()
+}
+
+func (ruby Ruby) getCmd(args ...string) (err error, cmd *exec.Cmd, stderr, stdout io.ReadCloser) {
 	cmd = exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
@@ -206,17 +245,20 @@ func (ruby Ruby) getCmd(args ...string) (err error, cmd *exec.Cmd, stdout, stder
 		return
 	}
 
-	stdout, err = cmd.StdoutPipe()
-	if err != nil {
-		err = errors.New(err)
-		return
-	}
-
 	stderr, err = cmd.StderrPipe()
 	if err != nil {
 		err = errors.New(err)
 		return
 	}
+
+	// In order to preserve colors output -
+	// trick the command into thinking this is real tty
+	stdout, tty, err := pty.Open()
+	if err != nil {
+		err = errors.New(err)
+		return
+	}
+	cmd.Stdout = tty
 
 	return
 }

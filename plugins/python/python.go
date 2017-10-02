@@ -1,6 +1,7 @@
 package python
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -18,6 +19,7 @@ import (
 	"github.com/blang/semver"
 	"github.com/chuckpreslar/emission"
 	"github.com/go-errors/errors"
+	"github.com/kr/pty"
 	"gopkg.in/cavaliercoder/grab.v1"
 
 	"github.com/markelog/eclectica/console"
@@ -94,14 +96,14 @@ func (python Python) PostInstall() (err error) {
 	bin := variables.GetBin("python", python.Version)
 
 	if hasTools(python.Version) {
-		err, cmd, stdErr, stdOut := python.getCmd(bin, "-m", "ensurepip")
+		err, cmd, stderr, stdout := python.getCmd(bin, "-m", "ensurepip")
 		if err != nil {
 			return err
 		}
 
 		err = cmd.Run()
 		if err != nil {
-			return console.GetError(err, stdErr, stdOut)
+			return console.GetError(err, stderr, stdout)
 		}
 
 		return err
@@ -215,39 +217,27 @@ func (python Python) ListRemote() (result []string, err error) {
 }
 
 func (python Python) configure() (err error) {
+	python.Emitter.Emit("configure")
+
 	path := variables.Path("python", python.Version)
 	configure := filepath.Join(path, "configure")
-
-	python.Emitter.Emit("configure")
 
 	err = python.externals()
 	if err != nil {
 		return errors.New(err)
 	}
 
-	err, cmd, stdErr, stdOut := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
+	err, cmd, stderr, stdout := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
 	if err != nil {
 		return err
 	}
 	cmd.Env = python.getEnvs(cmd.Env)
 
-	err = cmd.Run()
-	if err != nil {
-		return console.GetError(err, stdErr, stdOut)
-	}
-
-	return
-}
-
-func (python Python) touch() (err error) {
-	err, cmd, stdErr, stdOut := python.getCmd("make", "touch")
-	if err != nil {
-		return err
-	}
+	python.listen("configure", stdout)
 
 	err = cmd.Run()
 	if err != nil {
-		return console.GetError(err, stdErr, stdOut)
+		return console.GetError(err, stderr, stdout)
 	}
 
 	return
@@ -259,14 +249,16 @@ func (python Python) prepare() (err error) {
 	// Ignore touch errors since newest python makefile doesn't have this task
 	python.touch()
 
-	err, cmd, stdErr, stdOut := python.getCmd("make", "-j", "2")
+	err, cmd, stderr, stdout := python.getCmd("make", "-j", "2")
 	if err != nil {
 		return err
 	}
 
+	python.listen("prepare", stdout)
+
 	err = cmd.Run()
 	if err != nil {
-		return console.GetError(err, stdErr, stdOut)
+		return console.GetError(err, stderr, stdout)
 	}
 
 	return
@@ -275,17 +267,64 @@ func (python Python) prepare() (err error) {
 func (python Python) install() (err error) {
 	python.Emitter.Emit("install")
 
-	err, cmd, stdErr, stdOut := python.getCmd("make", "install")
+	err, cmd, stderr, stdout := python.getCmd("make", "install")
+	if err != nil {
+		return err
+	}
+
+	python.listen("install", stdout)
+
+	err = cmd.Run()
+	if err != nil {
+		return console.GetError(err, stderr, stdout)
+	}
+
+	return
+}
+
+func (python Python) touch() (err error) {
+	err, cmd, stderr, stdout := python.getCmd("make", "touch")
 	if err != nil {
 		return err
 	}
 
 	err = cmd.Run()
 	if err != nil {
-		return console.GetError(err, stdErr, stdOut)
+		return console.GetError(err, stderr, stdout)
 	}
 
 	return
+}
+
+func truncateString(str string, num int) string {
+	bnoden := str
+	if len(str) > num {
+		if num > 3 {
+			num -= 3
+		}
+		bnoden = str[0:num] + "..."
+	}
+	return bnoden
+}
+
+func (python Python) listen(event string, pipe io.ReadCloser) {
+	if pipe == nil {
+		return
+	}
+
+	scanner := bufio.NewScanner(pipe)
+	go func() {
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if len(line) == 0 {
+				continue
+			}
+
+			line = truncateString(line, 80)
+
+			python.Emitter.Emit(event, line)
+		}
+	}()
 }
 
 func (python Python) getEnvs(original []string) (result []string) {
@@ -319,7 +358,7 @@ func (python Python) getOSXEnvs(original []string) []string {
 	return original
 }
 
-func (python Python) getCmd(args ...string) (err error, cmd *exec.Cmd, stdout, stderr io.ReadCloser) {
+func (python Python) getCmd(args ...string) (err error, cmd *exec.Cmd, stderr, stdout io.ReadCloser) {
 	cmd = exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
@@ -331,17 +370,20 @@ func (python Python) getCmd(args ...string) (err error, cmd *exec.Cmd, stdout, s
 		return
 	}
 
-	stdout, err = cmd.StdoutPipe()
-	if err != nil {
-		err = errors.New(err)
-		return
-	}
-
 	stderr, err = cmd.StderrPipe()
 	if err != nil {
 		err = errors.New(err)
 		return
 	}
+
+	// In order to preserve colors output -
+	// trick the command into thinking this is real tty
+	stdout, tty, err := pty.Open()
+	if err != nil {
+		err = errors.New(err)
+		return
+	}
+	cmd.Stdout = tty
 
 	return
 }

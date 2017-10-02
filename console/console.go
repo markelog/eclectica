@@ -57,7 +57,7 @@ func Shell() {
 	print.Error(err)
 }
 
-// GetError is just facade to handling console errors
+// GetError is just facade to handling console errors of the pipes
 func GetError(err error, stdout, stderr io.ReadCloser) error {
 	if stdout == nil || stderr == nil {
 		return nil

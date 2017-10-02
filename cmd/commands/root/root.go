@@ -2,13 +2,13 @@ package root
 
 import (
 	"os"
-	"time"
 
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/flags"
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/cmd/print/custom-spinner"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/versions"
 )
@@ -24,7 +24,7 @@ var Command = &cobra.Command{
 }
 
 // Event type handler
-type handleFn func()
+type handleFn func(args ...string)
 
 // Entry point
 func Execute() {
@@ -64,7 +64,6 @@ func Execute() {
 	// In case of `ec <language>@<partial-version like node@5>`
 	if hasVersion && versions.IsPartial(version) {
 		print.InStyleln("Language", language)
-
 		version = getVersion(language, version)
 
 		print.InStyleln("Version", version)
@@ -134,17 +133,35 @@ func getVersion(language, version string) string {
 func conditionalInstall(plugin *plugins.Plugin) {
 	var (
 		err     error
-		spinner *print.Spinner
+		spinner *CustomSpinner.Spin
 	)
 
 	handle := func(note string) handleFn {
-		return func() {
-			if spinner != nil {
-				spinner.Stop()
+		return func(args ...string) {
+			var (
+				message string
+			)
+
+			if len(args) > 0 {
+				message = args[0]
 			}
 
-			time.Sleep(300 * time.Millisecond)
-			spinner = print.CustomSpin("Version", plugin.Version, note)
+			if spinner != nil {
+				spinner.Set(&CustomSpinner.SpinArgs{
+					Item:    plugin.Version,
+					Note:    note,
+					Message: message,
+				})
+
+				return
+			}
+
+			spinner = CustomSpinner.New(&CustomSpinner.SpinArgs{
+				Header:  "Version",
+				Item:    plugin.Version,
+				Note:    note,
+				Message: message,
+			})
 			spinner.Start()
 		}
 	}
