@@ -134,6 +134,11 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 			return
 		}
 
+		// Do not allow "preview" versions
+		if strings.Contains(href, "preview") == true {
+			return
+		}
+
 		version := rVersion.FindAllStringSubmatch(href, -1)[0][0]
 
 		if _, ok := tmp[version]; ok == false {

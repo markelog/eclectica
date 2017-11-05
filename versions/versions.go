@@ -57,7 +57,6 @@ func ComposeMinors(versions []string) map[string][]string {
 		}
 
 		versions := checkVersions[0]
-
 		part := versions[1] + "." + versions[2] + ".x"
 
 		if _, ok := result[part]; ok == false {

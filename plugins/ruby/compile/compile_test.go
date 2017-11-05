@@ -57,6 +57,11 @@ var _ = Describe("compile ruby", func() {
 
 			It("should contain 2.3.3 version", func() {
 				Expect(remotes).To(ContainElement("2.3.3"))
+				Expect(remotes).To(ContainElement("2.3.3"))
+			})
+
+			It("should not contain preview version (2.5.0 in this case)", func() {
+				Expect(remotes).ToNot(ContainElement("2.5.0"))
 			})
 		})
 

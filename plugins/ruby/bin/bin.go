@@ -99,9 +99,11 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 		href = strings.Replace(href, "ruby-", "", 1)
 		href = strings.Replace(href, ".tar.bz2", "", 1)
 
-		if version.MatchString(href) {
-			result = append(result, href)
+		if version.MatchString(href) == false {
+			continue
 		}
+
+		result = append(result, href)
 	}
 
 	return result, nil
