@@ -172,9 +172,8 @@ func semverifyList(versions []string) []string {
 	semverList := []semver.Version{}
 	result := []string{}
 
-	for _, element := range versions {
-		parsed, _ := semver.Parse(Semverify(element))
-
+	for _, version := range versions {
+		parsed, _ := semver.Parse(Semverify(version))
 		semverList = append(semverList, parsed)
 	}
 

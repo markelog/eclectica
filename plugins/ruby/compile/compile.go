@@ -26,7 +26,8 @@ import (
 
 var (
 	VersionLink    = "https://cache.ruby-lang.org/pub/ruby"
-	versionPattern = "\\d+\\.\\d+\\.\\d+"
+	versionHref    = `\d+\.\d+\.\d+\.tar\.gz`
+	versionPattern = `\d+\.\d+\.\d+`
 )
 
 type Ruby struct {
@@ -121,21 +122,13 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 
 	result := []string{}
 	tmp := make(map[string]bool)
+	rHref := regexp.MustCompile(versionHref)
 	rVersion := regexp.MustCompile(versionPattern)
 
 	doc.Find("a").Each(func(i int, node *goquery.Selection) {
 		href, _ := node.Attr("href")
 
-		if strings.Contains(href, ".tar.gz") == false {
-			return
-		}
-
-		if rVersion.MatchString(href) == false {
-			return
-		}
-
-		// Do not allow "preview" versions
-		if strings.Contains(href, "preview") == true {
+		if rHref.MatchString(href) == false {
 			return
 		}
 
@@ -266,46 +259,6 @@ func (ruby Ruby) getCmd(args ...string) (err error, cmd *exec.Cmd, stderr, stdou
 	cmd.Stdout = tty
 
 	return
-}
-
-func getRemoteVersions() ([]string, error) {
-	doc, err := goquery.NewDocument(VersionLink)
-
-	if err != nil {
-		if _, ok := err.(net.Error); ok {
-			return nil, errors.New(variables.ConnectionError)
-		}
-
-		return nil, err
-	}
-
-	result := []string{}
-	tmp := make(map[string]bool)
-	rVersion := regexp.MustCompile(versionPattern)
-
-	doc.Find("a").Each(func(i int, node *goquery.Selection) {
-		href, _ := node.Attr("href")
-
-		if strings.Contains(href, ".tar.gz") == false {
-			return
-		}
-
-		if rVersion.MatchString(href) == false {
-			return
-		}
-
-		version := rVersion.FindAllStringSubmatch(href, -1)[0][0]
-
-		if _, ok := tmp[version]; ok == false {
-			tmp[version] = true
-		}
-	})
-
-	for key, _ := range tmp {
-		result = append(result, key)
-	}
-
-	return result, nil
 }
 
 func remoteMap(version string) string {
