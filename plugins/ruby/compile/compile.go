@@ -292,6 +292,7 @@ func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out, outErr io.ReadC
 
 	err, libyaml, openssl := brewDependencies()
 	if err != nil {
+		err = errors.New(err)
 		return
 	}
 

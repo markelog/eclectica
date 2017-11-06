@@ -5,9 +5,16 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/markelog/release"
+)
+
+var (
+
+	// Right now lowest possible version on rvm is for "10.12"
+	min = float64(10.12)
 )
 
 // RemoveArtefacts removes RVM artefacts (ignore errors)
@@ -31,7 +38,12 @@ func RemoveArtefacts(base string) (err error) {
 
 func GetUrl(versionLink string) string {
 	typa, _, version := release.All()
+	floatVersion, _ := strconv.ParseFloat(version, 64)
 	arch := "x86_64"
+
+	if min < floatVersion {
+		version = fmt.Sprintf("%v", min)
+	}
 
 	versions := strings.Split(version, ".")
 	version = versions[0] + "." + versions[1]
