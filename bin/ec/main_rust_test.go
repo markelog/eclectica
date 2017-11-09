@@ -22,33 +22,33 @@ var _ = Describe("rust", func() {
 		fmt.Println()
 
 		fmt.Println("Install tmp version")
-		Execute("go", "run", path, "rust@1.8.0")
+		Execute("go", "run", path, "rust@1.20.0")
 
-		fmt.Println("Removing rust@1.9.0")
-		Execute("go", "run", path, "rm", "rust@1.9.0")
+		fmt.Println("Removing rust@1.21.0")
+		Execute("go", "run", path, "rm", "rust@1.21.0")
 		fmt.Println("Removed")
 	})
 
-	It("should install rust 1.9.0", func() {
-		Execute("go", "run", path, "rust@1.9.0")
+	It("should install rust 1.21.0", func() {
+		Execute("go", "run", path, "rust@1.21.0")
 		command, _ := Command("go", "run", path, "ls", "rust").Output()
 
 		fmt.Println()
 
-		Expect(strings.Contains(string(command), "♥ 1.9.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "♥ 1.21.0")).To(Equal(true))
 	})
 
 	It("should use local version", func() {
 		pwd, _ := os.Getwd()
 		versionFile := filepath.Join(filepath.Dir(pwd), ".rust-version")
 
-		Execute("go", "run", path, "rust@1.9.0")
+		Execute("go", "run", path, "rust@1.21.0")
 
-		io.WriteFile(versionFile, "1.8.0")
+		io.WriteFile(versionFile, "1.20.0")
 
 		command, _ := Command("go", "run", path, "ls", "rust").Output()
 
-		Expect(strings.Contains(string(command), "♥ 1.8.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "♥ 1.20.0")).To(Equal(true))
 
 		err := os.RemoveAll(versionFile)
 
@@ -56,10 +56,10 @@ var _ = Describe("rust", func() {
 	})
 
 	It("should list installed rust versions", func() {
-		Execute("go", "run", path, "rust@1.9.0")
+		Execute("go", "run", path, "rust@1.21.0")
 		command, _ := Command("go", "run", path, "ls", "rust").Output()
 
-		Expect(strings.Contains(string(command), "1.9.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "1.21.0")).To(Equal(true))
 	})
 
 	It("should list remote rust versions", func() {
@@ -69,15 +69,15 @@ var _ = Describe("rust", func() {
 	It("should remove rust version", func() {
 		result := true
 
-		Execute("go", "run", path, "rust@1.9.0")
-		Execute("go", "run", path, "rust@1.8.0")
-		Command("go", "run", path, "rm", "rust@1.9.0").Output()
+		Execute("go", "run", path, "rust@1.21.0")
+		Execute("go", "run", path, "rust@1.20.0")
+		Command("go", "run", path, "rm", "rust@1.21.0").Output()
 
 		plugin := plugins.New("rust")
 		versions := plugin.List()
 
 		for _, version := range versions {
-			if version == "1.9.0" {
+			if version == "1.21.0" {
 				result = false
 			}
 		}
