@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -167,7 +168,7 @@ func (ruby Ruby) configure() (err error) {
 func (ruby Ruby) prepare() (err error) {
 	ruby.Emitter.Emit("prepare")
 
-	err, cmd, stderr, stdout := ruby.getCmd("make", "-j", "2")
+	err, cmd, stderr, stdout := ruby.getCmd("make", "-j")
 	if err != nil {
 		return
 	}
@@ -185,7 +186,7 @@ func (ruby Ruby) prepare() (err error) {
 func (ruby Ruby) install() (err error) {
 	ruby.Emitter.Emit("install")
 
-	err, cmd, stderr, stdout := ruby.getCmd("make", "install")
+	err, cmd, stderr, stdout := ruby.getCmd("make", "install", "-j")
 	if err != nil {
 		return
 	}
@@ -231,17 +232,15 @@ func (ruby Ruby) listen(event string, pipe io.ReadCloser) {
 	}()
 }
 
-func (ruby Ruby) getCmd(args ...string) (err error, cmd *exec.Cmd, stderr, stdout io.ReadCloser) {
+func (ruby Ruby) getCmd(args ...string) (
+	err error,
+	cmd *exec.Cmd,
+	stderr, stdout io.ReadCloser,
+) {
 	cmd = exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
 	cmd.Dir = variables.InstallLanguage("ruby", ruby.Version)
-
-	if variables.IsDebug() {
-		cmd.Stderr = os.Stderr
-		cmd.Stdout = os.Stdout
-		return
-	}
 
 	stderr, err = cmd.StderrPipe()
 	if err != nil {
@@ -250,14 +249,24 @@ func (ruby Ruby) getCmd(args ...string) (err error, cmd *exec.Cmd, stderr, stdou
 	}
 
 	// In order to preserve colors output -
-	// trick the command into thinking this is real tty
-	stdout, tty, err := pty.Open()
+	// trick the command into thinking this is real tty.
+	// Works properly only with "configure" command
+	if path.Base(args[0]) == "configure" {
+		stdout, tty, ptyErr := pty.Open()
+		if ptyErr != nil {
+			return errors.New(ptyErr), nil, nil, nil
+		}
+		cmd.Stdout = tty
+		cmd.Stdin = tty
+
+		return nil, cmd, stderr, stdout
+	}
+
+	stdout, err = cmd.StdoutPipe()
 	if err != nil {
 		err = errors.New(err)
 		return
 	}
-	cmd.Stdout = tty
-
 	return
 }
 
@@ -271,12 +280,17 @@ func remoteMap(version string) string {
 	return version
 }
 
-func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out, outErr io.ReadCloser) {
+func (ruby Ruby) configureArgs() (
+	err error,
+	cmd *exec.Cmd,
+	stdout, stderr io.ReadCloser,
+) {
 	var (
 		path      = variables.InstallLanguage("ruby", ruby.Version)
 		configure = filepath.Join(path, "configure")
 		prefix    = "--prefix=" + variables.Path("ruby", ruby.Version)
 		baseruby  = "--with-baseruby="
+		shared    = "--enable-shared"
 	)
 
 	bin, err := binRuby()
@@ -286,7 +300,7 @@ func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out, outErr io.ReadC
 	baseruby = baseruby + bin
 
 	if runtime.GOOS != "darwin" {
-		err, cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby)
+		err, cmd, stdout, stderr = ruby.getCmd(configure, prefix, baseruby)
 		return
 	}
 
@@ -299,7 +313,14 @@ func (ruby Ruby) configureArgs() (err error, cmd *exec.Cmd, out, outErr io.ReadC
 	opensslDir := "--with-openssl-dir=" + openssl
 	libyamlDir := "--with-libyaml-dir=" + libyaml
 
-	err, cmd, out, outErr = ruby.getCmd(configure, prefix, baseruby, libyamlDir, opensslDir)
+	err, cmd, stdout, stderr = ruby.getCmd(
+		configure,
+		prefix,
+		baseruby,
+		libyamlDir,
+		opensslDir,
+		shared,
+	)
 	return
 }
 

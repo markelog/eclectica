@@ -19,7 +19,6 @@ import (
 	"github.com/blang/semver"
 	"github.com/chuckpreslar/emission"
 	"github.com/go-errors/errors"
-	"github.com/kr/pty"
 	"gopkg.in/cavaliercoder/grab.v1"
 
 	"github.com/markelog/eclectica/console"
@@ -219,15 +218,23 @@ func (python Python) ListRemote() (result []string, err error) {
 func (python Python) configure() (err error) {
 	python.Emitter.Emit("configure")
 
-	path := variables.Path("python", python.Version)
-	configure := filepath.Join(path, "configure")
-
+	var (
+		path      = variables.Path("python", python.Version)
+		configure = filepath.Join(path, "configure")
+		ensurepip = "--with-ensurepip=upgrade"
+		shared    = "--enabled-shared"
+	)
 	err = python.externals()
 	if err != nil {
 		return errors.New(err)
 	}
 
-	err, cmd, stderr, stdout := python.getCmd(configure, "--prefix="+path, "--with-ensurepip=upgrade")
+	err, cmd, stderr, stdout := python.getCmd(
+		configure,
+		"--prefix="+path,
+		ensurepip,
+		shared,
+	)
 	if err != nil {
 		return err
 	}
@@ -249,7 +256,7 @@ func (python Python) prepare() (err error) {
 	// Ignore touch errors since newest python makefile doesn't have this task
 	python.touch()
 
-	err, cmd, stderr, stdout := python.getCmd("make", "-j", "2")
+	err, cmd, stderr, stdout := python.getCmd("make", "-j")
 	if err != nil {
 		return err
 	}
@@ -358,7 +365,11 @@ func (python Python) getOSXEnvs(original []string) []string {
 	return original
 }
 
-func (python Python) getCmd(args ...string) (err error, cmd *exec.Cmd, stderr, stdout io.ReadCloser) {
+func (python Python) getCmd(args ...string) (
+	err error,
+	cmd *exec.Cmd,
+	stderr, stdout io.ReadCloser,
+) {
 	cmd = exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
@@ -376,14 +387,11 @@ func (python Python) getCmd(args ...string) (err error, cmd *exec.Cmd, stderr, s
 		return
 	}
 
-	// In order to preserve colors output -
-	// trick the command into thinking this is real tty
-	stdout, tty, err := pty.Open()
+	stdout, err = cmd.StdoutPipe()
 	if err != nil {
 		err = errors.New(err)
 		return
 	}
-	cmd.Stdout = tty
 
 	return
 }

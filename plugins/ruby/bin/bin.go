@@ -20,7 +20,7 @@ import (
 
 var (
 	VersionLink    = "https://rvm.io/binaries"
-	versionPattern = "\\d+\\.\\d+\\.\\d"
+	versionPattern = `\d+\.\d+\.\d`
 
 	bins = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
 	dots = []string{".ruby-version"}
