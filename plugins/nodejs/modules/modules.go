@@ -25,12 +25,8 @@ func New(previous, current string) *Modules {
 }
 
 func (modules Modules) Install() (err error) {
-	err = modules.copy()
-	if err != nil {
-		return
-	}
-
 	if modules.SameMajors() {
+		err = modules.copy()
 		return
 	}
 
@@ -43,10 +39,12 @@ func (modules Modules) Install() (err error) {
 }
 
 func (modules Modules) read() (result []string, err error) {
-	dest := filepath.Join(modules.getDest(), "node_modules")
+	dest := modules.getPrevious()
 
 	files, err := ioutil.ReadDir(dest)
+
 	if err != nil {
+		err = errors.New(err)
 		return
 	}
 
@@ -77,7 +75,15 @@ func (modules Modules) reinstall() (err error) {
 		return
 	}
 
-	install = append([]string{"install", "--offline", "--global", "--verbose"}, install...)
+	install = append(
+		[]string{
+			"install",
+			"--offline",
+			"--global",
+			"--verbose",
+		},
+		install...,
+	)
 	output, err := exec.Command("npm", install...).CombinedOutput()
 	if err != nil {
 		return errors.New(string(output))
@@ -87,16 +93,30 @@ func (modules Modules) reinstall() (err error) {
 }
 
 func (modules Modules) getDest() string {
-	return filepath.Dir(modules.Path(modules.current))
+	return modules.Path(modules.current)
+}
+
+func (modules Modules) getPrevious() string {
+	return modules.Path(modules.previous)
 }
 
 func (modules Modules) copy() (err error) {
-	packages := modules.Path(modules.previous)
 	dest := modules.getDest()
 
-	err = cprf.Copy(packages, dest)
+	install, err := modules.read()
 	if err != nil {
-		return errors.New(err)
+		return
+	}
+
+	if len(install) == 0 {
+		return
+	}
+
+	for _, pack := range install {
+		err = cprf.Copy(pack, dest)
+		if err != nil {
+			return errors.New(err)
+		}
 	}
 
 	previousBin := filepath.Join(variables.Path("node", modules.previous), "bin")

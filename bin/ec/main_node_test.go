@@ -34,7 +34,6 @@ var _ = Describe("node", func() {
 
 	Describe("preserve globally installed modules", func() {
 		dir, _ := os.Getwd()
-		testdata := filepath.Join(dir, "../../testdata/plugins/nodejs/example.scss")
 
 		It("between major versions (ojm module)", func() {
 			Execute("npm", "install", "--global", "ojm")
@@ -49,6 +48,7 @@ var _ = Describe("node", func() {
 		})
 
 		It("between major versions (node-sass module)", func() {
+			testdata := filepath.Join(dir, "../../testdata/plugins/nodejs/example.scss")
 			Execute("npm", "install", "--global", "node-sass")
 
 			Execute("go", "run", path, "node@"+secondaryVersion)
@@ -73,6 +73,7 @@ var _ = Describe("node", func() {
 		})
 
 		It("between minor versions (node-sass module)", func() {
+			testdata := filepath.Join(dir, "../../testdata/plugins/nodejs/example.scss")
 			Execute("npm", "install", "--global", "node-sass")
 
 			Execute("go", "run", path, "node@5.0.0")
