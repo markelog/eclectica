@@ -63,7 +63,7 @@ func GetBin(args ...interface{}) string {
 
 	base := Path(name, version)
 
-	// TODO: fix
+	// FIXME: should look better somehow
 	if name == "rust" {
 		name = "rustc"
 	}

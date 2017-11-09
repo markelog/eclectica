@@ -1,9 +1,10 @@
 package request
 
 import (
-	"errors"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/variables"
 )
@@ -26,6 +27,7 @@ func Body(url string) (string, error) {
 	contents, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
+		err = errors.New(err)
 		return "", err
 	}
 

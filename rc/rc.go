@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/go-errors/errors"
+
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -87,11 +89,11 @@ func (rc *Rc) add() error {
 	defer file.Close()
 
 	if err != nil {
-		return err
+		return errors.New(err)
 	}
 
 	_, err = file.WriteString(rc.command)
-	return err
+	return errors.New(err)
 }
 
 func (rc *Rc) Exists() bool {
