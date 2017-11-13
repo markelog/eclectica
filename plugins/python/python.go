@@ -222,7 +222,6 @@ func (python Python) configure() (err error) {
 		path      = variables.Path("python", python.Version)
 		configure = filepath.Join(path, "configure")
 		ensurepip = "--with-ensurepip=upgrade"
-		shared    = "--enabled-shared"
 	)
 	err = python.externals()
 	if err != nil {
@@ -233,7 +232,6 @@ func (python Python) configure() (err error) {
 		configure,
 		"--prefix="+path,
 		ensurepip,
-		shared,
 	)
 	if err != nil {
 		return err
