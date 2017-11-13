@@ -37,12 +37,5 @@ var _ = Describe("initiate", func() {
 				Expect(elem).NotTo(ContainSubstring(".eclectica/versions/rust/current/bin"))
 			}
 		})
-
-		It("put shared bin folder to the end", func() {
-			plugins := []string{}
-			result := strings.Split(Compose(plugins), ":")
-
-			Expect(result[2]).To(ContainSubstring(".eclectica/shared/bin"))
-		})
 	})
 })

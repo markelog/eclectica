@@ -83,9 +83,5 @@ func Compose(plugins []string) (result string) {
 		result += ":" + filepath.Join(variables.Home(), language, "current/bin")
 	}
 
-	// For shared modules
-	shared := filepath.Join(variables.Base(), "shared")
-	result += ":" + filepath.Join(shared, "bin")
-
 	return
 }
