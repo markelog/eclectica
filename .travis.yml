@@ -16,6 +16,8 @@ before_install:
   - export PATH=~/.eclectica/bin:$PATH
   - export PATH=~/.eclectica/shared/bin:$PATH
 
+  - export EC_DEBUG=true
+
   - echo $PATH
   - echo $HOME
 
