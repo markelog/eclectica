@@ -80,9 +80,9 @@ func (rc *Rc) Add() error {
 	return nil
 }
 
-func (rc *Rc) add() error {
+func (rc *Rc) add() (err error) {
 	if rc.Exists() {
-		return nil
+		return
 	}
 
 	file, err := os.OpenFile(rc.path, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
@@ -93,7 +93,11 @@ func (rc *Rc) add() error {
 	}
 
 	_, err = file.WriteString(rc.command)
-	return errors.New(err)
+	if err != nil {
+		err = errors.New(err)
+	}
+
+	return
 }
 
 func (rc *Rc) Exists() bool {
