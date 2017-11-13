@@ -5,16 +5,17 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
+	"github.com/blang/semver"
+	"github.com/markelog/eclectica/versions"
 	"github.com/markelog/release"
 )
 
 var (
 
 	// Right now lowest possible version on rvm is for "10.12"
-	min = float64(10.12)
+	min, _ = semver.Parse("10.12.0")
 )
 
 // RemoveArtefacts removes RVM artefacts (ignore errors)
@@ -38,11 +39,11 @@ func RemoveArtefacts(base string) (err error) {
 
 func GetUrl(versionLink string) string {
 	typa, _, version := release.All()
-	floatVersion, _ := strconv.ParseFloat(version, 64)
+	floatVersion, _ := semver.Parse(versions.Semverify(version))
 	arch := "x86_64"
 
-	if min < floatVersion {
-		version = fmt.Sprintf("%v", min)
+	if floatVersion.GT(min) {
+		version = fmt.Sprintf("%v", versions.Unsemverify(min.String()))
 	}
 
 	versions := strings.Split(version, ".")
