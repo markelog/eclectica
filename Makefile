@@ -31,7 +31,7 @@ int: install
 	@rm -rf $(tmp)
 .PHONY: int
 
-int-ci: install
+int-ci:
 	$(eval tmp := $(shell pwd)"/tmp")
 
 	@echo "[+] intergration testing"

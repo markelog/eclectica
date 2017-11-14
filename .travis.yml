@@ -14,7 +14,6 @@ before_install:
   - export PATH=~/.eclectica/versions/python/current/bin:$PATH
   - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
   - export PATH=~/.eclectica/bin:$PATH
-  - export PATH=~/.eclectica/shared/bin:$PATH
 
   - echo $PATH
   - echo $HOME
@@ -55,7 +54,6 @@ matrix:
         - export PATH=~/.eclectica/versions/python/current/bin:$PATH
         - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
         - export PATH=~/.eclectica/bin:$PATH
-        - export PATH=~/.eclectica/shared/bin:$PATH
 
         - echo $PATH
         - echo $HOME
@@ -123,7 +121,6 @@ matrix:
         - export PATH=~/.eclectica/versions/python/current/bin:$PATH
         - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
         - export PATH=~/.eclectica/bin:$PATH
-        - export PATH=~/.eclectica/shared/bin:$PATH
 
         - echo $PATH
         - echo $HOME
@@ -236,22 +233,23 @@ matrix:
       osx_image: xcode8
       script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=python2.7"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait 400 make int-ci"
-
-    - env: "TEST_LANGUAGE=python2-old"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait 400 make int-ci"
-
-    - env: "TEST_LANGUAGE=python3"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait 400 make int-ci"
-
     - env: "TEST_LANGUAGE=elm"
       os: osx
       osx_image: xcode8
       script: "travis_wait make int-ci"
+
+    # Takes a lot of time on El Captain
+    # - env: "TEST_LANGUAGE=python2.7"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait 9000 make int-ci"
+    #
+    # - env: "TEST_LANGUAGE=python2-old"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait 9000 make int-ci"
+    #
+    # - env: "TEST_LANGUAGE=python3"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait 9000 make int-ci"
