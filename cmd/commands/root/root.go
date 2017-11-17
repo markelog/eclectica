@@ -8,7 +8,6 @@ import (
 	"github.com/markelog/eclectica/cmd/flags"
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
-	"github.com/markelog/eclectica/cmd/print/custom-spinner"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/versions"
 )
@@ -25,6 +24,55 @@ var Command = &cobra.Command{
 
 // Event type handler
 type handleFn func(args ...string)
+
+// getVersion gets version of the language and its correlated version
+func getVersion(language, version string) string {
+	remoteList, err := info.FullListRemote(language)
+	print.Error(err)
+
+	version, err = versions.Complete(version, remoteList)
+	print.Error(err)
+
+	return version
+}
+
+// Install either globally or locally
+func conditionalInstall(plugin *plugins.Plugin) {
+	var (
+		err error
+	)
+
+	SetupEvents(plugin)
+
+	if flags.IsLocal {
+		err = plugin.LocalInstall()
+	} else {
+		err = plugin.Install()
+	}
+
+	print.Error(err)
+}
+
+// Entry point for installation
+func install(language, version string) {
+	plugin := plugins.New(language, version)
+
+	err := plugin.PreDownload()
+	print.Error(err)
+
+	response, err := plugin.Download()
+	print.Error(err)
+
+	// response == nil means we already downloaded that thing
+	if response != nil {
+		print.Download(response, plugin.Version)
+
+		err = plugin.Extract()
+		print.Error(err)
+	}
+
+	conditionalInstall(plugin)
+}
 
 // Entry point
 func Execute() {
@@ -117,98 +165,6 @@ func Execute() {
 
 	// We already know it will show an error
 	os.Exit(1)
-}
-
-func getVersion(language, version string) string {
-	remoteList, err := info.FullListRemote(language)
-	print.Error(err)
-
-	version, err = versions.Complete(version, remoteList)
-	print.Error(err)
-
-	return version
-}
-
-// Install either globally or locally
-func conditionalInstall(plugin *plugins.Plugin) {
-	var (
-		err     error
-		spinner *CustomSpinner.Spin
-	)
-
-	handle := func(note string) handleFn {
-		return func(args ...string) {
-			var (
-				message string
-			)
-
-			if len(args) > 0 {
-				message = args[0]
-			}
-
-			if spinner != nil {
-				spinner.Set(&CustomSpinner.SpinArgs{
-					Item:    plugin.Version,
-					Note:    note,
-					Message: message,
-				})
-
-				return
-			}
-
-			spinner = CustomSpinner.New(&CustomSpinner.SpinArgs{
-				Header:  "Version",
-				Item:    plugin.Version,
-				Note:    note,
-				Message: message,
-			})
-			spinner.Start()
-		}
-	}
-
-	plugin.Events().On("configure", handle("configure"))
-	plugin.Events().On("prepare", handle("prepare"))
-	plugin.Events().On("install", handle("install"))
-	plugin.Events().On("post-install", handle("post-install"))
-	plugin.Events().On("reapply modules", handle("reapply global modules"))
-
-	plugin.Events().On("done", func() {
-		if spinner == nil {
-			return
-		}
-
-		spinner.Stop()
-		spinner = nil
-	})
-
-	if flags.IsLocal {
-		err = plugin.LocalInstall()
-	} else {
-		err = plugin.Install()
-	}
-
-	print.Error(err)
-}
-
-// Entry point for installation
-func install(language, version string) {
-	plugin := plugins.New(language, version)
-
-	err := plugin.PreDownload()
-	print.Error(err)
-
-	response, err := plugin.Download()
-	print.Error(err)
-
-	// response == nil means we already downloaded that thing
-	if response != nil {
-		print.Download(response, plugin.Version)
-
-		err = plugin.Extract()
-		print.Error(err)
-	}
-
-	conditionalInstall(plugin)
 }
 
 // Add command to root command
