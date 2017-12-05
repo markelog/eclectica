@@ -2,6 +2,7 @@ package print
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -57,17 +58,20 @@ func Error(err error) {
 		return
 	}
 
-	fmt.Println()
-	fmt.Print(ansi.Color("> ", "red"))
+	stderr := log.New(os.Stderr, "", 0)
 
-	fmt.Fprintf(os.Stderr, "%v", err)
+	stderr.Println()
+	stderr.Print(ansi.Color("> ", "red"))
+
+	stderr.Printf("%v", err)
+	stderr.Println()
 
 	if variables.IsDebug() {
-		fmt.Println(errors.Wrap(err, 2).ErrorStack())
+		stderr.Println(errors.Wrap(err, 2).ErrorStack())
 	}
 
-	fmt.Println()
-	fmt.Println()
+	stderr.Println()
+	stderr.Println()
 
 	os.Exit(1)
 }
