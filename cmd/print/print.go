@@ -58,20 +58,16 @@ func Error(err error) {
 		return
 	}
 
+	red := ansi.Color("> ", "red")
 	stderr := log.New(os.Stderr, "", 0)
 
 	stderr.Println()
-	stderr.Print(ansi.Color("> ", "red"))
 
-	stderr.Printf("%v", err)
-	stderr.Println()
+	stderr.Printf(red+"%v", err)
 
 	if variables.IsDebug() {
 		stderr.Println(errors.Wrap(err, 2).ErrorStack())
 	}
-
-	stderr.Println()
-	stderr.Println()
 
 	os.Exit(1)
 }
