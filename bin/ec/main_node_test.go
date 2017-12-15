@@ -111,14 +111,6 @@ var _ = Describe("node", func() {
 		Expect(strings.Contains(string(command), "♥ "+secondaryVersion)).To(Equal(true))
 	})
 
-	It("test presence of the npmrc config", func() {
-		npmrcPath := filepath.Join(variables.Path("node", mainVersion), "/etc/npmrc")
-
-		data := io.Read(npmrcPath)
-
-		Expect(data).To(Equal("scripts-prepend-node-path=false"))
-	})
-
 	It("should list installed node versions", func() {
 		Execute("go", "run", path, "node@"+secondaryVersion)
 		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()

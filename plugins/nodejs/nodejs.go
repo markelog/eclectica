@@ -3,7 +3,6 @@ package nodejs
 import (
 	"fmt"
 	"net"
-	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
@@ -13,7 +12,6 @@ import (
 	"github.com/chuckpreslar/emission"
 	"github.com/go-errors/errors"
 
-	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/plugins/nodejs/modules"
 	"github.com/markelog/eclectica/variables"
@@ -50,11 +48,6 @@ func (node Node) Events() *emission.Emitter {
 
 func (node Node) PostInstall() (err error) {
 	node.Emitter.Emit("post-install")
-
-	err = node.setNpm()
-	if err != nil {
-		return errors.New(err)
-	}
 
 	ok, err := node.Yarn()
 	if err != nil && ok == false {
@@ -135,23 +128,4 @@ func (node Node) ListRemote() ([]string, error) {
 	}
 
 	return result, nil
-}
-
-// Removes needless warnings from npm output
-func (node Node) setNpm() (err error) {
-	path := variables.Path("node", node.Version)
-	etc := filepath.Join(path, "etc")
-	npmrc := filepath.Join(etc, "npmrc")
-
-	_, err = io.CreateDir(etc)
-	if err != nil {
-		return
-	}
-
-	err = io.WriteFile(npmrc, "scripts-prepend-node-path=false")
-	if err != nil {
-		return
-	}
-
-	return nil
 }
