@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/blang/semver"
+	hversion "github.com/hashicorp/go-version"
 )
 
 // Compose versions to map object of arrays from array
@@ -75,14 +76,36 @@ func ComposeMinors(versions []string) map[string][]string {
 // 	 string{"0.x", "4.x"}
 func GetKeys(versions map[string][]string) []string {
 	result := []string{}
+	compare := map[string]string{}
+	zeroRe := regexp.MustCompile(`\.x$`)
 
 	for version, _ := range versions {
 		result = append(result, version)
 	}
 
-	// In revese order
-	// Should we use semver sort?
-	sort.Sort(sort.Reverse(sort.StringSlice(result)))
+	// Serialize it to semver list
+	semverVersions := make([]*hversion.Version, len(result))
+	for i, raw := range result {
+		version := zeroRe.ReplaceAllString(raw, ".0-alpha")
+		semverVersion, _ := hversion.NewVersion(version)
+
+		compare[semverVersion.String()] = raw
+		semverVersions[i] = semverVersion
+	}
+
+	// Sort it
+	sort.Sort(hversion.Collection(semverVersions))
+
+	// Reverse it
+	for i := 0; i < len(semverVersions)/2; i++ {
+		j := len(semverVersions) - i - 1
+		semverVersions[i], semverVersions[j] = semverVersions[j], semverVersions[i]
+	}
+
+	// Bring it back to normal view
+	for i, version := range semverVersions {
+		result[i] = compare[version.String()]
+	}
 
 	return result
 }

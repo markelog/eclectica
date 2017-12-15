@@ -35,11 +35,29 @@ var _ = Describe("versions", func() {
 
 	Describe("GetKeys", func() {
 		It("should get version keys", func() {
-			list := map[string][]string{"4.x": []string{}, "0.x": []string{"0.8.2"}}
+			list := map[string][]string{
+				"10.x": []string{},
+				"4.x":  []string{},
+				"0.x":  []string{"0.8.2"},
+			}
 			keys := GetKeys(list)
 
-			Expect(keys[1]).To(Equal("0.x"))
-			Expect(keys[0]).To(Equal("4.x"))
+			Expect(keys[0]).To(Equal("10.x"))
+			Expect(keys[1]).To(Equal("4.x"))
+			Expect(keys[2]).To(Equal("0.x"))
+		})
+
+		It("should get version keys with 0.10.x in it", func() {
+			list := map[string][]string{
+				"0.9.x":  []string{},
+				"0.10.x": []string{},
+				"0.1.x":  []string{"0.8.2"},
+			}
+			keys := GetKeys(list)
+
+			Expect(keys[0]).To(Equal("0.10.x"))
+			Expect(keys[1]).To(Equal("0.9.x"))
+			Expect(keys[2]).To(Equal("0.1.x"))
 		})
 	})
 

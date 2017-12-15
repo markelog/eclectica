@@ -2,9 +2,9 @@
 package ls
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/go-errors/errors"
 	"github.com/markelog/list"
 	"github.com/spf13/cobra"
 
@@ -66,8 +66,6 @@ func listVersions(versions []string, current string) {
 			break
 		}
 	}
-
-	fmt.Println()
 }
 
 // List local ones
@@ -105,6 +103,7 @@ func listRemoteVersions(language string) {
 	print.Error(err)
 
 	current := plugins.New(language).Current()
+
 	listVersions(versions, current)
 }
 
