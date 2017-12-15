@@ -68,6 +68,12 @@ func (node Node) PostInstall() (err error) {
 func (node Node) Switch() (err error) {
 	previous := node.previous
 
+	// Should not install modules if not explicitly defined by the user
+	if node.withModules == false {
+		return
+	}
+
+	// If there is no previous version – don't do anything
 	if len(previous) == 0 {
 		return
 	}

@@ -32,13 +32,13 @@ var _ = Describe("node", func() {
 		Execute("go", "run", path, "rm", "node@"+secondaryVersion)
 	})
 
-	Describe("preserve globally installed modules", func() {
+	Describe("globally installed modules", func() {
 		dir, _ := os.Getwd()
 
-		It("between major versions (ojm module)", func() {
+		It("preserves between major versions (ojm module)", func() {
 			Execute("npm", "install", "--global", "ojm")
 
-			Execute("go", "run", path, "node@"+secondaryVersion)
+			Execute("go", "run", path, "node@"+secondaryVersion, "-w")
 
 			command, _ := Command("ojm").CombinedOutput()
 
@@ -47,11 +47,11 @@ var _ = Describe("node", func() {
 			Expect(string(command)).Should(ContainSubstring(expected))
 		})
 
-		It("between major versions (node-sass module)", func() {
+		It("preserves between major versions (node-sass module)", func() {
 			testdata := filepath.Join(dir, "../../testdata/plugins/nodejs/example.scss")
 			Execute("npm", "install", "--global", "node-sass")
 
-			Execute("go", "run", path, "node@"+secondaryVersion)
+			Execute("go", "run", path, "node@"+secondaryVersion, "-w")
 
 			command, _ := Command("node-sass", testdata).CombinedOutput()
 			expected := "background: #eeffcc;"
@@ -59,10 +59,10 @@ var _ = Describe("node", func() {
 			Expect(string(command)).Should(ContainSubstring(expected))
 		})
 
-		It("between minor versions (ojm module)", func() {
+		It("preserves between minor versions (ojm module)", func() {
 			Execute("npm", "install", "--global", "ojm")
 
-			Execute("go", "run", path, "node@5.0.0")
+			Execute("go", "run", path, "node@5.0.0", "-w")
 
 			command, _ := Command("ojm").CombinedOutput()
 			expected := "Check if site is down through isup.com"
@@ -72,11 +72,11 @@ var _ = Describe("node", func() {
 			Execute("go", "run", path, "rm", "node@5.0.0")
 		})
 
-		It("between minor versions (node-sass module)", func() {
+		It("preserves between minor versions (node-sass module)", func() {
 			testdata := filepath.Join(dir, "../../testdata/plugins/nodejs/example.scss")
 			Execute("npm", "install", "--global", "node-sass")
 
-			Execute("go", "run", path, "node@5.0.0")
+			Execute("go", "run", path, "node@5.0.0", "-w")
 
 			command, _ := Command("node-sass", testdata).CombinedOutput()
 			expected := "background: #eeffcc;"
@@ -84,6 +84,18 @@ var _ = Describe("node", func() {
 			Expect(string(command)).Should(ContainSubstring(expected))
 
 			Execute("go", "run", path, "rm", "node@5.0.0")
+		})
+
+		FIt("does not preserves modules", func() {
+			Execute("npm", "install", "--global", "ojm")
+
+			Execute("go", "run", path, "node@"+secondaryVersion)
+
+			command, _ := Command("ojm").CombinedOutput()
+
+			expected := "Check if site is down through isup.com"
+
+			Expect(string(command)).ShouldNot(ContainSubstring(expected))
 		})
 	})
 
