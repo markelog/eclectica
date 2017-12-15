@@ -95,9 +95,10 @@ func (golang Golang) ListRemote() ([]string, error) {
 	}
 
 	result := []string{}
+	selector := "#archive tr:first-of-type td:first-of-type.filename a"
 	rVersion := regexp.MustCompile(versionPattern)
 
-	doc.Find("#archive tr:first-of-type td:first-of-type.filename a").Each(func(i int, node *goquery.Selection) {
+	doc.Find(selector).Each(func(i int, node *goquery.Selection) {
 		text := node.Text()
 
 		if strings.Contains(text, "bootstrap") {
