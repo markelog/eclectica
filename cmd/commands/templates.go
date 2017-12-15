@@ -1,4 +1,4 @@
-package root
+package commands
 
 // Command example for install command
 const example = `

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/markelog/eclectica/cmd/commands/root"
+	"github.com/markelog/eclectica/cmd/commands"
 
 	// Commands
+	"github.com/markelog/eclectica/cmd/commands/install"
 	"github.com/markelog/eclectica/cmd/commands/ls"
 	"github.com/markelog/eclectica/cmd/commands/path"
 	"github.com/markelog/eclectica/cmd/commands/rm"
@@ -11,10 +12,11 @@ import (
 )
 
 func main() {
-	root.Register(rm.Command)
-	root.Register(ls.Command)
-	root.Register(version.Command)
-	root.Register(path.Command)
+	commands.Register(install.Command)
+	commands.Register(rm.Command)
+	commands.Register(ls.Command)
+	commands.Register(version.Command)
+	commands.Register(path.Command)
 
-	root.Execute()
+	commands.Execute()
 }

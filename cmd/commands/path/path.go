@@ -1,3 +1,4 @@
+// Package path defines "path" command i.e. outputs proper $PATH
 package path
 
 import (

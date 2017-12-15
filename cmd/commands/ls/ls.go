@@ -1,3 +1,4 @@
+// Package ls defines "list" command i.e. outputs installed or remote available languages
 package ls
 
 import (
@@ -7,16 +8,19 @@ import (
 	"github.com/markelog/list"
 	"github.com/spf13/cobra"
 
-	"github.com/markelog/eclectica/cmd/flags"
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins"
 )
 
+// Is action remote?
+var isRemote bool
+
 // Command represents the ls command
 var Command = &cobra.Command{
 	Use:     "ls",
+	Aliases: []string{"list"},
 	Short:   "List installed language versions",
 	Example: example,
 	Run:     run,
@@ -39,7 +43,7 @@ var example = `
 
 // Runner
 func run(cmd *cobra.Command, args []string) {
-	if flags.IsRemote {
+	if isRemote {
 		remote(args)
 	} else {
 		local(args)
@@ -145,5 +149,7 @@ func local(args []string) {
 
 // Init
 func init() {
-	Command.PersistentFlags().BoolVarP(flags.RemoteFlag())
+	flags := Command.PersistentFlags()
+
+	flags.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
 }

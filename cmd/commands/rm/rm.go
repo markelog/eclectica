@@ -1,3 +1,4 @@
+// Package rm defines "remove" command
 package rm
 
 import (
@@ -11,6 +12,7 @@ import (
 // Command config
 var Command = &cobra.Command{
 	Use:     "rm [<language>@<version>]",
+	Aliases: []string{"remove"},
 	Short:   "Remove language version",
 	Example: example,
 	Run:     run,

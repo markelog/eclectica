@@ -1,25 +1,33 @@
-package root
+// Package install installs the langauges
+package install
 
 import (
 	"os"
 
 	"github.com/spf13/cobra"
 
-	"github.com/markelog/eclectica/cmd/flags"
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/versions"
 )
 
-// Command aliases
-var aliases = []string{"eclectica"}
+// Is action remote?
+var isRemote bool
 
-// Command config
+// Is action local?
+var isLocal bool
+
+// Is action local?
+var WithModules bool
+
+// Command represents the ls command
 var Command = &cobra.Command{
-	Use:     "ec [<language>@<version>]",
-	Aliases: aliases,
-	Example: example,
+	Use: "install [<language>@<version>]",
+	Run: run,
+
+	// Rather use "run [<language>@<version>]"
+	Hidden: true,
 }
 
 // Event type handler
@@ -44,7 +52,7 @@ func conditionalInstall(plugin *plugins.Plugin) {
 
 	SetupEvents(plugin)
 
-	if flags.IsLocal {
+	if isLocal {
 		err = plugin.LocalInstall()
 	} else {
 		err = plugin.Install()
@@ -75,24 +83,10 @@ func install(language, version string) {
 }
 
 // Entry point
-func Execute() {
+func run(cmd *cobra.Command, args []string) {
 	var (
-		err  error
-		args = os.Args[1:]
+		err error
 	)
-
-	// If `--remote` or `-r` flag was passed (should go before any other instructions)
-	flags.Parse()
-
-	if info.NonInstallCommand(args) {
-
-		// Initialize cobra for other commands
-		if err = Command.Execute(); err != nil {
-			os.Exit(1)
-		}
-
-		return
-	}
 
 	// We don't use cobra here, since we support `ec <language>@<version>` syntax
 
@@ -128,7 +122,7 @@ func Execute() {
 		return
 	}
 
-	if flags.IsRemote {
+	if isRemote {
 
 		// In case of `ec -r`
 		if hasLanguage {
@@ -161,8 +155,6 @@ func Execute() {
 		return
 	}
 
-	Command.Execute()
-
 	// We already know it will show an error
 	os.Exit(1)
 }
@@ -174,8 +166,8 @@ func Register(cmd *cobra.Command) {
 
 // Init
 func init() {
-	Command.SetHelpTemplate(help)
-	Command.SetUsageTemplate(usage)
-
-	cobra.OnInitialize()
+	flags := Command.PersistentFlags()
+	flags.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
+	flags.BoolVarP(&isLocal, "local", "l", false, "Install as local version")
+	flags.BoolVarP(&isLocal, "with-modules", "w", false, "Reinstall global modules from the previous version (currently works only for node.js)")
 }

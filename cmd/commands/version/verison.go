@@ -1,3 +1,4 @@
+// Package version defines "version" command i.e. outputs current version
 package version
 
 import (

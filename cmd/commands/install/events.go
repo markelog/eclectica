@@ -1,4 +1,4 @@
-package root
+package install
 
 import (
 	"github.com/markelog/eclectica/cmd/print/custom-spinner"
