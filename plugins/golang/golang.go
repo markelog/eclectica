@@ -97,7 +97,7 @@ func (golang Golang) ListRemote() ([]string, error) {
 	result := []string{}
 	rVersion := regexp.MustCompile(versionPattern)
 
-	doc.Find("tr:first-of-type td:first-of-type.filename a").Each(func(i int, node *goquery.Selection) {
+	doc.Find("#archive tr:first-of-type td:first-of-type.filename a").Each(func(i int, node *goquery.Selection) {
 		text := node.Text()
 
 		if strings.Contains(text, "bootstrap") {
@@ -106,7 +106,7 @@ func (golang Golang) ListRemote() ([]string, error) {
 
 		// We not checking for duplicates, since it just might create more errors
 		version := rVersion.FindAllStringSubmatch(text, 1)[0][0]
-		result = append(result, versions.Semverify(version))
+		result = append(result, version)
 	})
 
 	return result, nil
