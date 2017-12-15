@@ -42,16 +42,26 @@ func init() {
 	flags.BoolVarP(&WithModules, "with-modules", "w", false, "Reinstall global modules from the previous version (currently works only for node.js)")
 }
 
+func augment() {
+	// Insert command "install" in args
+	os.Args = append(os.Args[:1], append([]string{"install"}, os.Args[1:]...)...)
+}
+
 func Execute() {
+
+	args := os.Args[1:]
+	if len(args) == 0 {
+		augment()
+		Command.Execute()
+
+		return
+	}
 
 	// Until https://github.com/spf13/cobra/pull/369 is landed
 	// Workaround to "forward" to a know command when no know command found
-	_, _, err := Command.Find(os.Args[1:])
-
+	_, _, err := Command.Find(args)
 	if err != nil && strings.HasPrefix(err.Error(), "unknown command") {
-
-		// Insert command "install" in args
-		os.Args = append(os.Args[:1], append([]string{"install"}, os.Args[1:]...)...)
+		augment()
 	}
 
 	Command.Execute()

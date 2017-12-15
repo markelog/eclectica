@@ -86,7 +86,7 @@ var _ = Describe("node", func() {
 			Execute("go", "run", path, "rm", "node@5.0.0")
 		})
 
-		FIt("does not preserves modules", func() {
+		It("does not preserves modules", func() {
 			Execute("npm", "install", "--global", "ojm")
 
 			Execute("go", "run", path, "node@"+secondaryVersion)
