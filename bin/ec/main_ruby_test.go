@@ -122,7 +122,9 @@ var _ = Describe("ruby", func() {
 
 		Command("go", "run", path, "rm", "ruby@2.2.1").Output()
 
-		plugin := plugins.New("ruby")
+		plugin := plugins.New(&plugins.Args{
+			Language: "ruby",
+		})
 		versions := plugin.List()
 
 		for _, version := range versions {

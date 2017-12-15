@@ -41,7 +41,9 @@ var _ = Describe("plugins", func() {
 	Describe("SearchBin", func() {
 		It("find all bins", func() {
 			for _, language := range Plugins {
-				bins := New(language).Bins()
+				bins := New(&Args{
+					Language: language,
+				}).Bins()
 
 				for _, elem := range bins {
 					Expect(SearchBin(elem)).To(Equal(language))
@@ -118,7 +120,10 @@ var _ = Describe("plugins", func() {
 		It("remove sequence", func() {
 			resCurrent = ""
 
-			New("node", "6.8.0").Remove()
+			New(&Args{
+				Language: "node",
+				Version:  "6.8.0",
+			}).Remove()
 
 			Expect(current).To(Equal(true))
 			Expect(list).To(Equal(true))
@@ -130,7 +135,10 @@ var _ = Describe("plugins", func() {
 		It("remove current version", func() {
 			resCurrent = "6.8.0"
 
-			New("node", "6.8.0").Remove()
+			New(&Args{
+				Language: "node",
+				Version:  "6.8.0",
+			}).Remove()
 
 			Expect(current).To(Equal(true))
 			Expect(list).To(Equal(true))
@@ -141,7 +149,9 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("shouldn't remove without version", func() {
-			err := New("node").Remove()
+			err := New(&Args{
+				Language: "node",
+			}).Remove()
 
 			Expect(err.Error()).To(Equal("Version was not defined"))
 		})
@@ -307,7 +317,10 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("install sequence for not installed version", func() {
-			New("node", "6.8.0").Install()
+			New(&Args{
+				Language: "node",
+				Version:  "6.8.0",
+			}).Install()
 
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(true))
@@ -321,7 +334,10 @@ var _ = Describe("plugins", func() {
 		It("install sequence for installed version", func() {
 			resIsInstalled = true
 
-			New("node", "6.8.0").Install()
+			New(&Args{
+				Language: "node",
+				Version:  "6.8.0",
+			}).Install()
 
 			Expect(current).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(true))
@@ -335,7 +351,10 @@ var _ = Describe("plugins", func() {
 		It("install sequence for current version", func() {
 			resCurrent = "6.8.0"
 
-			New("node", "6.8.0").Install()
+			New(&Args{
+				Language: "node",
+				Version:  "6.8.0",
+			}).Install()
 
 			Expect(current).To(Equal(true))
 			Expect(pluginSwitch).To(Equal(false))
@@ -347,7 +366,10 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("local install sequence", func() {
-			New("node", "6.8.0").LocalInstall()
+			New(&Args{
+				Language: "node",
+				Version:  "6.8.0",
+			}).LocalInstall()
 
 			Expect(current).To(Equal(true))
 			Expect(isInstalled).To(Equal(true))
@@ -361,7 +383,10 @@ var _ = Describe("plugins", func() {
 		It("should not return early", func() {
 			resOsStat, _ = os.Stat(os.Getenv("HOME"))
 
-			New("node", "6.8.0").Install()
+			New(&Args{
+				Language: "node",
+				Version:  "6.8.0",
+			}).Install()
 
 			Expect(current).To(Equal(true))
 			Expect(osRemoveAll).To(Equal(true))
@@ -372,7 +397,9 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("returns error if version was not defined", func() {
-			plugin := New("node")
+			plugin := New(&Args{
+				Language: "node",
+			})
 
 			Expect(plugin.Install()).Should(MatchError("Version was not defined"))
 		})
@@ -411,7 +438,10 @@ var _ = Describe("plugins", func() {
 					return info, nil
 				})
 
-			plugin = New("node", "5.0.0")
+			plugin = New(&Args{
+				Language: "node",
+				Version:  "5.0.0",
+			})
 		})
 
 		AfterEach(func() {
@@ -420,7 +450,9 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("returns error if version was not defined", func() {
-			plugin := New("node")
+			plugin := New(&Args{
+				Language: "node",
+			})
 			Expect(plugin.Extract()).Should(MatchError("Version was not defined"))
 		})
 
@@ -492,7 +524,10 @@ var _ = Describe("plugins", func() {
 				},
 			)
 
-			plugin = New("node", "5.0.0")
+			plugin = New(&Args{
+				Language: "node",
+				Version:  "5.0.0",
+			})
 		})
 
 		AfterEach(func() {
@@ -503,7 +538,9 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("returns error if version was not defined", func() {
-			plugin := New("node")
+			plugin := New(&Args{
+				Language: "node",
+			})
 			_, err := plugin.Download()
 			Expect(err).Should(MatchError("Version was not defined"))
 		})
@@ -527,7 +564,10 @@ var _ = Describe("plugins", func() {
 		Describe("404 response", func() {
 			It("should return error", func() {
 				info["url"] += "?status=404"
-				_, err := New("node", "5.0.0").Download()
+				_, err := New(&Args{
+					Language: "node",
+					Version:  "5.0.0",
+				}).Download()
 
 				Expect(err).Should(MatchError("Incorrect version 5.0.0"))
 			})
@@ -542,7 +582,10 @@ var _ = Describe("plugins", func() {
 				return nil, syscall.ENOENT
 			})
 
-			plugin = New("node", "5.0.0")
+			plugin = New(&Args{
+				Language: "node",
+				Version:  "5.0.0",
+			})
 		})
 
 		AfterEach(func() {
@@ -574,7 +617,10 @@ var _ = Describe("plugins", func() {
 				},
 			)
 
-			plugin = New("node", "5.0.0")
+			plugin = New(&Args{
+				Language: "node",
+				Version:  "5.0.0",
+			})
 		})
 
 		AfterEach(func() {
@@ -582,7 +628,9 @@ var _ = Describe("plugins", func() {
 		})
 
 		It("returns error if version was not defined", func() {
-			plugin := New("node")
+			plugin := New(&Args{
+				Language: "node",
+			})
 			_, err := plugin.Info()
 
 			Expect(err).Should(MatchError("Version was not defined"))
@@ -605,7 +653,10 @@ var _ = Describe("plugins", func() {
 
 		It("should not add extension if it was defined by the plugin", func() {
 			info["extension"] = "test"
-			info, _ := New("node", "5.0.0").Info()
+			info, _ := New(&Args{
+				Language: "node",
+				Version:  "5.0.0",
+			}).Info()
 
 			Expect(info["extension"]).To(Equal("test"))
 		})
@@ -616,7 +667,10 @@ var _ = Describe("plugins", func() {
 
 		It("should not add extension if it was defined by the plugin", func() {
 			info["extension"] = "test"
-			info, _ := New("node", "5.0.0").Info()
+			info, _ := New(&Args{
+				Language: "node",
+				Version:  "5.0.0",
+			}).Info()
 
 			Expect(info["extension"]).To(Equal("test"))
 		})
@@ -627,7 +681,10 @@ var _ = Describe("plugins", func() {
 
 		It("should not add extension if it was defined by the plugin", func() {
 			info["extension"] = "test"
-			info, _ := New("node", "5.0.0").Info()
+			info, _ := New(&Args{
+				Language: "node",
+				Version:  "5.0.0",
+			}).Info()
 
 			Expect(info["extension"]).To(Equal("test"))
 		})
@@ -687,7 +744,10 @@ var _ = Describe("plugins", func() {
 				},
 			)
 
-			p := New("node", version)
+			p := New(&Args{
+				Language: "node",
+				Version:  version,
+			})
 			p.Events().On("done", func() {
 				eventCalled = true
 			})
@@ -710,7 +770,10 @@ var _ = Describe("plugins", func() {
 				},
 			)
 
-			p := New("node", version)
+			p := New(&Args{
+				Language: "node",
+				Version:  version,
+			})
 			p.Events().On("done", func() {
 				eventCalled = true
 			})

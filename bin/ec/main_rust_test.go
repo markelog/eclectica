@@ -73,7 +73,9 @@ var _ = Describe("rust", func() {
 		Execute("go", "run", path, "rust@1.20.0")
 		Command("go", "run", path, "rm", "rust@1.21.0").Output()
 
-		plugin := plugins.New("rust")
+		plugin := plugins.New(&plugins.Args{
+			Language: "rust",
+		})
 		versions := plugin.List()
 
 		for _, version := range versions {

@@ -19,7 +19,7 @@ var isRemote bool
 var isLocal bool
 
 // Is action local?
-var WithModules bool
+var withModules bool
 
 // Command represents the ls command
 var Command = &cobra.Command{
@@ -63,7 +63,11 @@ func conditionalInstall(plugin *plugins.Plugin) {
 
 // Entry point for installation
 func install(language, version string) {
-	plugin := plugins.New(language, version)
+	plugin := plugins.New(&plugins.Args{
+		Language:    language,
+		Version:     version,
+		WithModules: withModules,
+	})
 
 	err := plugin.PreDownload()
 	print.Error(err)

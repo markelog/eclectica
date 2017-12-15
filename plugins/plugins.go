@@ -36,6 +36,12 @@ type Plugin struct {
 	info    map[string]string
 }
 
+type Args struct {
+	Language    string
+	Version     string
+	WithModules bool
+}
+
 var (
 	Plugins = []string{
 		"node",
@@ -47,40 +53,33 @@ var (
 	}
 )
 
-func New(args ...string) *Plugin {
-	var (
-		version string
-		name    = args[0]
-	)
-
-	if len(args) == 2 {
-		version = args[1]
-	} else {
-		version = ""
-	}
-
+func New(args *Args) *Plugin {
 	plugin := &Plugin{
-		name:    name,
-		Version: version,
+		name:    args.Language,
+		Version: args.Version,
 		emitter: emission.NewEmitter(),
 	}
 
 	switch {
-	case name == "node":
-		plugin.Pkg = nodejs.New(version, plugin.emitter)
-	case name == "rust":
-		plugin.Pkg = rust.New(version, plugin.emitter)
-	case name == "ruby":
-		plugin.Pkg = ruby.New(version, plugin.emitter)
-	case name == "go":
-		plugin.Pkg = golang.New(version, plugin.emitter)
-	case name == "python":
-		plugin.Pkg = python.New(version, plugin.emitter)
-	case name == "elm":
-		plugin.Pkg = elm.New(version, plugin.emitter)
+	case args.Language == "node":
+		plugin.Pkg = nodejs.New(&nodejs.Args{
+			Version:     args.Version,
+			Emitter:     plugin.emitter,
+			WithModules: args.WithModules,
+		})
+	case args.Language == "rust":
+		plugin.Pkg = rust.New(args.Version, plugin.emitter)
+	case args.Language == "ruby":
+		plugin.Pkg = ruby.New(args.Version, plugin.emitter)
+	case args.Language == "go":
+		plugin.Pkg = golang.New(args.Version, plugin.emitter)
+	case args.Language == "python":
+		plugin.Pkg = python.New(args.Version, plugin.emitter)
+	case args.Language == "elm":
+		plugin.Pkg = elm.New(args.Version, plugin.emitter)
 	}
 
-	if len(args) == 2 {
+	if len(args.Version) > 0 {
 		plugin.info, _ = plugin.Info()
 	}
 
@@ -619,7 +618,9 @@ func SearchBin(name string) string {
 	bins := map[string][]string{}
 
 	for _, language := range Plugins {
-		bins[language] = New(language).Bins()
+		bins[language] = New(&Args{
+			Language: language,
+		}).Bins()
 	}
 
 	for index, _ := range bins {

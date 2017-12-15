@@ -18,8 +18,11 @@ import (
 
 // Pipe results of command execution to parent and
 // pass environment variables from language plugin
-func setCmd(cmd *exec.Cmd, name, version string) {
-	environment, err := plugins.New(name, version).Environment()
+func setCmd(cmd *exec.Cmd, language, version string) {
+	environment, err := plugins.New(&plugins.Args{
+		Language: language,
+		Version:  version,
+	}).Environment()
 	print.Error(err)
 
 	if len(environment) > 0 {
@@ -46,7 +49,9 @@ func getRelativePath(dotPath string) string {
 }
 
 func getVersion(language string) (version, dotPath string) {
-	plugin := plugins.New(language)
+	plugin := plugins.New(&plugins.Args{
+		Language: language,
+	})
 	dotFiles := plugin.Dots()
 
 	version, dotPath, err := io.GetVersion(dotFiles)

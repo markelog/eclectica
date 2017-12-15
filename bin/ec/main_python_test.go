@@ -79,7 +79,9 @@ var _ = Describe("python", func() {
 
 				Command("go", "run", path, "rm", "python@2.7.12").Output()
 
-				plugin := plugins.New("python")
+				plugin := plugins.New(&plugins.Args{
+					Language: "python",
+				})
 				versions := plugin.List()
 
 				for _, version := range versions {
@@ -175,7 +177,9 @@ var _ = Describe("python", func() {
 
 			Command("go", "run", path, "rm", "python@3.5.2").Output()
 
-			plugin := plugins.New("python")
+			plugin := plugins.New(&plugins.Args{
+				Language: "python",
+			})
 			versions := plugin.List()
 
 			for _, version := range versions {

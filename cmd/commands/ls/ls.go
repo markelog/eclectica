@@ -70,7 +70,9 @@ func listVersions(versions []string, current string) {
 
 // List local ones
 func listLocalVersions(language string) {
-	plugin := plugins.New(language)
+	plugin := plugins.New(&plugins.Args{
+		Language: language,
+	})
 
 	versions := plugin.List()
 
@@ -102,7 +104,9 @@ func listRemoteVersions(language string) {
 	versions, err := info.AskRemoteVersions(language)
 	print.Error(err)
 
-	current := plugins.New(language).Current()
+	current := plugins.New(&plugins.Args{
+		Language: language,
+	}).Current()
 
 	listVersions(versions, current)
 }

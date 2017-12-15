@@ -28,17 +28,25 @@ var (
 )
 
 type Node struct {
-	Version  string
-	previous string
-	Emitter  *emission.Emitter
+	Version     string
+	previous    string
+	withModules bool
+	Emitter     *emission.Emitter
 	pkg.Base
 }
 
-func New(version string, emitter *emission.Emitter) *Node {
+type Args struct {
+	Version     string
+	Emitter     *emission.Emitter
+	WithModules bool
+}
+
+func New(args *Args) *Node {
 	return &Node{
-		Version:  version,
-		Emitter:  emitter,
-		previous: variables.CurrentVersion("node"),
+		Version:     args.Version,
+		Emitter:     args.Emitter,
+		withModules: args.WithModules,
+		previous:    variables.CurrentVersion("node"),
 	}
 }
 

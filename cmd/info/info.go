@@ -29,7 +29,9 @@ func Ask() (language, version string, err error) {
 
 // Ask for version
 func AskVersion(language string) (version string, err error) {
-	vers := plugins.New(language).List()
+	vers := plugins.New(&plugins.Args{
+		Language: language,
+	}).List()
 
 	if len(vers) == 0 {
 		err = errors.New("There is no installed versions")
@@ -131,7 +133,9 @@ func GetSpinner(language string, prefix spinner.SpinnerFn) *spinner.Spinner {
 }
 
 func ListRemote(language string) (versions map[string][]string, err error) {
-	plugin := plugins.New(language)
+	plugin := plugins.New(&plugins.Args{
+		Language: language,
+	})
 	c, _ := curse.New()
 	s := GetSpinner(language, func() {
 		c.MoveUp(1)
@@ -147,7 +151,9 @@ func ListRemote(language string) (versions map[string][]string, err error) {
 }
 
 func FullListRemote(language string) (versions []string, err error) {
-	plugin := plugins.New(language)
+	plugin := plugins.New(&plugins.Args{
+		Language: language,
+	})
 	c, _ := curse.New()
 	s := GetSpinner(language, func() {
 		c.MoveUp(1)

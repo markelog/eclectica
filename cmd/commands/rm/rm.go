@@ -58,6 +58,9 @@ func run(cmd *cobra.Command, args []string) {
 
 // Try to remove
 func remove(language, version string) {
-	err := plugins.New(language, version).Remove()
+	err := plugins.New(&plugins.Args{
+		Language: language,
+		Version:  version,
+	}).Remove()
 	print.Error(err)
 }

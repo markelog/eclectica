@@ -64,7 +64,9 @@ var _ = Describe("go", func() {
 		Execute("go", "run", path, "go@1.6.0")
 		Command("go", "run", path, "rm", "go@1.7.0").Output()
 
-		plugin := plugins.New("go")
+		plugin := plugins.New(&plugins.Args{
+			Language: "go",
+		})
 		versions := plugin.List()
 
 		for _, version := range versions {

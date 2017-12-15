@@ -131,7 +131,9 @@ var _ = Describe("node", func() {
 		Execute("go", "run", path, "node@"+mainVersion)
 		Command("go", "run", path, "rm", "node@"+secondaryVersion).CombinedOutput()
 
-		plugin := plugins.New("node")
+		plugin := plugins.New(&plugins.Args{
+			Language: "node",
+		})
 		versions := plugin.List()
 
 		for _, version := range versions {
