@@ -3,7 +3,6 @@ package commands
 
 import (
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -17,9 +16,11 @@ var isLocal bool
 // Reinstall global modules from previous version?
 var WithModules bool
 
+var use = "ec [<language>@<version>]"
+
 // Command config
 var Command = &cobra.Command{
-	Use:     "ec [<language>@<version>]",
+	Use:     use,
 	Example: example,
 	Hidden:  true,
 }
@@ -50,17 +51,12 @@ func augment() {
 func Execute() {
 
 	args := os.Args[1:]
-	if len(args) == 0 {
-		augment()
-		Command.Execute()
-
-		return
-	}
 
 	// Until https://github.com/spf13/cobra/pull/369 is landed
 	// Workaround to "forward" to a know command when no know command found
-	_, _, err := Command.Find(args)
-	if err != nil && strings.HasPrefix(err.Error(), "unknown command") {
+	cmd, _, _ := Command.Find(args)
+
+	if cmd.Use == use {
 		augment()
 	}
 
