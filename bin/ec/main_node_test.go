@@ -15,7 +15,7 @@ import (
 )
 
 var _ = Describe("node", func() {
-	mainVersion := "5.1.0"
+	mainVersion := "5.12.0"
 	secondaryVersion := "6.4.0"
 
 	if shouldRun("node") == false {
@@ -109,7 +109,7 @@ var _ = Describe("node", func() {
 
 		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
-		Expect(strings.Contains(string(command), "♥ 5.1.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "♥ "+mainVersion)).To(Equal(true))
 
 		err := os.RemoveAll(versionFile)
 
