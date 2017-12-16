@@ -32,10 +32,11 @@ var _ = Describe("rust", func() {
 	It("should install rust 1.21.0", func() {
 		Execute("go", "run", path, "rust@1.21.0")
 		command, _ := Command("go", "run", path, "ls", "rust").Output()
+		result := string(command)
 
 		fmt.Println()
 
-		Expect(strings.Contains(string(command), "♥ 1.21.0")).To(Equal(true))
+		Expect(strings.Contains(result, "♥ 1.21.0")).To(Equal(true))
 	})
 
 	It("should use local version", func() {
