@@ -40,11 +40,11 @@ var _ = Describe("node", func() {
 
 			Execute("go", "run", path, "node@"+secondaryVersion, "-w")
 
-			command, _ := Command("ojm").CombinedOutput()
-
 			expected := "Check if site is down through isup.com"
+			command, _ := Command("ojm").CombinedOutput()
+			output := string(command)
 
-			Expect(string(command)).Should(ContainSubstring(expected))
+			Expect(output).Should(ContainSubstring(expected))
 		})
 
 		It("preserves between major versions (node-sass module)", func() {
@@ -53,8 +53,8 @@ var _ = Describe("node", func() {
 
 			Execute("go", "run", path, "node@"+secondaryVersion, "-w")
 
-			command, _ := Command("node-sass", testdata).CombinedOutput()
 			expected := "background: #eeffcc;"
+			command, _ := Command("node-sass", testdata).CombinedOutput()
 
 			Expect(string(command)).Should(ContainSubstring(expected))
 		})
@@ -99,28 +99,37 @@ var _ = Describe("node", func() {
 		})
 	})
 
-	It("should use local version", func() {
+	Describe("installation of the local version", func() {
 		pwd, _ := os.Getwd()
 		versionFile := filepath.Join(filepath.Dir(pwd), ".node-version")
 
-		Execute("go", "run", path, "node@"+secondaryVersion)
+		BeforeEach(func() {
+			io.WriteFile(versionFile, mainVersion)
+		})
 
-		io.WriteFile(versionFile, mainVersion)
+		AfterEach(func() {
+			os.RemoveAll(versionFile)
+		})
 
-		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
+		It("should use local version", func() {
+			Execute("go", "run", path, "node@"+secondaryVersion)
 
-		Expect(strings.Contains(string(command), "♥ "+mainVersion)).To(Equal(true))
+			command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
+			output := string(command)
 
-		err := os.RemoveAll(versionFile)
-
-		Expect(err).To(BeNil())
+			Expect(output).Should(ContainSubstring("♥ " + mainVersion))
+		})
 	})
 
 	It("should install node "+secondaryVersion, func() {
 		Execute("go", "run", path, "node@"+secondaryVersion)
-		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
 
-		Expect(strings.Contains(string(command), "♥ "+secondaryVersion)).To(Equal(true))
+		command, _ := Command("go", "run", path, "ls", "node").CombinedOutput()
+		output := string(command)
+
+		println(output)
+
+		Expect(strings.Contains(output, "♥ "+secondaryVersion)).To(Equal(true))
 	})
 
 	It("should list installed node versions", func() {
