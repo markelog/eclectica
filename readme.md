@@ -31,7 +31,7 @@ sudo -H pip install -v eclectica
 ## gem
 
 ```sh
-gem install eclectica
+sudo gem install eclectica
 ```
 
 ## cargo
@@ -75,4 +75,3 @@ if you need to install it to your `$HOME` for example, do this
 ```sh
 wget -qO- https://raw.githubusercontent.com/markelog/ec-install/master/scripts/install.sh | EC_DEST=~/bin sh
 ``` -->
-
