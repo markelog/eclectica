@@ -16,7 +16,7 @@ test: install
 .PHONY: test
 
 int: install
-	$(eval tmp := $(shell pwd)"/tmp")
+	$(eval tmp := $(TMPDIR)"eclectica")
 
 	@echo "[+] intergration testing"
 
@@ -26,13 +26,15 @@ int: install
 	@go build -v ./bin/ec-proxy
 	@mv ec-proxy $(tmp)
 
-	@env EC_PROXY_PLACE=$(tmp) EC_WITHOUT_SPINNER=true TEST_ALL=true go test -v ./bin/ec -timeout 50m
+	-@env EC_PROXY_PLACE=$(tmp) EC_WITHOUT_SPINNER=true TEST_ALL=true go test -v ./bin/ec -timeout 50m
 
 	@rm -rf $(tmp)
 .PHONY: int
 
 int-ci:
-	$(eval tmp := $(shell pwd)"/tmp")
+	$(eval tmp := $(TMPDIR)"eclectica")
+
+	@echo $(tmp)
 
 	@echo "[+] intergration testing"
 
@@ -42,9 +44,12 @@ int-ci:
 	@go build -v ./bin/ec-proxy
 	@mv ec-proxy $(tmp)
 
-	@env EC_PROXY_PLACE=$(tmp) EC_WITHOUT_SPINNER=true go test -v ./bin/ec -timeout 50m
+	-@env EC_PROXY_PLACE=$(tmp) EC_WITHOUT_SPINNER=true go test -v ./bin/ec -timeout 50m
+
+	@echo $(tmp)
 
 	@rm -rf $(tmp)
+	@echo $(?)
 .PHONY: int-ci
 
 build:
