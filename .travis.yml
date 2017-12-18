@@ -190,17 +190,17 @@ matrix:
     - env: "TEST_LANGUAGE=python2.7"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 400 make int-ci"
+      script: "travis_wait 800 make int-ci"
 
     - env: "TEST_LANGUAGE=python2-old"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 400 make int-ci"
+      script: "travis_wait 800 make int-ci"
 
     - env: "TEST_LANGUAGE=python3"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 400 make int-ci"
+      script: "travis_wait 800 make int-ci"
 
     - env: "TEST_LANGUAGE=elm"
       os: osx
