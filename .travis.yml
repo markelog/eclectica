@@ -191,25 +191,26 @@ matrix:
       osx_image: xcode8.3.3
       script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=python2.7"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
-
-    - env: "TEST_LANGUAGE=python2-old"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
-
-    - env: "TEST_LANGUAGE=python3"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
-
     - env: "TEST_LANGUAGE=elm"
       os: osx
       osx_image: xcode8.3.3
       script: "travis_wait make int-ci"
+
+    # Takes to long on CI :/ – travis exits early
+    # - env: "TEST_LANGUAGE=python2.7"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 800 make int-ci"
+    #
+    # - env: "TEST_LANGUAGE=python2-old"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 800 make int-ci"
+    #
+    # - env: "TEST_LANGUAGE=python3"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 800 make int-ci"
 
     # OS X El Capitan
     - env: "TEST_LANGUAGE=main"
@@ -242,7 +243,7 @@ matrix:
       osx_image: xcode8
       script: "travis_wait make int-ci"
 
-    # Takes a lot of time on El Captain
+    # Takes to long on CI :/ – travis exits early
     # - env: "TEST_LANGUAGE=python2.7"
     #   os: osx
     #   osx_image: xcode8
