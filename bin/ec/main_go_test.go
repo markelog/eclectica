@@ -18,35 +18,40 @@ var _ = Describe("go", func() {
 		return
 	}
 
+	var (
+		mainVersion      = "1.9.0"
+		secondaryVersion = "1.8.0"
+	)
+
 	BeforeEach(func() {
 		fmt.Println()
 
-		fmt.Println("Install tmp version")
-		Execute("go", "run", path, "go@1.6.0")
+		fmt.Println("Install " + mainVersion + " version")
+		Execute("go", "run", path, "go@"+secondaryVersion)
 
-		fmt.Println("Removing go@1.7.0")
-		Execute("go", "run", path, "rm", "go@1.7.0")
+		fmt.Println("Removing go@" + mainVersion)
+		Execute("go", "run", path, "rm", "go@"+mainVersion)
 		fmt.Println("Removed")
 	})
 
 	It("should list installed versions", func() {
-		Execute("go", "run", path, "go@1.7.0")
+		Execute("go", "run", path, "go@"+mainVersion)
 		command, _ := Command("go", "run", path, "ls", "go").Output()
 
-		Expect(strings.Contains(string(command), "♥ 1.7.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "♥ "+mainVersion)).To(Equal(true))
 	})
 
 	It("should use local version", func() {
 		pwd, _ := os.Getwd()
 		versionFile := filepath.Join(filepath.Dir(pwd), ".go-version")
 
-		Execute("go", "run", path, "go@1.7.0")
+		Execute("go", "run", path, "go@"+mainVersion)
 
-		io.WriteFile(versionFile, "1.6.0")
+		io.WriteFile(versionFile, secondaryVersion)
 
 		command, _ := Command("go", "run", path, "ls", "go").Output()
 
-		Expect(strings.Contains(string(command), "♥ 1.6.0")).To(Equal(true))
+		Expect(strings.Contains(string(command), "♥ "+secondaryVersion)).To(Equal(true))
 
 		err := os.RemoveAll(versionFile)
 
@@ -54,15 +59,15 @@ var _ = Describe("go", func() {
 	})
 
 	It("should list remote versions", func() {
-		Expect(checkRemoteList("go", "1.7.x", 20)).To(Equal(true))
+		Expect(checkRemoteList("go", "1.9.x", 20)).To(Equal(true))
 	})
 
 	It("should remove go version", func() {
 		result := true
 
-		Execute("go", "run", path, "go@1.7.0")
-		Execute("go", "run", path, "go@1.6.0")
-		Command("go", "run", path, "rm", "go@1.7.0").Output()
+		Execute("go", "run", path, "go@"+mainVersion)
+		Execute("go", "run", path, "go@"+secondaryVersion)
+		Command("go", "run", path, "rm", "go@"+mainVersion).Output()
 
 		plugin := plugins.New(&plugins.Args{
 			Language: "go",
@@ -70,7 +75,7 @@ var _ = Describe("go", func() {
 		versions := plugin.List()
 
 		for _, version := range versions {
-			if version == "1.7.0" {
+			if version == mainVersion {
 				result = false
 			}
 		}

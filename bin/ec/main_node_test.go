@@ -15,12 +15,14 @@ import (
 )
 
 var _ = Describe("node", func() {
-	mainVersion := "5.12.0"
-	secondaryVersion := "6.4.0"
-
 	if shouldRun("node") == false {
 		return
 	}
+
+	var (
+		mainVersion      = "5.12.0"
+		secondaryVersion = "6.4.0"
+	)
 
 	BeforeEach(func() {
 		fmt.Println()

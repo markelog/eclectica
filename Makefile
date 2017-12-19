@@ -21,7 +21,7 @@ int: install
 	@echo "[+] intergration testing"
 
 	@rm -rf $(tmp)
-	@mkdir $(tmp)
+	@mkdir -p $(tmp)
 
 	@go build -v ./bin/ec-proxy
 	@mv ec-proxy $(tmp)
@@ -34,12 +34,10 @@ int: install
 int-ci:
 	$(eval tmp := $(TMPDIR)"eclectica")
 
-	@echo $(tmp)
-
 	@echo "[+] intergration testing"
 
 	@rm -rf $(tmp)
-	@mkdir $(tmp)
+	@mkdir -p $(tmp)
 
 	@go build -v ./bin/ec-proxy
 	@mv ec-proxy $(tmp)
