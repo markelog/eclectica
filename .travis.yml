@@ -6,6 +6,10 @@ language: go
 
 go: 1.9
 
+env:
+  global:
+  - TMPDIR=$TRAVIS_BUILD_DIR/tmp
+
 before_install:
   - export PATH=~/.eclectica/versions/node/current/bin:$PATH
   - export PATH=~/.eclectica/versions/rust/current/bin:$PATH

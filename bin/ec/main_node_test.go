@@ -141,7 +141,7 @@ var _ = Describe("node", func() {
 		Expect(strings.Contains(string(command), "node-v"+secondaryVersion+"-darwin-x64")).To(Equal(false))
 	})
 
-	FIt("should list remote node versions", func() {
+	It("should list remote node versions", func() {
 		Expect(checkRemoteList("node", "6.x", 15)).To(Equal(true))
 	})
 
