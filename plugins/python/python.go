@@ -96,9 +96,9 @@ func (python Python) PostInstall() (err error) {
 	bin := variables.GetBin("python", python.Version)
 
 	if hasTools(python.Version) {
-		err, cmd, stderr, stdout := python.getCmd(bin, "-m", "ensurepip")
-		if err != nil {
-			return err
+		cmdErr, cmd, stderr, stdout := python.getCmd(bin, "-m", "ensurepip")
+		if cmdErr != nil {
+			return cmdErr
 		}
 
 		err = cmd.Run()
@@ -239,7 +239,8 @@ func (python Python) configure() (err error) {
 	}
 	cmd.Env = python.getEnvs(cmd.Env)
 
-	python.listen("configure", stdout)
+	python.listen("configure", stdout, true)
+	python.listen("configure", stderr, false)
 
 	err = cmd.Run()
 	if err != nil {
@@ -260,7 +261,8 @@ func (python Python) prepare() (err error) {
 		return err
 	}
 
-	python.listen("prepare", stdout)
+	python.listen("prepare", stderr, false)
+	python.listen("prepare", stdout, true)
 
 	err = cmd.Run()
 	if err != nil {
@@ -278,7 +280,8 @@ func (python Python) install() (err error) {
 		return err
 	}
 
-	python.listen("install", stdout)
+	python.listen("install", stderr, false)
+	python.listen("install", stdout, true)
 
 	err = cmd.Run()
 	if err != nil {
@@ -289,9 +292,9 @@ func (python Python) install() (err error) {
 }
 
 func (python Python) touch() (err error) {
-	err, cmd, stderr, stdout := python.getCmd("make", "touch")
-	if err != nil {
-		return err
+	cmdErr, cmd, stderr, stdout := python.getCmd("make", "touch")
+	if cmdErr != nil {
+		return cmdErr
 	}
 
 	err = cmd.Run()
@@ -302,7 +305,7 @@ func (python Python) touch() (err error) {
 	return
 }
 
-func (python Python) listen(event string, pipe io.ReadCloser) {
+func (python Python) listen(event string, pipe io.ReadCloser, emit bool) {
 	if pipe == nil {
 		return
 	}
@@ -317,7 +320,9 @@ func (python Python) listen(event string, pipe io.ReadCloser) {
 
 			line = eStrings.ElipsisForTerminal(line)
 
-			python.Emitter.Emit(event, line)
+			if emit {
+				python.Emitter.Emit(event, line)
+			}
 		}
 	}()
 }
