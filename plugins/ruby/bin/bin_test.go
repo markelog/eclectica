@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	eio "github.com/markelog/eclectica/io"
+	eIO "github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/ruby/bin"
 	"github.com/markelog/eclectica/variables"
 )
@@ -32,7 +32,7 @@ var _ = Describe("bin ruby", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := eio.Read("../../../testdata/plugins/ruby/bin-dist.html")
+				content := eIO.Read("../../../testdata/plugins/ruby/bin-dist.html")
 
 				// httpmock is not incompatible with goquery :/.
 				// See https://github.com/jarcoal/httpmock/issues/18

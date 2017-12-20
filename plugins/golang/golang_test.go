@@ -17,7 +17,7 @@ import (
 	"github.com/markelog/eclectica/cmd/print"
 	. "github.com/markelog/eclectica/plugins/golang"
 
-	eio "github.com/markelog/eclectica/io"
+	eIO "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -38,7 +38,7 @@ var _ = Describe("golang", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := eio.Read("./testdata/dl.html")
+				content := eIO.Read("./testdata/dl.html")
 
 				// httpmock is not incompatible with goquery :/.
 				// See https://github.com/jarcoal/httpmock/issues/18
@@ -109,7 +109,7 @@ var _ = Describe("golang", func() {
 
 	Describe("Info", func() {
 		BeforeEach(func() {
-			content := eio.Read("../../testdata/plugins/golang/latest.txt")
+			content := eIO.Read("../../testdata/plugins/golang/latest.txt")
 
 			httpmock.Activate()
 

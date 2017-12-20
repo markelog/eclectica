@@ -19,7 +19,7 @@ import (
 	. "github.com/markelog/eclectica/plugins"
 
 	"github.com/markelog/eclectica/initiate"
-	eio "github.com/markelog/eclectica/io"
+	eIO "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/variables"
 )
@@ -278,7 +278,7 @@ var _ = Describe("plugins", func() {
 			})
 
 			// Nothing to check for this one
-			monkey.Patch(eio.WriteFile, func(path, content string) error {
+			monkey.Patch(eIO.WriteFile, func(path, content string) error {
 				return nil
 			})
 		})
@@ -304,7 +304,7 @@ var _ = Describe("plugins", func() {
 			monkey.Unpatch(os.Symlink)
 			monkey.Unpatch(os.Stat)
 			monkey.Unpatch(os.RemoveAll)
-			monkey.Unpatch(eio.WriteFile)
+			monkey.Unpatch(eIO.WriteFile)
 
 			guardInitiate.Unpatch()
 			guardCheckShell.Unpatch()

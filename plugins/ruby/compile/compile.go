@@ -19,8 +19,9 @@ import (
 	"github.com/kr/pty"
 
 	"github.com/markelog/eclectica/console"
-	eio "github.com/markelog/eclectica/io"
+	eIO "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins/ruby/base"
+	eStrings "github.com/markelog/eclectica/strings"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 )
@@ -57,7 +58,7 @@ func (ruby Ruby) PreInstall() (err error) {
 	os.RemoveAll(install)
 
 	if _, err = os.Stat(install); err != nil {
-		_, err = eio.CreateDir(parent)
+		_, err = eIO.CreateDir(parent)
 		if err != nil {
 			return
 		}
@@ -201,17 +202,6 @@ func (ruby Ruby) install() (err error) {
 	return
 }
 
-func truncateString(str string, num int) string {
-	bnoden := str
-	if len(str) > num {
-		if num > 3 {
-			num -= 3
-		}
-		bnoden = str[0:num] + "..."
-	}
-	return bnoden
-}
-
 func (ruby Ruby) listen(event string, pipe io.ReadCloser) {
 	if pipe == nil {
 		return
@@ -225,7 +215,7 @@ func (ruby Ruby) listen(event string, pipe io.ReadCloser) {
 				continue
 			}
 
-			line = truncateString(line, 80)
+			line = eStrings.ElipsisForTerminal(line)
 
 			ruby.Emitter.Emit(event, line)
 		}

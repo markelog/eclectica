@@ -14,7 +14,7 @@ import (
 	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/console"
-	eio "github.com/markelog/eclectica/io"
+	eIO "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 )
@@ -52,7 +52,7 @@ func Urls(version string) (result []string, err error) {
 func getStrip(path string) string {
 	r, _ := regexp.Compile("\\ndiff --git a/")
 
-	text := eio.Read(path)
+	text := eIO.Read(path)
 	isDir := r.MatchString(text)
 
 	if isDir {

@@ -24,6 +24,7 @@ import (
 	"github.com/markelog/eclectica/console"
 	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/plugins/python/patch"
+	eStrings "github.com/markelog/eclectica/strings"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 )
@@ -301,17 +302,6 @@ func (python Python) touch() (err error) {
 	return
 }
 
-func truncateString(str string, num int) string {
-	bnoden := str
-	if len(str) > num {
-		if num > 3 {
-			num -= 3
-		}
-		bnoden = str[0:num] + "..."
-	}
-	return bnoden
-}
-
 func (python Python) listen(event string, pipe io.ReadCloser) {
 	if pipe == nil {
 		return
@@ -325,7 +315,7 @@ func (python Python) listen(event string, pipe io.ReadCloser) {
 				continue
 			}
 
-			line = truncateString(line, 80)
+			line = eStrings.ElipsisForTerminal(line)
 
 			python.Emitter.Emit(event, line)
 		}

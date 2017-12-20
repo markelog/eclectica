@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	eio "github.com/markelog/eclectica/io"
+	eIO "github.com/markelog/eclectica/io"
 	. "github.com/markelog/eclectica/plugins/elm"
 	"github.com/markelog/eclectica/variables"
 )
@@ -32,7 +32,7 @@ var _ = Describe("elm", func() {
 
 		Describe("success", func() {
 			BeforeEach(func() {
-				content := eio.Read("../../testdata/plugins/elm/elm-platform.html")
+				content := eIO.Read("../../testdata/plugins/elm/elm-platform.html")
 
 				ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					status := 200

@@ -1,4 +1,4 @@
-package request_test
+package strings_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -9,5 +9,5 @@ import (
 
 func TestRequest(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Strings Suite")
+	RunSpecs(t, "Request Suite")
 }

@@ -3,6 +3,7 @@ package spinner
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/fatih/color"
 	spin "github.com/tj/go-spin"
@@ -12,6 +13,7 @@ type SpinnerFn func()
 
 type Spinner struct {
 	isDone  bool
+	mutex   *sync.Mutex
 	channel chan bool
 	Spin    *spin.Spinner
 	Prefix  SpinnerFn
@@ -27,6 +29,7 @@ func (spinner *Spinner) Start() {
 	}
 
 	if spinner.Spin == nil {
+		spinner.mutex = &sync.Mutex{}
 		spinner.Spin = spin.New()
 	}
 
@@ -35,7 +38,13 @@ func (spinner *Spinner) Start() {
 	spinner.Before()
 
 	go func() {
-		for spinner.isDone == false {
+		for {
+			// spinner.mutex.Lock()
+
+			if spinner.isDone {
+				break
+			}
+
 			spinner.Prefix()
 
 			color.Set(color.FgCyan)
@@ -44,6 +53,8 @@ func (spinner *Spinner) Start() {
 
 			spinner.Postfix()
 		}
+
+		// spinner.mutex.Unlock()
 	}()
 }
 
