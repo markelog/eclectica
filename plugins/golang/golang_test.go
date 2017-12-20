@@ -63,7 +63,8 @@ var _ = Describe("golang", func() {
 			})
 
 			It("should have correct version values", func() {
-				Expect(remotes[0]).To(Equal("1.9.1"))
+				Expect(remotes[0]).To(Equal("1.9.2"))
+				Expect(remotes[1]).To(Equal("1.9.1"))
 			})
 
 			It("should have only one beta version", func() {

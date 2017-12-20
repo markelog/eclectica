@@ -25,6 +25,8 @@ var (
 
 	bins = []string{"go", "godoc", "gofmt"}
 	dots = []string{".go-version"}
+
+	rVersion = regexp.MustCompile(versionPattern)
 )
 
 type Golang struct {
@@ -83,7 +85,12 @@ func (rust Golang) Dots() []string {
 	return dots
 }
 
-func (golang Golang) ListRemote() ([]string, error) {
+func (golang Golang) ListRemote() (result []string, err error) {
+	var (
+		firstSelector = "#stable + div tr:first-of-type td:first-of-type.filename a"
+		selector      = "#archive tr:first-of-type td:first-of-type.filename a"
+	)
+
 	doc, err := goquery.NewDocument(VersionsLink)
 
 	if err != nil {
@@ -94,23 +101,27 @@ func (golang Golang) ListRemote() ([]string, error) {
 		return nil, err
 	}
 
-	result := []string{}
-	selector := "#archive tr:first-of-type td:first-of-type.filename a"
-	rVersion := regexp.MustCompile(versionPattern)
+	result = augmentSlice(result, doc.Find(firstSelector).Eq(0))
 
 	doc.Find(selector).Each(func(i int, node *goquery.Selection) {
-		text := node.Text()
-
-		if strings.Contains(text, "bootstrap") {
-			return
-		}
-
-		// We not checking for duplicates, since it just might create more errors
-		version := rVersion.FindAllStringSubmatch(text, 1)[0][0]
-		result = append(result, version)
+		result = augmentSlice(result, node)
 	})
 
 	return result, nil
+}
+
+func augmentSlice(result []string, node *goquery.Selection) []string {
+	text := node.Text()
+
+	if strings.Contains(text, "bootstrap") {
+		return result
+	}
+
+	// We not checking for duplicates, since it just might create more errors
+	version := rVersion.FindAllStringSubmatch(text, 1)[0][0]
+	result = append(result, version)
+
+	return result
 }
 
 func getPlatform() (string, error) {
