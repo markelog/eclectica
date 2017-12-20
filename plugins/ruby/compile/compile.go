@@ -156,7 +156,8 @@ func (ruby Ruby) configure() (err error) {
 		return
 	}
 
-	ruby.listen("configure", stdout)
+	ruby.listen("configure", stderr, false)
+	ruby.listen("configure", stdout, true)
 
 	err = cmd.Run()
 	if err != nil {
@@ -174,7 +175,8 @@ func (ruby Ruby) prepare() (err error) {
 		return
 	}
 
-	ruby.listen("prepare", stdout)
+	ruby.listen("prepare", stderr, false)
+	ruby.listen("prepare", stdout, true)
 
 	err = cmd.Run()
 	if err != nil {
@@ -192,7 +194,8 @@ func (ruby Ruby) install() (err error) {
 		return
 	}
 
-	ruby.listen("install", stdout)
+	ruby.listen("install", stderr, false)
+	ruby.listen("install", stdout, true)
 
 	err = cmd.Run()
 	if err != nil {
@@ -202,7 +205,7 @@ func (ruby Ruby) install() (err error) {
 	return
 }
 
-func (ruby Ruby) listen(event string, pipe io.ReadCloser) {
+func (ruby Ruby) listen(event string, pipe io.ReadCloser, emit bool) {
 	if pipe == nil {
 		return
 	}
@@ -217,7 +220,9 @@ func (ruby Ruby) listen(event string, pipe io.ReadCloser) {
 
 			line = eStrings.ElipsisForTerminal(line)
 
-			ruby.Emitter.Emit(event, line)
+			if emit {
+				ruby.Emitter.Emit(event, line)
+			}
 		}
 	}()
 }
