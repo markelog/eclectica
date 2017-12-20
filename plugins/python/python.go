@@ -13,6 +13,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -48,15 +49,17 @@ var (
 )
 
 type Python struct {
-	Version string
-	Emitter *emission.Emitter
 	pkg.Base
+	Version   string
+	Emitter   *emission.Emitter
+	waitGroup *sync.WaitGroup
 }
 
 func New(version string, emitter *emission.Emitter) *Python {
 	return &Python{
-		Version: version,
-		Emitter: emitter,
+		Version:   version,
+		Emitter:   emitter,
+		waitGroup: &sync.WaitGroup{},
 	}
 }
 
@@ -239,13 +242,16 @@ func (python Python) configure() (err error) {
 	}
 	cmd.Env = python.getEnvs(cmd.Env)
 
-	python.listen("configure", stdout, true)
 	python.listen("configure", stderr, false)
+	python.listen("configure", stdout, true)
 
-	err = cmd.Run()
+	err = cmd.Start()
 	if err != nil {
 		return console.GetError(err, stderr, stdout)
 	}
+
+	cmd.Wait()
+	python.waitGroup.Wait()
 
 	return
 }
@@ -264,10 +270,13 @@ func (python Python) prepare() (err error) {
 	python.listen("prepare", stderr, false)
 	python.listen("prepare", stdout, true)
 
-	err = cmd.Run()
+	err = cmd.Start()
 	if err != nil {
 		return console.GetError(err, stderr, stdout)
 	}
+
+	cmd.Wait()
+	python.waitGroup.Wait()
 
 	return
 }
@@ -283,10 +292,13 @@ func (python Python) install() (err error) {
 	python.listen("install", stderr, false)
 	python.listen("install", stdout, true)
 
-	err = cmd.Run()
+	err = cmd.Start()
 	if err != nil {
 		return console.GetError(err, stderr, stdout)
 	}
+
+	cmd.Wait()
+	python.waitGroup.Wait()
 
 	return
 }
@@ -311,7 +323,18 @@ func (python Python) listen(event string, pipe io.ReadCloser, emit bool) {
 	}
 
 	scanner := bufio.NewScanner(pipe)
+
+	python.waitGroup.Add(1)
 	go func() {
+		defer python.waitGroup.Done()
+
+		if emit == false {
+			for scanner.Scan() {
+			}
+
+			return
+		}
+
 		for scanner.Scan() {
 			line := strings.TrimSpace(scanner.Text())
 			if len(line) == 0 {
@@ -320,9 +343,7 @@ func (python Python) listen(event string, pipe io.ReadCloser, emit bool) {
 
 			line = eStrings.ElipsisForTerminal(line)
 
-			if emit {
-				python.Emitter.Emit(event, line)
-			}
+			python.Emitter.Emit(event, line)
 		}
 	}()
 }

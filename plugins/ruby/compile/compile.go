@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chuckpreslar/emission"
@@ -33,15 +34,17 @@ var (
 )
 
 type Ruby struct {
-	Version string
-	Emitter *emission.Emitter
 	base.Ruby
+	Version   string
+	Emitter   *emission.Emitter
+	waitGroup *sync.WaitGroup
 }
 
 func New(version string, emitter *emission.Emitter) *Ruby {
 	return &Ruby{
-		Version: version,
-		Emitter: emitter,
+		Version:   version,
+		Emitter:   emitter,
+		waitGroup: &sync.WaitGroup{},
 	}
 }
 
@@ -159,10 +162,12 @@ func (ruby Ruby) configure() (err error) {
 	ruby.listen("configure", stderr, false)
 	ruby.listen("configure", stdout, true)
 
-	err = cmd.Run()
+	err = cmd.Start()
 	if err != nil {
 		return console.GetError(err, stderr, stdout)
 	}
+
+	cmd.Wait()
 
 	return
 }
@@ -178,10 +183,13 @@ func (ruby Ruby) prepare() (err error) {
 	ruby.listen("prepare", stderr, false)
 	ruby.listen("prepare", stdout, true)
 
-	err = cmd.Run()
+	err = cmd.Start()
 	if err != nil {
 		return console.GetError(err, stderr, stdout)
 	}
+
+	ruby.waitGroup.Wait()
+	cmd.Wait()
 
 	return
 }
@@ -197,10 +205,13 @@ func (ruby Ruby) install() (err error) {
 	ruby.listen("install", stderr, false)
 	ruby.listen("install", stdout, true)
 
-	err = cmd.Run()
+	err = cmd.Start()
 	if err != nil {
 		return console.GetError(err, stderr, stdout)
 	}
+
+	ruby.waitGroup.Wait()
+	cmd.Wait()
 
 	return
 }
@@ -211,7 +222,18 @@ func (ruby Ruby) listen(event string, pipe io.ReadCloser, emit bool) {
 	}
 
 	scanner := bufio.NewScanner(pipe)
+
+	ruby.waitGroup.Add(1)
 	go func() {
+		defer ruby.waitGroup.Done()
+
+		if emit == false {
+			for scanner.Scan() {
+			}
+
+			return
+		}
+
 		for scanner.Scan() {
 			line := strings.TrimSpace(scanner.Text())
 			if len(line) == 0 {
@@ -220,9 +242,7 @@ func (ruby Ruby) listen(event string, pipe io.ReadCloser, emit bool) {
 
 			line = eStrings.ElipsisForTerminal(line)
 
-			if emit {
-				ruby.Emitter.Emit(event, line)
-			}
+			ruby.Emitter.Emit(event, line)
 		}
 	}()
 }

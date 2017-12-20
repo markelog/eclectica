@@ -113,6 +113,8 @@ func GetCommand(args []string) string {
 func GetSpinner(language string, prefix spinner.SpinnerFn) *spinner.Spinner {
 	c, _ := curse.New()
 
+	before := func() {}
+
 	postfix := func() {
 		fmt.Println()
 		time.Sleep(200 * time.Millisecond)
@@ -124,12 +126,7 @@ func GetSpinner(language string, prefix spinner.SpinnerFn) *spinner.Spinner {
 		print.InStyleln("Language", language)
 	}
 
-	return &spinner.Spinner{
-		Before:  func() {},
-		After:   after,
-		Prefix:  prefix,
-		Postfix: postfix,
-	}
+	return spinner.New(before, after, prefix, postfix)
 }
 
 func ListRemote(language string) (versions map[string][]string, err error) {

@@ -5,32 +5,42 @@ import (
 	"os"
 	"sync"
 
-	"github.com/fatih/color"
+	"github.com/mgutz/ansi"
 	spin "github.com/tj/go-spin"
 )
 
 type SpinnerFn func()
 
 type Spinner struct {
-	isDone  bool
-	mutex   *sync.Mutex
-	channel chan bool
-	Spin    *spin.Spinner
-	Prefix  SpinnerFn
-	Postfix SpinnerFn
-	Before  SpinnerFn
-	After   SpinnerFn
+	isDone bool
+
+	mutex *sync.Mutex
+	Spin  *spin.Spinner
+
+	Before, After, Prefix, Postfix SpinnerFn
+}
+
+func New(before, after, prefix, postfix SpinnerFn) *Spinner {
+	return &Spinner{
+		isDone: false,
+
+		mutex: &sync.Mutex{},
+		Spin:  spin.New(),
+
+		Before:  before,
+		After:   after,
+		Prefix:  prefix,
+		Postfix: postfix,
+	}
 }
 
 func (spinner *Spinner) Start() {
+	spinner.mutex.Lock()
+	defer spinner.mutex.Unlock()
+
 	if os.Getenv("EC_WITHOUT_SPINNER") == "true" {
 		spinner.isDone = true
 		return
-	}
-
-	if spinner.Spin == nil {
-		spinner.mutex = &sync.Mutex{}
-		spinner.Spin = spin.New()
 	}
 
 	spinner.isDone = false
@@ -39,7 +49,7 @@ func (spinner *Spinner) Start() {
 
 	go func() {
 		for {
-			// spinner.mutex.Lock()
+			spinner.mutex.Lock()
 
 			if spinner.isDone {
 				break
@@ -47,18 +57,20 @@ func (spinner *Spinner) Start() {
 
 			spinner.Prefix()
 
-			color.Set(color.FgCyan)
-			fmt.Print(spinner.Spin.Next())
-			color.Unset()
+			fmt.Print(ansi.Color(spinner.Spin.Next(), "cyan"))
 
 			spinner.Postfix()
+
+			spinner.mutex.Unlock()
 		}
 
-		// spinner.mutex.Unlock()
+		spinner.mutex.Unlock()
 	}()
 }
 
 func (spinner *Spinner) Stop() {
+	spinner.mutex.Lock()
+	defer spinner.mutex.Unlock()
 	if spinner.isDone == true {
 		return
 	}

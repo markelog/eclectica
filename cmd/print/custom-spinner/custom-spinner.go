@@ -2,6 +2,7 @@ package CustomSpinner
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/markelog/eclectica/cmd/print"
@@ -24,19 +25,20 @@ type SpinArgs struct {
 type Spin struct {
 	SpinArgs
 	Spinner *spinner.Spinner
+	mutex   *sync.Mutex
 }
 
 func New(args *SpinArgs) *Spin {
-	me := &Spin{}
+	me := &Spin{
+		mutex: &sync.Mutex{},
+	}
 	me.Set(args)
 
 	return me
 }
 
 func (me *Spin) Set(args *SpinArgs) {
-	if me.Spinner == nil {
-		me.constructSpinner()
-	}
+	me.mutex.Lock()
 
 	if len(args.Header) != 0 {
 		me.Header = args.Header
@@ -52,6 +54,12 @@ func (me *Spin) Set(args *SpinArgs) {
 
 	if len(args.Message) != 0 {
 		me.Message = args.Message
+	}
+
+	me.mutex.Unlock()
+
+	if me.Spinner == nil {
+		me.constructSpinner()
 	}
 }
 
@@ -70,6 +78,9 @@ func (me *Spin) constructSpinner() {
 
 	started := false
 	prefix := func() {
+		me.mutex.Lock()
+		defer me.mutex.Unlock()
+
 		cursed.MoveUp(1)
 
 		if started {
@@ -81,6 +92,9 @@ func (me *Spin) constructSpinner() {
 	}
 
 	postfix := func() {
+		me.mutex.Lock()
+		defer me.mutex.Unlock()
+
 		var (
 			message string
 		)
@@ -94,15 +108,13 @@ func (me *Spin) constructSpinner() {
 	}
 
 	after := func() {
+		me.mutex.Lock()
+		defer me.mutex.Unlock()
+
 		cursed.MoveUp(1)
 		cursed.EraseCurrentLine()
 		print.InStyleln(me.Header, me.Item)
 	}
 
-	me.Spinner = &spinner.Spinner{
-		Before:  before,
-		After:   after,
-		Prefix:  prefix,
-		Postfix: postfix,
-	}
+	me.Spinner = spinner.New(before, after, prefix, postfix)
 }

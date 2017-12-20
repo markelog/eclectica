@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dustin/go-humanize"
@@ -89,8 +90,6 @@ func Download(response *grab.Response, version string) string {
 	before := func() {}
 
 	prefix := func() {
-		Error(response.Error)
-
 		cursed.MoveUp(1)
 		cursed.EraseCurrentLine()
 
@@ -111,22 +110,22 @@ func Download(response *grab.Response, version string) string {
 	}
 
 	after := func() {
+		Error(response.Error)
+
 		cursed.MoveUp(1)
 		cursed.EraseCurrentLine()
 		InStyleln("Version", version)
 	}
 
-	spin := &spinner.Spinner{
-		Before:  before,
-		After:   after,
-		Prefix:  prefix,
-		Postfix: postfix,
-	}
+	spin := spinner.New(before, after, prefix, postfix)
+	mutex := &sync.Mutex{}
 
 	spin.Start()
+	mutex.Lock()
 	for response.IsComplete() == false {
 		time.Sleep(time.Millisecond * 100)
 	}
+	mutex.Unlock()
 	spin.Stop()
 
 	return response.Filename
