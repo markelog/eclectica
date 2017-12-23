@@ -9,5 +9,5 @@ import (
 
 func TestEclectica(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Eclectica Suite")
+	RunSpecs(t, "Variables Suite")
 }

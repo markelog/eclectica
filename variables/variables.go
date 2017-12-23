@@ -2,6 +2,7 @@ package variables
 
 import (
 	"os"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -89,7 +90,14 @@ func GetShellPath() string {
 }
 
 func Base() string {
-	return filepath.Join(os.Getenv("HOME"), ".eclectica")
+	usr, _ := user.Current()
+	username := usr.Username
+
+	if username == "root" {
+		usr, _ = user.Lookup(os.Getenv("SUDO_USER"))
+	}
+
+	return filepath.Join(usr.HomeDir, ".eclectica")
 }
 
 func CurrentVersion(name string) string {

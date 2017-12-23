@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path"
@@ -104,6 +105,10 @@ func main() {
 
 	pathPart := filepath.Join(base, language, version)
 	binPath := filepath.Join(pathPart, "bin", name)
+
+	if variables.IsDebug() {
+		fmt.Println("bin path: " + binPath)
+	}
 
 	if _, err := os.Stat(binPath); os.IsNotExist(err) {
 		notInstalled(version, dotPath)

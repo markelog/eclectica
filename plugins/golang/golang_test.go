@@ -7,12 +7,14 @@ import (
 	"net/http/httptest"
 	"os"
 	"os/exec"
+	"os/user"
 	"runtime"
 
 	"github.com/bouk/monkey"
 	"github.com/jarcoal/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/sanity-io/litter"
 
 	"github.com/markelog/eclectica/cmd/print"
 	. "github.com/markelog/eclectica/plugins/golang"
@@ -189,16 +191,26 @@ var _ = Describe("golang", func() {
 
 	Describe("Environment", func() {
 		It("should set GOROOT and GOPATH environment variables", func() {
+			monkey.Patch(user.Current, func() (*user.User, error) {
+				user := &user.User{
+					HomeDir: "",
+				}
+				return user, nil
+			})
+
 			monkey.Patch(os.Getenv, func(name string) string {
 				return ""
 			})
 
 			result, _ := golang.Environment()
 
+			litter.Dump(result)
+
 			Expect(result[0]).To(Equal("GOROOT=.eclectica/versions/go"))
 			Expect(result[1]).To(Equal("GOPATH=go"))
 
 			monkey.Unpatch(os.Getenv)
+			monkey.Unpatch(user.Current)
 		})
 
 		It("should set GOROOT and GOPATH environment variables", func() {
@@ -210,12 +222,20 @@ var _ = Describe("golang", func() {
 				return ""
 			})
 
+			monkey.Patch(user.Current, func() (*user.User, error) {
+				user := &user.User{
+					HomeDir: "",
+				}
+				return user, nil
+			})
+
 			result, _ := golang.Environment()
 
 			Expect(len(result)).To(Equal(1))
 			Expect(result[0]).To(Equal("GOROOT=.eclectica/versions/go"))
 
 			monkey.Unpatch(os.Getenv)
+			monkey.Unpatch(user.Current)
 		})
 	})
 })
