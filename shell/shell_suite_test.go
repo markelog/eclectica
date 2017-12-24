@@ -1,4 +1,4 @@
-package initiate_test
+package shell_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -9,5 +9,5 @@ import (
 
 func TestPlugins(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Initiate Suite")
+	RunSpecs(t, "Shell Suite")
 }

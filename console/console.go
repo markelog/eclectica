@@ -1,19 +1,14 @@
+// Package console provides helpful console related methods
 package console
 
 import (
 	"io"
 	"io/ioutil"
-	"os"
 	"os/exec"
 	"reflect"
 	"regexp"
-	"strings"
 
 	"github.com/go-errors/errors"
-	"golang.org/x/crypto/ssh/terminal"
-
-	"github.com/markelog/eclectica/cmd/print"
-	"github.com/markelog/eclectica/variables"
 )
 
 // Get gets cmd instance by passing array to exec.Command
@@ -30,35 +25,8 @@ func Get(args []string) *exec.Cmd {
 	return cmd
 }
 
-// Start Shell
-func Shell() {
-
-	// If shell is not output - get out
-	if terminal.IsTerminal(int(os.Stdout.Fd())) == false {
-		return
-	}
-
-	var procAttr os.ProcAttr
-
-	procAttr.Files = []*os.File{
-		os.Stdin,
-		os.Stdout,
-		os.Stderr,
-	}
-
-	args := []string{
-		variables.GetShellName(),
-	}
-
-	proc, err := os.StartProcess(variables.GetShellPath(), args, &procAttr)
-	print.Error(err)
-
-	_, err = proc.Wait()
-	print.Error(err)
-}
-
-// GetError is just facade to handling console errors of the pipes
-func GetError(err error, stdout, stderr io.ReadCloser) error {
+// Error is just facade for handling console pipes errors
+func Error(err error, stdout, stderr io.ReadCloser) error {
 	if stdout == nil || stderr == nil {
 		return nil
 	}
@@ -89,23 +57,4 @@ func GetError(err error, stdout, stderr io.ReadCloser) error {
 	}
 
 	return err
-}
-
-func trimMessage(message string) (result string) {
-	result = strings.TrimSpace(message)
-
-	messageLength := 30
-
-	messages := strings.Split(result, "\n")
-	last := len(messages) - 1
-
-	result = messages[last]
-
-	if len(result) < messageLength {
-		return
-	}
-
-	result = "..." + result[messageLength-3:]
-
-	return
 }

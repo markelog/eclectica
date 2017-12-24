@@ -1,3 +1,5 @@
+// Package io provides some helpful IO functions with simplified
+// signatures in the context of eclectica package
 package io
 
 import (
@@ -9,8 +11,14 @@ import (
 	"github.com/go-errors/errors"
 )
 
+const (
+	perm = 0700
+)
+
+// Walker signature function
 type Walker func(path string) bool
 
+// walkUp walker up to filesystem tree
 func walkUp(path string, fn Walker) {
 	current := path
 
@@ -21,21 +29,25 @@ func walkUp(path string, fn Walker) {
 
 	for {
 		if current == "" || current == "/" {
-			return
+			break
 		}
 
 		current = filepath.Dir(current)
 
 		stop = fn(current)
 		if stop == true {
-			return
+			break
 		}
 	}
 
 	return
 }
 
+// GetVersion finds a file by provided argument and extracts
+// the version defined in it
 func GetVersion(args ...interface{}) (version, path string, err error) {
+	current := "current"
+
 	if len(args) > 1 {
 		path, err = FindDotFile(args[0], args[1])
 	} else {
@@ -47,7 +59,7 @@ func GetVersion(args ...interface{}) (version, path string, err error) {
 	}
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return "current", "", nil
+		return current, "", nil
 	}
 
 	file, err := os.Open(path)
@@ -67,9 +79,11 @@ func GetVersion(args ...interface{}) (version, path string, err error) {
 		return "", "", scannerErr
 	}
 
-	return "current", "", nil
+	return current, "", nil
 }
 
+// FindDotFile finds file up in the filesystem tree
+// by provided list of possible files
 func FindDotFile(args ...interface{}) (versionPath string, err error) {
 	var path string
 	dots := args[0].([]string)
@@ -101,8 +115,9 @@ func FindDotFile(args ...interface{}) (versionPath string, err error) {
 	return
 }
 
+// CreateDir creates dir with predefined perms
 func CreateDir(path string) (string, error) {
-	err := os.MkdirAll(path, 0700)
+	err := os.MkdirAll(path, perm)
 
 	if err != nil {
 		return "", errors.New(err)
@@ -111,10 +126,11 @@ func CreateDir(path string) (string, error) {
 	return path, nil
 }
 
+// WriteFile writes file with default perms and accepts a string as data
 func WriteFile(path, content string) error {
 	data := []byte(content)
 
-	err := ioutil.WriteFile(path, data, 0700)
+	err := ioutil.WriteFile(path, data, perm)
 	if err != nil {
 		return errors.New(err)
 	}
@@ -122,6 +138,7 @@ func WriteFile(path, content string) error {
 	return nil
 }
 
+// Read file and return a content string
 func Read(path string) string {
 	bytes, err := ioutil.ReadFile(path)
 
@@ -132,6 +149,7 @@ func Read(path string) string {
 	return string(bytes)
 }
 
+// ListVersions lists installed versions for the given path
 func ListVersions(path string) (vers []string) {
 	vers = []string{}
 
@@ -150,6 +168,8 @@ func ListVersions(path string) (vers []string) {
 	return
 }
 
+// Symlink removes the link if file already
+// present and the creates another symlink
 func Symlink(current, base string) (err error) {
 	// Remove symlink just in case it's already present
 	err = os.RemoveAll(current)

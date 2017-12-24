@@ -1,26 +1,30 @@
+// Package strings provides simplified signatures for strings
 package strings
 
 import "golang.org/x/crypto/ssh/terminal"
 
-func Elipsis(str string, num int) string {
+// Elipsis returns trimmed string by provided maximum limit
+func Elipsis(str string, max int) string {
 	var (
 		result = str
 		length = len(str)
 	)
 
-	if num < 1 {
+	if max < 1 {
 		return result
 	}
 
-	if length > num {
-		if num > 3 {
-			num -= 3
+	if length > max {
+		if max > 3 {
+			max -= 3
 		}
-		result = str[0:num] + "..."
+		result = str[0:max] + "..."
 	}
 	return result
 }
 
+// ElipsisForTerminal returns trimmed string which should fit nicely to
+// terminal pipe output
 func ElipsisForTerminal(str string) (result string) {
 	var (
 		width, _, _ = terminal.GetSize(0)

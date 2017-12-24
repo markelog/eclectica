@@ -100,7 +100,7 @@ func Apply(path string) (err error) {
 
 		err = cmd.Run()
 		if err != nil {
-			return console.GetError(err, stdout, stderr)
+			return console.Error(err, stdout, stderr)
 		}
 	}
 

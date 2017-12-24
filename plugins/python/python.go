@@ -106,7 +106,7 @@ func (python Python) PostInstall() (err error) {
 
 		err = cmd.Run()
 		if err != nil {
-			return console.GetError(err, stderr, stdout)
+			return console.Error(err, stderr, stdout)
 		}
 
 		return err
@@ -247,7 +247,7 @@ func (python Python) configure() (err error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return console.GetError(err, stderr, stdout)
+		return console.Error(err, stderr, stdout)
 	}
 
 	cmd.Wait()
@@ -272,7 +272,7 @@ func (python Python) prepare() (err error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return console.GetError(err, stderr, stdout)
+		return console.Error(err, stderr, stdout)
 	}
 
 	cmd.Wait()
@@ -294,7 +294,7 @@ func (python Python) install() (err error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return console.GetError(err, stderr, stdout)
+		return console.Error(err, stderr, stdout)
 	}
 
 	cmd.Wait()
@@ -311,7 +311,7 @@ func (python Python) touch() (err error) {
 
 	err = cmd.Run()
 	if err != nil {
-		return console.GetError(err, stderr, stdout)
+		return console.Error(err, stderr, stdout)
 	}
 
 	return

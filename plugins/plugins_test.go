@@ -17,8 +17,8 @@ import (
 	"github.com/bouk/monkey"
 
 	. "github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/shell"
 
-	"github.com/markelog/eclectica/initiate"
 	eIO "github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/plugins/nodejs"
 	"github.com/markelog/eclectica/variables"
@@ -206,20 +206,20 @@ var _ = Describe("plugins", func() {
 		BeforeEach(func() {
 			var d *Plugin
 			var n *nodejs.Node
-			var i *initiate.Init
+			var i *shell.Shell
 
 			pType := reflect.TypeOf(d)
 			nodejsType := reflect.TypeOf(n)
 			initType := reflect.TypeOf(i)
 
 			guardInitiate = monkey.PatchInstanceMethod(initType, "Initiate",
-				func(init *initiate.Init) error {
+				func(init *shell.Shell) error {
 					return nil
 				},
 			)
 
-			guardCheckShell = monkey.PatchInstanceMethod(initType, "CheckShell",
-				func(init *initiate.Init) {},
+			guardCheckShell = monkey.PatchInstanceMethod(initType, "Check",
+				func(init *shell.Shell) {},
 			)
 
 			guardCurrent = monkey.PatchInstanceMethod(pType, "Current",

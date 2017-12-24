@@ -11,7 +11,6 @@ import (
 
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/plugins"
-	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 
 	"github.com/markelog/eclectica/cmd/print/spinner"
@@ -97,19 +96,6 @@ func GetLanguage(args []string) (language, version string) {
 	return "", ""
 }
 
-// Get command from args list
-func GetCommand(args []string) string {
-	for _, element := range args {
-		for _, command := range variables.NonInstallCommands {
-			if command == element {
-				return command
-			}
-		}
-	}
-
-	return ""
-}
-
 func GetSpinner(language string, prefix spinner.SpinnerFn) *spinner.Spinner {
 	c, _ := curse.New()
 
@@ -177,9 +163,4 @@ func HasVersion(args []string) bool {
 	_, version := GetLanguage(args)
 
 	return version != ""
-}
-
-// Is this is non-install command in args list?
-func NonInstallCommand(args []string) bool {
-	return GetCommand(args) != ""
 }

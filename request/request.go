@@ -1,3 +1,4 @@
+// Package request provides methods simplified signatures for http requests
 package request
 
 import (
@@ -13,6 +14,7 @@ var (
 	client = &http.Client{}
 )
 
+// Body gets body response from provided url string
 func Body(url string) (string, error) {
 	response, err := client.Get(url)
 	if err != nil {

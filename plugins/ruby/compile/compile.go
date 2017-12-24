@@ -164,7 +164,7 @@ func (ruby Ruby) configure() (err error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return console.GetError(err, stderr, stdout)
+		return console.Error(err, stderr, stdout)
 	}
 
 	cmd.Wait()
@@ -185,7 +185,7 @@ func (ruby Ruby) prepare() (err error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return console.GetError(err, stderr, stdout)
+		return console.Error(err, stderr, stdout)
 	}
 
 	ruby.waitGroup.Wait()
@@ -207,7 +207,7 @@ func (ruby Ruby) install() (err error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return console.GetError(err, stderr, stdout)
+		return console.Error(err, stderr, stdout)
 	}
 
 	ruby.waitGroup.Wait()

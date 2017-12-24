@@ -1,3 +1,4 @@
+// Package rc provides a bit of logic for .*.rc files
 package rc
 
 import (
@@ -18,11 +19,13 @@ var (
 	}
 )
 
+// Rc essential structure
 type Rc struct {
 	command string
 	path    string
 }
 
+// New returns new Rc struct
 func New(command string) *Rc {
 	rc := &Rc{}
 
@@ -80,6 +83,7 @@ func (rc *Rc) Add() error {
 	return nil
 }
 
+// add helper method for Add()
 func (rc *Rc) add() (err error) {
 	if rc.Exists() {
 		return
@@ -100,6 +104,7 @@ func (rc *Rc) add() (err error) {
 	return
 }
 
+// Exists checks if rc data already present
 func (rc *Rc) Exists() bool {
 	contents, err := ioutil.ReadFile(rc.path)
 	if err != nil {
@@ -111,6 +116,7 @@ func (rc *Rc) Exists() bool {
 	return strings.Contains(str, rc.command)
 }
 
+// Find finds proper rc file
 func (rc *Rc) Find() string {
 	home := os.Getenv("HOME")
 	shell := variables.GetShellName()

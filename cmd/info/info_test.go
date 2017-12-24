@@ -48,24 +48,4 @@ var _ = Describe("info", func() {
 			Expect(language).To(Equal(""))
 		})
 	})
-
-	Describe("NonInstallCommand", func() {
-		It("should detect command", func() {
-			hasCommand := info.NonInstallCommand([]string{"-r", "ls"})
-
-			Expect(hasCommand).To(Equal(true))
-		})
-
-		It("should detect command in different sequence", func() {
-			hasCommand := info.NonInstallCommand([]string{"ls", "-r"})
-
-			Expect(hasCommand).To(Equal(true))
-		})
-
-		It("should not detect command", func() {
-			hasCommand := info.NonInstallCommand([]string{"-r", "rustc@1.2.3"})
-
-			Expect(hasCommand).To(Equal(false))
-		})
-	})
 })

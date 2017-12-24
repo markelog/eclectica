@@ -11,14 +11,9 @@ import (
 )
 
 var (
-	NonInstallCommands = []string{"ls", "rm", "version", "init", "--help", "-h"}
-	DefaultInstall     = filepath.Join(Base(), "bin")
-	ConnectionError    = "Connection cannot be established"
+	DefaultInstall  = filepath.Join(Base(), "bin")
+	ConnectionError = "Connection cannot be established"
 )
-
-func Prefix(name string) string {
-	return filepath.Join(Home(), name)
-}
 
 // TempDir gets OS consistent folder path
 // I am crying over here :/
@@ -37,6 +32,84 @@ func IsDebug() bool {
 	return os.Getenv("EC_DEBUG") == "true"
 }
 
+// Path gives full path to parent of "bin" folder
+func GetBin(args ...interface{}) string {
+	name, version := nameAndVersion(args)
+
+	base := Path(name, version)
+
+	// FIXME: should look better somehow
+	if name == "rust" {
+		name = "rustc"
+	}
+
+	return filepath.Join(base, "bin", name)
+}
+
+// GetShellPath gets path to current shell binary
+func GetShellName() string {
+	path := GetShellPath()
+	parts := strings.Split(path, "/")
+
+	return parts[len(parts)-1]
+}
+
+// GetShellPath gets path to current shell binary
+func GetShellPath() string {
+	path := os.Getenv("SHELL")
+
+	if len(path) == 0 {
+		return "/bin/bash"
+	}
+
+	return path
+}
+
+// Base provides path where eclectica stores everything filesystem related
+func Base() string {
+	usr, _ := user.Current()
+	username := usr.Username
+
+	if username == "root" {
+		usr, _ = user.Lookup(os.Getenv("SUDO_USER"))
+	}
+
+	return filepath.Join(usr.HomeDir, ".eclectica")
+}
+
+// Prefix gets path to the language install folder
+func Prefix(name string) string {
+	return filepath.Join(Home(), name)
+}
+
+// Get path to install folder for the specific version or to the current one
+func Path(args ...interface{}) string {
+	name, version := nameAndVersion(args)
+
+	return filepath.Join(Home(), name, version)
+}
+
+// Home gets path to the place where eclectica installs their languages
+func Home() string {
+	return filepath.Join(Base(), "versions")
+}
+
+// Support get path to support folder
+func Support() string {
+	return filepath.Join(Base(), "support")
+}
+
+// InstallPath get path to install folder
+func InstallPath() string {
+	return filepath.Join(Support(), "install")
+}
+
+// InstallLanguage get path to dist folder in install folder
+func InstallLanguage(language, version string) string {
+	return filepath.Join(InstallPath(), language, version)
+}
+
+// nameAndVersion helper method to get name and version
 func nameAndVersion(args []interface{}) (string, string) {
 	var (
 		name    = args[0].(string)
@@ -52,54 +125,7 @@ func nameAndVersion(args []interface{}) (string, string) {
 	return name, version
 }
 
-func Path(args ...interface{}) string {
-	name, version := nameAndVersion(args)
-
-	return filepath.Join(Home(), name, version)
-}
-
-// Path gives full path to parent of "bin" folder
-func GetBin(args ...interface{}) string {
-	name, version := nameAndVersion(args)
-
-	base := Path(name, version)
-
-	// FIXME: should look better somehow
-	if name == "rust" {
-		name = "rustc"
-	}
-
-	return filepath.Join(base, "bin", name)
-}
-
-func GetShellName() string {
-	path := GetShellPath()
-	parts := strings.Split(path, "/")
-
-	return parts[len(parts)-1]
-}
-
-func GetShellPath() string {
-	path := os.Getenv("SHELL")
-
-	if len(path) == 0 {
-		return "/bin/bash"
-	}
-
-	return path
-}
-
-func Base() string {
-	usr, _ := user.Current()
-	username := usr.Username
-
-	if username == "root" {
-		usr, _ = user.Lookup(os.Getenv("SUDO_USER"))
-	}
-
-	return filepath.Join(usr.HomeDir, ".eclectica")
-}
-
+// CurrentVersion get current version for the specific language
 func CurrentVersion(name string) string {
 	base := Path(name)
 	path := filepath.Join(base, ".eclectica")
@@ -107,23 +133,13 @@ func CurrentVersion(name string) string {
 	return io.Read(path)
 }
 
+// WriteVersion writes version to the language install folder path
+// under the name ".eclectica"
 func WriteVersion(name, version string) error {
 	base := Path(name, version)
 	path := filepath.Join(base, ".eclectica")
 
 	return io.WriteFile(path, version)
-}
-
-func Support() string {
-	return filepath.Join(Base(), "support")
-}
-
-func InstallPath() string {
-	return filepath.Join(Support(), "install")
-}
-
-func InstallLanguage(language, version string) string {
-	return filepath.Join(InstallPath(), language, version)
 }
 
 // IsInstalled checks if this version was already installed
@@ -138,8 +154,4 @@ func IsInstalled(name, version string) bool {
 	}
 
 	return false
-}
-
-func Home() string {
-	return filepath.Join(Base(), "versions")
 }

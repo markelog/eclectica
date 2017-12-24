@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/markelog/eclectica/initiate"
 	"github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/shell"
 )
 
 // Command config
@@ -23,7 +23,7 @@ var Command = &cobra.Command{
 // Updates the path environment variable
 func run(c *cobra.Command, args []string) {
 	path := os.Getenv("PATH")
-	addition := initiate.Compose(plugins.Plugins)
+	addition := shell.Compose(plugins.Plugins)
 
 	if strings.Contains(path, addition) {
 		fmt.Print(path)

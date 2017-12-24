@@ -13,9 +13,9 @@ import (
 	"github.com/markelog/cprf"
 	"gopkg.in/cavaliercoder/grab.v1"
 
-	"github.com/markelog/eclectica/initiate"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/pkg"
+	"github.com/markelog/eclectica/shell"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
 
@@ -106,8 +106,8 @@ func (plugin *Plugin) LocalInstall() (err error) {
 	// Handle CTRL+C signal
 	plugin.Interrupt()
 
-	init := initiate.New(plugin.name, Plugins)
-	init.CheckShell()
+	init := shell.New(plugin.name, Plugins)
+	init.Check()
 
 	err = init.Initiate()
 	if err != nil {
@@ -136,7 +136,7 @@ func (plugin *Plugin) LocalInstall() (err error) {
 
 	// Start new shell from eclectica if needed
 	// note: should be the last action
-	init.RestartShell()
+	init.Start()
 
 	return
 }
@@ -181,8 +181,8 @@ func (plugin *Plugin) Install() (err error) {
 	// Handle CTRL+C signal
 	plugin.Interrupt()
 
-	init := initiate.New(plugin.name, Plugins)
-	init.CheckShell()
+	init := shell.New(plugin.name, Plugins)
+	init.Check()
 
 	err = init.Initiate()
 	if err != nil {
@@ -191,7 +191,7 @@ func (plugin *Plugin) Install() (err error) {
 
 	// If this is already a current version we can safely say this one is installed
 	if plugin.Version == plugin.Current() {
-		init.RestartShell()
+		init.Start()
 		return nil
 	}
 
@@ -202,7 +202,7 @@ func (plugin *Plugin) Install() (err error) {
 			return
 		}
 
-		init.RestartShell()
+		init.Start()
 		return
 	}
 
@@ -218,7 +218,7 @@ func (plugin *Plugin) Install() (err error) {
 
 	// Start new shell from eclectica if needed
 	// note: should be the last action
-	init.RestartShell()
+	init.Start()
 
 	return
 }

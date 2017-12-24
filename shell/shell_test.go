@@ -1,4 +1,4 @@
-package initiate_test
+package shell_test
 
 import (
 	"strings"
@@ -6,10 +6,10 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/markelog/eclectica/initiate"
+	. "github.com/markelog/eclectica/shell"
 )
 
-var _ = Describe("initiate", func() {
+var _ = Describe("shell", func() {
 	Describe("Compose", func() {
 		It("puts main bin folder first", func() {
 			plugins := []string{}
