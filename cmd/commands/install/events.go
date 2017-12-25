@@ -5,6 +5,7 @@ import (
 	"github.com/markelog/eclectica/plugins"
 )
 
+// SetupEvents sets events
 func SetupEvents(plugin *plugins.Plugin) {
 	var spinner *CustomSpinner.Spin
 

@@ -1,4 +1,4 @@
-# Eclectica [![Build Status](https://travis-ci.org/markelog/eclectica.svg?branch=master)](https://travis-ci.org/markelog/eclectica)
+# Eclectica [![Build Status](https://travis-ci.org/markelog/eclectica.svg?branch=master)](https://travis-ci.org/markelog/eclectica) [![GoDoc](https://godoc.org/github.com/markelog/eclectica?status.svg)](https://godoc.org/github.com/markelog/eclectica) [![Go Report Card](https://goreportcard.com/badge/github.com/markelog/eclectica)](https://goreportcard.com/report/github.com/markelog/eclectica)
 
 ## Install
 

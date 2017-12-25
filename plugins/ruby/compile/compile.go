@@ -1,3 +1,4 @@
+// Package compile provides ruby compilation plugin
 package compile
 
 import (
@@ -28,11 +29,14 @@ import (
 )
 
 var (
-	VersionLink    = "https://cache.ruby-lang.org/pub/ruby"
+	// VersionLink is the URL link from which we can get all possible versions
+	VersionLink = "https://cache.ruby-lang.org/pub/ruby"
+
 	versionHref    = `\d+\.\d+\.\d+\.tar\.gz`
 	versionPattern = `\d+\.\d+\.\d+`
 )
 
+// Ruby compile essential struct
 type Ruby struct {
 	base.Ruby
 	Version   string
@@ -40,6 +44,7 @@ type Ruby struct {
 	waitGroup *sync.WaitGroup
 }
 
+// New returns language struct
 func New(version string, emitter *emission.Emitter) *Ruby {
 	return &Ruby{
 		Version:   version,
@@ -48,10 +53,12 @@ func New(version string, emitter *emission.Emitter) *Ruby {
 	}
 }
 
+// Events returns language related event emitter
 func (ruby Ruby) Events() *emission.Emitter {
 	return ruby.Emitter
 }
 
+// PreInstall hook
 func (ruby Ruby) PreInstall() (err error) {
 	install := variables.InstallLanguage("ruby", ruby.Version)
 	parent := filepath.Dir(install)
@@ -83,6 +90,7 @@ func (ruby Ruby) PreInstall() (err error) {
 	return
 }
 
+// Install hook
 func (ruby Ruby) Install() (err error) {
 	err = ruby.configure()
 	if err != nil {
@@ -97,14 +105,17 @@ func (ruby Ruby) Install() (err error) {
 	return ruby.install()
 }
 
+// PostInstall hook
 func (ruby Ruby) PostInstall() (err error) {
 	return os.RemoveAll(filepath.Join(variables.InstallPath(), "ruby"))
 }
 
+// Rollback hook
 func (ruby Ruby) Rollback() (err error) {
 	return os.RemoveAll(filepath.Join(variables.InstallPath(), "ruby"))
 }
 
+// Info provides all the info needed for installation of the plugin
 func (ruby Ruby) Info() map[string]string {
 	result := make(map[string]string)
 
@@ -114,6 +125,7 @@ func (ruby Ruby) Info() map[string]string {
 	return result
 }
 
+// ListRemote returns list of the all available remote versions
 func (ruby Ruby) ListRemote() ([]string, error) {
 	doc, err := goquery.NewDocument(VersionLink)
 
@@ -144,7 +156,7 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 		}
 	})
 
-	for key, _ := range tmp {
+	for key := range tmp {
 		result = append(result, key)
 	}
 
@@ -154,7 +166,7 @@ func (ruby Ruby) ListRemote() ([]string, error) {
 func (ruby Ruby) configure() (err error) {
 	ruby.Emitter.Emit("configure")
 
-	err, cmd, stderr, stdout := ruby.configureArgs()
+	cmd, stderr, stdout, err := ruby.configureArgs()
 	if err != nil {
 		return
 	}
@@ -175,7 +187,7 @@ func (ruby Ruby) configure() (err error) {
 func (ruby Ruby) prepare() (err error) {
 	ruby.Emitter.Emit("prepare")
 
-	err, cmd, stderr, stdout := ruby.getCmd("make", "-j")
+	cmd, stderr, stdout, err := ruby.getCmd("make", "-j")
 	if err != nil {
 		return
 	}
@@ -197,7 +209,7 @@ func (ruby Ruby) prepare() (err error) {
 func (ruby Ruby) install() (err error) {
 	ruby.Emitter.Emit("install")
 
-	err, cmd, stderr, stdout := ruby.getCmd("make", "install", "-j")
+	cmd, stderr, stdout, err := ruby.getCmd("make", "install", "-j")
 	if err != nil {
 		return
 	}
@@ -248,9 +260,9 @@ func (ruby Ruby) listen(event string, pipe io.ReadCloser, emit bool) {
 }
 
 func (ruby Ruby) getCmd(args ...string) (
-	err error,
 	cmd *exec.Cmd,
 	stderr, stdout io.ReadCloser,
+	err error,
 ) {
 	cmd = exec.Command(args[0], args[1:]...)
 
@@ -269,12 +281,12 @@ func (ruby Ruby) getCmd(args ...string) (
 	if path.Base(args[0]) == "configure" {
 		stdout, tty, ptyErr := pty.Open()
 		if ptyErr != nil {
-			return errors.New(ptyErr), nil, nil, nil
+			return nil, nil, nil, errors.New(ptyErr)
 		}
 		cmd.Stdout = tty
 		cmd.Stdin = tty
 
-		return nil, cmd, stderr, stdout
+		return cmd, stderr, stdout, nil
 	}
 
 	stdout, err = cmd.StdoutPipe()
@@ -296,9 +308,9 @@ func remoteMap(version string) string {
 }
 
 func (ruby Ruby) configureArgs() (
-	err error,
 	cmd *exec.Cmd,
 	stdout, stderr io.ReadCloser,
+	err error,
 ) {
 	var (
 		path      = variables.InstallLanguage("ruby", ruby.Version)
@@ -315,11 +327,11 @@ func (ruby Ruby) configureArgs() (
 	baseruby = baseruby + bin
 
 	if runtime.GOOS != "darwin" {
-		err, cmd, stdout, stderr = ruby.getCmd(configure, prefix, baseruby)
+		cmd, stdout, stderr, err = ruby.getCmd(configure, prefix, baseruby)
 		return
 	}
 
-	err, libyaml, openssl := brewDependencies()
+	libyaml, openssl, err := brewDependencies()
 	if err != nil {
 		err = errors.New(err)
 		return
@@ -328,7 +340,7 @@ func (ruby Ruby) configureArgs() (
 	opensslDir := "--with-openssl-dir=" + openssl
 	libyamlDir := "--with-libyaml-dir=" + libyaml
 
-	err, cmd, stdout, stderr = ruby.getCmd(
+	cmd, stdout, stderr, err = ruby.getCmd(
 		configure,
 		prefix,
 		baseruby,
@@ -339,7 +351,7 @@ func (ruby Ruby) configureArgs() (
 	return
 }
 
-func brewDependencies() (err error, libyaml string, openssl string) {
+func brewDependencies() (libyaml, openssl string, err error) {
 	out, err := exec.Command("brew", "--prefix", "libyaml").Output()
 	libyaml = strings.TrimSpace(string(out))
 	if err != nil {

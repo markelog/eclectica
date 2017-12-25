@@ -1,3 +1,4 @@
+// Package ruby provides all needed logic for installation of ruby
 package ruby
 
 import (
@@ -9,6 +10,7 @@ import (
 	"github.com/markelog/eclectica/plugins/ruby/compile"
 )
 
+// New returns either compile or bin Ruby struct
 func New(version string, emitter *emission.Emitter) pkg.Pkg {
 	if hasBin(version, emitter) {
 		return bin.New(version, emitter)

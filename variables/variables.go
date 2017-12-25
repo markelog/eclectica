@@ -11,7 +11,11 @@ import (
 )
 
 var (
-	DefaultInstall  = filepath.Join(Base(), "bin")
+
+	// DefaultInstall is a default path to the general bin folder
+	DefaultInstall = filepath.Join(Base(), "bin")
+
+	// ConnectionError is a general connection error text
 	ConnectionError = "Connection cannot be established"
 )
 
@@ -32,7 +36,7 @@ func IsDebug() bool {
 	return os.Getenv("EC_DEBUG") == "true"
 }
 
-// Path gives full path to parent of "bin" folder
+// GetBin returns path to the bin folder of the provided language
 func GetBin(args ...interface{}) string {
 	name, version := nameAndVersion(args)
 
@@ -46,7 +50,7 @@ func GetBin(args ...interface{}) string {
 	return filepath.Join(base, "bin", name)
 }
 
-// GetShellPath gets path to current shell binary
+// GetShellName gets name of the used shell
 func GetShellName() string {
 	path := GetShellPath()
 	parts := strings.Split(path, "/")
@@ -82,7 +86,8 @@ func Prefix(name string) string {
 	return filepath.Join(Home(), name)
 }
 
-// Get path to install folder for the specific version or to the current one
+// Path gets path of the install folder for the
+// specific version or to the current one
 func Path(args ...interface{}) string {
 	name, version := nameAndVersion(args)
 

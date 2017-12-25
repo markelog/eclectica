@@ -1,3 +1,4 @@
+// Package modules is a way for installation node modules for node.js plugin
 package modules
 
 import (
@@ -12,11 +13,13 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
+// Modules essential struct
 type Modules struct {
 	current  string
 	previous string
 }
 
+// New returns modules struct
 func New(previous, current string) *Modules {
 	return &Modules{
 		current:  current,
@@ -24,6 +27,7 @@ func New(previous, current string) *Modules {
 	}
 }
 
+// Install modules
 func (modules Modules) Install() (err error) {
 	if modules.SameMajors() {
 		err = modules.copy()
@@ -167,12 +171,15 @@ func (modules Modules) copy() (err error) {
 	return
 }
 
+// Path returns path to the node_modules folder
 func (modules Modules) Path(version string) string {
 	path := variables.Path("node", version)
 
 	return filepath.Join(path, "lib/node_modules")
 }
 
+// SameMajors compares previous and current node version
+// returning true if they have same major versions
 func (modules Modules) SameMajors() bool {
 	previous, _ := semver.Make(modules.previous)
 	current, _ := semver.Make(modules.current)

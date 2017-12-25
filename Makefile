@@ -18,7 +18,7 @@ test: install
 int: install
 	$(eval tmp := $(TMPDIR)"eclectica")
 
-	@echo "[+] intergration testing"
+	@echo "[+] integration testing"
 
 	@rm -rf $(tmp)
 	@mkdir -p $(tmp)
@@ -34,7 +34,7 @@ int: install
 int-ci:
 	$(eval tmp := $(TMPDIR)"eclectica")
 
-	@echo "[+] intergration testing"
+	@echo "[+] integration testing"
 
 	@rm -rf $(tmp)
 	@mkdir -p $(tmp)

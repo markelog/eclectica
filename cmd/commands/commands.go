@@ -14,7 +14,7 @@ var isRemote bool
 var isLocal bool
 
 // Reinstall global modules from previous version?
-var WithModules bool
+var withModules bool
 
 var use = "ec [<language>@<version>]"
 
@@ -25,12 +25,11 @@ var Command = &cobra.Command{
 	Hidden:  true,
 }
 
-// Add command to root command
+// Register command to root command
 func Register(cmd *cobra.Command) {
 	Command.AddCommand(cmd)
 }
 
-// Init
 func init() {
 	Command.SetHelpTemplate(help)
 	Command.SetUsageTemplate(usage)
@@ -40,7 +39,7 @@ func init() {
 	flags := Command.PersistentFlags()
 	flags.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
 	flags.BoolVarP(&isLocal, "local", "l", false, "Install as local version i.e. language will be installed only to local folder")
-	flags.BoolVarP(&WithModules, "with-modules", "w", false, "Reinstall global modules from the previous version (currently works only for node.js)")
+	flags.BoolVarP(&withModules, "with-modules", "w", false, "Reinstall global modules from the previous version (currently works only for node.js)")
 }
 
 func augment() {
@@ -48,6 +47,7 @@ func augment() {
 	os.Args = append(os.Args[:1], append([]string{"install"}, os.Args[1:]...)...)
 }
 
+// Execute the command
 func Execute() {
 
 	args := os.Args[1:]

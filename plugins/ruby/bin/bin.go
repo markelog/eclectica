@@ -1,3 +1,4 @@
+// Package bin provides ruby binary plugin
 package bin
 
 import (
@@ -19,19 +20,24 @@ import (
 )
 
 var (
-	VersionLink    = "https://rvm.io/binaries"
+
+	// VersionLink is the URL link from which we can get all possible versions
+	VersionLink = "https://rvm.io/binaries"
+
 	versionPattern = `\d+\.\d+\.\d`
 
 	bins = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
 	dots = []string{".ruby-version"}
 )
 
+// Ruby bin essential struct
 type Ruby struct {
 	Version string
 	Emitter *emission.Emitter
 	base.Ruby
 }
 
+// New returns language struct
 func New(version string, emitter *emission.Emitter) *Ruby {
 	return &Ruby{
 		Version: version,
@@ -39,10 +45,12 @@ func New(version string, emitter *emission.Emitter) *Ruby {
 	}
 }
 
+// Events returns language related event emitter
 func (ruby Ruby) Events() *emission.Emitter {
 	return ruby.Emitter
 }
 
+// PostInstall hook
 func (ruby Ruby) PostInstall() error {
 	err := removeRVMArtefacts(variables.Path("ruby", ruby.Version))
 	if err != nil {
@@ -67,18 +75,21 @@ func removeRVMArtefacts(base string) error {
 
 	return nil
 }
+
+// Info provides all the info needed for installation of the plugin
 func (ruby Ruby) Info() map[string]string {
 	result := make(map[string]string)
 
 	result["filename"] = fmt.Sprintf("ruby-%s", ruby.Version)
 	result["extension"] = "tar.bz2"
-	result["url"] = fmt.Sprintf("%s/%s.%s", rvm.GetUrl(VersionLink), result["filename"], result["extension"])
+	result["url"] = fmt.Sprintf("%s/%s.%s", rvm.GetURL(VersionLink), result["filename"], result["extension"])
 
 	return result
 }
 
+// ListRemote returns list of the all available remote versions
 func (ruby Ruby) ListRemote() ([]string, error) {
-	url := rvm.GetUrl(VersionLink)
+	url := rvm.GetURL(VersionLink)
 	doc, err := goquery.NewDocument(url)
 
 	if err != nil {

@@ -1,3 +1,4 @@
+// Package golang provides additional golang methods for linux installation
 package golang
 
 import (

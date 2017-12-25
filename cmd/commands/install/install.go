@@ -1,4 +1,4 @@
-// Package install installs the langauges
+// Package install installs the languages
 package install
 
 import (
@@ -138,14 +138,14 @@ func run(cmd *cobra.Command, args []string) {
 			install(language, version)
 			return
 
-			// In case of `ec -r <language>` or `ec <language> -r`
-		} else {
-			language, version, err = info.AskRemote()
-			print.Error(err)
-
-			install(language, version)
-			return
 		}
+
+		// In case of `ec -r <language>` or `ec <language> -r`
+		language, version, err = info.AskRemote()
+		print.Error(err)
+
+		install(language, version)
+		return
 	}
 
 	// In case of `ec <language>`
@@ -161,11 +161,6 @@ func run(cmd *cobra.Command, args []string) {
 
 	// We already know it will show an error
 	os.Exit(1)
-}
-
-// Add command to root command
-func Register(cmd *cobra.Command) {
-	Command.AddCommand(cmd)
 }
 
 // Init

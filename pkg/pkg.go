@@ -1,4 +1,4 @@
-// Package provides helpful base interfaces and struct definitions
+// Package pkg provides helpful base interfaces and struct definitions
 package pkg
 
 import "github.com/chuckpreslar/emission"
@@ -61,17 +61,17 @@ func (base Base) Rollback() error {
 	return nil
 }
 
-// Environment get needed environment variables and values
+// Environment returns list of the all needed envionment variables
 func (base Base) Environment() (result []string, err error) {
 	return
 }
 
-// Info gets plugin related info
+// Info provides all the info needed for installation of the plugin
 func (base Base) Info() (result map[string]string) {
 	return
 }
 
-// ListRemote gets availiable remote version for this plugin
+// ListRemote returns list of the all available remote versions
 func (base Base) ListRemote() (result []string, err error) {
 	return
 }

@@ -18,11 +18,15 @@ import (
 var (
 	minimalForYarn, _ = semver.Make("4.0.0")
 	version           = "1.0.1"
-	yarnUrl           = fmt.Sprintf("https://yarnpkg.com/downloads/%s/yarn-v%s.tar.gz", version, version)
+	yarnURL           = fmt.Sprintf(
+		"https://yarnpkg.com/downloads/%s/yarn-v%s.tar.gz",
+		version,
+		version,
+	)
 )
 
 func (node Node) download(path string) (err error) {
-	_, err = grab.Get(path, yarnUrl)
+	_, err = grab.Get(path, yarnURL)
 	if err != nil {
 		return
 	}
@@ -36,6 +40,7 @@ func (node Node) isYarnPossible() bool {
 	return version.GTE(minimalForYarn)
 }
 
+// Yarn does everything that needs to be done to install yarn
 func (node Node) Yarn() (ok bool, err error) {
 	var (
 		path       = variables.Path("node", node.Version)

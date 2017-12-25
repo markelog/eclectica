@@ -1,3 +1,4 @@
+// Package nodejs provides all needed logic for installation of node.js
 package nodejs
 
 import (
@@ -18,7 +19,9 @@ import (
 )
 
 var (
-	VersionLink    = "https://nodejs.org/dist"
+	// VersionLink is the URL link from which we can get all possible versions
+	VersionLink = "https://nodejs.org/dist"
+
 	versionPattern = "v\\d+\\.\\d+\\.\\d+$"
 
 	minimalVersion, _ = semver.Make("0.10.0")
@@ -27,6 +30,7 @@ var (
 	dots = []string{".nvmrc", ".node-version"}
 )
 
+// Node essential struct
 type Node struct {
 	Version     string
 	previous    string
@@ -35,12 +39,14 @@ type Node struct {
 	pkg.Base
 }
 
+// Args is arguments struct for New() method
 type Args struct {
 	Version     string
 	Emitter     *emission.Emitter
 	WithModules bool
 }
 
+// New returns language struct
 func New(args *Args) *Node {
 	return &Node{
 		Version:     args.Version,
@@ -50,10 +56,12 @@ func New(args *Args) *Node {
 	}
 }
 
+// Events returns language related event emitter
 func (node Node) Events() *emission.Emitter {
 	return node.Emitter
 }
 
+// PostInstall hook
 func (node Node) PostInstall() (err error) {
 	node.Emitter.Emit("post-install")
 
@@ -65,6 +73,7 @@ func (node Node) PostInstall() (err error) {
 	return nil
 }
 
+// Switch hook
 func (node Node) Switch() (err error) {
 	previous := node.previous
 
@@ -88,24 +97,30 @@ func (node Node) Switch() (err error) {
 	return
 }
 
+// Info provides all the info needed for installation of the plugin
 func (node Node) Info() map[string]string {
 	result := make(map[string]string)
-	sourcesUrl := fmt.Sprintf("%s/v%s", VersionLink, node.Version)
+	sourcesURL := fmt.Sprintf("%s/v%s", VersionLink, node.Version)
 
 	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", node.Version, runtime.GOOS)
-	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
+	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesURL, result["filename"])
 
 	return result
 }
 
+// Bins returns list of the all bins included
+// with the distribution of the language
 func (node Node) Bins() []string {
 	return bins
 }
 
+// Dots returns list of the all available filenames
+// which can define versions
 func (node Node) Dots() []string {
 	return dots
 }
 
+// ListRemote returns list of the all available remote versions
 func (node Node) ListRemote() ([]string, error) {
 	doc, err := goquery.NewDocument(VersionLink)
 

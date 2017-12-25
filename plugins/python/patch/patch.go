@@ -1,3 +1,4 @@
+// Package patch provides logic for applying patches for the python installation
 package patch
 
 import (
@@ -20,14 +21,20 @@ import (
 )
 
 var (
-	Link    = "https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build/patches"
+	// Link holds link for list of all patches
+	Link = "https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build/patches"
+
+	// RawLink is a part of the url for the patches so we can download them
 	RawLink = "https://raw.githubusercontent.com/pyenv/pyenv/master/plugins/python-build/share/python-build/patches"
 )
 
-func Urls(version string) (result []string, err error) {
-	unsemVersion := versions.Unsemverify(version)
-	link := fmt.Sprintf("%s/%s/Python-%s", Link, unsemVersion, unsemVersion)
-	rawLink := fmt.Sprintf("%s/%s/Python-%s", RawLink, unsemVersion, unsemVersion)
+// URLs returns list of all needed patch urls
+func URLs(version string) (urls []string, err error) {
+	var (
+		unsemVersion = versions.Unsemverify(version)
+		link         = fmt.Sprintf("%s/%s/Python-%s", Link, unsemVersion, unsemVersion)
+		rawLink      = fmt.Sprintf("%s/%s/Python-%s", RawLink, unsemVersion, unsemVersion)
+	)
 
 	doc, err := goquery.NewDocument(link)
 	if err != nil {
@@ -44,7 +51,7 @@ func Urls(version string) (result []string, err error) {
 		content := node.Text()
 		fullPath := fmt.Sprintf("%s/%s", rawLink, content)
 
-		result = append(result, fullPath)
+		urls = append(urls, fullPath)
 	})
 	return
 }
@@ -62,6 +69,7 @@ func getStrip(path string) string {
 	return "0"
 }
 
+// Apply the patch
 func Apply(path string) (err error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {

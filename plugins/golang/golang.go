@@ -1,3 +1,4 @@
+// Package golang provides all needed logic for installation of Golang
 package golang
 
 import (
@@ -19,8 +20,12 @@ import (
 )
 
 var (
-	VersionsLink   = "https://golang.org/dl"
-	DownloadLink   = "https://storage.googleapis.com/golang"
+	// VersionLink is the URL link from which we can get all possible versions
+	VersionLink = "https://golang.org/dl"
+
+	// DownloadLink from which we download binaries for golang
+	DownloadLink = "https://storage.googleapis.com/golang"
+
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
 
 	bins = []string{"go", "godoc", "gofmt"}
@@ -29,12 +34,14 @@ var (
 	rVersion = regexp.MustCompile(versionPattern)
 )
 
+// Golang essential struct
 type Golang struct {
 	Version string
 	Emitter *emission.Emitter
 	pkg.Base
 }
 
+// New returns language struct
 func New(version string, emitter *emission.Emitter) *Golang {
 	return &Golang{
 		Version: version,
@@ -42,14 +49,17 @@ func New(version string, emitter *emission.Emitter) *Golang {
 	}
 }
 
+// Events returns language related event emitter
 func (golang Golang) Events() *emission.Emitter {
 	return golang.Emitter
 }
 
+// PostInstall hook
 func (golang Golang) PostInstall() error {
 	return dealWithShell()
 }
 
+// Environment returns list of the all needed envionment variables
 func (golang Golang) Environment() (result []string, err error) {
 	result = append(result, "GOROOT="+variables.Path("go", golang.Version))
 
@@ -63,6 +73,7 @@ func (golang Golang) Environment() (result []string, err error) {
 	return
 }
 
+// Info provides all the info needed for installation of the plugin
 func (golang Golang) Info() map[string]string {
 	result := make(map[string]string)
 
@@ -77,21 +88,26 @@ func (golang Golang) Info() map[string]string {
 	return result
 }
 
-func (rust Golang) Bins() []string {
+// Bins returns list of the all bins included
+// with the distribution of the language
+func (golang Golang) Bins() []string {
 	return bins
 }
 
-func (rust Golang) Dots() []string {
+// Dots returns list of the all available filenames
+// which can define versions
+func (golang Golang) Dots() []string {
 	return dots
 }
 
+// ListRemote returns list of the all available remote versions
 func (golang Golang) ListRemote() (result []string, err error) {
 	var (
 		firstSelector = "#stable + div tr:first-of-type td:first-of-type.filename a"
 		selector      = "#archive tr:first-of-type td:first-of-type.filename a"
 	)
 
-	doc, err := goquery.NewDocument(VersionsLink)
+	doc, err := goquery.NewDocument(VersionLink)
 
 	if err != nil {
 		if _, ok := err.(net.Error); ok {

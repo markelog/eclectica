@@ -1,3 +1,4 @@
+// Package info provides ways to acquiring additional info from the user
 package info
 
 import (
@@ -26,7 +27,7 @@ func Ask() (language, version string, err error) {
 	return
 }
 
-// Ask for version
+// AskVersion asks version from the user
 func AskVersion(language string) (version string, err error) {
 	vers := plugins.New(&plugins.Args{
 		Language: language,
@@ -42,7 +43,7 @@ func AskVersion(language string) (version string, err error) {
 	return
 }
 
-// Ask for language and remote version
+// AskRemote asks for remote version from the user
 func AskRemote() (language, version string, err error) {
 	language = list.GetWith("Language", plugins.Plugins)
 	version, err = AskRemoteVersion(language)
@@ -50,7 +51,7 @@ func AskRemote() (language, version string, err error) {
 	return
 }
 
-// Ask for list of remote versions
+// AskRemoteVersions asks for list of remote versions
 func AskRemoteVersions(language string) (vers []string, err error) {
 	remoteList, err := ListRemote(language)
 	if err != nil {
@@ -63,7 +64,7 @@ func AskRemoteVersions(language string) (vers []string, err error) {
 	return
 }
 
-// Ask for list of remote version
+// AskRemoteVersion asks for list of remote version
 func AskRemoteVersion(language string) (version string, err error) {
 	versions, err := AskRemoteVersions(language)
 
@@ -76,7 +77,7 @@ func AskRemoteVersion(language string) (version string, err error) {
 	return
 }
 
-// Get supported language from args list
+// GetLanguage gets supported language from args list
 func GetLanguage(args []string) (language, version string) {
 	for _, element := range args {
 		data := strings.Split(element, "@")
@@ -96,7 +97,8 @@ func GetLanguage(args []string) (language, version string) {
 	return "", ""
 }
 
-func GetSpinner(language string, prefix spinner.SpinnerFn) *spinner.Spinner {
+// GetSpinner gets the spinner, just easier that way
+func GetSpinner(language string, prefix spinner.Fn) *spinner.Spinner {
 	c, _ := curse.New()
 
 	before := func() {}
@@ -115,6 +117,7 @@ func GetSpinner(language string, prefix spinner.SpinnerFn) *spinner.Spinner {
 	return spinner.New(before, after, prefix, postfix)
 }
 
+// ListRemote lists remote version from the plugin indirectly
 func ListRemote(language string) (versions map[string][]string, err error) {
 	plugin := plugins.New(&plugins.Args{
 		Language: language,
@@ -133,6 +136,7 @@ func ListRemote(language string) (versions map[string][]string, err error) {
 	return
 }
 
+// FullListRemote lists remote version from the plugin directly
 func FullListRemote(language string) (versions []string, err error) {
 	plugin := plugins.New(&plugins.Args{
 		Language: language,
@@ -151,14 +155,14 @@ func FullListRemote(language string) (versions []string, err error) {
 	return
 }
 
-// Is there an langauge in args list?
+// HasLanguage do we have language in args list?
 func HasLanguage(args []string) bool {
 	language, _ := GetLanguage(args)
 
 	return language != ""
 }
 
-// Is there an version in args list?
+// HasVersion do we have version in args list?
 func HasVersion(args []string) bool {
 	_, version := GetLanguage(args)
 

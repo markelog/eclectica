@@ -1,3 +1,4 @@
+// Package spinner provides essential (empty) spinner
 package spinner
 
 import (
@@ -9,18 +10,21 @@ import (
 	spin "github.com/tj/go-spin"
 )
 
-type SpinnerFn func()
-
+// Spinner essential struct
 type Spinner struct {
+	Before, After, Prefix, Postfix Fn
+
+	Spin *spin.Spinner
+
 	isDone bool
-
-	mutex *sync.Mutex
-	Spin  *spin.Spinner
-
-	Before, After, Prefix, Postfix SpinnerFn
+	mutex  *sync.Mutex
 }
 
-func New(before, after, prefix, postfix SpinnerFn) *Spinner {
+// Fn callback signature
+type Fn func()
+
+// New returns new spinner struct
+func New(before, after, prefix, postfix Fn) *Spinner {
 	return &Spinner{
 		isDone: false,
 
@@ -34,6 +38,7 @@ func New(before, after, prefix, postfix SpinnerFn) *Spinner {
 	}
 }
 
+// Start the spinner
 func (spinner *Spinner) Start() {
 	spinner.mutex.Lock()
 	defer spinner.mutex.Unlock()
@@ -68,6 +73,7 @@ func (spinner *Spinner) Start() {
 	}()
 }
 
+// Stop the spinner
 func (spinner *Spinner) Stop() {
 	spinner.mutex.Lock()
 	defer spinner.mutex.Unlock()

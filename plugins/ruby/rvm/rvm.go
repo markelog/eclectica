@@ -37,7 +37,8 @@ func RemoveArtefacts(base string) (err error) {
 	return nil
 }
 
-func GetUrl(versionLink string) string {
+// GetURL returns OS version, type and name
+func GetURL(versionLink string) string {
 	typa, _, version := release.All()
 	floatVersion, _ := semver.Parse(versions.Semverify(version))
 	arch := "x86_64"

@@ -1,3 +1,4 @@
+// Package CustomSpinner provides spinner with additional custom logic
 package CustomSpinner
 
 import (
@@ -5,10 +6,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/markelog/curse"
+
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/cmd/print/spinner"
-
-	"github.com/markelog/curse"
 )
 
 var (
@@ -18,16 +19,20 @@ var (
 	timeout = print.Timeout
 )
 
+// Spin essential struct
+type Spin struct {
+	SpinArgs
+	Spinner *spinner.Spinner
+
+	mutex *sync.Mutex
+}
+
+// SpinArgs is arguments struct for New() method
 type SpinArgs struct {
 	Header, Item, Note, Message string
 }
 
-type Spin struct {
-	SpinArgs
-	Spinner *spinner.Spinner
-	mutex   *sync.Mutex
-}
-
+// New returns custom spinner struct
 func New(args *SpinArgs) *Spin {
 	me := &Spin{
 		mutex: &sync.Mutex{},
@@ -37,6 +42,7 @@ func New(args *SpinArgs) *Spin {
 	return me
 }
 
+// Set new data for the spinner
 func (me *Spin) Set(args *SpinArgs) {
 	me.mutex.Lock()
 
@@ -63,10 +69,12 @@ func (me *Spin) Set(args *SpinArgs) {
 	}
 }
 
+// Start the spinner
 func (me Spin) Start() {
 	me.Spinner.Start()
 }
 
+// Stop the spinner
 func (me Spin) Stop() {
 	me.Spinner.Stop()
 }

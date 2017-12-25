@@ -14,8 +14,8 @@ import (
 
 var (
 	rcs = map[string][]string{
-		"bash": []string{".bash_profile", ".bashrc", ".profile"},
-		"zsh":  []string{".zshrc"},
+		"bash": {".bash_profile", ".bashrc", ".profile"},
+		"zsh":  {".zshrc"},
 	}
 )
 

@@ -32,10 +32,10 @@ var _ = Describe("golang", func() {
 	golang := &Golang{}
 
 	Describe("ListRemote", func() {
-		old := VersionsLink
+		old := VersionLink
 
 		AfterEach(func() {
-			VersionsLink = old
+			VersionLink = old
 		})
 
 		Describe("success", func() {
@@ -55,7 +55,7 @@ var _ = Describe("golang", func() {
 					io.WriteString(w, content)
 				}))
 
-				VersionsLink = ts.URL
+				VersionLink = ts.URL
 
 				remotes, err = golang.ListRemote()
 			})
@@ -100,7 +100,7 @@ var _ = Describe("golang", func() {
 
 		Describe("fail", func() {
 			BeforeEach(func() {
-				VersionsLink = ""
+				VersionLink = ""
 				remotes, err = golang.ListRemote()
 			})
 

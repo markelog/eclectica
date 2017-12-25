@@ -1,3 +1,4 @@
+// Package rust provides all needed logic for installation of rust
 package rust
 
 import (
@@ -19,7 +20,9 @@ import (
 )
 
 var (
-	VersionsLink   = "https://static.rust-lang.org/dist"
+	// VersionLink is the URL link from which we can get all possible versions
+	VersionLink = "https://static.rust-lang.org/dist"
+
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:-(alpha|beta)(?:\\.\\d*)?)?"
 	listLink       = "https://static.rust-lang.org/dist/index.txt"
 
@@ -27,12 +30,14 @@ var (
 	dots = []string{".rust-version"}
 )
 
+// Rust essential struct
 type Rust struct {
 	Version string
 	Emitter *emission.Emitter
 	pkg.Base
 }
 
+// New returns language struct
 func New(version string, emitter *emission.Emitter) *Rust {
 	return &Rust{
 		Version: version,
@@ -40,10 +45,12 @@ func New(version string, emitter *emission.Emitter) *Rust {
 	}
 }
 
+// Events returns language related event emitter
 func (rust Rust) Events() *emission.Emitter {
 	return rust.Emitter
 }
 
+// Install hook
 func (rust Rust) Install() error {
 	path := variables.Path("rust", rust.Version)
 	tmp := filepath.Join(path, "tmp")
@@ -69,26 +76,34 @@ func (rust Rust) Install() error {
 	return err
 }
 
+// Info provides all the info needed for installation of the plugin
 func (rust Rust) Info() map[string]string {
-	result := make(map[string]string)
-	platform, _ := getPlatform()
-	filename := fmt.Sprintf("rust-%s-%s", rust.Version, platform)
-	sourcesUrl := fmt.Sprintf("%s/%s", VersionsLink, filename)
+	var (
+		result      = make(map[string]string)
+		platform, _ = getPlatform()
+		filename    = fmt.Sprintf("rust-%s-%s", rust.Version, platform)
+		sourcesURL  = fmt.Sprintf("%s/%s", VersionLink, filename)
+	)
 
 	result["filename"] = filename
-	result["url"] = fmt.Sprintf("%s.tar.gz", sourcesUrl)
+	result["url"] = fmt.Sprintf("%s.tar.gz", sourcesURL)
 
 	return result
 }
 
+// Bins returns list of the all bins included
+// with the distribution of the language
 func (rust Rust) Bins() []string {
 	return bins
 }
 
-func (node Rust) Dots() []string {
+// Dots returns list of the all available filenames
+// which can define versions
+func (rust Rust) Dots() []string {
 	return dots
 }
 
+// ListRemote returns list of the all available remote versions
 func (rust Rust) ListRemote() ([]string, error) {
 	body, err := request.Body(listLink)
 

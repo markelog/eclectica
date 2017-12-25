@@ -1,3 +1,4 @@
+// Package python provides all needed logic for installation of python
 package python
 
 import (
@@ -31,13 +32,16 @@ import (
 )
 
 var (
-	VersionLink    = "https://hg.python.org/cpython/tags"
+
+	// VersionLink is the URL link from which we can get all possible versions
+	VersionLink = "https://hg.python.org/cpython/tags"
+
 	remoteVersion  = "https://www.python.org/ftp/python"
 	versionPattern = "^\\d+\\.\\d+(?:\\.\\d)?"
 
 	pipName = "get-pip.py"
-	baseUrl = "https://bootstrap.pypa.io/"
-	pipUrl  = baseUrl + pipName
+	baseURL = "https://bootstrap.pypa.io/"
+	pipURL  = baseURL + pipName
 
 	// Hats off to inconsistent python developers
 	noNilVersions, _ = semver.Make("3.3.0")
@@ -48,6 +52,7 @@ var (
 	dots = []string{".python-version"}
 )
 
+// Python essential struct
 type Python struct {
 	pkg.Base
 	Version   string
@@ -55,6 +60,7 @@ type Python struct {
 	waitGroup *sync.WaitGroup
 }
 
+// New returns language struct
 func New(version string, emitter *emission.Emitter) *Python {
 	return &Python{
 		Version:   version,
@@ -63,10 +69,12 @@ func New(version string, emitter *emission.Emitter) *Python {
 	}
 }
 
+// Events returns language related event emitter
 func (python Python) Events() *emission.Emitter {
 	return python.Emitter
 }
 
+// PreInstall hook
 func (python Python) PreInstall() error {
 	if runtime.GOOS == "linux" {
 		return dealWithLinuxShell()
@@ -75,6 +83,7 @@ func (python Python) PreInstall() error {
 	return dealWithOSXShell()
 }
 
+// Install hook
 func (python Python) Install() (err error) {
 	err = python.configure()
 	if err != nil {
@@ -94,12 +103,13 @@ func (python Python) Install() (err error) {
 	return python.renameLinks()
 }
 
+// PostInstall hook
 func (python Python) PostInstall() (err error) {
 	path := variables.Path("python", python.Version)
 	bin := variables.GetBin("python", python.Version)
 
 	if hasTools(python.Version) {
-		cmdErr, cmd, stderr, stdout := python.getCmd(bin, "-m", "ensurepip")
+		cmd, stderr, stdout, cmdErr := python.getCmd(bin, "-m", "ensurepip")
 		if cmdErr != nil {
 			return cmdErr
 		}
@@ -129,6 +139,7 @@ func (python Python) PostInstall() (err error) {
 	return nil
 }
 
+// Info provides all the info needed for installation of the plugin
 func (python Python) Info() map[string]string {
 	var (
 		result    = make(map[string]string)
@@ -165,14 +176,19 @@ func (python Python) Info() map[string]string {
 	return result
 }
 
-func (rust Python) Bins() []string {
+// Bins returns list of the all bins included
+// with the distribution of the language
+func (python Python) Bins() []string {
 	return bins
 }
 
-func (rust Python) Dots() []string {
+// Dots returns list of the all available filenames
+// which can define versions
+func (python Python) Dots() []string {
 	return dots
 }
 
+// ListRemote returns list of the all available remote versions
 func (python Python) ListRemote() (result []string, err error) {
 	doc, err := goquery.NewDocument(VersionLink)
 
@@ -232,7 +248,7 @@ func (python Python) configure() (err error) {
 		return errors.New(err)
 	}
 
-	err, cmd, stderr, stdout := python.getCmd(
+	cmd, stderr, stdout, err := python.getCmd(
 		configure,
 		"--prefix="+path,
 		ensurepip,
@@ -262,7 +278,7 @@ func (python Python) prepare() (err error) {
 	// Ignore touch errors since newest python makefile doesn't have this task
 	python.touch()
 
-	err, cmd, stderr, stdout := python.getCmd("make", "-j")
+	cmd, stderr, stdout, err := python.getCmd("make", "-j")
 	if err != nil {
 		return err
 	}
@@ -284,7 +300,7 @@ func (python Python) prepare() (err error) {
 func (python Python) install() (err error) {
 	python.Emitter.Emit("install")
 
-	err, cmd, stderr, stdout := python.getCmd("make", "install")
+	cmd, stderr, stdout, err := python.getCmd("make", "install")
 	if err != nil {
 		return err
 	}
@@ -304,7 +320,7 @@ func (python Python) install() (err error) {
 }
 
 func (python Python) touch() (err error) {
-	cmdErr, cmd, stderr, stdout := python.getCmd("make", "touch")
+	cmd, stderr, stdout, cmdErr := python.getCmd("make", "touch")
 	if cmdErr != nil {
 		return cmdErr
 	}
@@ -380,9 +396,10 @@ func (python Python) getOSXEnvs(original []string) []string {
 }
 
 func (python Python) getCmd(args ...string) (
-	err error,
+
 	cmd *exec.Cmd,
 	stderr, stdout io.ReadCloser,
+	err error,
 ) {
 	cmd = exec.Command(args[0], args[1:]...)
 
@@ -473,13 +490,13 @@ func (python Python) renameLinks() (err error) {
 func (python Python) downloadExternals() (err error) {
 	path := variables.Path("python", python.Version)
 
-	urls, err := patch.Urls(python.Version)
+	urls, err := patch.URLs(python.Version)
 	if err != nil {
 		return errors.New(err)
 	}
 
 	if hasTools(python.Version) == false {
-		urls = append(urls, pipUrl)
+		urls = append(urls, pipURL)
 	}
 
 	respch, err := grab.GetBatch(len(urls), path, urls...)

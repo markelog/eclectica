@@ -456,7 +456,7 @@ var _ = Describe("plugins", func() {
 			Expect(plugin.Extract()).Should(MatchError("Version was not defined"))
 		})
 
-		It("should extract langauge", func() {
+		It("should extract language", func() {
 			plugin.Extract()
 
 			_, err := os.Stat(filepath.Join(destFolder, "/test.txt"))

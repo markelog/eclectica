@@ -1,3 +1,4 @@
+// Package elm provides all needed logic for installation of Elm
 package elm
 
 import (
@@ -21,7 +22,9 @@ import (
 )
 
 var (
-	VersionLink    = "https://dl.bintray.com/elmlang/elm-platform"
+	// VersionLink is the URL link from which we can get all possible versions
+	VersionLink = "https://dl.bintray.com/elmlang/elm-platform"
+
 	versionPattern = "\\d+\\.\\d+\\.\\d+"
 
 	diffFolderBinaryName, _ = semver.Make("0.17.1")
@@ -30,12 +33,14 @@ var (
 	dots = []string{".elm-version"}
 )
 
+// Elm essential struct
 type Elm struct {
 	Version string
 	Emitter *emission.Emitter
 	pkg.Base
 }
 
+// New returns language struct
 func New(version string, emitter *emission.Emitter) *Elm {
 	return &Elm{
 		Version: version,
@@ -43,10 +48,12 @@ func New(version string, emitter *emission.Emitter) *Elm {
 	}
 }
 
+// Events returns language related event emitter
 func (elm Elm) Events() *emission.Emitter {
 	return elm.Emitter
 }
 
+// PreDownload hook
 func (elm Elm) PreDownload() (err error) {
 	path := elm.getTmpPath()
 
@@ -57,6 +64,7 @@ func (elm Elm) PreDownload() (err error) {
 	return
 }
 
+// PostInstall hook
 func (elm Elm) PostInstall() error {
 	path := variables.Path("elm", elm.Version)
 	binPath := filepath.Join(path, "bin")
@@ -80,10 +88,13 @@ func (elm Elm) PostInstall() error {
 	return nil
 }
 
+// Info provides all the info needed for installation of the plugin
 func (elm Elm) Info() map[string]string {
-	result := make(map[string]string)
-	sourcesUrl := fmt.Sprintf("%s/%s", VersionLink, elm.Version)
-	chosen, _ := semver.Make(elm.Version)
+	var (
+		result     = make(map[string]string)
+		sourcesURL = fmt.Sprintf("%s/%s", VersionLink, elm.Version)
+		chosen, _  = semver.Make(elm.Version)
+	)
 
 	// Man, why?!
 	if chosen.LT(diffFolderBinaryName) {
@@ -100,20 +111,25 @@ func (elm Elm) Info() map[string]string {
 	}
 
 	result["filename"] = fmt.Sprintf("%s-x64", runtime.GOOS)
-	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesUrl, result["filename"])
+	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesURL, result["filename"])
 	result["archive-folder"] = filepath.Join(variables.TempDir(), "elm-archive-"+elm.Version) + "/"
 
 	return result
 }
 
+// Bins returns list of the all bins included
+// with the distribution of the language
 func (elm Elm) Bins() []string {
 	return bins
 }
 
+// Dots returns list of the all available filenames
+// which can define versions
 func (elm Elm) Dots() []string {
 	return dots
 }
 
+// ListRemote returns list of the all available remote versions
 func (elm Elm) ListRemote() ([]string, error) {
 	doc, err := goquery.NewDocument(VersionLink)
 

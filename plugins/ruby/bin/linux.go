@@ -1,3 +1,4 @@
+// Package bin provides ruby related methods for the "bin" type installation
 package bin
 
 import (

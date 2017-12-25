@@ -20,9 +20,14 @@ import (
 )
 
 var (
-	Gray    = ansi.ColorCode("240")
-	White   = ansi.ColorCode("white+b")
-	Reset   = ansi.ColorCode("reset")
+
+	// Gray color
+	Gray = ansi.ColorCode("240")
+	// White color
+	White = ansi.ColorCode("white+b")
+	// Reset ASCII-sequence
+	Reset = ansi.ColorCode("reset")
+	// Timeout for anything general
 	Timeout = 200 * time.Millisecond
 )
 

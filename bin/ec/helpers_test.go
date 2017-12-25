@@ -17,12 +17,12 @@ var (
 	bins    = variables.DefaultInstall
 )
 
-func shouldRun(langauge string) bool {
+func shouldRun(language string) bool {
 	if os.Getenv("TEST_ALL") == "true" {
 		return true
 	}
 
-	if os.Getenv("TEST_LANGUAGE") == langauge {
+	if os.Getenv("TEST_LANGUAGE") == language {
 		return true
 	}
 

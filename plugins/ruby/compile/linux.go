@@ -12,6 +12,8 @@ import (
 )
 
 var (
+
+	// LinuxDependencies is a list of all linux system dependencies
 	LinuxDependencies = []string{
 		"make", "autoconf", "gcc-6",
 		"bison", "build-essential", "libssl-dev",

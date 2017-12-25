@@ -67,7 +67,7 @@ func (shell *Shell) Initiate() (err error) {
 	return
 }
 
-// Restart restarts shell if needed
+// Start starts the shell if needed
 func (shell *Shell) Start() {
 	if shell.shouldRestart {
 		Start()
@@ -83,7 +83,7 @@ func (shell *Shell) checkStatus() bool {
 	return false
 }
 
-// Composes plugin paths
+// Compose returns $PATH paths for all provided languages
 func Compose(plugins []string) (result string) {
 	// First eclectica binaries
 	result = ":" + variables.DefaultInstall

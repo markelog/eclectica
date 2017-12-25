@@ -11,12 +11,12 @@ import (
 )
 
 var _ = Describe("RVM related methods", func() {
-	Describe("GetUrl", func() {
+	Describe("GetURL", func() {
 		It("should return same resulted url part", func() {
 			monkey.Patch(release.All, func() (string, string, string) {
 				return "osx", "x86_64", "10.12"
 			})
-			result := rvm.GetUrl("test")
+			result := rvm.GetURL("test")
 			monkey.Unpatch(release.All)
 
 			Expect(result).To(Equal("test/osx/10.12/x86_64"))
@@ -26,7 +26,7 @@ var _ = Describe("RVM related methods", func() {
 			monkey.Patch(release.All, func() (string, string, string) {
 				return "osx", "x86_64", "10.13"
 			})
-			result := rvm.GetUrl("test")
+			result := rvm.GetURL("test")
 			monkey.Unpatch(release.All)
 
 			Expect(result).To(Equal("test/osx/10.12/x86_64"))

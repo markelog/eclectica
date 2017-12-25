@@ -36,9 +36,9 @@ var _ = Describe("versions", func() {
 	Describe("GetKeys", func() {
 		It("should get version keys", func() {
 			list := map[string][]string{
-				"10.x": []string{},
-				"4.x":  []string{},
-				"0.x":  []string{"0.8.2"},
+				"10.x": {},
+				"4.x":  {},
+				"0.x":  {"0.8.2"},
 			}
 			keys := GetKeys(list)
 
@@ -49,9 +49,9 @@ var _ = Describe("versions", func() {
 
 		It("should get version keys with 0.10.x in it", func() {
 			list := map[string][]string{
-				"0.9.x":  []string{},
-				"0.10.x": []string{},
-				"0.1.x":  []string{"0.8.2"},
+				"0.9.x":  {},
+				"0.10.x": {},
+				"0.1.x":  {"0.8.2"},
 			}
 			keys := GetKeys(list)
 

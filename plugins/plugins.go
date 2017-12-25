@@ -1,3 +1,4 @@
+// Package plugins provides essential logic for installation of the plugins
 package plugins
 
 import (
@@ -28,14 +29,17 @@ import (
 	"github.com/markelog/eclectica/plugins/rust"
 )
 
+// Plugin essential struct
 type Plugin struct {
-	name    string
 	Version string
 	Pkg     pkg.Pkg
 	emitter *emission.Emitter
-	info    map[string]string
+
+	name string
+	info map[string]string
 }
 
+// Args is arguments struct for New() method
 type Args struct {
 	Language    string
 	Version     string
@@ -43,6 +47,8 @@ type Args struct {
 }
 
 var (
+
+	// Plugins holds list of all supported plugins
 	Plugins = []string{
 		"node",
 		"rust",
@@ -53,6 +59,7 @@ var (
 	}
 )
 
+// New returns new plugin struct
 func New(args *Args) *Plugin {
 	plugin := &Plugin{
 		name:    args.Language,
@@ -86,10 +93,17 @@ func New(args *Args) *Plugin {
 	return plugin
 }
 
+// Events returns language related event emitter
+func (plugin *Plugin) Events() *emission.Emitter {
+	return plugin.Pkg.Events()
+}
+
+// PreDownload executes logic before downloading of the plugin
 func (plugin *Plugin) PreDownload() error {
 	return plugin.Pkg.PreDownload()
 }
 
+// PreInstall executes logic before installation of the plugin
 func (plugin *Plugin) PreInstall() error {
 	if plugin.IsInstalled() {
 		return nil
@@ -98,6 +112,7 @@ func (plugin *Plugin) PreInstall() error {
 	return plugin.Pkg.PreInstall()
 }
 
+// LocalInstall installs language locally - to the current pwd folder
 func (plugin *Plugin) LocalInstall() (err error) {
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
@@ -168,6 +183,7 @@ func (plugin Plugin) finishLocal() (err error) {
 	return
 }
 
+// Install the plugin
 func (plugin *Plugin) Install() (err error) {
 	err = plugin.PreInstall()
 	if err != nil {
@@ -239,6 +255,7 @@ func (plugin Plugin) finishInstall() (err error) {
 	return
 }
 
+// PostInstall executes logic after installation of the plugin
 func (plugin *Plugin) PostInstall() (err error) {
 	if plugin.IsInstalled() {
 		return nil
@@ -261,6 +278,7 @@ func (plugin *Plugin) PostInstall() (err error) {
 	return
 }
 
+// Switch executes logic before switching plugin versions
 func (plugin *Plugin) Switch() (err error) {
 	err = plugin.Pkg.Switch()
 	if err != nil {
@@ -271,10 +289,12 @@ func (plugin *Plugin) Switch() (err error) {
 	return
 }
 
+// Environment returns list of the all needed envionment variables
 func (plugin *Plugin) Environment() ([]string, error) {
 	return plugin.Pkg.Environment()
 }
 
+// Info provides all the info needed for installation of the plugin
 func (plugin *Plugin) Info() (map[string]string, error) {
 	if plugin.Version == "" {
 		return nil, errors.New("Version was not defined")
@@ -366,23 +386,7 @@ func (plugin *Plugin) Interrupt() {
 	}()
 }
 
-func (plugin *Plugin) List() (vers []string) {
-	path := variables.Prefix(plugin.name)
-	vers = io.ListVersions(path)
-
-	return
-}
-
-func (plugin *Plugin) ListRemote() (map[string][]string, error) {
-	vers, err := plugin.Pkg.ListRemote()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return versions.Compose(vers), nil
-}
-
+// Remove the plugin
 func (plugin *Plugin) Remove() (err error) {
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
@@ -422,6 +426,7 @@ func (plugin *Plugin) Remove() (err error) {
 	return os.RemoveAll(variables.Prefix(plugin.name))
 }
 
+// Download the plugin
 func (plugin *Plugin) Download() (*grab.Response, error) {
 	if plugin.Version == "" {
 		return nil, errors.New("Version was not defined")
@@ -456,6 +461,7 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
 	return resp, nil
 }
 
+// Extract raw files from the downloaded archive (its always an archive)
 func (plugin *Plugin) Extract() error {
 	if plugin.Version == "" {
 		return errors.New("Version was not defined")
@@ -507,18 +513,38 @@ func (plugin *Plugin) Extract() error {
 	return nil
 }
 
+// Bins returns list of the all bins included
+// with the distribution of the language
 func (plugin *Plugin) Bins() []string {
 	return plugin.Pkg.Bins()
 }
 
+// Dots returns list of the all available filenames
+// which can define versions
 func (plugin *Plugin) Dots() []string {
 	return plugin.Pkg.Dots()
 }
 
-func (plugin *Plugin) Events() *emission.Emitter {
-	return plugin.Pkg.Events()
+// List returns list of the all available local versions
+func (plugin *Plugin) List() (vers []string) {
+	path := variables.Prefix(plugin.name)
+	vers = io.ListVersions(path)
+
+	return
 }
 
+// ListRemote returns list of the all available remote versions
+func (plugin *Plugin) ListRemote() (map[string][]string, error) {
+	vers, err := plugin.Pkg.ListRemote()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return versions.Compose(vers), nil
+}
+
+// Link replaces (if needed) and sets symlink for the language
 func (plugin *Plugin) Link() (err error) {
 	var (
 		base    = variables.Path(plugin.name, plugin.Version)
@@ -543,6 +569,7 @@ func (plugin *Plugin) IsInstalled() bool {
 	return variables.IsInstalled(plugin.name, plugin.Version)
 }
 
+// Proxy installs the proxy for the language
 func (plugin *Plugin) Proxy() (err error) {
 	ecProxyFolder := os.Getenv("EC_PROXY_PLACE")
 
@@ -614,6 +641,7 @@ func (plugin *Plugin) removeSupport() (err error) {
 	return nil
 }
 
+// SearchBin searches for the actual binary
 func SearchBin(name string) string {
 	bins := map[string][]string{}
 
@@ -623,7 +651,7 @@ func SearchBin(name string) string {
 		}).Bins()
 	}
 
-	for index, _ := range bins {
+	for index := range bins {
 		for _, bin := range bins[index] {
 			if name == bin {
 				return index

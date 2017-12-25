@@ -1,3 +1,5 @@
+// Package versions provides helpful methods
+// for anything related to the versions in eclectica
 package versions
 
 import (
@@ -79,7 +81,7 @@ func GetKeys(versions map[string][]string) []string {
 	compare := map[string]string{}
 	zeroRe := regexp.MustCompile(`\.x$`)
 
-	for version, _ := range versions {
+	for version := range versions {
 		result = append(result, version)
 	}
 
@@ -117,7 +119,7 @@ func GetKeys(versions map[string][]string) []string {
 // Will return:
 //   [1.1.0, 1.1.0-beta]
 func GetElements(key string, versions map[string][]string) []string {
-	for version, _ := range versions {
+	for version := range versions {
 		if version == key {
 			return semverifyList(versions[version])
 		}

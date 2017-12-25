@@ -12,9 +12,13 @@ import (
 )
 
 var (
+
+	// OSXDependencies is a list of OSX system dependencies
 	OSXDependencies = []string{
 		"openssl", "readline",
 	}
+
+	// XCodeDependencies is a list of XCode dependencies
 	XCodeDependencies = []string{
 		"xcrun", "make", "gcc",
 	}

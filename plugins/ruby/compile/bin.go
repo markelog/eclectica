@@ -44,7 +44,7 @@ func binRuby() (bin string, err error) {
 		return
 	}
 
-	url := fmt.Sprintf("%s/ruby-2.1.5.tar.bz2", rvm.GetUrl(versionLink))
+	url := fmt.Sprintf("%s/ruby-2.1.5.tar.bz2", rvm.GetURL(versionLink))
 	_, err = grab.Get(tmp, url)
 	if err != nil {
 		err = errors.New(err)

@@ -37,9 +37,9 @@ var _ = Describe("patch", func() {
 		patch.Link = oldLink
 	})
 
-	Describe("Urls", func() {
+	Describe("URLs", func() {
 		It("should contains url list for specific version", func() {
-			urls, err := patch.Urls("2.6.9")
+			urls, err := patch.URLs("2.6.9")
 
 			Expect(err).To(BeNil())
 
@@ -53,7 +53,7 @@ var _ = Describe("patch", func() {
 		})
 
 		It("should contains url list for specific version", func() {
-			urls, err := patch.Urls("2.7.0")
+			urls, err := patch.URLs("2.7.0")
 
 			Expect(err).To(BeNil())
 
