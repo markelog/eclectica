@@ -1,3 +1,4 @@
+// Package print have methods to print various eclectica info in style
 package print
 
 import (
@@ -25,18 +26,21 @@ var (
 	Timeout = 200 * time.Millisecond
 )
 
+// InStyle prints header and text with style
 func InStyle(name, entity string) {
 	name = ansi.Color(name, "white+b")
 	entity = ansi.Color(" "+entity+" ", "cyan+h")
 
-	fmt.Print(name, entity)
+	fmt.Print(name, entity, Reset)
 }
 
+// InStyleln prints header and text with style and newline char
 func InStyleln(name, entity string) {
 	InStyle(name, entity)
 	fmt.Println()
 }
 
+// Version prints version in style
 func Version(args ...interface{}) {
 	var color string
 	version := args[0].(string)
@@ -50,10 +54,12 @@ func Version(args ...interface{}) {
 	fmt.Println(color, "  ", version, Reset)
 }
 
+// CurrentVersion prints version with the heart symbol in style
 func CurrentVersion(version string) {
 	fmt.Println(ansi.Color("  ♥ "+version, "cyan"))
 }
 
+// Error prints error in style to stderr
 func Error(err error) {
 	if err == nil {
 		return
@@ -73,6 +79,7 @@ func Error(err error) {
 	os.Exit(1)
 }
 
+// Download continuously prints download info
 func Download(response *grab.Response, version string) string {
 	Error(response.Error)
 
@@ -131,6 +138,7 @@ func Download(response *grab.Response, version string) string {
 	return response.Filename
 }
 
+// Warning prints warning and how to fix it in style
 func Warning(note, command string) {
 	fmt.Println()
 	fmt.Print(ansi.Color("> ", "red"))
