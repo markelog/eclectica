@@ -1,4 +1,21 @@
-# Eclectica [![Build Status](https://travis-ci.org/markelog/eclectica.svg?branch=master)](https://travis-ci.org/markelog/eclectica) [![GoDoc](https://godoc.org/github.com/markelog/eclectica?status.svg)](https://godoc.org/github.com/markelog/eclectica) [![Go Report Card](https://goreportcard.com/badge/github.com/markelog/eclectica)](https://goreportcard.com/report/github.com/markelog/eclectica)
+<p align="center">
+	<img alt="Eclectica" src="https://cdn.rawgit.com/markelog/eclectica/81e8e049f825f6ceaf7a2a8e402e16cf59799bb1/assets/logo.png" width="300">
+</p>
+
+<p align="center">
+  Cool and eclectic version manager for any language
+</p>
+
+<p align="center">
+  <a href="https://travis-ci.org/markelog/eclectica">
+		<img alt="Build Status" src="https://travis-ci.org/markelog/eclectica.svg?branch=master">
+	</a><a href="https://godoc.org/github.com/markelog/eclectica">
+		<img alt="GoDoc" src="https://godoc.org/github.com/markelog/eclectica?status.svg">
+	</a><a href="https://goreportcard.com/report/github.com/markelog/eclectica">
+		<img alt="Go Report" src="https://goreportcard.com/badge/github.com/markelog/eclectica">
+	</a>
+</p>
+
 
 ## Install
 
