@@ -1,4 +1,4 @@
-* text eol=lf
+* text=auto
 
 plugins/python/patch/testdata/patches.html linguist-vendored
 **/testdata/** linguist-vendored
