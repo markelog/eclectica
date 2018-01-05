@@ -38,7 +38,7 @@ func init() {
 
 	flags := Command.PersistentFlags()
 	flags.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
-	flags.BoolVarP(&isLocal, "local", "l", false, "Install as local version i.e. language will be installed only to local folder")
+	flags.BoolVarP(&isLocal, "local", "l", false, "Install to current folder only")
 	flags.BoolVarP(&withModules, "with-modules", "w", false, "Reinstall global modules from the previous version (currently works only for node.js)")
 }
 
@@ -53,7 +53,6 @@ func Execute() {
 	args := os.Args[1:]
 
 	// Until https://github.com/spf13/cobra/pull/369 is landed
-	// Workaround to "forward" to a know command when no know command found
 	cmd, _, _ := Command.Find(args)
 
 	if cmd.Use == use {
