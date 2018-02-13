@@ -9,8 +9,7 @@ const example = `
   $ ec go
 
   Choose remote version with interactive list
-  $ ec -r rust
-`
+  $ ec -r rust`
 
 // Help output
 const help = `
@@ -20,24 +19,29 @@ const help = `
 
 // Usuage output
 const usage = `Usage:{{if .Runnable}}
-  {{if .HasAvailableFlags}}{{appendIfNotPresent .UseLine "[flags]"}}{{else}}{{.UseLine}}{{end}}{{end}}
-  {{if .HasAvailableSubCommands}}{{ .CommandPath}} [command] [flags] [<language>@<version>]{{end}}{{if gt .Aliases 0}}
+  {{if .HasAvailableFlags}}{{appendIfNotPresent .UseLine "[flags]"}}{{else}}{{.UseLine}}{{end}}{{end}}{{if .HasAvailableSubCommands}}
+  {{ .CommandPath}} [command] [flags] [<language>@<version>]{{end}}{{if gt .Aliases 0}}
+
 Aliases:
-  {{.NameAndAliases}}{{end}}
-{{if .HasExample}}
-Examples:{{ .Example }}{{end}}
-{{ if .HasAvailableSubCommands}}Available Commands:{{range .Commands}}{{if .IsAvailableCommand}}
-  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}
+  {{.NameAndAliases}}{{end}}{{if .HasExample}}
 
-{{end}}{{ if .HasAvailableLocalFlags}}Flags:
-{{.LocalFlags.FlagUsages | trimRightSpace}}
+Examples:{{ .Example }}{{end}}{{ if .HasAvailableSubCommands}}
 
-{{end}}{{ if .HasAvailableInheritedFlags}}Global Flags:
+Available Commands:{{range .Commands}}{{if .IsAvailableCommand}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{ if .HasAvailableLocalFlags}}
+
+Flags:
+{{.LocalFlags.FlagUsages | trimRightSpace}}{{end}}{{ if .HasAvailableInheritedFlags}}
+
+Global Flags:
 {{.InheritedFlags.FlagUsages | trimRightSpace}}
+
 
 {{end}}{{if .HasHelpSubCommands}}
 
-Additional help topics:{{range .Commands}}{{if .IsHelpCommand}}
-  {{rpad .CommandPath .CommandPathPadding}} {{.Short}}{{end}}{{end}}{{end}}{{ if .HasAvailableSubCommands }}Use "{{.CommandPath}} [command] --help" for more information about a command.
+Additional:{{range .Commands}}{{if .IsHelpCommand}}
+  {{rpad .CommandPath .CommandPathPadding}} {{.Short}}{{end}}{{end}}{{end}}{{ if .HasAvailableSubCommands }}
+
+Use "{{.CommandPath}} [command] --help" for more information about a command
 
 {{end}}`

@@ -21,7 +21,7 @@ var isRemote bool
 var Command = &cobra.Command{
 	Use:     "ls",
 	Aliases: []string{"list"},
-	Short:   "list installed language versions",
+	Short:   "List installed language versions",
 	Example: example,
 	Run:     run,
 }
@@ -38,8 +38,7 @@ var example = `
   $ ec ls
 
   List remote versions
-  $ ec ls -r
-`
+  $ ec ls -r`
 
 // Runner
 func run(cmd *cobra.Command, args []string) {

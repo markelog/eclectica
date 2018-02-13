@@ -23,8 +23,9 @@ var withModules bool
 
 // Command represents the ls command
 var Command = &cobra.Command{
-	Use: "install [<language>@<version>]",
-	Run: run,
+	Use:   "install [<language>@<version>]",
+	Short: "Install language",
+	Run:   run,
 
 	// Rather use "install [<language>@<version>]"
 	Hidden: true,
@@ -161,12 +162,4 @@ func run(cmd *cobra.Command, args []string) {
 
 	// We already know it will show an error
 	os.Exit(1)
-}
-
-// Init
-func init() {
-	flags := Command.PersistentFlags()
-	flags.BoolVarP(&isRemote, "remote", "r", false, "get remote versions")
-	flags.BoolVarP(&isLocal, "local", "l", false, "install as local version")
-	flags.BoolVarP(&withModules, "with-modules", "w", false, "reinstall global modules from the previous version (currently works only for node.js)")
 }

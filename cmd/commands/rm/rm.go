@@ -13,7 +13,7 @@ import (
 var Command = &cobra.Command{
 	Use:     "rm [<language>@<version>]",
 	Aliases: []string{"remove"},
-	Short:   "remove language version",
+	Short:   "Remove language version",
 	Example: example,
 	Run:     run,
 }
@@ -27,8 +27,7 @@ var example = `
   $ ec rm go
 
   Remove with interactive list
-  $ ec rm
-`
+  $ ec rm`
 
 // Runner
 func run(cmd *cobra.Command, args []string) {
