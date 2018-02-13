@@ -15,7 +15,7 @@ import (
 // Command config
 var Command = &cobra.Command{
 	Use:    "path",
-	Short:  "Echo path environment variable with eclectica specific keys",
+	Short:  "echo path environment variable with eclectica specific keys",
 	Run:    run,
 	Hidden: true,
 }

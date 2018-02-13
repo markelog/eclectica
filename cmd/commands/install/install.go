@@ -166,7 +166,7 @@ func run(cmd *cobra.Command, args []string) {
 // Init
 func init() {
 	flags := Command.PersistentFlags()
-	flags.BoolVarP(&isRemote, "remote", "r", false, "Get remote versions")
-	flags.BoolVarP(&isLocal, "local", "l", false, "Install as local version")
-	flags.BoolVarP(&withModules, "with-modules", "w", false, "Reinstall global modules from the previous version (currently works only for node.js)")
+	flags.BoolVarP(&isRemote, "remote", "r", false, "get remote versions")
+	flags.BoolVarP(&isLocal, "local", "l", false, "install as local version")
+	flags.BoolVarP(&withModules, "with-modules", "w", false, "reinstall global modules from the previous version (currently works only for node.js)")
 }
