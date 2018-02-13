@@ -22,11 +22,9 @@ const help = `
 const usage = `Usage:{{if .Runnable}}
   {{if .HasAvailableFlags}}{{appendIfNotPresent .UseLine "[flags]"}}{{else}}{{.UseLine}}{{end}}{{end}}
   {{if .HasAvailableSubCommands}}{{ .CommandPath}} [command] [flags] [<language>@<version>]{{end}}{{if gt .Aliases 0}}
-
 Aliases:
-  {{.NameAndAliases}}
-{{end}}{{if .HasExample}}
-
+  {{.NameAndAliases}}{{end}}
+{{if .HasExample}}
 Examples:{{ .Example }}{{end}}
 {{ if .HasAvailableSubCommands}}Available Commands:{{range .Commands}}{{if .IsAvailableCommand}}
   {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}

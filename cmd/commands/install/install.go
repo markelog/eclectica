@@ -26,7 +26,7 @@ var Command = &cobra.Command{
 	Use: "install [<language>@<version>]",
 	Run: run,
 
-	// Rather use "run [<language>@<version>]"
+	// Rather use "install [<language>@<version>]"
 	Hidden: true,
 }
 

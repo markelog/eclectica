@@ -3,6 +3,7 @@ package commands
 
 import (
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -50,12 +51,10 @@ func augment() {
 // Execute the command
 func Execute() {
 
-	args := os.Args[1:]
-
 	// Until https://github.com/spf13/cobra/pull/369 is landed
-	cmd, _, _ := Command.Find(args)
-
-	if cmd.Use == use {
+	args := os.Args[1:]
+	_, _, err := Command.Find(args)
+	if err != nil && strings.HasPrefix(err.Error(), "unknown command") {
 		augment()
 	}
 
