@@ -67,7 +67,6 @@ var _ = Describe("plugins", func() {
 		var resOsRemoveAll error
 
 		resOsRemoveAll = nil
-		resList = nil
 
 		osRemoveCount := 0
 
@@ -106,7 +105,6 @@ var _ = Describe("plugins", func() {
 			osRemoveAll = false
 
 			resCurrent = ""
-			resList = nil
 			resOsRemoveAll = nil
 
 			osRemoveCount = 0
@@ -187,7 +185,6 @@ var _ = Describe("plugins", func() {
 		resPluginsSwitch = nil
 		resInstall = nil
 		resPostInstall = nil
-		resPkgInstall = nil
 		resOsRemoveAll = nil
 		resOsSymlink = nil
 		resOsStat = nil
@@ -295,7 +292,6 @@ var _ = Describe("plugins", func() {
 
 			resCurrent = ""
 			resPostInstall = nil
-			resPkgInstall = nil
 			resOsRemoveAll = nil
 			resOsSymlink = nil
 			resOsStat = nil
@@ -693,7 +689,6 @@ var _ = Describe("plugins", func() {
 	Describe("Rollback", func() {
 		var (
 			bins              = false
-			osRemoveAll       = false
 			lastRemoveAllPath = ""
 			osRemoveCount     = 0
 
@@ -714,7 +709,6 @@ var _ = Describe("plugins", func() {
 
 			monkey.Patch(os.RemoveAll, func(path string) error {
 				lastRemoveAllPath = path
-				osRemoveAll = true
 				osRemoveCount = osRemoveCount + 1
 				return nil
 			})
@@ -723,7 +717,6 @@ var _ = Describe("plugins", func() {
 
 		AfterEach(func() {
 			bins = false
-			osRemoveAll = false
 			lastRemoveAllPath = ""
 			osRemoveCount = 0
 
