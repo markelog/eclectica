@@ -31,6 +31,22 @@ func Register(cmd *cobra.Command) {
 	Command.AddCommand(cmd)
 }
 
+// Execute the command
+func Execute() {
+
+	// Until https://github.com/spf13/cobra/pull/369 is landed
+	args := os.Args[1:]
+	cmd, _, err := Command.Find(args)
+
+	if cmd.Use == use || err != nil && strings.HasPrefix(err.Error(), "unknown command") {
+		if hasHelp(args) == false {
+			augment()
+		}
+	}
+
+	Command.Execute()
+}
+
 func init() {
 	Command.SetHelpTemplate(help)
 	Command.SetUsageTemplate(usage)
@@ -48,15 +64,12 @@ func augment() {
 	os.Args = append(os.Args[:1], append([]string{"install"}, os.Args[1:]...)...)
 }
 
-// Execute the command
-func Execute() {
-
-	// Until https://github.com/spf13/cobra/pull/369 is landed
-	args := os.Args[1:]
-	_, _, err := Command.Find(args)
-	if err != nil && strings.HasPrefix(err.Error(), "unknown command") {
-		augment()
+func hasHelp(args []string) bool {
+	for _, elem := range args {
+		if elem == `--help` || elem == `-h` {
+			return true
+		}
 	}
 
-	Command.Execute()
+	return false
 }

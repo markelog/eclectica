@@ -25,6 +25,13 @@ var _ = Describe("main logic", func() {
 		Expect(strCommand).To(MatchRegexp(regVersion))
 	})
 
+	It("should show proper help", func() {
+		command, _ := Command("go", "run", path, "--help").Output()
+		strCommand := strings.TrimSpace(string(command))
+
+		Expect(strCommand).To(ContainSubstring(`ec [command] [flags] [<language>@<version>]`))
+	})
+
 	It("should show list without language", func() {
 		output := checkRemoteUse()
 
