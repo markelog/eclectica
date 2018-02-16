@@ -32,6 +32,29 @@ var _ = Describe("main logic", func() {
 		Expect(strCommand).To(ContainSubstring(`ec [command] [flags] [<language>@<version>]`))
 	})
 
+	It("should show error for language typo", func() {
+		command, _ := Command("go", "run", path, "noda").CombinedOutput()
+		strCommand := strings.TrimSpace(string(command))
+
+		Expect(strCommand).To(
+			ContainSubstring(
+				`Eclectica does not support`,
+			),
+		)
+
+		Expect(strCommand).To(
+			ContainSubstring(
+				`node`,
+			),
+		)
+
+		Expect(strCommand).To(
+			ContainSubstring(
+				`noda`,
+			),
+		)
+	})
+
 	It("should show list without language", func() {
 		output := checkRemoteUse()
 

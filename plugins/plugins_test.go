@@ -63,7 +63,6 @@ var _ = Describe("plugins", func() {
 
 		type Empty struct{}
 
-		var resList error
 		var resOsRemoveAll error
 
 		resOsRemoveAll = nil
@@ -175,7 +174,6 @@ var _ = Describe("plugins", func() {
 			resPluginsSwitch error
 			resInstall       error
 			resPostInstall   error
-			resPkgInstall    error
 			resOsRemoveAll   error
 			resOsSymlink     error
 			resIsInstalled   bool

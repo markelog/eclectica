@@ -77,6 +77,19 @@ func AskRemoteVersion(language string) (version string, err error) {
 	return
 }
 
+func PossibleLanguage(args []string) (language string) {
+	for _, element := range args {
+		data := strings.Split(element, "@")
+		language = data[0]
+
+		if strings.Contains(language, "-") == false {
+			return
+		}
+	}
+
+	return ""
+}
+
 // GetLanguage gets supported language from args list
 func GetLanguage(args []string) (language, version string) {
 	for _, element := range args {

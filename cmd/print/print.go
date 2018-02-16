@@ -145,17 +145,40 @@ func Download(response *grab.Response, version string) string {
 
 // Warning prints warning and how to fix it in style
 func Warning(note, command string) {
-	fmt.Println()
-	fmt.Print(ansi.Color("> ", "red"))
-	fmt.Print(note)
+	stderr := log.New(os.Stderr, "", 0)
+
+	stderr.Println()
+	stderr.Print(ansi.Color("> ", "red"), note)
 
 	if command != "" {
-		fmt.Println()
-		fmt.Println()
+		stderr.Println()
+		stderr.Println()
 
-		fmt.Print(ansi.Color("> ", "green") + command)
+		stderr.Print(ansi.Color("> ", "green") + command)
+	}
+}
+
+func ClosestLangWarning(language, closest string) {
+	incorrectOne := ansi.Color(language, "red")
+
+	if closest != "" {
+		getArgs := strings.Join(os.Args, " ")
+		close := strings.Replace(getArgs, language, closest, 1)
+		removeInstall := strings.Replace(close, " install", "", 1)
+
+		correctOne := ansi.Color(removeInstall, "green")
+
+		Warning(
+			`Eclectica does not support "`+
+				incorrectOne+`", perhaps you meant "`+correctOne+`"`,
+			"",
+		)
+
+		return
 	}
 
-	fmt.Println()
-	fmt.Println()
+	Warning(
+		`Eclectica does not support "`+incorrectOne+`", whatever that is`,
+		"",
+	)
 }

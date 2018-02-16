@@ -4,6 +4,7 @@ package install
 import (
 	"os"
 
+	"github.com/schollz/closestmatch"
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/info"
@@ -30,6 +31,9 @@ var Command = &cobra.Command{
 	// Rather use "install [<language>@<version>]"
 	Hidden: true,
 }
+
+// Searching for closest plugin name
+var cm = closestmatch.New(plugins.Plugins, []int{2})
 
 // Event type handler
 type handleFn func(args ...string)
@@ -107,6 +111,12 @@ func run(cmd *cobra.Command, args []string) {
 	language, version := info.GetLanguage(args)
 	hasLanguage := info.HasLanguage(args)
 	hasVersion := info.HasVersion(args)
+
+	if hasLanguage == false {
+		possible := info.PossibleLanguage(args)
+		print.ClosestLangWarning(possible, cm.Closest(possible))
+		return
+	}
 
 	// In case of `ec <language>@<partial-version like node@5>`
 	if hasVersion && versions.IsPartial(version) {

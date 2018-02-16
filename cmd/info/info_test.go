@@ -48,4 +48,24 @@ var _ = Describe("info", func() {
 			Expect(language).To(Equal(""))
 		})
 	})
+
+	Describe("PossibleLanguage", func() {
+		It("should get language", func() {
+			language := info.PossibleLanguage([]string{"-r", "rust"})
+
+			Expect(language).To(Equal("rust"))
+		})
+
+		It("should get language in different sequence", func() {
+			language := info.PossibleLanguage([]string{"rust", "-r"})
+
+			Expect(language).To(Equal("rust"))
+		})
+
+		It("should get non-existing language with `-r`", func() {
+			language := info.PossibleLanguage([]string{"-r", "boom@1.2.3"})
+
+			Expect(language).To(Equal("boom"))
+		})
+	})
 })
