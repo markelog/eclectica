@@ -155,8 +155,8 @@ func ListVersions(path string) (vers []string) {
 
 	folders, _ := ioutil.ReadDir(path)
 
-	for _, folder := range folders {
-		name := folder.Name()
+	for i := len(folders) - 1; i != 1; i-- {
+		name := folders[i].Name()
 
 		if name == "current" {
 			continue
