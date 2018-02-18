@@ -163,14 +163,13 @@ func ClosestLangWarning(language, closest string) {
 
 	if closest != "" {
 		getArgs := strings.Join(os.Args, " ")
-		close := strings.Replace(getArgs, language, closest, 1)
-		removeInstall := strings.Replace(close, " install", "", 1)
+		corrected := strings.Replace(getArgs, language, closest, 1)
 
-		correctOne := ansi.Color(removeInstall, "green")
+		withColor := ansi.Color(corrected, "green")
 
 		Warning(
 			`Eclectica does not support "`+
-				incorrectOne+`", perhaps you meant "`+correctOne+`"`,
+				incorrectOne+`", perhaps you meant "`+withColor+`"`,
 			"",
 		)
 
