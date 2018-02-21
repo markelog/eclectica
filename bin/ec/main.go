@@ -7,6 +7,7 @@ import (
 	"github.com/markelog/eclectica/cmd/commands/install"
 	"github.com/markelog/eclectica/cmd/commands/ls"
 	"github.com/markelog/eclectica/cmd/commands/path"
+	"github.com/markelog/eclectica/cmd/commands/remove-everything"
 	"github.com/markelog/eclectica/cmd/commands/rm"
 	"github.com/markelog/eclectica/cmd/commands/version"
 )
@@ -17,6 +18,7 @@ func main() {
 	commands.Register(ls.Command)
 	commands.Register(version.Command)
 	commands.Register(path.Command)
+	commands.Register(removeEverything.Command)
 
 	commands.Execute()
 }

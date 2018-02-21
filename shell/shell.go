@@ -26,20 +26,17 @@ export PATH="$(ec path)"
 
 // Shell essential structure
 type Shell struct {
-	command, language string
-	plugins           []string
-	shouldRestart     bool
-	rc                *rc.Rc
+	command       string
+	shouldRestart bool
+	rc            *rc.Rc
 }
 
 // New cretates new Shell struct
-func New(language string, plugins []string) *Shell {
+func New() *Shell {
 	shell := &Shell{
-		language:      language,
-		plugins:       plugins,
 		command:       command,
 		shouldRestart: false,
-		rc:            nil,
+		rc:            rc.New(command),
 	}
 
 	return shell
@@ -57,12 +54,21 @@ func (shell *Shell) Initiate() (err error) {
 		return
 	}
 
-	shell.rc = rc.New(shell.command)
-
 	err = shell.rc.Add()
 	if err != nil {
 		return
 	}
+
+	return
+}
+
+func (shell *Shell) Remove() (err error) {
+	err = shell.rc.Remove()
+	if err != nil {
+		return
+	}
+
+	Start()
 
 	return
 }
@@ -76,7 +82,7 @@ func (shell *Shell) Start() {
 
 // checkStatus checks the status of the shell
 func (shell *Shell) checkStatus() bool {
-	if strings.Contains(os.Getenv("PATH"), Compose(shell.plugins)) == false {
+	if strings.Contains(os.Getenv("PATH"), command) == false {
 		return true
 	}
 

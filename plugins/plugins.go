@@ -121,7 +121,7 @@ func (plugin *Plugin) LocalInstall() (err error) {
 	// Handle CTRL+C signal
 	plugin.Interrupt()
 
-	init := shell.New(plugin.name, Plugins)
+	init := shell.New()
 	init.Check()
 
 	err = init.Initiate()
@@ -197,7 +197,7 @@ func (plugin *Plugin) Install() (err error) {
 	// Handle CTRL+C signal
 	plugin.Interrupt()
 
-	init := shell.New(plugin.name, Plugins)
+	init := shell.New()
 	init.Check()
 
 	err = init.Initiate()

@@ -35,13 +35,12 @@ func New(command string) *Rc {
 	return rc
 }
 
-// Add bash configs on Linux system
+// Add bash configs on Unix system
 // .bashrc works when you open new bash session (open terminal)
 // .bash_profile is executed when you login
 //
-// So in order for our env variables to be consistently exposed we need to modify both of them
-// Note: on Mac, .bash_profile is executed when new bash session is opened,
-// so we don't need to this in there
+// So in order for our env variables to be
+// consistently exposed we need to modify both of them
 func (rc *Rc) Add() error {
 	shell := variables.GetShellName()
 
@@ -97,6 +96,69 @@ func (rc *Rc) add() (err error) {
 	}
 
 	_, err = file.WriteString(rc.command)
+	if err != nil {
+		err = errors.New(err)
+	}
+
+	return
+}
+
+// Remove bash configs on Unix system
+func (rc *Rc) Remove() error {
+	shell := variables.GetShellName()
+
+	if shell != "bash" {
+		return rc.remove()
+	}
+
+	pathsRc := filepath.Join(os.Getenv("HOME"), ".bashrc")
+	pathsProfile := filepath.Join(os.Getenv("HOME"), ".bash_profile")
+
+	// Make sure we have those files
+	if _, err := os.Stat(pathsRc); err != nil {
+		return rc.remove()
+	}
+	if _, err := os.Stat(pathsProfile); err != nil {
+		return rc.remove()
+	}
+
+	bashrc := &Rc{
+		command: rc.command,
+		path:    pathsRc,
+	}
+
+	bashProfile := &Rc{
+		command: rc.command,
+		path:    pathsProfile,
+	}
+
+	err := bashrc.remove()
+	if err != nil {
+		return err
+	}
+
+	err = bashProfile.remove()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// add helper method for Remove()
+func (rc *Rc) remove() (err error) {
+	if rc.Exists() == false {
+		return
+	}
+
+	read, err := ioutil.ReadFile(rc.path)
+	if err != nil {
+		return errors.New(err)
+	}
+
+	replaced := strings.Replace(string(read), rc.command, "", -1)
+
+	err = ioutil.WriteFile(rc.path, []byte(replaced), 0)
 	if err != nil {
 		err = errors.New(err)
 	}
