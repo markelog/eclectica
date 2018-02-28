@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/markelog/curse"
 	"github.com/markelog/list"
 
@@ -84,7 +83,6 @@ func PossibleLanguage(args []string) (language string) {
 		language = data[0]
 
 		if strings.Contains(language, "-") == false {
-			spew.Dump(args)
 			return
 		}
 	}
