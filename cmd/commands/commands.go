@@ -4,10 +4,6 @@ package commands
 import (
 	"os"
 
-	"github.com/markelog/eclectica/cmd/info"
-	"github.com/markelog/eclectica/cmd/print"
-	"github.com/markelog/eclectica/plugins"
-	"github.com/schollz/closestmatch"
 	"github.com/spf13/cobra"
 )
 
@@ -36,8 +32,6 @@ func Register(cmd *cobra.Command) {
 
 // Execute the command
 func Execute() {
-	cm := closestmatch.New(plugins.Plugins, []int{2})
-
 	// Until https://github.com/spf13/cobra/pull/369 is landed
 	args := os.Args[1:]
 	cmd, args, _ := Command.Find(args)
@@ -45,13 +39,6 @@ func Execute() {
 
 	if name == "ec" && hasHelp(args) == false {
 		augment()
-	}
-
-	// Searching for closest plugin name
-	if isLanguageRelated(name, args) && info.HasLanguage(args) == false {
-		possible := info.PossibleLanguage(args)
-		print.ClosestLangWarning(possible, cm.Closest(possible))
-		return
 	}
 
 	Command.Execute()

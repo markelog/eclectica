@@ -163,9 +163,10 @@ func ClosestLangWarning(language, closest string) {
 
 	if closest != "" {
 		getArgs := strings.Join(os.Args, " ")
-		corrected := strings.Replace(getArgs, language, closest, 1)
+		withoutLanguage := strings.Replace(getArgs, language, closest, 1)
+		withoutInstall := strings.Replace(withoutLanguage, " install", "", 1)
 
-		withColor := ansi.Color(corrected, "green")
+		withColor := ansi.Color(withoutInstall, "green")
 
 		Warning(
 			`Eclectica does not support "`+

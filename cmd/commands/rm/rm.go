@@ -2,6 +2,7 @@
 package rm
 
 import (
+	"github.com/schollz/closestmatch"
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/info"
@@ -32,14 +33,19 @@ var example = `
 // Runner
 func run(cmd *cobra.Command, args []string) {
 	var (
-		language string
-		version  string
-		err      error
+		err               error
+		language, version = info.GetLanguage(args)
+		hasLanguage       = info.HasLanguage(args)
+		hasVersion        = info.HasVersion(args)
+		cm                = closestmatch.New(plugins.Plugins, []int{2})
 	)
 
-	language, version = info.GetLanguage(args)
-	hasLanguage := info.HasLanguage(args)
-	hasVersion := info.HasVersion(args)
+	// Searching for closest plugin name
+	if len(args) > 0 && hasLanguage == false {
+		possible := info.PossibleLanguage(args)
+		print.ClosestLangWarning(possible, cm.Closest(possible))
+		return
+	}
 
 	if hasVersion == false {
 		if hasLanguage {

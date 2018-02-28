@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/markelog/list"
+	"github.com/schollz/closestmatch"
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/info"
@@ -42,6 +43,17 @@ var example = `
 
 // Runner
 func run(cmd *cobra.Command, args []string) {
+	var (
+		cm = closestmatch.New(plugins.Plugins, []int{2})
+	)
+
+	// Searching for closest plugin name
+	if len(args) > 0 && info.HasLanguage(args) == false {
+		possible := info.PossibleLanguage(args)
+		print.ClosestLangWarning(possible, cm.Closest(possible))
+		return
+	}
+
 	if isRemote {
 		remote(args)
 	} else {
