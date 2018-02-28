@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="Eclectica" src="https://cdn.rawgit.com/markelog/eclectica/81e8e049f825f6ceaf7a2a8e402e16cf59799bb1/assets/logo.png" width="300">
+	<img alt="Eclectica" src="./assets/logo.svg" width="300">
 </p>
 
 <p align="center">
