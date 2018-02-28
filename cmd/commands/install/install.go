@@ -25,7 +25,7 @@ var withModules bool
 // Command represents the ls command
 var Command = &cobra.Command{
 	Use:   "install [<language>@<version>]",
-	Short: "Install language",
+	Short: "install language",
 	Run:   run,
 
 	// Rather use "install [<language>@<version>]"

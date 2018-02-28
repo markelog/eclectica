@@ -14,7 +14,7 @@ import (
 var Command = &cobra.Command{
 	Use:     "rm [<language>@<version>]",
 	Aliases: []string{"remove"},
-	Short:   "Remove language version",
+	Short:   "remove language version",
 	Example: example,
 	Run:     run,
 }

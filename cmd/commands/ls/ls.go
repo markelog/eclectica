@@ -22,7 +22,7 @@ var isRemote bool
 var Command = &cobra.Command{
 	Use:     "ls",
 	Aliases: []string{"list"},
-	Short:   "List installed language versions",
+	Short:   "list installed language versions",
 	Example: example,
 	Run:     run,
 }
