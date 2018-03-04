@@ -1,4 +1,5 @@
-// Package version defines "version" command i.e. outputs current version
+// Package removeEverything defines "remove-everything" command i.e.
+// remove absolutely everything related to eclectica
 package removeEverything
 
 import (
@@ -6,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/shell"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/list"
@@ -59,6 +61,6 @@ func run(c *cobra.Command, args []string) {
 	print.Error(err)
 
 	// Remove everything in rc files and restart the shell
-	err = shell.New().Remove()
+	err = shell.New(plugins.Plugins).Remove()
 	print.Error(err)
 }

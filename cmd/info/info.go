@@ -23,7 +23,7 @@ type prefixFn func()
 func Ask() (language, version string, err error) {
 	fmt.Println()
 
-	language = list.GetWith("language", plugins.Plugins)
+	language = list.GetWith("langauge:", plugins.Plugins)
 	version, err = AskVersion(language)
 
 	return
@@ -40,7 +40,7 @@ func AskVersion(language string) (version string, err error) {
 		return
 	}
 
-	version = list.GetWith("version", vers)
+	version = list.GetWith(" version:", vers)
 
 	return
 }
@@ -49,7 +49,7 @@ func AskVersion(language string) (version string, err error) {
 func AskRemote() (language, version string, err error) {
 	fmt.Println()
 
-	language = list.GetWith("language", plugins.Plugins)
+	language = list.GetWith("langauge:", plugins.Plugins)
 	version, err = AskRemoteVersion(language)
 
 	return
@@ -62,7 +62,7 @@ func AskRemoteVersions(language string) (vers []string, err error) {
 		return
 	}
 
-	key := list.GetWith("mask", versions.GetKeys(remoteList))
+	key := list.GetWith("    mask:", versions.GetKeys(remoteList))
 	vers = versions.GetElements(key, remoteList)
 
 	return
@@ -76,7 +76,7 @@ func AskRemoteVersion(language string) (version string, err error) {
 		return
 	}
 
-	version = list.GetWith("version", versions)
+	version = list.GetWith(" version:", versions)
 
 	return
 }
@@ -128,7 +128,7 @@ func GetSpinner(language string, prefix spinner.Fn) *spinner.Spinner {
 	after := func() {
 		c.MoveUp(1)
 		c.EraseCurrentLine()
-		print.InStyleln("language", language)
+		print.InStyleln("langauge:", language)
 	}
 
 	return spinner.New(before, after, prefix, postfix)
@@ -143,7 +143,7 @@ func ListRemote(language string) (versions map[string][]string, err error) {
 	s := GetSpinner(language, func() {
 		c.MoveUp(1)
 		c.EraseCurrentLine()
-		print.InStyle("language", language)
+		print.InStyle("langauge:", language)
 	})
 
 	s.Start()
@@ -162,7 +162,7 @@ func FullListRemote(language string) (versions []string, err error) {
 	s := GetSpinner(language, func() {
 		c.MoveUp(1)
 		c.EraseCurrentLine()
-		print.InStyle("language", language)
+		print.InStyle("langauge:", language)
 	})
 
 	s.Start()

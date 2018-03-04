@@ -116,7 +116,7 @@ func Download(response *grab.Response, version string) string {
 		size, transfer := sizeAndTransfer()
 		text := fmt.Sprintf("(%s/%s ", transfer, size)
 
-		InStyle("version", version)
+		InStyle(" version:", version)
 		fmt.Print(Gray, text, Reset)
 	}
 
@@ -134,7 +134,7 @@ func Download(response *grab.Response, version string) string {
 
 		cursed.MoveUp(1)
 		cursed.EraseCurrentLine()
-		InStyleln("version", version)
+		InStyleln(" version:", version)
 	}
 
 	spin := spinner.New(before, after, prefix, postfix)

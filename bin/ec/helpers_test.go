@@ -138,7 +138,7 @@ func checkRemoteUseWithLanguage(name string) (result string) {
 		for {
 			result = string(output.Bytes())
 
-			if len(result) > 0 && strings.Contains(result, "mask") {
+			if len(result) > 0 && strings.Contains(result, "    mask:") {
 				Kill(cmd)
 				proceed = false
 				return

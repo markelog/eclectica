@@ -4,7 +4,6 @@ package shell
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"golang.org/x/crypto/ssh/terminal"
@@ -29,14 +28,16 @@ export PATH="$(ec path)"
 type Shell struct {
 	command       string
 	shouldRestart bool
+	plugins       []string
 	rc            *rc.Rc
 }
 
 // New cretates new Shell struct
-func New() *Shell {
+func New(plugins []string) *Shell {
 	shell := &Shell{
 		command:       command,
 		shouldRestart: false,
+		plugins:       plugins,
 		rc:            rc.New(command),
 	}
 
@@ -63,28 +64,6 @@ func (shell *Shell) Initiate() (err error) {
 	return
 }
 
-// MyCaller returns the caller of the function that called it :)
-func MyCaller() string {
-
-	// we get the callers as uintptrs - but we just need 1
-	fpcs := make([]uintptr, 1)
-
-	// skip 3 levels to get to the caller of whoever called Caller()
-	n := runtime.Callers(3, fpcs)
-	if n == 0 {
-		return "n/a" // proper error her would be better
-	}
-
-	// get the info of the actual function that's in the pointer
-	fun := runtime.FuncForPC(fpcs[0] - 1)
-	if fun == nil {
-		return "n/a"
-	}
-
-	// return its name
-	return fun.Name()
-}
-
 func (shell *Shell) Remove() (err error) {
 	err = shell.rc.Remove()
 	if err != nil {
@@ -105,7 +84,8 @@ func (shell *Shell) Start() bool {
 
 // checkStatus checks the status of the shell
 func (shell *Shell) checkStatus() bool {
-	if strings.Contains(os.Getenv("PATH"), command) == false {
+	cmd := Compose(shell.plugins)
+	if strings.Contains(os.Getenv("PATH"), cmd) == false {
 		return true
 	}
 

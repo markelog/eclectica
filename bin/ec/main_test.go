@@ -58,14 +58,14 @@ var _ = Describe("main logic", func() {
 	It("should show list without language", func() {
 		output := checkRemoteUse()
 
-		Expect(strings.Contains(output, "language")).To(Equal(true))
+		Expect(strings.Contains(output, "langauge:")).To(Equal(true))
 		Expect(strings.Contains(output, "node")).To(Equal(true))
 	})
 
 	It("should show list with language", func() {
 		output := checkRemoteUseWithLanguage("node")
 
-		Expect(strings.Contains(output, "mask")).To(Equal(true))
+		Expect(strings.Contains(output, "    mask:")).To(Equal(true))
 		Expect(strings.Contains(output, "6.x")).To(Equal(true))
 	})
 
@@ -199,7 +199,7 @@ var _ = Describe("main logic", func() {
 
 				actual := string(result)
 
-				expected := `Version "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
+				expected := `version "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
 
 				Expect(actual).To(ContainSubstring(expected))
 			})
@@ -213,14 +213,14 @@ var _ = Describe("main logic", func() {
 				result, _ := Command("node", "-v").CombinedOutput()
 
 				actual := string(result)
-				expected := `Mask "5" was defined on "./ec/.node-version" path but none of these versions were installed`
+				expected := `mask "5" was defined on "./ec/.node-version" path but none of these versions were installed`
 
 				Expect(actual).To(ContainSubstring(expected))
 			})
 
 		})
 
-		Describe("mask of 5 versions", func() {
+		Describe("mask: of 5 versions", func() {
 			BeforeEach(func() {
 				Execute("go", "run", path, "node@5.11.0")
 				Execute("go", "run", path, "node@5.12.0")

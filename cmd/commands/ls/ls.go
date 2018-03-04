@@ -105,7 +105,7 @@ func listLocalVersions(language string) {
 
 // Ask for language and list local versions
 func listLocal() {
-	language := list.GetWith("language", plugins.Plugins)
+	language := list.GetWith("langauge:", plugins.Plugins)
 
 	listLocalVersions(language)
 }
@@ -124,7 +124,7 @@ func listRemoteVersions(language string) {
 
 // Ask for language and list remote versions
 func listRemote() {
-	language := list.GetWith("language", plugins.Plugins)
+	language := list.GetWith("langauge:", plugins.Plugins)
 
 	listRemoteVersions(language)
 }
@@ -138,7 +138,7 @@ func remote(args []string) {
 
 	for _, plugin := range plugins.Plugins {
 		if args[0] == plugin {
-			print.FnInStyleln("language", plugin)
+			print.FnInStyleln("langauge:", plugin)
 			listRemoteVersions(plugin)
 			return
 		}
@@ -154,7 +154,7 @@ func local(args []string) {
 
 	for _, plugin := range plugins.Plugins {
 		if args[0] == plugin {
-			print.FnInStyleln("language", plugin)
+			print.FnInStyleln("langauge:", plugin)
 			listLocalVersions(plugin)
 			return
 		}

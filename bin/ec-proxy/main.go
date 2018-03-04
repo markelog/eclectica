@@ -81,13 +81,13 @@ func getVersion(language string) (version, dotPath string) {
 
 func notInstalled(version, dotPath string) {
 	var (
-		start  = "version \"" + version + "\" "
+		start  = "version: \"" + version + "\" "
 		ending = "path but this version is not installed"
 	)
 
 	// Different error message for the partial version
 	if versions.IsPartial(version) {
-		start = "mask \"" + version + "\" "
+		start = "mask: \"" + version + "\" "
 		ending = "path but none of these versions were installed"
 	}
 
