@@ -115,7 +115,7 @@ func (plugin *Plugin) PreInstall() error {
 // LocalInstall installs language locally - to the current pwd folder
 func (plugin *Plugin) LocalInstall() (err error) {
 	if plugin.Version == "" {
-		return errors.New("Version was not defined")
+		return errors.New("version was not defined")
 	}
 
 	// Handle CTRL+C signal
@@ -191,7 +191,7 @@ func (plugin *Plugin) Install() (err error) {
 	}
 
 	if plugin.Version == "" {
-		return errors.New("Version was not defined")
+		return errors.New("version was not defined")
 	}
 
 	// Handle CTRL+C signal
@@ -297,7 +297,7 @@ func (plugin *Plugin) Environment() ([]string, error) {
 // Info provides all the info needed for installation of the plugin
 func (plugin *Plugin) Info() (map[string]string, error) {
 	if plugin.Version == "" {
-		return nil, errors.New("Version was not defined")
+		return nil, errors.New("version was not defined")
 	}
 
 	info := plugin.Pkg.Info()
@@ -389,7 +389,7 @@ func (plugin *Plugin) Interrupt() {
 // Remove the plugin
 func (plugin *Plugin) Remove() (err error) {
 	if plugin.Version == "" {
-		return errors.New("Version was not defined")
+		return errors.New("version was not defined")
 	}
 
 	var (
@@ -429,7 +429,7 @@ func (plugin *Plugin) Remove() (err error) {
 // Download the plugin
 func (plugin *Plugin) Download() (*grab.Response, error) {
 	if plugin.Version == "" {
-		return nil, errors.New("Version was not defined")
+		return nil, errors.New("version was not defined")
 	}
 
 	// If already downloaded
@@ -464,7 +464,7 @@ func (plugin *Plugin) Download() (*grab.Response, error) {
 // Extract raw files from the downloaded archive (its always an archive)
 func (plugin *Plugin) Extract() error {
 	if plugin.Version == "" {
-		return errors.New("Version was not defined")
+		return errors.New("version was not defined")
 	}
 
 	// Create language folder with path like this – /home/user/.eclectica/versions/go

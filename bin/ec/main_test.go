@@ -58,14 +58,14 @@ var _ = Describe("main logic", func() {
 	It("should show list without language", func() {
 		output := checkRemoteUse()
 
-		Expect(strings.Contains(output, "Language")).To(Equal(true))
+		Expect(strings.Contains(output, "language")).To(Equal(true))
 		Expect(strings.Contains(output, "node")).To(Equal(true))
 	})
 
 	It("should show list with language", func() {
 		output := checkRemoteUseWithLanguage("node")
 
-		Expect(strings.Contains(output, "Mask")).To(Equal(true))
+		Expect(strings.Contains(output, "mask")).To(Equal(true))
 		Expect(strings.Contains(output, "6.x")).To(Equal(true))
 	})
 

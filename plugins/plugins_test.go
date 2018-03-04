@@ -150,7 +150,7 @@ var _ = Describe("plugins", func() {
 				Language: "node",
 			}).Remove()
 
-			Expect(err.Error()).To(Equal("Version was not defined"))
+			Expect(err.Error()).To(Equal("version was not defined"))
 		})
 	})
 
@@ -395,7 +395,7 @@ var _ = Describe("plugins", func() {
 				Language: "node",
 			})
 
-			Expect(plugin.Install()).Should(MatchError("Version was not defined"))
+			Expect(plugin.Install()).Should(MatchError("version was not defined"))
 		})
 	})
 
@@ -447,7 +447,7 @@ var _ = Describe("plugins", func() {
 			plugin := New(&Args{
 				Language: "node",
 			})
-			Expect(plugin.Extract()).Should(MatchError("Version was not defined"))
+			Expect(plugin.Extract()).Should(MatchError("version was not defined"))
 		})
 
 		It("should extract language", func() {
@@ -536,7 +536,7 @@ var _ = Describe("plugins", func() {
 				Language: "node",
 			})
 			_, err := plugin.Download()
-			Expect(err).Should(MatchError("Version was not defined"))
+			Expect(err).Should(MatchError("version was not defined"))
 		})
 
 		Describe("200 response", func() {
@@ -627,7 +627,7 @@ var _ = Describe("plugins", func() {
 			})
 			_, err := plugin.Info()
 
-			Expect(err).Should(MatchError("Version was not defined"))
+			Expect(err).Should(MatchError("version was not defined"))
 		})
 
 		It("should augment output from plugin `Info` method", func() {

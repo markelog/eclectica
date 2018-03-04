@@ -35,6 +35,33 @@ func New(command string) *Rc {
 	return rc
 }
 
+// getRcs gets rc instances
+func (rc *Rc) getRcs() (err error, bashrc *Rc, bashProfile *Rc) {
+	pathsRc := filepath.Join(os.Getenv("HOME"), ".bashrc")
+	pathsProfile := filepath.Join(os.Getenv("HOME"), ".bash_profile")
+
+	// Make sure we have those files
+	if _, err := os.Stat(pathsRc); err != nil {
+		return errors.New("couldn't find the " + pathsRc), nil, nil
+		// return rc.remove()
+	}
+	if _, err := os.Stat(pathsProfile); err != nil {
+		return errors.New("couldn't find the " + pathsProfile), nil, nil
+	}
+
+	bashrc = &Rc{
+		command: rc.command,
+		path:    pathsRc,
+	}
+
+	bashProfile = &Rc{
+		command: rc.command,
+		path:    pathsProfile,
+	}
+
+	return nil, bashrc, bashProfile
+}
+
 // Add bash configs on Unix system
 // .bashrc works when you open new bash session (open terminal)
 // .bash_profile is executed when you login
@@ -48,28 +75,12 @@ func (rc *Rc) Add() error {
 		return rc.add()
 	}
 
-	pathsRc := filepath.Join(os.Getenv("HOME"), ".bashrc")
-	pathsProfile := filepath.Join(os.Getenv("HOME"), ".bash_profile")
-
-	// Make sure we have those files
-	if _, err := os.Stat(pathsRc); err != nil {
-		return rc.add()
-	}
-	if _, err := os.Stat(pathsProfile); err != nil {
+	err, bashrc, bashProfile := rc.getRcs()
+	if err != nil {
 		return rc.add()
 	}
 
-	bashrc := &Rc{
-		command: rc.command,
-		path:    pathsRc,
-	}
-
-	bashProfile := &Rc{
-		command: rc.command,
-		path:    pathsProfile,
-	}
-
-	err := bashrc.add()
+	err = bashrc.add()
 	if err != nil {
 		return err
 	}
@@ -111,28 +122,12 @@ func (rc *Rc) Remove() error {
 		return rc.remove()
 	}
 
-	pathsRc := filepath.Join(os.Getenv("HOME"), ".bashrc")
-	pathsProfile := filepath.Join(os.Getenv("HOME"), ".bash_profile")
-
-	// Make sure we have those files
-	if _, err := os.Stat(pathsRc); err != nil {
-		return rc.remove()
-	}
-	if _, err := os.Stat(pathsProfile); err != nil {
+	err, bashrc, bashProfile := rc.getRcs()
+	if err != nil {
 		return rc.remove()
 	}
 
-	bashrc := &Rc{
-		command: rc.command,
-		path:    pathsRc,
-	}
-
-	bashProfile := &Rc{
-		command: rc.command,
-		path:    pathsProfile,
-	}
-
-	err := bashrc.remove()
+	err = bashrc.remove()
 	if err != nil {
 		return err
 	}

@@ -30,7 +30,7 @@ func SetupEvents(plugin *plugins.Plugin) {
 			}
 
 			spinner = CustomSpinner.New(&CustomSpinner.SpinArgs{
-				Header:  "Version",
+				Header:  "version",
 				Item:    plugin.Version,
 				Note:    note,
 				Message: message,

@@ -45,6 +45,14 @@ func InStyleln(name, entity string) {
 	fmt.Println()
 }
 
+// FnInStyleln prints header and text with style
+// and newline char before and after
+func FnInStyleln(name, entity string) {
+	fmt.Println()
+	InStyle(name, entity)
+	fmt.Println()
+}
+
 // Version prints version in style
 func Version(args ...interface{}) {
 	var color string
@@ -108,7 +116,7 @@ func Download(response *grab.Response, version string) string {
 		size, transfer := sizeAndTransfer()
 		text := fmt.Sprintf("(%s/%s ", transfer, size)
 
-		InStyle("Version", version)
+		InStyle("version", version)
 		fmt.Print(Gray, text, Reset)
 	}
 
@@ -126,7 +134,7 @@ func Download(response *grab.Response, version string) string {
 
 		cursed.MoveUp(1)
 		cursed.EraseCurrentLine()
-		InStyleln("Version", version)
+		InStyleln("version", version)
 	}
 
 	spin := spinner.New(before, after, prefix, postfix)
@@ -141,6 +149,11 @@ func Download(response *grab.Response, version string) string {
 	spin.Stop()
 
 	return response.Filename
+}
+
+func Green(msg string) {
+	fmt.Println()
+	fmt.Println(ansi.Color("> ", "green") + msg)
 }
 
 // Warning prints warning and how to fix it in style

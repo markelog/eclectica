@@ -4,6 +4,7 @@ package shell
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"golang.org/x/crypto/ssh/terminal"
@@ -62,22 +63,44 @@ func (shell *Shell) Initiate() (err error) {
 	return
 }
 
+// MyCaller returns the caller of the function that called it :)
+func MyCaller() string {
+
+	// we get the callers as uintptrs - but we just need 1
+	fpcs := make([]uintptr, 1)
+
+	// skip 3 levels to get to the caller of whoever called Caller()
+	n := runtime.Callers(3, fpcs)
+	if n == 0 {
+		return "n/a" // proper error her would be better
+	}
+
+	// get the info of the actual function that's in the pointer
+	fun := runtime.FuncForPC(fpcs[0] - 1)
+	if fun == nil {
+		return "n/a"
+	}
+
+	// return its name
+	return fun.Name()
+}
+
 func (shell *Shell) Remove() (err error) {
 	err = shell.rc.Remove()
 	if err != nil {
 		return
 	}
 
-	Start()
-
 	return
 }
 
 // Start starts the shell if needed
-func (shell *Shell) Start() {
+func (shell *Shell) Start() bool {
 	if shell.shouldRestart {
-		Start()
+		return Start()
 	}
+
+	return false
 }
 
 // checkStatus checks the status of the shell
@@ -121,11 +144,13 @@ func Path() string {
 }
 
 // Start starts a shell
-func Start() {
+// This is the only place beside cmd modules where we
+// might output stuff to std(out | err)
+func Start() bool {
 
-	// If shell is not output - get out
+	// If input is not a terminal - get out
 	if terminal.IsTerminal(int(os.Stdout.Fd())) == false {
-		return
+		return false
 	}
 
 	var procAttr os.ProcAttr
@@ -143,6 +168,12 @@ func Start() {
 	proc, err := os.StartProcess(Path(), args, &procAttr)
 	print.Error(err)
 
+	print.Green(
+		"First time executing eclectica - had to restart the shell",
+	)
+
 	_, err = proc.Wait()
 	print.Error(err)
+
+	return true
 }

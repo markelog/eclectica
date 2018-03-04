@@ -9,5 +9,5 @@ import (
 
 func TestPlugins(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Versions Suite")
+	RunSpecs(t, "versions Suite")
 }

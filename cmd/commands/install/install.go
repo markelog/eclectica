@@ -118,18 +118,18 @@ func run(cmd *cobra.Command, args []string) {
 
 	// In case of `ec <language>@<partial-version like node@5>`
 	if hasVersion && versions.IsPartial(version) {
-		print.InStyleln("Language", language)
+		print.FnInStyleln("language", language)
 		version = getVersion(language, version)
 
-		print.InStyleln("Version", version)
+		print.InStyleln("version", version)
 
 		install(language, version)
 		return
 
 		// In case of `ec <language>@<version>`
 	} else if hasVersion {
-		print.InStyleln("Language", language)
-		print.InStyleln("Version", version)
+		print.FnInStyleln("language", language)
+		print.InStyleln("version", version)
 
 		install(language, version)
 		return
@@ -139,7 +139,7 @@ func run(cmd *cobra.Command, args []string) {
 
 		// In case of `ec -r`
 		if hasLanguage {
-			print.InStyleln("Language", language)
+			print.FnInStyleln("language", language)
 
 			version, err = info.AskRemoteVersion(language)
 			print.Error(err)
@@ -159,7 +159,7 @@ func run(cmd *cobra.Command, args []string) {
 
 	// In case of `ec <language>`
 	if hasLanguage && hasVersion == false {
-		print.InStyleln("Language", language)
+		print.FnInStyleln("language", language)
 
 		version, err = info.AskVersion(language)
 		print.Error(err)
