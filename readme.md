@@ -16,8 +16,40 @@
 	</a>
 </p>
 
+Eclectica unifies management of any language under one cohesive and minimalistic interface.
 
-## Install
+Like [pyenv](https://github.com/pyenv/pyenv) for Python,
+[rbenv](https://github.com/rbenv/rbenv) for Ruby, [nvm](https://github.com/creationix/nvm) Node.js and etc. Managing multiple languages and doing it in a little more enjoyable fashion
+
+```
+Usage:
+  ec [command] [flags] [<language>@<version>]
+
+Examples:
+  Install specifc version
+  $ ec node@6.4.0
+
+  Choose local version with interactive list
+  $ ec go
+
+  Choose remote version with interactive list
+  $ ec -r rust
+
+Available Commands:
+  ls                list installed language versions
+  remove-everything removes everything related to the eclectica
+  rm                remove language version
+  version           print version of Eclectica
+
+Flags:
+  -h, --help           help for ec
+  -l, --local          install to the current folder only
+  -r, --remote         ask for remote versions
+  -w, --with-modules   reinstall global modules from the previous version (currently works only for node.js)
+
+Use "ec [command] --help" for more information about a command
+```
+# Install
 
 - [go get](#go-get)
 - [npm](#npm)
