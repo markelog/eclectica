@@ -498,7 +498,7 @@ var _ = Describe("plugins", func() {
 
 			info = map[string]string{
 				"name":               "node",
-				" version:":          "5.0.0",
+				"version":            "5.0.0",
 				"destination-folder": destFolder,
 				"archive-folder":     path,
 				"archive-path":       archivePath,
@@ -639,7 +639,7 @@ var _ = Describe("plugins", func() {
 			}
 
 			Expect(info["name"]).To(Equal("node"))
-			Expect(info[" version:"]).To(Equal("5.0.0"))
+			Expect(info["version"]).To(Equal("5.0.0"))
 			Expect(info["archive-folder"]).To(Equal(tmpDir))
 			Expect(info["archive-path"]).To(Equal(tmpDir + "node-arch.tar.gz"))
 			Expect(info["destination-folder"]).To(Equal(variables.Home() + "/node/5.0.0"))

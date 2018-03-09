@@ -56,12 +56,7 @@ var _ = Describe("main logic", func() {
 	})
 
 	It("should show list without language", func() {
-		Skip("hmmm")
 		output := checkRemoteUse()
-
-		println(1)
-		println(output)
-		println(1)
 
 		Expect(output).To(ContainSubstring("langauge:"))
 		Expect(output).To(ContainSubstring("node"))
@@ -204,7 +199,7 @@ var _ = Describe("main logic", func() {
 
 				actual := string(result)
 
-				expected := `version "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
+				expected := `version: "6.3.0" was defined on "./ec/.node-version" path but this version is not installed`
 
 				Expect(actual).To(ContainSubstring(expected))
 			})
@@ -218,7 +213,7 @@ var _ = Describe("main logic", func() {
 				result, _ := Command("node", "-v").CombinedOutput()
 
 				actual := string(result)
-				expected := `mask "5" was defined on "./ec/.node-version" path but none of these versions were installed`
+				expected := `mask: "5" was defined on "./ec/.node-version" path but none of these versions were installed`
 
 				Expect(actual).To(ContainSubstring(expected))
 			})
