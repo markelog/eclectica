@@ -63,7 +63,7 @@ func (node Node) Events() *emission.Emitter {
 
 // PostInstall hook
 func (node Node) PostInstall() (err error) {
-	node.Emitter.Emit("post-install")
+	node.Emitter.Emit("postinstall")
 
 	ok, err := node.Yarn()
 	if err != nil && ok == false {

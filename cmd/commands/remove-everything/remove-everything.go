@@ -6,12 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/spf13/cobra"
+
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/list"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/shell"
 	"github.com/markelog/eclectica/variables"
-	"github.com/markelog/list"
-	"github.com/spf13/cobra"
 )
 
 // Command config
@@ -34,7 +35,7 @@ func init() {
 func run(c *cobra.Command, args []string) {
 
 	if assumeYes == false {
-		response := list.GetWith("Are you sure?", []string{"yes", "no"})
+		response := list.List("Are you sure?", []string{"yes", "no"}, 0)
 
 		if response == "no" {
 			return

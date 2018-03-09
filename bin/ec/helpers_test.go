@@ -108,7 +108,6 @@ func checkRemoteUse() (result string) {
 	go func() {
 		for {
 			result = string(output.Bytes())
-
 			if len(result) > 0 {
 				Kill(cmd)
 				proceed = false

@@ -100,12 +100,12 @@ func (me *Spin) constructSpinner() {
 	}
 
 	postfix := func() {
-		me.mutex.Lock()
-		defer me.mutex.Unlock()
-
 		var (
 			message string
 		)
+
+		me.mutex.Lock()
+		defer me.mutex.Unlock()
 
 		if len(me.Message) > 0 {
 			message = white + "(" + gray + me.Message + white + ")"

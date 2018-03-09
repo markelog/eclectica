@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/markelog/curse"
-	"github.com/markelog/list"
 
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/list"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/versions"
 
@@ -23,7 +23,7 @@ type prefixFn func()
 func Ask() (language, version string, err error) {
 	fmt.Println()
 
-	language = list.GetWith("langauge:", plugins.Plugins)
+	language = list.List("langauge:", plugins.Plugins, 0)
 	version, err = AskVersion(language)
 
 	return
@@ -40,7 +40,7 @@ func AskVersion(language string) (version string, err error) {
 		return
 	}
 
-	version = list.GetWith(" version:", vers)
+	version = list.List("version:", vers, 1)
 
 	return
 }
@@ -49,7 +49,7 @@ func AskVersion(language string) (version string, err error) {
 func AskRemote() (language, version string, err error) {
 	fmt.Println()
 
-	language = list.GetWith("langauge:", plugins.Plugins)
+	language = list.List("langauge:", plugins.Plugins, 0)
 	version, err = AskRemoteVersion(language)
 
 	return
@@ -62,7 +62,7 @@ func AskRemoteVersions(language string) (vers []string, err error) {
 		return
 	}
 
-	key := list.GetWith("    mask:", versions.GetKeys(remoteList))
+	key := list.List("mask:", versions.GetKeys(remoteList), 4)
 	vers = versions.GetElements(key, remoteList)
 
 	return
@@ -76,7 +76,7 @@ func AskRemoteVersion(language string) (version string, err error) {
 		return
 	}
 
-	version = list.GetWith(" version:", versions)
+	version = list.List("version:", versions, 1)
 
 	return
 }

@@ -30,7 +30,7 @@ func SetupEvents(plugin *plugins.Plugin) {
 			}
 
 			spinner = CustomSpinner.New(&CustomSpinner.SpinArgs{
-				Header:  "version",
+				Header:  " version:",
 				Item:    plugin.Version,
 				Note:    note,
 				Message: message,
@@ -42,7 +42,7 @@ func SetupEvents(plugin *plugins.Plugin) {
 	plugin.Events().On("configure", handle("configure"))
 	plugin.Events().On("prepare", handle("prepare"))
 	plugin.Events().On("install", handle("install"))
-	plugin.Events().On("post-install", handle("post-install"))
+	plugin.Events().On("postinstall", handle("postinstall"))
 	plugin.Events().On("reapply modules", handle("reapply global modules"))
 
 	plugin.Events().On("done", func() {

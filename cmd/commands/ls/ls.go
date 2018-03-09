@@ -5,13 +5,13 @@ import (
 	"fmt"
 
 	"github.com/go-errors/errors"
-	"github.com/markelog/list"
 	"github.com/schollz/closestmatch"
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/info"
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/io"
+	"github.com/markelog/eclectica/list"
 	"github.com/markelog/eclectica/plugins"
 )
 
@@ -105,7 +105,7 @@ func listLocalVersions(language string) {
 
 // Ask for language and list local versions
 func listLocal() {
-	language := list.GetWith("langauge:", plugins.Plugins)
+	language := list.List("langauge:", plugins.Plugins, 0)
 
 	listLocalVersions(language)
 }
@@ -124,7 +124,7 @@ func listRemoteVersions(language string) {
 
 // Ask for language and list remote versions
 func listRemote() {
-	language := list.GetWith("langauge:", plugins.Plugins)
+	language := list.List("langauge:", plugins.Plugins, 0)
 
 	listRemoteVersions(language)
 }
