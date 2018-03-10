@@ -14,19 +14,8 @@ import (
 	"github.com/markelog/eclectica/variables"
 )
 
-const (
-	command = `
-
-#eclectica start
-export PATH="$(ec path)"
-#eclectica end
-
-`
-)
-
 // Shell essential structure
 type Shell struct {
-	command       string
 	shouldRestart bool
 	plugins       []string
 	rc            *rc.Rc
@@ -35,10 +24,9 @@ type Shell struct {
 // New cretates new Shell struct
 func New(plugins []string) *Shell {
 	shell := &Shell{
-		command:       command,
 		shouldRestart: false,
 		plugins:       plugins,
-		rc:            rc.New(command),
+		rc:            rc.New(),
 	}
 
 	return shell

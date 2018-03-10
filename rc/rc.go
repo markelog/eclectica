@@ -5,14 +5,24 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
+	"regexp"
 
 	"github.com/go-errors/errors"
 
 	"github.com/markelog/eclectica/variables"
 )
 
+const (
+	begin = `#eclectica start`
+	end   = `#eclectica end`
+
+	command = `
+export PATH="$(ec path)"
+`
+)
+
 var (
+	reg = regexp.MustCompile(begin + "(?:[^\n]*\n+)+" + end)
 	rcs = map[string][]string{
 		"bash": {".bash_profile", ".bashrc", ".profile"},
 		"zsh":  {".zshrc"},
@@ -21,15 +31,12 @@ var (
 
 // Rc essential structure
 type Rc struct {
-	command string
-	path    string
+	path string
 }
 
 // New returns new Rc struct
-func New(command string) *Rc {
+func New() *Rc {
 	rc := &Rc{}
-
-	rc.command = command
 	rc.path = rc.Find()
 
 	return rc
@@ -50,13 +57,11 @@ func (rc *Rc) getRcs() (err error, bashrc *Rc, bashProfile *Rc) {
 	}
 
 	bashrc = &Rc{
-		command: rc.command,
-		path:    pathsRc,
+		path: pathsRc,
 	}
 
 	bashProfile = &Rc{
-		command: rc.command,
-		path:    pathsProfile,
+		path: pathsProfile,
 	}
 
 	return nil, bashrc, bashProfile
@@ -106,7 +111,7 @@ func (rc *Rc) add() (err error) {
 		return errors.New(err)
 	}
 
-	_, err = file.WriteString(rc.command)
+	_, err = file.WriteString(begin + command + end)
 	if err != nil {
 		err = errors.New(err)
 	}
@@ -142,6 +147,7 @@ func (rc *Rc) Remove() error {
 
 // add helper method for Remove()
 func (rc *Rc) remove() (err error) {
+	println(begin + "(.*?)" + end)
 	if rc.Exists() == false {
 		return
 	}
@@ -151,9 +157,9 @@ func (rc *Rc) remove() (err error) {
 		return errors.New(err)
 	}
 
-	replaced := strings.Replace(string(read), rc.command, "", -1)
+	replaced := reg.ReplaceAll(read, []byte(""))
 
-	err = ioutil.WriteFile(rc.path, []byte(replaced), 0)
+	err = ioutil.WriteFile(rc.path, replaced, 0)
 	if err != nil {
 		err = errors.New(err)
 	}
@@ -168,9 +174,7 @@ func (rc *Rc) Exists() bool {
 		return false
 	}
 
-	str := string(contents)
-
-	return strings.Contains(str, rc.command)
+	return reg.MatchString(string(contents))
 }
 
 // Find finds proper rc file

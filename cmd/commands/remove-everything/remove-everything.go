@@ -3,16 +3,12 @@
 package removeEverything
 
 import (
-	"os"
-	"path/filepath"
-
 	"github.com/spf13/cobra"
 
 	"github.com/markelog/eclectica/cmd/print"
 	"github.com/markelog/eclectica/list"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/shell"
-	"github.com/markelog/eclectica/variables"
 )
 
 // Command config
@@ -43,25 +39,25 @@ func run(c *cobra.Command, args []string) {
 	}
 
 	// Get ec binary
-	path, err := os.Executable()
-	print.Error(err)
-
-	// Remove main executable
-	err = os.Remove(path)
-	print.Error(err)
-
-	// Get ec-proxy binary
-	ecProxy := filepath.Join(filepath.Dir(path), "ec-proxy")
-
-	// Remove proxy executable
-	err = os.Remove(ecProxy)
-	print.Error(err)
-
-	// Remove all the languages
-	err = os.RemoveAll(variables.Base())
-	print.Error(err)
+	// path, err := os.Executable()
+	// print.Error(err)
+	//
+	// // Remove main executable
+	// err = os.Remove(path)
+	// print.Error(err)
+	//
+	// // Get ec-proxy binary
+	// ecProxy := filepath.Join(filepath.Dir(path), "ec-proxy")
+	//
+	// // Remove proxy executable
+	// err = os.Remove(ecProxy)
+	// print.Error(err)
+	//
+	// // Remove all the languages
+	// err = os.RemoveAll(variables.Base())
+	// print.Error(err)
 
 	// Remove everything in rc files and restart the shell
-	err = shell.New(plugins.Plugins).Remove()
+	err := shell.New(plugins.Plugins).Remove()
 	print.Error(err)
 }
