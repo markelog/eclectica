@@ -13,9 +13,8 @@ import (
 )
 
 const (
-	begin = `#eclectica start`
-	end   = `#eclectica end`
-
+	begin   = `#eclectica start`
+	end     = `#eclectica end`
 	command = `
 export PATH="$(ec path)"
 `
@@ -147,7 +146,6 @@ func (rc *Rc) Remove() error {
 
 // add helper method for Remove()
 func (rc *Rc) remove() (err error) {
-	println(begin + "(.*?)" + end)
 	if rc.Exists() == false {
 		return
 	}

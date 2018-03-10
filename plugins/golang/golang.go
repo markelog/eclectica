@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -56,6 +57,13 @@ func (golang Golang) Events() *emission.Emitter {
 
 // PostInstall hook
 func (golang Golang) PostInstall() error {
+	// In case consumer used go binaries installed without eclectica.
+	// So some IDE's use go autocomplete which
+	// might use the gocode daemon, which cache the previous path even
+	// if you explicitly set the GOROOT path, so we would need to drop that cache
+	// Not sure if that would always help
+	exec.Command("gocode", "drop-cache")
+
 	return dealWithShell()
 }
 
