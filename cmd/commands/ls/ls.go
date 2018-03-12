@@ -105,6 +105,8 @@ func listLocalVersions(language string) {
 
 // Ask for language and list local versions
 func listLocal() {
+	fmt.Println()
+
 	language := list.List("langauge:", plugins.Plugins, 0)
 
 	listLocalVersions(language)
@@ -124,6 +126,8 @@ func listRemoteVersions(language string) {
 
 // Ask for language and list remote versions
 func listRemote() {
+	fmt.Println()
+
 	language := list.List("langauge:", plugins.Plugins, 0)
 
 	listRemoteVersions(language)
