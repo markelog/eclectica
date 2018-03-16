@@ -88,11 +88,11 @@ wget -qO - https://raw.githubusercontent.com/markelog/ec-install/master/scripts/
 Default installation folder is `/usr/local/bin`, so you might need to execute `sh` with `sudo` like this –
 
 ```sh
-wget -qO - https://raw.githubusercontent.com/markelog/ec-install/master/scripts/install.sh | sudo sh
+wget -qO - https://raw.githubusercontent.com/markelog/ec-install/master/scripts/wget-install.sh | sudo sh
 ```
 
 if you need to install it to your `$HOME` for example, do this
 
 ```sh
-wget -qO - https://raw.githubusercontent.com/markelog/ec-install/master/scripts/install.sh | EC_DEST=~/bin sh
+wget -qO - https://raw.githubusercontent.com/markelog/ec-install/master/scripts/wget-install.sh | EC_DEST=~/bin sh
 ```
