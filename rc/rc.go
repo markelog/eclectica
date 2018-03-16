@@ -16,7 +16,7 @@ const (
 	begin   = `#eclectica start`
 	end     = `#eclectica end`
 	command = `
-export PATH="$(ec path)"
+command -v ec > /dev/null && export PATH="$(ec path)"
 `
 )
 
