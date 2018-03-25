@@ -61,6 +61,7 @@ func dealWithLinuxShell() error {
 	command := "sudo add-apt-repository ppa:ubuntu-toolchain-r/test && sudo apt-get update && sudo apt-get install -y " + strings.Join(deps, " ")
 
 	print.Warning(message, command)
+	print.LastPrint()
 	os.Exit(1)
 
 	return nil

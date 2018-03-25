@@ -63,6 +63,7 @@ func dealWithShell() error {
 	command := "sudo apt-get update && sudo apt-get install -y " + strings.Join(deps, " ")
 
 	print.Warning(message, command)
+	print.LastPrint()
 
 	return nil
 }

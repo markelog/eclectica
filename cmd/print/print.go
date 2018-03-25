@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -42,6 +43,16 @@ func InStyle(name, entity string) {
 // InStyleln prints header and text with style and newline char
 func InStyleln(name, entity string) {
 	InStyle(name, entity)
+	fmt.Println()
+}
+
+// LastPrints prints the last newline only in those system
+// that do not do newline char automatically
+func LastPrint() {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
 	fmt.Println()
 }
 

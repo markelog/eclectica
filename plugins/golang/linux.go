@@ -49,6 +49,7 @@ func dealWithShell() (err error) {
 	}
 
 	print.Warning(message, command)
+	print.LastPrint()
 
 	return
 }

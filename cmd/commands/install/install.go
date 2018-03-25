@@ -61,6 +61,7 @@ func conditionalInstall(plugin *plugins.Plugin) {
 	}
 
 	print.Error(err)
+	print.LastPrint()
 }
 
 // Entry point for installation

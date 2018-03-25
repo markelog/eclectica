@@ -142,6 +142,7 @@ func Start() bool {
 
 	_, err = proc.Wait()
 	print.Error(err)
+	print.LastPrint()
 
 	return true
 }
