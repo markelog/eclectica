@@ -68,4 +68,5 @@ func remove(language, version string) {
 		Version:  version,
 	}).Remove()
 	print.Error(err)
+	print.LastPrint()
 }

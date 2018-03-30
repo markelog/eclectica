@@ -77,6 +77,8 @@ func listVersions(versions []string, current string) {
 			break
 		}
 	}
+
+	print.LastPrint()
 }
 
 // List local ones

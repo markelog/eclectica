@@ -100,6 +100,8 @@ func Error(err error) {
 		stderr.Println(errors.Wrap(err, 2).ErrorStack())
 	}
 
+	LastPrint()
+
 	os.Exit(1)
 }
 

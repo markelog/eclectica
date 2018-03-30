@@ -139,10 +139,10 @@ func Start() bool {
 	print.Green(
 		"First time executing eclectica - had to restart the shell",
 	)
+	print.LastPrint()
 
 	_, err = proc.Wait()
 	print.Error(err)
-	print.LastPrint()
 
 	return true
 }
