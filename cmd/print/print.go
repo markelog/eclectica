@@ -46,10 +46,10 @@ func InStyleln(name, entity string) {
 	fmt.Println()
 }
 
-// LastPrints prints the last newline only in those system
+// LastPrint prints the last newline only in those system
 // that do not do newline char automatically
 func LastPrint() {
-	if runtime.GOOS != "darwin" {
+	if runtime.GOOS == "darwin" {
 		return
 	}
 
