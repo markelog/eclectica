@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-errors/errors"
 
+	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -42,18 +43,9 @@ func New() *Rc {
 }
 
 // getRcs gets rc instances
-func (rc *Rc) getRcs() (err error, bashrc *Rc, bashProfile *Rc) {
+func (rc *Rc) getRcs() (bashrc *Rc, bashProfile *Rc) {
 	pathsRc := filepath.Join(os.Getenv("HOME"), ".bashrc")
 	pathsProfile := filepath.Join(os.Getenv("HOME"), ".bash_profile")
-
-	// Make sure we have those files
-	if _, err := os.Stat(pathsRc); err != nil {
-		return errors.New("couldn't find the " + pathsRc), nil, nil
-		// return rc.remove()
-	}
-	if _, err := os.Stat(pathsProfile); err != nil {
-		return errors.New("couldn't find the " + pathsProfile), nil, nil
-	}
 
 	bashrc = &Rc{
 		path: pathsRc,
@@ -63,7 +55,7 @@ func (rc *Rc) getRcs() (err error, bashrc *Rc, bashProfile *Rc) {
 		path: pathsProfile,
 	}
 
-	return nil, bashrc, bashProfile
+	return bashrc, bashProfile
 }
 
 // Add bash configs on Unix system
@@ -79,12 +71,9 @@ func (rc *Rc) Add() error {
 		return rc.add()
 	}
 
-	err, bashrc, bashProfile := rc.getRcs()
-	if err != nil {
-		return rc.add()
-	}
+	bashrc, bashProfile := rc.getRcs()
 
-	err = bashrc.add()
+	err := bashrc.add()
 	if err != nil {
 		return err
 	}
@@ -103,6 +92,15 @@ func (rc *Rc) add() (err error) {
 		return
 	}
 
+	if _, err := os.Stat(rc.path); err != nil {
+		return io.WriteFile(rc.path, begin+command+end)
+	}
+
+	return rc.append()
+}
+
+// append to an rc file
+func (rc *Rc) append() (err error) {
 	file, err := os.OpenFile(rc.path, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	defer file.Close()
 
@@ -112,10 +110,10 @@ func (rc *Rc) add() (err error) {
 
 	_, err = file.WriteString(begin + command + end)
 	if err != nil {
-		err = errors.New(err)
+		return errors.New(err)
 	}
 
-	return
+	return nil
 }
 
 // Remove bash configs on Unix system
@@ -126,12 +124,9 @@ func (rc *Rc) Remove() error {
 		return rc.remove()
 	}
 
-	err, bashrc, bashProfile := rc.getRcs()
-	if err != nil {
-		return rc.remove()
-	}
+	bashrc, bashProfile := rc.getRcs()
 
-	err = bashrc.remove()
+	err := bashrc.remove()
 	if err != nil {
 		return err
 	}
