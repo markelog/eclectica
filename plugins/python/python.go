@@ -39,14 +39,17 @@ var (
 	remoteVersion  = "https://www.python.org/ftp/python"
 	versionPattern = "^\\d+\\.\\d+(?:\\.\\d)?"
 
-	pipName = "get-pip.py"
-	baseURL = "https://bootstrap.pypa.io/"
-	pipURL  = baseURL + pipName
+	pipName   = "get-pip.py"
+	baseURL   = "https://bootstrap.pypa.io/"
+	pipURL    = baseURL + pipName
+	oldPipURL = baseURL + "/2.6/" + pipName
 
 	// Hats off to inconsistent python developers
 	noNilVersions, _ = semver.Make("3.3.0")
 	// When pip began to be available with binaries
 	pipAvailable, _ = semver.Make("2.7.9")
+	// Old version of python require older version of pip
+	withOldPip, _ = semver.Make("2.7.0")
 
 	bins = []string{"2to3", "idle", "pydoc", "python", "python-config", "pip", "easy_install"}
 	dots = []string{".python-version"}
@@ -488,6 +491,7 @@ func (python Python) renameLinks() (err error) {
 }
 
 func (python Python) downloadExternals() (err error) {
+	chosen, _ := semver.Make(python.Version)
 	path := variables.Path("python", python.Version)
 
 	urls, err := patch.URLs(python.Version)
@@ -496,7 +500,11 @@ func (python Python) downloadExternals() (err error) {
 	}
 
 	if hasTools(python.Version) == false {
-		urls = append(urls, pipURL)
+		if chosen.LT(withOldPip) {
+			urls = append(urls, oldPipURL)
+		} else {
+			urls = append(urls, pipURL)
+		}
 	}
 
 	respch, err := grab.GetBatch(len(urls), path, urls...)
