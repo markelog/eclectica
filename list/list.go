@@ -15,6 +15,7 @@ func escape(str string) string {
 	return escapeReg.ReplaceAllString(str, "")
 }
 
+// List the plugins
 func List(header string, options []string, indent int) string {
 	strIndent := ""
 

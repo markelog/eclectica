@@ -127,7 +127,7 @@ func (ruby Ruby) Info() map[string]string {
 
 // ListRemote returns list of the all available remote versions
 func (ruby Ruby) ListRemote() ([]string, error) {
-	doc, err := goquery.NewDocument(VersionLink)
+	doc, err := goquery.NewDocument(VersionLink + "/")
 
 	if err != nil {
 		if _, ok := err.(net.Error); ok {
