@@ -49,11 +49,6 @@ func init() {
 	Command.SetUsageTemplate(usage)
 
 	cobra.OnInitialize()
-
-	flags := Command.PersistentFlags()
-	flags.BoolVarP(&isRemote, "remote", "r", false, "ask for remote versions")
-	flags.BoolVarP(&isLocal, "local", "l", false, "install to the current folder only")
-	flags.BoolVarP(&withModules, "with-modules", "w", false, "reinstall global modules from the previous version (currently works only for node.js)")
 }
 
 func isLanguageRelated(name string, args []string) bool {

@@ -25,11 +25,8 @@ var withModules bool
 // Command represents the ls command
 var Command = &cobra.Command{
 	Use:   "install [<language>@<version>]",
-	Short: "install language",
+	Short: "same as \"ec [<language>@<version>]\"",
 	Run:   run,
-
-	// Rather use "install [<language>@<version>]"
-	Hidden: true,
 }
 
 // Event type handler
