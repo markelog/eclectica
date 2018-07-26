@@ -7,12 +7,19 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/go-errors/errors"
+	"github.com/markelog/eclectica/versions"
 )
 
 const (
 	perm = 0700
+)
+
+var (
+	versionPattern = `\d+(\.\d+)?(\.\d+)?`
+	rVersion       = regexp.MustCompile(versionPattern)
 )
 
 // Walker signature function
@@ -41,6 +48,18 @@ func walkUp(path string, fn Walker) {
 	}
 
 	return
+}
+
+// ExtractVersion from the string
+func ExtractVersion(file string) (string, error) {
+	match := rVersion.FindAllStringSubmatch(file, 1)
+	if len(match) == 0 {
+		return "", errors.New("There is no version here")
+	}
+
+	version := match[0][0]
+
+	return versions.Semverify(version), nil
 }
 
 // GetVersion finds a file by provided argument and extracts
@@ -72,7 +91,14 @@ func GetVersion(args ...interface{}) (version, path string, err error) {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		return scanner.Text(), path, nil
+
+		version, extractErr := ExtractVersion(scanner.Text())
+
+		if extractErr != nil {
+			return "", "", extractErr
+		}
+
+		return version, path, extractErr
 	}
 
 	if scannerErr := scanner.Err(); scannerErr != nil {

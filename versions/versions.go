@@ -12,6 +12,11 @@ import (
 	hversion "github.com/hashicorp/go-version"
 )
 
+var (
+	majorPattern = `^\d+$`
+	rMajor       = regexp.MustCompile(majorPattern)
+)
+
 // Compose versions to map object of arrays from array
 func Compose(versions []string) map[string][]string {
 	majors := ComposeMajors(versions)
@@ -156,6 +161,11 @@ func HasMinor(version string) bool {
 	return len(strings.Split(version, ".")) == 2
 }
 
+// HasOnlyMajor checks if provided version has only major number in it
+func HasOnlyMajor(version string) bool {
+	return rMajor.MatchString(version)
+}
+
 // getLatest gets last possible version from provided map of array strings
 func getLatest(versions map[string][]string) (string, error) {
 	latestVersions := GetKeys(versions)[0]
@@ -215,6 +225,10 @@ func semverifyList(versions []string) []string {
 // Semverify will do its best to semverify a string
 // "1.8-beta2" -> "1.8.0-beta2"
 func Semverify(version string) string {
+	if HasOnlyMajor(version) {
+		return version + ".0.0"
+	}
+
 	if HasMinor(version) == false {
 		return version
 	}

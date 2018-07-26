@@ -65,6 +65,7 @@ func run(cmd *cobra.Command, args []string) {
 func listVersions(versions []string, current string) {
 	fmt.Println()
 	for i, version := range versions {
+
 		if current == version {
 			print.CurrentVersion(version)
 			continue
@@ -95,6 +96,7 @@ func listLocalVersions(language string) {
 	}
 
 	current, _, err := io.GetVersion(plugin.Dots())
+
 	print.Error(err)
 
 	// In case we could find `.<language>-version` file i.e. there is no local version

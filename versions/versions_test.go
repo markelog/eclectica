@@ -175,6 +175,10 @@ var _ = Describe("versions", func() {
 			Expect(Semverify("6.8")).To(Equal("6.8.0"))
 		})
 
+		It("Should add two `0` to the end there", func() {
+			Expect(Semverify("6")).To(Equal("6.0.0"))
+		})
+
 		It("Should add `.0` to between text and numbers", func() {
 			Expect(Semverify("1.7beta")).To(Equal("1.7.0-beta"))
 		})
