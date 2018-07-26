@@ -52,6 +52,7 @@ func (shell *Shell) Initiate() (err error) {
 	return
 }
 
+// Remove some text from the shell config file
 func (shell *Shell) Remove() (err error) {
 	err = shell.rc.Remove()
 	if err != nil {

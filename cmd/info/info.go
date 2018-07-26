@@ -81,6 +81,7 @@ func AskRemoteVersion(language string) (version string, err error) {
 	return
 }
 
+// PossibleLanguage gets the most possible language that user probably meant
 func PossibleLanguage(args []string) (language string) {
 	for _, element := range args {
 		data := strings.Split(element, "@")

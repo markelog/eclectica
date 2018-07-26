@@ -164,6 +164,7 @@ func Download(response *grab.Response, version string) string {
 	return response.Filename
 }
 
+// Greens prints stuff in green
 func Green(msg string) {
 	fmt.Println()
 	fmt.Println(ansi.Color("> ", "green") + msg)
@@ -184,6 +185,7 @@ func Warning(note, command string) {
 	}
 }
 
+// ClosestLangWarning prints error message for the similar typed language
 func ClosestLangWarning(language, closest string) {
 	incorrectOne := ansi.Color(language, "red")
 

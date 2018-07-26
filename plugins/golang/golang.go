@@ -27,7 +27,7 @@ var (
 	// DownloadLink from which we download binaries for golang
 	DownloadLink = "https://storage.googleapis.com/golang"
 
-	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:(alpha|beta|rc)(?:\\d*)?)?"
+	versionPattern = `\d+\.\d+(?:\.\d+)?(?:(alpha|beta|rc)(?:\d*)?)?`
 
 	bins = []string{"go", "godoc", "gofmt"}
 	dots = []string{".go-version"}
