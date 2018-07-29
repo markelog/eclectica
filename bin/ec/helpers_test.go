@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 
@@ -108,7 +109,8 @@ func checkRemoteUse() (result string) {
 	go func() {
 		for {
 			result = string(output.Bytes())
-			if len(result) > 0 {
+			matched, _ := regexp.MatchString(`\w`, result)
+			if matched {
 				Kill(cmd)
 				proceed = false
 				return
