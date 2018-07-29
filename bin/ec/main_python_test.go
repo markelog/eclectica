@@ -71,7 +71,7 @@ var _ = Describe("python", func() {
 			})
 
 			It("should list remote versions", func() {
-				Expect(checkRemoteList("python", "2.x", 50)).To(Equal(true))
+				Expect(checkRemoteList("python", "2.x", 150)).To(Equal(true))
 			})
 
 			It("should remove version", func() {
