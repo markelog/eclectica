@@ -10,7 +10,6 @@ import (
 	"regexp"
 
 	"github.com/go-errors/errors"
-	"github.com/markelog/eclectica/versions"
 )
 
 const (
@@ -18,7 +17,7 @@ const (
 )
 
 var (
-	versionPattern = `\d+(\.\d+)?(\.\d+)?`
+	versionPattern = `(\d+(\.\d+)?(\.\d+)?)|(latest)`
 	rVersion       = regexp.MustCompile(versionPattern)
 )
 
@@ -59,7 +58,7 @@ func ExtractVersion(file string) (string, error) {
 
 	version := match[0][0]
 
-	return versions.Semverify(version), nil
+	return version, nil
 }
 
 // GetVersion finds a file by provided argument and extracts

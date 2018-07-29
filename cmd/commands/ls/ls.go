@@ -13,6 +13,7 @@ import (
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/list"
 	"github.com/markelog/eclectica/plugins"
+	"github.com/markelog/eclectica/versions"
 )
 
 // Is action remote?
@@ -62,11 +63,13 @@ func run(cmd *cobra.Command, args []string) {
 }
 
 // List versions
-func listVersions(versions []string, current string) {
-	fmt.Println()
-	for i, version := range versions {
+func listVersions(vers []string, current string) {
+	completeCurrent, _ := versions.Complete(current, vers)
 
-		if current == version {
+	fmt.Println()
+	for i, version := range vers {
+
+		if completeCurrent == version {
 			print.CurrentVersion(version)
 			continue
 		}

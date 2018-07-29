@@ -240,7 +240,7 @@ var _ = Describe("main logic", func() {
 				result, _ := Command("node", "-v").CombinedOutput()
 
 				actual := string(result)
-				expected := `v5.12.0`
+				expected := "v5.12.0"
 
 				Expect(actual).To(ContainSubstring(expected))
 

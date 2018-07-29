@@ -27,20 +27,6 @@ var _ = Describe("io", func() {
 			Expect(result).To(Equal("1.2.3"))
 		})
 
-		It("gets version with 1.2 format", func() {
-			result, err := ExtractVersion("1.2")
-
-			Expect(err).To(BeNil())
-			Expect(result).To(Equal("1.2.0"))
-		})
-
-		It("gets version with one digit format", func() {
-			result, err := ExtractVersion("1")
-
-			Expect(err).To(BeNil())
-			Expect(result).To(Equal("1.0.0"))
-		})
-
 		It("returns an error if there is no version", func() {
 			result, err := ExtractVersion("test")
 
@@ -53,6 +39,13 @@ var _ = Describe("io", func() {
 
 			Expect(err).To(BeNil())
 			Expect(result).To(Equal("8.11.2"))
+		})
+
+		It("gets version with \"latest\" keyword", func() {
+			result, err := ExtractVersion("latest")
+
+			Expect(err).To(BeNil())
+			Expect(result).To(Equal("latest"))
 		})
 	})
 
