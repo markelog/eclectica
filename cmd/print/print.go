@@ -164,7 +164,7 @@ func Download(response *grab.Response, version string) string {
 	return response.Filename
 }
 
-// Greens prints stuff in green
+// Green prints stuff in console in green color
 func Green(msg string) {
 	fmt.Println()
 	fmt.Println(ansi.Color("> ", "green") + msg)
