@@ -12,9 +12,10 @@ import (
 
 // New returns either compile or bin Ruby struct
 func New(version string, emitter *emission.Emitter) pkg.Pkg {
-	if hasBin(version, emitter) {
-		return bin.New(version, emitter)
-	}
+	// Apprently, those binaries are not installed with SSL certificats :/
+	// if hasBin(version, emitter) {
+	// 	return bin.New(version, emitter)
+	// }
 
 	return compile.New(version, emitter)
 }
