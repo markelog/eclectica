@@ -11,6 +11,9 @@ env:
   - TMPDIR=$TRAVIS_BUILD_DIR/
 
 before_install:
+  # Install dep
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  
+
   - export PATH=~/.eclectica/versions/node/current/bin:$PATH
   - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
   - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
