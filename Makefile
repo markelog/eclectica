@@ -7,7 +7,7 @@ clean:
 
 install:
 	@echo "[+] installing dependencies"
-	@go get -t -v ./...
+	@dep ensure
 .PHONY: install
 
 test: install
