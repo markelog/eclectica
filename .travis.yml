@@ -12,6 +12,8 @@ env:
 
 before_install:
   # Install dep
+  # Cause of https://github.com/golang/dep/issues/1846
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir -p /Users/travis/gopath/bin; fi
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  
 install:
   - make install
