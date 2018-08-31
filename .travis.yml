@@ -13,18 +13,6 @@ env:
 before_install:
   # Install dep
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  
-
-  - export PATH=~/.eclectica/versions/node/current/bin:$PATH
-  - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
-  - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
-  - export PATH=~/.eclectica/versions/go/current/bin:$PATH
-  - export PATH=~/.eclectica/versions/python/current/bin:$PATH
-  - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
-  - export PATH=~/.eclectica/bin:$PATH
-
-  - echo $PATH
-  - echo $HOME
-
 install:
   - make install
 
