@@ -626,21 +626,6 @@ func (plugin *Plugin) removeProxy() (err error) {
 	return nil
 }
 
-func (plugin *Plugin) removeSupport() (err error) {
-	bins := plugin.Bins()
-
-	for _, bin := range bins {
-		proxy := filepath.Join(variables.DefaultInstall, bin)
-
-		err = os.RemoveAll(proxy)
-		if err != nil {
-			return
-		}
-	}
-
-	return nil
-}
-
 // SearchBin searches for the actual binary
 func SearchBin(name string) string {
 	bins := map[string][]string{}

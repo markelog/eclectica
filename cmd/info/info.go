@@ -17,8 +17,6 @@ import (
 	"github.com/markelog/eclectica/cmd/print/spinner"
 )
 
-type prefixFn func()
-
 // Ask for language and version from the user
 func Ask() (language, version string, err error) {
 	fmt.Println()

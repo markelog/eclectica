@@ -7,15 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Is action remote?
-var isRemote bool
-
-// Is action local?
-var isLocal bool
-
-// Reinstall global modules from previous version?
-var withModules bool
-
 var use = "ec [<language>@<version>]"
 
 // Command config
@@ -49,21 +40,6 @@ func init() {
 	Command.SetUsageTemplate(usage)
 
 	cobra.OnInitialize()
-}
-
-func isLanguageRelated(name string, args []string) bool {
-	if hasHelp(args) {
-		return false
-	}
-
-	names := []string{"ec", "ls", "rm"}
-	for _, elem := range names {
-		if elem == name {
-			return len(args) != 0
-		}
-	}
-
-	return false
 }
 
 func augment() {

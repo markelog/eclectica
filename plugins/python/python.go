@@ -557,13 +557,3 @@ func hasTools(version string) bool {
 
 	return semverVersion.Compare(pipAvailable) != -1
 }
-
-func checkErrors(out []byte) (err error) {
-	output := string(out)
-
-	if strings.Contains(output, "Traceback") {
-		err = errors.New(output)
-	}
-
-	return err
-}

@@ -23,11 +23,6 @@ var (
 
 	// VersionLink is the URL link from which we can get all possible versions
 	VersionLink = "https://rvm.io/binaries"
-
-	versionPattern = `\d+\.\d+\.\d`
-
-	bins = []string{"erb", "gem", "irb", "rake", "rdoc", "ri", "ruby"}
-	dots = []string{".ruby-version"}
 )
 
 // Ruby bin essential struct
