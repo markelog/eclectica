@@ -2,7 +2,6 @@ package main_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,11 +10,10 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/markelog/eclectica/io"
-	"github.com/markelog/eclectica/plugins"
 )
 
 var _ = Describe("ruby", func() {
-	if shouldRun("ruby") == false {
+	if shouldRun("ruby-second") == false {
 		return
 	}
 
@@ -34,6 +32,7 @@ var _ = Describe("ruby", func() {
 		pwd, _ := os.Getwd()
 		versionFile := filepath.Join(filepath.Dir(pwd), ".ruby-version")
 
+		Execute("go", "run", path, "ruby@2.1.5")
 		Execute("go", "run", path, "ruby@2.2.1")
 
 		io.WriteFile(versionFile, "2.1.5")
@@ -77,29 +76,16 @@ var _ = Describe("ruby", func() {
 		Expect(strings.Contains(string(ec), "♥ 2.4.1")).To(Equal(true))
 	})
 
-	It("should install two versions of ruby", func() {
-		Execute("go", "run", path, "ruby@2.4.2")
-		Execute("go", "run", path, "ruby@2.4.1")
-
-		ruby, _ := Command("ruby", "--version").Output()
-		ec, _ := Command("go", "run", path, "ls", "ruby").Output()
-
-		Expect(strings.Contains(string(ruby), "2.4.1")).To(Equal(true))
-		Expect(strings.Contains(string(ec), "♥ 2.4.1")).To(Equal(true))
-	})
-
-	It("should install bundler", func() {
-		tempDir := os.TempDir()
-		gems := filepath.Join(tempDir, "gems")
-
+	FIt("should install bundler", func() {
 		Execute("go", "run", path, "ruby@2.2.1")
-		os.Setenv("GEM_HOME", tempDir)
-		Command("gem", "install", "bundler").Output()
 
-		folders, _ := ioutil.ReadDir(gems)
-		Expect(strings.Contains(folders[0].Name(), "bundler-")).To(Equal(true))
+		Execute("gem", "install", "--system")
+		Execute("gem", "clean")
+		Execute("gem", "install", "bundler")
 
-		os.RemoveAll(gems)
+		gems, _ := Command("gem", "list").Output()
+
+		Expect(strings.Contains(string(gems), "bundler")).To(Equal(true))
 	})
 
 	It("should list installed ruby versions", func() {
@@ -112,27 +98,5 @@ var _ = Describe("ruby", func() {
 
 	It("should list remote ruby versions", func() {
 		Expect(checkRemoteList("ruby", "2.x", 5)).To(Equal(true))
-	})
-
-	It("should remove ruby version", func() {
-		result := true
-
-		Execute("go", "run", path, "ruby@2.2.1")
-		Execute("go", "run", path, "ruby@2.1.0")
-
-		Command("go", "run", path, "rm", "ruby@2.2.1").Output()
-
-		plugin := plugins.New(&plugins.Args{
-			Language: "ruby",
-		})
-		versions := plugin.List()
-
-		for _, version := range versions {
-			if version == "2.2.1" {
-				result = false
-			}
-		}
-
-		Expect(result).To(Equal(true))
 	})
 })

@@ -11,10 +11,18 @@ env:
   - TMPDIR=$TRAVIS_BUILD_DIR/
 
 before_install:
+  - export PATH=~/.eclectica/versions/node/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/go/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/python/current/bin:$PATH
+  - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
+  - export PATH=~/.eclectica/bin:$PATH
+
   # Install dep
   # Cause of https://github.com/golang/dep/issues/1846
   - mkdir -p $HOME/gopath/bin
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 install:
   - make install
 
@@ -25,215 +33,297 @@ matrix:
   include:
 
     # ubuntu trusty
-    - env: "TEST_LANGUAGE=main"
-      os: linux
-      dist: trusty
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=main"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=node"
-      os: linux
-      dist: trusty
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=node"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=rust"
-      os: linux
-      dist: trusty
-      script: "travis_wait 40 make int-ci"
+    # - env: "TEST_LANGUAGE=rust"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait 40 make int-ci"
 
-    - env: "TEST_LANGUAGE=ruby"
-      os: linux
-      dist: trusty
-      before_install:
-        # Install dep
-        # Cause of https://github.com/golang/dep/issues/1846
-        - mkdir -p $HOME/gopath/bin
-        - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh 
+    # - env: "TEST_LANGUAGE=ruby-first"
+    #   os: linux
+    #   dist: trusty
+    #   before_install:
+    #     - export PATH=~/.eclectica/versions/node/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/go/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/python/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
+    #     - export PATH=~/.eclectica/bin:$PATH
 
-        # C++14
-        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -qq
-      install:
-        - "make install"
+    #     # Install dep
+    #     # Cause of https://github.com/golang/dep/issues/1846
+    #     - mkdir -p $HOME/gopath/bin
+    #     - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
-        # C++14
-        - sudo apt-get install -qq g++-6
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
-      script: "travis_wait 60 make int-ci"
+    #     # C++14
+    #     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    #     - sudo apt-get update -qq
+    #   install:
+    #     - "make install"
 
-    - env: "TEST_LANGUAGE=go"
-      os: linux
-      dist: trusty
-      script: "travis_wait make int-ci"
+    #     # C++14
+    #     - sudo apt-get install -qq g++-6
+    #     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
+    #   script: "travis_wait 50 make int-ci"
 
-    - env: "TEST_LANGUAGE=python2.7"
-      os: linux
-      dist: trusty
-      script: "travis_wait 60 make int-ci"
+    # - env: "TEST_LANGUAGE=ruby-second"
+    #   os: linux
+    #   dist: trusty
+    #   before_install:
+    #     - export PATH=~/.eclectica/versions/node/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/go/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/python/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
+    #     - export PATH=~/.eclectica/bin:$PATH
 
-    - env: "TEST_LANGUAGE=python2-old"
-      os: linux
-      dist: trusty
-      script: "travis_wait 60 make int-ci"
+    #     # Install dep
+    #     # Cause of https://github.com/golang/dep/issues/1846
+    #     - mkdir -p $HOME/gopath/bin
+    #     - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
-    - env: "TEST_LANGUAGE=python3"
-      os: linux
-      dist: trusty
-      script: "travis_wait 60 make int-ci"
+    #     # C++14
+    #     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    #     - sudo apt-get update -qq
+    #   install:
+    #     - "make install"
 
-    - env: "TEST_LANGUAGE=elm"
-      os: linux
-      dist: trusty
-      script: "travis_wait make int-ci"
+    #     # C++14
+    #     - sudo apt-get install -qq g++-6
+    #     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
+    #   script: "travis_wait 50 make int-ci"
 
-    # ubuntu precise
-    - env: "TEST_LANGUAGE=main"
-      os: linux
-      dist: precise
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=go"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=node"
-      os: linux
-      dist: precise
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=python2.7"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait 60 make int-ci"
 
-    - env: "TEST_LANGUAGE=rust"
-      os: linux
-      dist: precise
-      script: "travis_wait 40 make int-ci"
+    # - env: "TEST_LANGUAGE=python2-old"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait 60 make int-ci"
 
-    - env: "TEST_LANGUAGE=ruby"
-      os: linux
-      dist: precise
-      before_install:
-        # Install dep
-        # Cause of https://github.com/golang/dep/issues/1846
-        - mkdir -p $HOME/gopath/bin
-        - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh 
+    # - env: "TEST_LANGUAGE=python3"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait 60 make int-ci"
 
-        # C++14
-        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -qq
-      install:
-        - "make install"
+    # - env: "TEST_LANGUAGE=elm"
+    #   os: linux
+    #   dist: trusty
+    #   script: "travis_wait make int-ci"
 
-        # C++14
-        - sudo apt-get install -qq g++-6
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
-      script: "travis_wait 60 make int-ci"
+    # # ubuntu precise
+    # - env: "TEST_LANGUAGE=main"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=go"
-      os: linux
-      dist: precise
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=node"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=python2.7"
-      os: linux
-      dist: precise
-      script: "travis_wait 60 make int-ci"
+    # - env: "TEST_LANGUAGE=rust"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait 40 make int-ci"
 
-    - env: "TEST_LANGUAGE=python2-old"
-      os: linux
-      dist: precise
-      script: "travis_wait 60 make int-ci"
+    # - env: "TEST_LANGUAGE=ruby-first"
+    #   os: linux
+    #   dist: precise
+    #   before_install:
+    #     - export PATH=~/.eclectica/versions/node/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/go/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/python/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
+    #     - export PATH=~/.eclectica/bin:$PATH
 
-    - env: "TEST_LANGUAGE=python3"
-      os: linux
-      dist: precise
-      script: "travis_wait 60 make int-ci"
+    #     # Install dep
+    #     # Cause of https://github.com/golang/dep/issues/1846
+    #     - mkdir -p $HOME/gopath/bin
+    #     - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
-    - env: "TEST_LANGUAGE=elm"
-      os: linux
-      dist: precise
-      script: "travis_wait make int-ci"
+    #     # C++14
+    #     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    #     - sudo apt-get update -qq
+    #   install:
+    #     - "make install"
 
-    # MacOS Sierra
-    - env: "TEST_LANGUAGE=main"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+    #     # C++14
+    #     - sudo apt-get install -qq g++-6
+    #     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
+    #   script: "travis_wait 50 make int-ci"
 
-    - env: "TEST_LANGUAGE=node"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=ruby-second"
+    #   os: linux
+    #   dist: precise
+    #   before_install:
+    #     - export PATH=~/.eclectica/versions/node/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/ruby/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/go/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/python/current/bin:$PATH
+    #     - export PATH=~/.eclectica/versions/elm/current/bin:$PATH
+    #     - export PATH=~/.eclectica/bin:$PATH
 
-    - env: "TEST_LANGUAGE=rust"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+    #     # Install dep
+    #     # Cause of https://github.com/golang/dep/issues/1846
+    #     - mkdir -p $HOME/gopath/bin
+    #     - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
-    - env: "TEST_LANGUAGE=ruby"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait 60 make int-ci"
+    #     # C++14
+    #     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    #     - sudo apt-get update -qq
+    #   install:
+    #     - "make install"
 
-    - env: "TEST_LANGUAGE=go"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+    #     # C++14
+    #     - sudo apt-get install -qq g++-6
+    #     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
+    #   script: "travis_wait 50 make int-ci"
 
-    - env: "TEST_LANGUAGE=elm"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=go"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=python2.7"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
+    # - env: "TEST_LANGUAGE=python2.7"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait 60 make int-ci"
 
-    - env: "TEST_LANGUAGE=python2-old"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
+    # - env: "TEST_LANGUAGE=python2-old"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait 60 make int-ci"
 
-    - env: "TEST_LANGUAGE=python3"
-      os: osx
-      osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
+    # - env: "TEST_LANGUAGE=python3"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait 60 make int-ci"
 
-    # OS X El Capitan
-    - env: "TEST_LANGUAGE=main"
+    # - env: "TEST_LANGUAGE=elm"
+    #   os: linux
+    #   dist: precise
+    #   script: "travis_wait make int-ci"
+
+    # # MacOS Sierra
+    # - env: "TEST_LANGUAGE=main"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=node"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=rust"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=ruby-first"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 50 make int-ci"
+
+    # - env: "TEST_LANGUAGE=ruby-second"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 50 make int-ci"
+
+    # - env: "TEST_LANGUAGE=go"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=elm"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=python2.7"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 800 make int-ci"
+
+    # - env: "TEST_LANGUAGE=python2-old"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 800 make int-ci"
+
+    # - env: "TEST_LANGUAGE=python3"
+    #   os: osx
+    #   osx_image: xcode8.3.3
+    #   script: "travis_wait 800 make int-ci"
+
+    # # OS X El Capitan
+    # - env: "TEST_LANGUAGE=main"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=node"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=rust"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait make int-ci"
+
+    # - env: "TEST_LANGUAGE=ruby-first"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait 50 make int-ci"
+
+    - env: "TEST_LANGUAGE=ruby-second"
       os: osx
       osx_image: xcode8
-      script: "travis_wait make int-ci"
+      script: "travis_wait 50 make int-ci"
 
-    - env: "TEST_LANGUAGE=node"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=go"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=rust"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=elm"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait make int-ci"
 
-    - env: "TEST_LANGUAGE=ruby"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait 60 make int-ci"
+    # - env: "TEST_LANGUAGE=python2.7"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait 9000 make int-ci"
 
-    - env: "TEST_LANGUAGE=go"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait make int-ci"
+    # - env: "TEST_LANGUAGE=python2-old"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait 9000 make int-ci"
 
-    - env: "TEST_LANGUAGE=elm"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait make int-ci"
-
-    - env: "TEST_LANGUAGE=python2.7"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait 9000 make int-ci"
-
-    - env: "TEST_LANGUAGE=python2-old"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait 9000 make int-ci"
-
-    - env: "TEST_LANGUAGE=python3"
-      os: osx
-      osx_image: xcode8
-      script: "travis_wait 9000 make int-ci"
+    # - env: "TEST_LANGUAGE=python3"
+    #   os: osx
+    #   osx_image: xcode8
+    #   script: "travis_wait 9000 make int-ci"

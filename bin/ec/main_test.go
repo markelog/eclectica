@@ -16,6 +16,23 @@ var _ = Describe("main logic", func() {
 		return
 	}
 
+	var (
+		pwd, _      = os.Getwd()
+		versionFile = filepath.Join(pwd, ".node-version")
+	)
+
+	BeforeEach(func() {
+		if _, err := os.Stat(versionFile); err == nil {
+			os.RemoveAll(versionFile)
+		}
+	})
+
+	AfterEach(func() {
+		if _, err := os.Stat(versionFile); err == nil {
+			os.RemoveAll(versionFile)
+		}
+	})
+
 	It("should output version", func() {
 		regVersion := "\\d+\\.\\d+\\.\\d+$"
 
@@ -131,23 +148,10 @@ var _ = Describe("main logic", func() {
 
 	Describe("local", func() {
 		Describe("vs global for 6.x versions", func() {
-			var (
-				pwd         string
-				versionFile string
-			)
-
-			BeforeEach(func() {
-				pwd, _ = os.Getwd()
-				versionFile = filepath.Join(pwd, ".node-version")
-			})
-
 			AfterEach(func() {
 				Execute("go", "run", path, "rm", "node@6.5.0")
 				Execute("go", "run", path, "rm", "node@6.4.0")
 
-				if _, err := os.Stat(versionFile); err == nil {
-					os.RemoveAll(versionFile)
-				}
 			})
 
 			It("should install version but don't switch to it globally", func() {
@@ -174,22 +178,12 @@ var _ = Describe("main logic", func() {
 		})
 
 		Describe("useful error messages", func() {
-			var (
-				pwd         string
-				versionFile string
-			)
-
 			BeforeEach(func() {
-				pwd, _ = os.Getwd()
-				versionFile = filepath.Join(pwd, ".node-version")
-
 				Execute("go", "run", path, "node@4.0.0")
 			})
 
 			AfterEach(func() {
 				Execute("go", "run", path, "rm", "node@4.0.0")
-
-				os.RemoveAll(versionFile)
 			})
 
 			It("should provide more or less complete error message if local install is not there", func() {
@@ -205,9 +199,6 @@ var _ = Describe("main logic", func() {
 			})
 
 			It("should provide more or less complete error message if mask is not satisfactory", func() {
-				pwd, _ := os.Getwd()
-				versionFile := filepath.Join(pwd, ".node-version")
-
 				io.WriteFile(versionFile, "5")
 
 				result, _ := Command("node", "-v").CombinedOutput()
@@ -232,9 +223,6 @@ var _ = Describe("main logic", func() {
 			})
 
 			It("should choose latest available version", func() {
-				pwd, _ := os.Getwd()
-				versionFile := filepath.Join(pwd, ".node-version")
-
 				io.WriteFile(versionFile, "5")
 
 				result, _ := Command("node", "-v").CombinedOutput()
@@ -243,8 +231,6 @@ var _ = Describe("main logic", func() {
 				expected := "v5.12.0"
 
 				Expect(actual).To(ContainSubstring(expected))
-
-				os.RemoveAll(versionFile)
 			})
 		})
 	})
