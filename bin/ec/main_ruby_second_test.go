@@ -6,10 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/markelog/eclectica/io"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"github.com/markelog/eclectica/io"
 )
 
 var _ = Describe("ruby", func() {
@@ -77,10 +76,6 @@ var _ = Describe("ruby", func() {
 	})
 
 	FIt("should install bundler", func() {
-		Execute("go", "run", path, "ruby@2.2.1")
-
-		Execute("gem", "install", "--system")
-		Execute("gem", "clean")
 		Execute("gem", "install", "bundler")
 
 		gems, _ := Command("gem", "list").Output()
