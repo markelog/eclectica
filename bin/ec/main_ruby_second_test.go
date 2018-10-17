@@ -75,7 +75,7 @@ var _ = Describe("ruby", func() {
 		Expect(strings.Contains(string(ec), "♥ 2.4.1")).To(Equal(true))
 	})
 
-	FIt("should install bundler", func() {
+	It("should install bundler", func() {
 		Execute("gem", "install", "bundler")
 
 		gems, _ := Command("gem", "list").Output()
