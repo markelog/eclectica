@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"runtime"
 
 	. "github.com/onsi/ginkgo"
@@ -28,17 +27,10 @@ func Read(path string) string {
 
 var _ = Describe("rust", func() {
 	var (
-		remotes     []string
-		err         error
-		rust        *Rust
 		version     = "1.0.0"
 		path, _     = filepath.Abs("../../testdata/plugins/versions/")
 		versionPath = filepath.Join(path, "rust", version)
 	)
-
-	BeforeEach(func() {
-		rust = &Rust{}
-	})
 
 	AfterEach(func() {
 		os.RemoveAll(versionPath)
@@ -70,70 +62,6 @@ var _ = Describe("rust", func() {
 			Expect(firstArg).To(Equal("--prefix=" + path))
 
 			monkey.Unpatch(exec.Command)
-		})
-	})
-
-	Describe("ListRemote", func() {
-		Describe("fail", func() {
-			BeforeEach(func() {
-				httpmock.Activate()
-
-				httpmock.RegisterResponder(
-					"GET",
-					"https://static.rust-lang.org/dist/index.txt",
-					httpmock.NewStringResponder(500, ""),
-				)
-			})
-
-			AfterEach(func() {
-				defer httpmock.DeactivateAndReset()
-			})
-
-			It("should return an error", func() {
-				remotes, err = rust.ListRemote()
-
-				Expect(err).Should(MatchError(variables.ConnectionError))
-			})
-		})
-
-		Describe("success", func() {
-			BeforeEach(func() {
-				content := Read("../../testdata/plugins/rust/dist.txt")
-
-				httpmock.Activate()
-
-				httpmock.RegisterResponder(
-					"GET",
-					"https://static.rust-lang.org/dist/index.txt",
-					httpmock.NewStringResponder(200, content),
-				)
-			})
-
-			AfterEach(func() {
-				defer httpmock.DeactivateAndReset()
-			})
-
-			BeforeEach(func() {
-				remotes, err = rust.ListRemote()
-			})
-
-			It("should not return an error", func() {
-				Expect(err).To(BeNil())
-			})
-
-			It("gets list of versions", func() {
-				Expect(remotes[0]).To(Equal("0.10"))
-				Expect(remotes[2]).To(Equal("0.12.0"))
-				Expect(remotes[8]).To(Equal("1.0.0-beta.4"))
-			})
-
-			It("should have correct version values", func() {
-				rp := regexp.MustCompile("\\d+\\.\\d+")
-
-				for _, element := range remotes {
-					Expect(rp.MatchString(element)).To(Equal(true))
-				}
-			})
 		})
 	})
 

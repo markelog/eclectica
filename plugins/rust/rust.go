@@ -8,14 +8,17 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strings"
 
 	"github.com/chuckpreslar/emission"
 	"github.com/go-errors/errors"
 	"github.com/markelog/cprf"
+	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/config"
+	"gopkg.in/src-d/go-git.v4/storage/memory"
 
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/pkg"
-	"github.com/markelog/eclectica/request"
 	"github.com/markelog/eclectica/variables"
 )
 
@@ -24,7 +27,7 @@ var (
 	VersionLink = "https://static.rust-lang.org/dist"
 
 	versionPattern = "\\d+\\.\\d+(?:\\.\\d+)?(?:-(alpha|beta)(?:\\.\\d*)?)?"
-	listLink       = "https://static.rust-lang.org/dist/index.txt"
+	listLink       = "https://github.com/rust-lang/rust.git"
 
 	bins = []string{"cargo", "rust-gdb", "rustc", "rustdoc"}
 	dots = []string{".rust-version"}
@@ -105,13 +108,43 @@ func (rust Rust) Dots() []string {
 
 // ListRemote returns list of the all available remote versions
 func (rust Rust) ListRemote() ([]string, error) {
-	body, err := request.Body(listLink)
+	// Get stuff from git, since it's the only way to get it for rust.
+	// See https://github.com/rust-lang/www.rust-lang.org/issues/662
+	return gitRemote(listLink)
+}
 
+func gitRemote(link string) ([]string, error) {
+	remote, err := git.Init(memory.NewStorage(), nil)
 	if err != nil {
-		return []string{}, err
+		return nil, err
 	}
 
-	return getVersions(body)
+	repo, err := remote.CreateRemote(&config.RemoteConfig{
+		Name: "rust",
+		URLs: []string{link},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	list, err := repo.List(&git.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	tag := "refs/tags/"
+	versions := []string{}
+	for _, item := range list {
+		name := item.Name().String()
+
+		if strings.Contains(name, tag) == false {
+			continue
+		}
+
+		versions = append(versions, strings.Replace(name, tag, "", 1))
+	}
+
+	return versions, nil
 }
 
 func getFullPattern() (string, error) {
