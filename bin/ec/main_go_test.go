@@ -19,8 +19,8 @@ var _ = Describe("go", func() {
 	}
 
 	var (
-		mainVersion      = "1.9.0"
-		secondaryVersion = "1.8.0"
+		mainVersion      = "1.11.0"
+		secondaryVersion = "1.10.0"
 	)
 
 	BeforeEach(func() {
