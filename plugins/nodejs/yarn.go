@@ -17,7 +17,7 @@ import (
 
 var (
 	minimalForYarn, _ = semver.Make("4.0.0")
-	version           = "1.5.1"
+	version           = "1.13.0"
 	yarnURL           = fmt.Sprintf(
 		"https://yarnpkg.com/downloads/%s/yarn-v%s.tar.gz",
 		version,
