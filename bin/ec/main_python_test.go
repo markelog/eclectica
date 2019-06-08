@@ -30,6 +30,8 @@ var _ = Describe("python", func() {
 				command, _ := Command("go", "run", path, "ls", "python").Output()
 
 				Expect(strings.Contains(string(command), "♥ 2.6.9")).To(Equal(true))
+
+				Command("go", "run", path, "rm", "python@2.6.9").Output()
 			})
 
 			It(`should install "old" 2.7.0 version`, func() {
@@ -38,6 +40,8 @@ var _ = Describe("python", func() {
 				command, _ := Command("go", "run", path, "ls", "python").Output()
 
 				Expect(strings.Contains(string(command), "♥ 2.7.0")).To(Equal(true))
+
+				Command("go", "run", path, "rm", "python@2.7.0").Output()
 			})
 		})
 
@@ -49,6 +53,24 @@ var _ = Describe("python", func() {
 			BeforeEach(func() {
 				Execute("go", "run", path, "python@2.7.10")
 				Execute("go", "run", path, "python@2.7.12")
+			})
+
+			It(`should install 2.7.13 version`, func() {
+				Execute("go", "run", path, "python@2.7.13")
+
+				command, _ := Command("go", "run", path, "ls", "python").Output()
+
+				Expect(strings.Contains(string(command), "♥ 2.7.13")).To(Equal(true))
+
+				Command("go", "run", path, "rm", "python@2.7.13").Output()
+			})
+
+			It(`should install latest 2.x.x version`, func() {
+				Execute("go", "run", path, "python@2")
+
+				command, _ := Command("go", "run", path, "ls", "python").Output()
+
+				Expect(strings.Contains(string(command), "♥ 2.")).To(Equal(true))
 			})
 
 			It("should list installed versions", func() {

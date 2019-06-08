@@ -54,11 +54,11 @@ var _ = Describe("python", func() {
 				Expect(err).To(BeNil())
 			})
 
-			It("should exclude some version", func() {
-				Expect(remotes[0]).To(Equal("3.4.5"))
+			It("should get first and last versions", func() {
+				Expect(remotes[0]).To(Equal("3.7.3"))
 
 				last := len(remotes) - 1
-				Expect(remotes[last]).To(Equal("3.0"))
+				Expect(remotes[last]).To(Equal("2.0.1"))
 			})
 		})
 

@@ -8,13 +8,11 @@ import (
 	"time"
 
 	"github.com/markelog/curse"
-
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/cmd/print/spinner"
 	"github.com/markelog/eclectica/list"
 	"github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/versions"
-
-	"github.com/markelog/eclectica/cmd/print/spinner"
 )
 
 // Ask for language and version from the user

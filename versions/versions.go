@@ -3,11 +3,11 @@
 package versions
 
 import (
-	"errors"
 	"regexp"
 	"sort"
 	"strings"
 
+	"github.com/go-errors/errors"
 	"github.com/blang/semver"
 	hversion "github.com/hashicorp/go-version"
 )

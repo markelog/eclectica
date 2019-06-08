@@ -1,3705 +1,2163 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<!-- saved from url=(0034)https://hg.python.org/cpython/tags -->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="icon" href="https://hg.python.org/cpython/static/hgicon.png" type="image/png">
-<meta name="robots" content="index, nofollow">
-<link rel="stylesheet" href="./index_files/style-paper.css" type="text/css">
-<script type="text/javascript" src="./index_files/mercurial.js"></script>
+<!doctype html>
+<!--[if lt IE 7]>   <html class="no-js ie6 lt-ie7 lt-ie8 lt-ie9">   <![endif]-->
+<!--[if IE 7]>      <html class="no-js ie7 lt-ie8 lt-ie9">          <![endif]-->
+<!--[if IE 8]>      <html class="no-js ie8 lt-ie9">                 <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" dir="ltr">
+<!--<![endif]-->
 
-<title>cpython: tags</title>
-<link rel="alternate" type="application/atom+xml" href="https://hg.python.org/cpython/atom-tags" title="Atom feed for cpython: tags">
-<link rel="alternate" type="application/rss+xml" href="https://hg.python.org/cpython/rss-tags" title="RSS feed for cpython: tags">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <link rel="prefetch" href="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+
+  <meta name="application-name" content="Python.org">
+  <meta name="msapplication-tooltip" content="The official home of the Python Programming Language">
+  <meta name="apple-mobile-web-app-title" content="Python.org">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="format-detection" content="telephone=no">
+  <meta http-equiv="cleartype" content="on">
+  <meta http-equiv="imagetoolbar" content="false">
+
+  <script src="/static/js/libs/modernizr.js"></script>
+
+  <link href="/static/stylesheets/style.67f4b30f7483.css" rel="stylesheet" type="text/css" title="default" />
+  <link href="/static/stylesheets/mq.3ae8e02ece5b.css" rel="stylesheet" type="text/css"
+    media="not print, braille, embossed, speech, tty" />
+
+
+  <!--[if (lte IE 8)&(!IEMobile)]>
+    <link href="/static/stylesheets/no-mq.fcf414dc68a3.css" rel="stylesheet" type="text/css" media="screen" />
+    
+    
+    <![endif]-->
+
+
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/apple-touch-icon-144x144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/apple-touch-icon-114x114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/apple-touch-icon-72x72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="/static/apple-touch-icon-precomposed.png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon-precomposed.png">
+
+
+  <meta name="msapplication-TileImage" content="/static/metro-icon-144x144-precomposed.png"><!-- white shape -->
+  <meta name="msapplication-TileColor" content="#3673a5"><!-- python blue -->
+  <meta name="msapplication-navbutton-color" content="#3673a5">
+
+  <title>Download Python | Python.org</title>
+
+  <meta name="description" content="The official home of the Python Programming Language">
+  <meta name="keywords"
+    content="Python programming language object oriented web free open source software license documentation download community">
+
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Python.org">
+  <meta property="og:title" content="Download Python">
+  <meta property="og:description" content="The official home of the Python Programming Language">
+
+  <meta property="og:image" content="https://www.python.org/static/opengraph-icon-200x200.png">
+  <meta property="og:image:secure_url" content="https://www.python.org/static/opengraph-icon-200x200.png">
+
+  <meta property="og:url" content="https://www.python.org/downloads/">
+
+  <link rel="author" href="/static/humans.txt">
+
+  <link rel="alternate" type="application/rss+xml" title="Python Enhancement Proposals"
+    href="https://www.python.org/dev/peps/peps.rss/">
+  <link rel="alternate" type="application/rss+xml" title="Python Job Opportunities"
+    href="https://www.python.org/jobs/feed/rss/">
+  <link rel="alternate" type="application/rss+xml" title="Python Software Foundation News"
+    href="https://feeds.feedburner.com/PythonSoftwareFoundationNews">
+  <link rel="alternate" type="application/rss+xml" title="Python Insider"
+    href="https://feeds.feedburner.com/PythonInsider">
+
+
+
+
+  <script type="application/ld+json">
+     {
+       "@context": "https://schema.org",
+       "@type": "WebSite",
+       "url": "https://www.python.org/",
+       "potentialAction": {
+         "@type": "SearchAction",
+         "target": "https://www.python.org/search/?q={search_term_string}",
+         "query-input": "required name=search_term_string"
+       }
+     }
+    </script>
+
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-39055973-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
 </head>
-<body>
 
-<div class="container">
-<div class="menu">
-<div class="logo">
-<a href="https://hg.python.org/">
-<img src="./index_files/hglogo.png" alt="back to hg.python.org repositories"></a>
+<body class="python download">
+
+  <div id="touchnav-wrapper">
+
+    <div id="nojs" class="do-not-print">
+      <p><strong>Notice:</strong> While Javascript is not essential for this website, your interaction with the content
+        will be limited. Please turn Javascript on for the full experience. </p>
+    </div>
+
+    <!--[if lte IE 8]>
+        <div id="oldie-warning" class="do-not-print">
+            <p>
+                <strong>Notice:</strong> Your browser is <em>ancient</em>. Please
+                <a href="http://browsehappy.com/">upgrade to a different browser</a> to experience a better web.
+            </p>
+        </div>
+        <![endif]-->
+
+    <!-- Sister Site Links -->
+    <div id="top" class="top-bar do-not-print">
+
+      <nav class="meta-navigation container" role="navigation">
+
+
+        <div class="skip-link screen-reader-text">
+          <a href="#content" title="Skip to content">Skip to content</a>
+        </div>
+
+
+        <a id="close-python-network" class="jump-link" href="#python-network" aria-hidden="true">
+          <span aria-hidden="true" class="icon-arrow-down"><span>&#9660;</span></span> Close
+        </a>
+
+
+
+        <ul class="menu" role="tree">
+
+          <li class="python-meta current_branch selected">
+            <a href="/" title="The Python Programming Language" class="current_branch selected">Python</a>
+          </li>
+
+          <li class="psf-meta ">
+            <a href="/psf-landing/" title="The Python Software Foundation">PSF</a>
+          </li>
+
+          <li class="docs-meta ">
+            <a href="https://docs.python.org" title="Python Documentation">Docs</a>
+          </li>
+
+          <li class="pypi-meta ">
+            <a href="https://pypi.python.org/" title="Python Package Index">PyPI</a>
+          </li>
+
+          <li class="jobs-meta ">
+            <a href="/jobs/" title="Python Job Board">Jobs</a>
+          </li>
+
+          <li class="shop-meta ">
+            <a href="/community/" title="Python Community">Community</a>
+          </li>
+
+        </ul>
+
+
+        <a id="python-network" class="jump-link" href="#top" aria-hidden="true">
+          <span aria-hidden="true" class="icon-arrow-up"><span>&#9650;</span></span> The Python Network
+        </a>
+
+      </nav>
+
+    </div>
+
+    <!-- Header elements -->
+    <header class="main-header" role="banner">
+      <div class="container">
+
+        <h1 class="site-headline">
+          <a href="/"><img class="python-logo" src="/static/img/python-logo.png" alt="python&trade;"></a>
+        </h1>
+
+        <div class="options-bar-container do-not-print">
+          <a href="/psf/donations/" class="donate-button">Donate</a>
+          <div class="options-bar">
+
+            <a id="site-map-link" class="jump-to-menu" href="#site-map"><span class="menu-icon">&equiv;</span> Menu</a>
+            <form class="search-the-site" action="/search/" method="get">
+              <fieldset title="Search Python.org">
+
+                <span aria-hidden="true" class="icon-search"></span>
+
+                <label class="screen-reader-text" for="id-search-field">Search This Site</label>
+                <input id="id-search-field" name="q" type="search" role="textbox" class="search-field"
+                  placeholder="Search" value="" tabindex="1">
+
+                <button type="submit" name="submit" id="submit" class="search-button" title="Submit this Search"
+                  tabindex="3">
+                  GO
+                </button>
+
+
+                <!--[if IE]><input type="text" style="display: none;" disabled="disabled" size="1" tabindex="4"><![endif]-->
+
+              </fieldset>
+            </form><span class="breaker"></span>
+            <div class="adjust-font-size" aria-hidden="true">
+              <ul class="navigation menu" aria-label="Adjust Text Size on Page">
+                <li class="tier-1 last" aria-haspopup="true">
+                  <a href="#" class="action-trigger"><strong><small>A</small> A</strong></a>
+                  <ul class="subnav menu">
+                    <li class="tier-2 element-1" role="treeitem"><a class="text-shrink" title="Make Text Smaller"
+                        href="javascript:;">Smaller</a></li>
+                    <li class="tier-2 element-2" role="treeitem"><a class="text-grow" title="Make Text Larger"
+                        href="javascript:;">Larger</a></li>
+                    <li class="tier-2 element-3" role="treeitem"><a class="text-reset"
+                        title="Reset any font size changes I have made" href="javascript:;">Reset</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div class="winkwink-nudgenudge">
+              <ul class="navigation menu" aria-label="Social Media Navigation">
+                <li class="tier-1 last" aria-haspopup="true">
+                  <a href="#" class="action-trigger">Socialize</a>
+                  <ul class="subnav menu">
+                    <li class="tier-2 element-1" role="treeitem"><a
+                        href="https://www.facebook.com/pythonlang?fref=ts"><span aria-hidden="true"
+                          class="icon-facebook"></span>Facebook</a></li>
+                    <li class="tier-2 element-2" role="treeitem"><a href="https://twitter.com/ThePSF"><span
+                          aria-hidden="true" class="icon-twitter"></span>Twitter</a></li>
+                    <li class="tier-2 element-3" role="treeitem"><a href="/community/irc/"><span aria-hidden="true"
+                          class="icon-freenode"></span>Chat on IRC</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <span data-html-include="/authenticated"></span>
+          </div><!-- end options-bar -->
+        </div>
+
+        <nav id="mainnav" class="python-navigation main-navigation do-not-print" role="navigation">
+
+
+          <ul class="navigation menu" role="menubar" aria-label="Main Navigation">
+
+
+
+            <li id="about" class="tier-1 element-1  " aria-haspopup="true">
+              <a href="/about/" title="" class="">About</a>
+
+
+
+              <ul class="subnav menu" role="menu" aria-hidden="true">
+
+                <li class="tier-2 element-1" role="treeitem"><a href="/about/apps/" title="">Applications</a></li>
+
+                <li class="tier-2 element-2" role="treeitem"><a href="/about/quotes/" title="">Quotes</a></li>
+
+                <li class="tier-2 element-3" role="treeitem"><a href="/about/gettingstarted/" title="">Getting
+                    Started</a></li>
+
+                <li class="tier-2 element-4" role="treeitem"><a href="/about/help/" title="">Help</a></li>
+
+                <li class="tier-2 element-5" role="treeitem"><a href="http://brochure.getpython.info/" title="">Python
+                    Brochure</a></li>
+
+              </ul>
+
+
+            </li>
+
+
+
+            <li id="downloads" class="tier-1 element-2  " aria-haspopup="true">
+              <a href="/downloads/" title="" class=" selected">Downloads</a>
+
+
+
+              <ul class="subnav menu" role="menu" aria-hidden="true">
+
+                <li class="tier-2 element-1" role="treeitem"><a href="/downloads/" title="">All releases</a></li>
+
+                <li class="tier-2 element-2" role="treeitem"><a href="/downloads/source/" title="">Source code</a></li>
+
+                <li class="tier-2 element-3" role="treeitem"><a href="/downloads/windows/" title="">Windows</a></li>
+
+                <li class="tier-2 element-4" role="treeitem"><a href="/downloads/mac-osx/" title="">Mac OS X</a></li>
+
+                <li class="tier-2 element-5" role="treeitem"><a href="/download/other/" title="">Other Platforms</a>
+                </li>
+
+                <li class="tier-2 element-6" role="treeitem"><a href="https://docs.python.org/3/license.html"
+                    title="">License</a></li>
+
+                <li class="tier-2 element-7" role="treeitem"><a href="/download/alternatives" title="">Alternative
+                    Implementations</a></li>
+
+              </ul>
+
+
+            </li>
+
+
+
+            <li id="documentation" class="tier-1 element-3  " aria-haspopup="true">
+              <a href="/doc/" title="" class="">Documentation</a>
+
+
+
+              <ul class="subnav menu" role="menu" aria-hidden="true">
+
+                <li class="tier-2 element-1" role="treeitem"><a href="/doc/" title="">Docs</a></li>
+
+                <li class="tier-2 element-2" role="treeitem"><a href="/doc/av" title="">Audio/Visual Talks</a></li>
+
+                <li class="tier-2 element-3" role="treeitem"><a href="https://wiki.python.org/moin/BeginnersGuide"
+                    title="">Beginner&#39;s Guide</a></li>
+
+                <li class="tier-2 element-4" role="treeitem"><a href="https://devguide.python.org/"
+                    title="">Developer&#39;s Guide</a></li>
+
+                <li class="tier-2 element-5" role="treeitem"><a href="https://docs.python.org/faq/" title="">FAQ</a>
+                </li>
+
+                <li class="tier-2 element-6" role="treeitem"><a href="http://wiki.python.org/moin/Languages"
+                    title="">Non-English Docs</a></li>
+
+                <li class="tier-2 element-7" role="treeitem"><a href="http://python.org/dev/peps/" title="">PEP
+                    Index</a></li>
+
+                <li class="tier-2 element-8" role="treeitem"><a href="https://wiki.python.org/moin/PythonBooks"
+                    title="">Python Books</a></li>
+
+                <li class="tier-2 element-9" role="treeitem"><a href="/doc/essays/" title="">Python Essays</a></li>
+
+              </ul>
+
+
+            </li>
+
+
+
+            <li id="community" class="tier-1 element-4  " aria-haspopup="true">
+              <a href="/community/" title="" class="">Community</a>
+
+
+
+              <ul class="subnav menu" role="menu" aria-hidden="true">
+
+                <li class="tier-2 element-1" role="treeitem"><a href="/community/survey" title="">Community Survey</a>
+                </li>
+
+                <li class="tier-2 element-2" role="treeitem"><a href="/community/diversity/" title="">Diversity</a></li>
+
+                <li class="tier-2 element-3" role="treeitem"><a href="/community/lists/" title="">Mailing Lists</a></li>
+
+                <li class="tier-2 element-4" role="treeitem"><a href="/community/irc/" title="">IRC</a></li>
+
+                <li class="tier-2 element-5" role="treeitem"><a href="/community/forums/" title="">Forums</a></li>
+
+                <li class="tier-2 element-6" role="treeitem"><a href="/community/workshops/" title="">Python
+                    Conferences</a></li>
+
+                <li class="tier-2 element-7" role="treeitem"><a href="/community/sigs/" title="">Special Interest
+                    Groups</a></li>
+
+                <li class="tier-2 element-8" role="treeitem"><a href="/community/logos/" title="">Python Logo</a></li>
+
+                <li class="tier-2 element-9" role="treeitem"><a href="https://wiki.python.org/moin/" title="">Python
+                    Wiki</a></li>
+
+                <li class="tier-2 element-10" role="treeitem"><a href="/community/merchandise/" title="">Merchandise</a>
+                </li>
+
+                <li class="tier-2 element-11" role="treeitem"><a href="/community/awards" title="">Community Awards</a>
+                </li>
+
+                <li class="tier-2 element-12" role="treeitem"><a href="https://www.python.org/psf/codeofconduct/"
+                    title="">Code of Conduct</a></li>
+
+              </ul>
+
+
+            </li>
+
+
+
+            <li id="success-stories" class="tier-1 element-5  " aria-haspopup="true">
+              <a href="/success-stories/" title="success-stories" class="">Success Stories</a>
+
+
+
+              <ul class="subnav menu" role="menu" aria-hidden="true">
+
+                <li class="tier-2 element-1" role="treeitem"><a href="/success-stories/category/arts/" title="">Arts</a>
+                </li>
+
+                <li class="tier-2 element-2" role="treeitem"><a href="/success-stories/category/business/"
+                    title="">Business</a></li>
+
+                <li class="tier-2 element-3" role="treeitem"><a href="/success-stories/category/education/"
+                    title="">Education</a></li>
+
+                <li class="tier-2 element-4" role="treeitem"><a href="/success-stories/category/engineering/"
+                    title="">Engineering</a></li>
+
+                <li class="tier-2 element-5" role="treeitem"><a href="/success-stories/category/government/"
+                    title="">Government</a></li>
+
+                <li class="tier-2 element-6" role="treeitem"><a href="/success-stories/category/scientific/"
+                    title="">Scientific</a></li>
+
+                <li class="tier-2 element-7" role="treeitem"><a href="/success-stories/category/software-development/"
+                    title="">Software Development</a></li>
+
+              </ul>
+
+
+            </li>
+
+
+
+            <li id="news" class="tier-1 element-6  " aria-haspopup="true">
+              <a href="/blogs/" title="News from around the Python world" class="">News</a>
+
+
+
+              <ul class="subnav menu" role="menu" aria-hidden="true">
+
+                <li class="tier-2 element-1" role="treeitem"><a href="/blogs/" title="Python Insider Blog Posts">Python
+                    News</a></li>
+
+                <li class="tier-2 element-2" role="treeitem"><a href="http://planetpython.org/"
+                    title="Planet Python">Community News</a></li>
+
+                <li class="tier-2 element-3" role="treeitem"><a href="http://pyfound.blogspot.com/" title="PSF Blog">PSF
+                    News</a></li>
+
+                <li class="tier-2 element-4" role="treeitem"><a href="http://pycon.blogspot.com/"
+                    title="PyCon Blog">PyCon News</a></li>
+
+              </ul>
+
+
+            </li>
+
+
+
+            <li id="events" class="tier-1 element-7  " aria-haspopup="true">
+              <a href="/events/" title="" class="">Events</a>
+
+
+
+              <ul class="subnav menu" role="menu" aria-hidden="true">
+
+                <li class="tier-2 element-1" role="treeitem"><a href="/events/python-events" title="">Python Events</a>
+                </li>
+
+                <li class="tier-2 element-2" role="treeitem"><a href="/events/python-user-group/" title="">User Group
+                    Events</a></li>
+
+                <li class="tier-2 element-3" role="treeitem"><a href="/events/python-events/past/" title="">Python
+                    Events Archive</a></li>
+
+                <li class="tier-2 element-4" role="treeitem"><a href="/events/python-user-group/past/" title="">User
+                    Group Events Archive</a></li>
+
+                <li class="tier-2 element-5" role="treeitem"><a
+                    href="https://wiki.python.org/moin/PythonEventsCalendar#Submitting_an_Event" title="">Submit an
+                    Event</a></li>
+
+              </ul>
+
+
+            </li>
+
+
+
+
+
+          </ul>
+
+
+        </nav>
+
+        <div class="header-banner ">
+          <!-- for optional "do-not-print" class -->
+
+          <div class="download-for-current-os">
+
+            <div class="download-os-mac-osx" style="display: none;">
+
+              <h1 class="call-to-action">Download the latest version for Mac OS X</h1>
+
+              <p class="download-buttons">
+
+                <a class="button" href="https://www.python.org/ftp/python/3.7.3/python-3.7.3-macosx10.9.pkg">Download
+                  Python 3.7.3</a>
+
+              </p>
+            </div>
+
+            <div class="download-os-source" style="display: none;">
+
+              <h1 class="call-to-action">Download the latest source release</h1>
+
+              <p class="download-buttons">
+
+                <a class="button" href="https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz">Download Python
+                  3.7.3</a>
+
+              </p>
+            </div>
+
+            <div class="download-os-windows" style="display: none;">
+
+              <h1 class="call-to-action">Download the latest version for Windows</h1>
+
+              <p class="download-buttons">
+
+                <a class="button" href="https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe">Download Python
+                  3.7.3</a>
+
+              </p>
+            </div>
+
+            <div class="download-unknown">
+              <h1 class="call-to-action">Download the latest version of Python</h1>
+              <p class="download-buttons">
+
+                <a class="button" href="/downloads/release/python-373/">Download Python 3.7.3</a>
+
+              </p>
+            </div>
+            <p>
+              Looking for Python with a different OS? Python for
+              <a href="/downloads/windows/">Windows</a>,
+              <a href="/downloads/source/">Linux/UNIX</a>,
+              <a href="/downloads/mac-osx/">Mac OS X</a>,
+              <a href="/download/other/">Other</a>
+            </p>
+
+            <p style="margin-top: 0.35em">
+              Want to help test development versions of Python?
+              <a href="/download/pre-releases/">Pre-releases</a>,
+              <a href="https://quay.io/repository/python-devs/ci-image">Docker images</a>
+            </p>
+
+            <p style="margin-top: 0.35em">
+              Looking for Python 2.7? See below for specific releases
+            </p>
+
+
+          </div>
+
+        </div>
+
+
+
+
+      </div><!-- end .container -->
+    </header>
+
+    <div id="content" class="content-wrapper">
+      <!-- Main Content Column -->
+      <div class="container">
+
+        <section class="main-content " role="main">
+
+
+
+
+
+
+
+          <div class="row download-list-widget">
+
+            <div class="notification-bar notification-bar--survey"
+              style="background-color: #ffdf76; color: #664e04; border-color: #004d7a; text-align: center; background-color: #004d7a; color: #fff; padding: 10px; margin: .5em; position: relative; width: 95%; background-color: #ffdf76; color: #664e04; border-color: #004d7a; border-radius: 1em;">
+              <span class="notification-bar__icon">
+                <i class="fa fa-chart-line" aria-hidden="true"></i>
+              </span>
+              <span class="notification-bar__message">Contribute to the PSF by Purchasing a PyCharm License. All
+                proceeds benefit the PSF. &nbsp;&nbsp;<a class="button button--dark button--small button--primary"
+                  style="color: #606060; border-color: #006dad; background-color: #006dad;"
+                  href="https://www.jetbrains.com/pycharm/promo/support-python/" target="_blank" rel="noopener">Donate
+                  Now</a>
+              </span>
+            </div>
+
+
+            <h2 class="widget-title">Looking for a specific release?</h2>
+            <p class="success-quote">Python releases by version number:</p>
+
+            <div class="list-row-headings">
+              <span class="release-number">Release version</span>
+              <span class="release-date">Release date</span>
+              <span class="release-download">&nbsp;</span>
+              <span class="release-enhancements">Click for more</span>
+            </div>
+            <ol class="list-row-container menu">
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-373/">Python 3.7.3</a></span>
+                <span class="release-date">March 25, 2019</span>
+                <span class="release-download"><a href="/downloads/release/python-373/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.7/whatsnew/changelog.html#python-3-7-3-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-3410/">Python 3.4.10</a></span>
+                <span class="release-date">March 18, 2019</span>
+                <span class="release-download"><a href="/downloads/release/python-3410/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-10">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-357/">Python 3.5.7</a></span>
+                <span class="release-date">March 18, 2019</span>
+                <span class="release-download"><a href="/downloads/release/python-357/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-7">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-2716/">Python 2.7.16</a></span>
+                <span class="release-date">March 4, 2019</span>
+                <span class="release-download"><a href="/downloads/release/python-2716/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://raw.githubusercontent.com/python/cpython/v2.7.16/Misc/NEWS.d/2.7.16.rst">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-372/">Python 3.7.2</a></span>
+                <span class="release-date">Dec. 24, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-372/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.7/whatsnew/changelog.html#python-3-7-2-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-368/">Python 3.6.8</a></span>
+                <span class="release-date">Dec. 24, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-368/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-8-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-371/">Python 3.7.1</a></span>
+                <span class="release-date">Oct. 20, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-371/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.7/whatsnew/changelog.html#python-3-7-1-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-367/">Python 3.6.7</a></span>
+                <span class="release-date">Oct. 20, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-367/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-7-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-356/">Python 3.5.6</a></span>
+                <span class="release-date">Aug. 2, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-356/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-6">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-349/">Python 3.4.9</a></span>
+                <span class="release-date">Aug. 2, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-349/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-9">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-370/">Python 3.7.0</a></span>
+                <span class="release-date">June 27, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-370/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.7/whatsnew/changelog.html#python-3-7-0-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-366/">Python 3.6.6</a></span>
+                <span class="release-date">June 27, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-366/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-6-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-2715/">Python 2.7.15</a></span>
+                <span class="release-date">May 1, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-2715/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a href="">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-365/">Python 3.6.5</a></span>
+                <span class="release-date">March 28, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-365/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-5-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-348/">Python 3.4.8</a></span>
+                <span class="release-date">Feb. 5, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-348/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-8-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-355/">Python 3.5.5</a></span>
+                <span class="release-date">Feb. 5, 2018</span>
+                <span class="release-download"><a href="/downloads/release/python-355/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-5-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-364/">Python 3.6.4</a></span>
+                <span class="release-date">Dec. 19, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-364/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-4-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-363/">Python 3.6.3</a></span>
+                <span class="release-date">Oct. 3, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-363/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-3-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-337/">Python 3.3.7</a></span>
+                <span class="release-date">Sept. 19, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-337/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/release/3.3.7/whatsnew/changelog.html">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-2714/">Python 2.7.14</a></span>
+                <span class="release-date">Sept. 16, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-2714/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://raw.githubusercontent.com/python/cpython/84471935ed2f62b8c5758fd544c7d37076fe0fa5/Misc/NEWS">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-347/">Python 3.4.7</a></span>
+                <span class="release-date">Aug. 9, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-347/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-7">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-354/">Python 3.5.4</a></span>
+                <span class="release-date">Aug. 8, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-354/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-4">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-362/">Python 3.6.2</a></span>
+                <span class="release-date">July 17, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-362/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-2-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-361/">Python 3.6.1</a></span>
+                <span class="release-date">March 21, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-361/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-1-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-346/">Python 3.4.6</a></span>
+                <span class="release-date">Jan. 17, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-346/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-6">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-353/">Python 3.5.3</a></span>
+                <span class="release-date">Jan. 17, 2017</span>
+                <span class="release-download"><a href="/downloads/release/python-353/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-3">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-360/">Python 3.6.0</a></span>
+                <span class="release-date">Dec. 23, 2016</span>
+                <span class="release-download"><a href="/downloads/release/python-360/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.6/whatsnew/changelog.html#python-3-6-0-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-2713/">Python 2.7.13</a></span>
+                <span class="release-date">Dec. 17, 2016</span>
+                <span class="release-download"><a href="/downloads/release/python-2713/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://hg.python.org/cpython/raw-file/v2.7.13/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-345/">Python 3.4.5</a></span>
+                <span class="release-date">June 27, 2016</span>
+                <span class="release-download"><a href="/downloads/release/python-345/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-5">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-352/">Python 3.5.2</a></span>
+                <span class="release-date">June 27, 2016</span>
+                <span class="release-download"><a href="/downloads/release/python-352/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-2">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-2712/">Python 2.7.12</a></span>
+                <span class="release-date">June 25, 2016</span>
+                <span class="release-download"><a href="/downloads/release/python-2712/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://hg.python.org/cpython/raw-file/v2.7.12/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-344/">Python 3.4.4</a></span>
+                <span class="release-date">Dec. 21, 2015</span>
+                <span class="release-download"><a href="/downloads/release/python-344/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-4">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-351/">Python 3.5.1</a></span>
+                <span class="release-date">Dec. 7, 2015</span>
+                <span class="release-download"><a href="/downloads/release/python-351/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-1-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-2711/">Python 2.7.11</a></span>
+                <span class="release-date">Dec. 5, 2015</span>
+                <span class="release-download"><a href="/downloads/release/python-2711/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://hg.python.org/cpython/raw-file/53d30ab403f1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-350/">Python 3.5.0</a></span>
+                <span class="release-date">Sept. 13, 2015</span>
+                <span class="release-download"><a href="/downloads/release/python-350/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.5/whatsnew/changelog.html#python-3-5-0-final">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-2710/">Python 2.7.10</a></span>
+                <span class="release-date">May 23, 2015</span>
+                <span class="release-download"><a href="/downloads/release/python-2710/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://hg.python.org/cpython/raw-file/15c95b7d81dc/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-343/">Python 3.4.3</a></span>
+                <span class="release-date">Feb. 25, 2015</span>
+                <span class="release-download"><a href="/downloads/release/python-343/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-3">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-279/">Python 2.7.9</a></span>
+                <span class="release-date">Dec. 10, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-279/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://hg.python.org/cpython/raw-file/v2.7.9/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-342/">Python 3.4.2</a></span>
+                <span class="release-date">Oct. 13, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-342/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-2">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-336/">Python 3.3.6</a></span>
+                <span class="release-date">Oct. 12, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-336/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a href="https://hg.python.org/cpython/file/v3.3.6/Misc/NEWS">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-326/">Python 3.2.6</a></span>
+                <span class="release-date">Oct. 12, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-326/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a href="https://hg.python.org/cpython/file/v3.2.6/Misc/NEWS">Release
+                    Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-278/">Python 2.7.8</a></span>
+                <span class="release-date">July 2, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-278/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.8/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-277/">Python 2.7.7</a></span>
+                <span class="release-date">June 1, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-277/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.7/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-341/">Python 3.4.1</a></span>
+                <span class="release-date">May 19, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-341/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-1">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-340/">Python 3.4.0</a></span>
+                <span class="release-date">March 17, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-340/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/3.4/whatsnew/changelog.html#python-3-4-0">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-335/">Python 3.3.5</a></span>
+                <span class="release-date">March 9, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-335/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/release/3.3.5/whatsnew/changelog.html">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-334/">Python 3.3.4</a></span>
+                <span class="release-date">Feb. 9, 2014</span>
+                <span class="release-download"><a href="/downloads/release/python-334/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/release/3.3.4/whatsnew/changelog.html">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-333/">Python 3.3.3</a></span>
+                <span class="release-date">Nov. 17, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-333/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/release/3.3.3/whatsnew/changelog.html">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-276/">Python 2.7.6</a></span>
+                <span class="release-date">Nov. 10, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-276/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.6/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-269/">Python 2.6.9</a></span>
+                <span class="release-date">Oct. 29, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-269/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.9/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-332/">Python 3.3.2</a></span>
+                <span class="release-date">May 15, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-332/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/release/3.3.2/whatsnew/changelog.html">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-325/">Python 3.2.5</a></span>
+                <span class="release-date">May 15, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-325/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.2.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-275/">Python 2.7.5</a></span>
+                <span class="release-date">May 12, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-275/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-324/">Python 3.2.4</a></span>
+                <span class="release-date">April 6, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-324/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.2.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-274/">Python 2.7.4</a></span>
+                <span class="release-date">April 6, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-274/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-331/">Python 3.3.1</a></span>
+                <span class="release-date">April 6, 2013</span>
+                <span class="release-download"><a href="/downloads/release/python-331/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="https://docs.python.org/release/3.3.1/whatsnew/changelog.html">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-330/">Python 3.3.0</a></span>
+                <span class="release-date">Sept. 29, 2012</span>
+                <span class="release-download"><a href="/downloads/release/python-330/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.3.0/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-323/">Python 3.2.3</a></span>
+                <span class="release-date">April 10, 2012</span>
+                <span class="release-download"><a href="/downloads/release/python-323/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.2.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-268/">Python 2.6.8</a></span>
+                <span class="release-date">April 10, 2012</span>
+                <span class="release-download"><a href="/downloads/release/python-268/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.8/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-273/">Python 2.7.3</a></span>
+                <span class="release-date">April 9, 2012</span>
+                <span class="release-download"><a href="/downloads/release/python-273/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-315/">Python 3.1.5</a></span>
+                <span class="release-date">April 9, 2012</span>
+                <span class="release-download"><a href="/downloads/release/python-315/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.1.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-322/">Python 3.2.2</a></span>
+                <span class="release-date">Sept. 3, 2011</span>
+                <span class="release-download"><a href="/downloads/release/python-322/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.2.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-321/">Python 3.2.1</a></span>
+                <span class="release-date">July 9, 2011</span>
+                <span class="release-download"><a href="/downloads/release/python-321/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.2.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-272/">Python 2.7.2</a></span>
+                <span class="release-date">June 11, 2011</span>
+                <span class="release-download"><a href="/downloads/release/python-272/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-314/">Python 3.1.4</a></span>
+                <span class="release-date">June 11, 2011</span>
+                <span class="release-download"><a href="/downloads/release/python-314/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.1.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-267/">Python 2.6.7</a></span>
+                <span class="release-date">June 3, 2011</span>
+                <span class="release-download"><a href="/downloads/release/python-267/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.7/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-256/">Python 2.5.6</a></span>
+                <span class="release-date">May 26, 2011</span>
+                <span class="release-download"><a href="/downloads/release/python-256/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.5.6/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-320/">Python 3.2.0</a></span>
+                <span class="release-date">Feb. 20, 2011</span>
+                <span class="release-download"><a href="/downloads/release/python-320/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-271/">Python 2.7.1</a></span>
+                <span class="release-date">Nov. 27, 2010</span>
+                <span class="release-download"><a href="/downloads/release/python-271/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-313/">Python 3.1.3</a></span>
+                <span class="release-date">Nov. 27, 2010</span>
+                <span class="release-download"><a href="/downloads/release/python-313/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.1.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-266/">Python 2.6.6</a></span>
+                <span class="release-date">Aug. 24, 2010</span>
+                <span class="release-download"><a href="/downloads/release/python-266/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.6/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-270/">Python 2.7.0</a></span>
+                <span class="release-date">July 3, 2010</span>
+                <span class="release-download"><a href="/downloads/release/python-270/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.7/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-312/">Python 3.1.2</a></span>
+                <span class="release-date">March 20, 2010</span>
+                <span class="release-download"><a href="/downloads/release/python-312/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.1.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-265/">Python 2.6.5</a></span>
+                <span class="release-date">March 18, 2010</span>
+                <span class="release-download"><a href="/downloads/release/python-265/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-255/">Python 2.5.5</a></span>
+                <span class="release-date">Jan. 31, 2010</span>
+                <span class="release-download"><a href="/downloads/release/python-255/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.5.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-264/">Python 2.6.4</a></span>
+                <span class="release-date">Oct. 26, 2009</span>
+                <span class="release-download"><a href="/downloads/release/python-264/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-263/">Python 2.6.3</a></span>
+                <span class="release-date">Oct. 2, 2009</span>
+                <span class="release-download"><a href="/downloads/release/python-263/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-311/">Python 3.1.1</a></span>
+                <span class="release-date">Aug. 17, 2009</span>
+                <span class="release-download"><a href="/downloads/release/python-311/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.1.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-310/">Python 3.1.0</a></span>
+                <span class="release-date">June 26, 2009</span>
+                <span class="release-download"><a href="/downloads/release/python-310/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-262/">Python 2.6.2</a></span>
+                <span class="release-date">April 14, 2009</span>
+                <span class="release-download"><a href="/downloads/release/python-262/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-301/">Python 3.0.1</a></span>
+                <span class="release-date">Feb. 13, 2009</span>
+                <span class="release-download"><a href="/downloads/release/python-301/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.0.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-254/">Python 2.5.4</a></span>
+                <span class="release-date">Dec. 23, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-254/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.5.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-253/">Python 2.5.3</a></span>
+                <span class="release-date">Dec. 19, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-253/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.5.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-246/">Python 2.4.6</a></span>
+                <span class="release-date">Dec. 19, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-246/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.4.6/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-261/">Python 2.6.1</a></span>
+                <span class="release-date">Dec. 4, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-261/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-300/">Python 3.0.0</a></span>
+                <span class="release-date">Dec. 3, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-300/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v3.0/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-260/">Python 2.6.0</a></span>
+                <span class="release-date">Oct. 2, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-260/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.6/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-237/">Python 2.3.7</a></span>
+                <span class="release-date">March 11, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-237/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.3.7/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-245/">Python 2.4.5</a></span>
+                <span class="release-date">March 11, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-245/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.4.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-252/">Python 2.5.2</a></span>
+                <span class="release-date">Feb. 21, 2008</span>
+                <span class="release-download"><a href="/downloads/release/python-252/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.5.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-251/">Python 2.5.1</a></span>
+                <span class="release-date">April 19, 2007</span>
+                <span class="release-download"><a href="/downloads/release/python-251/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.5.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-236/">Python 2.3.6</a></span>
+                <span class="release-date">Nov. 1, 2006</span>
+                <span class="release-download"><a href="/downloads/release/python-236/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.3.6/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-244/">Python 2.4.4</a></span>
+                <span class="release-date">Oct. 18, 2006</span>
+                <span class="release-download"><a href="/downloads/release/python-244/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.4.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-250/">Python 2.5.0</a></span>
+                <span class="release-date">Sept. 19, 2006</span>
+                <span class="release-download"><a href="/downloads/release/python-250/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-243/">Python 2.4.3</a></span>
+                <span class="release-date">April 15, 2006</span>
+                <span class="release-download"><a href="/downloads/release/python-243/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.4.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-242/">Python 2.4.2</a></span>
+                <span class="release-date">Sept. 27, 2005</span>
+                <span class="release-download"><a href="/downloads/release/python-242/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.4.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-241/">Python 2.4.1</a></span>
+                <span class="release-date">March 30, 2005</span>
+                <span class="release-download"><a href="/downloads/release/python-241/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.4.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-235/">Python 2.3.5</a></span>
+                <span class="release-date">Feb. 8, 2005</span>
+                <span class="release-download"><a href="/downloads/release/python-235/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.3.5/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-240/">Python 2.4.0</a></span>
+                <span class="release-date">Nov. 30, 2004</span>
+                <span class="release-download"><a href="/downloads/release/python-240/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-234/">Python 2.3.4</a></span>
+                <span class="release-date">May 27, 2004</span>
+                <span class="release-download"><a href="/downloads/release/python-234/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.3.4/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-233/">Python 2.3.3</a></span>
+                <span class="release-date">Dec. 19, 2003</span>
+                <span class="release-download"><a href="/downloads/release/python-233/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.3.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-232/">Python 2.3.2</a></span>
+                <span class="release-date">Oct. 3, 2003</span>
+                <span class="release-download"><a href="/downloads/release/python-232/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.3.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-231/">Python 2.3.1</a></span>
+                <span class="release-date">Sept. 23, 2003</span>
+                <span class="release-download"><a href="/downloads/release/python-231/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.3.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-230/">Python 2.3.0</a></span>
+                <span class="release-date">July 29, 2003</span>
+                <span class="release-download"><a href="/downloads/release/python-230/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/15fc83c505e3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-223/">Python 2.2.3</a></span>
+                <span class="release-date">May 30, 2003</span>
+                <span class="release-download"><a href="/downloads/release/python-223/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.2.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-222/">Python 2.2.2</a></span>
+                <span class="release-date">Oct. 14, 2002</span>
+                <span class="release-download"><a href="/downloads/release/python-222/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.2.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-221/">Python 2.2.1</a></span>
+                <span class="release-date">April 10, 2002</span>
+                <span class="release-download"><a href="/downloads/release/python-221/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.2.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-213/">Python 2.1.3</a></span>
+                <span class="release-date">April 9, 2002</span>
+                <span class="release-download"><a href="/downloads/release/python-213/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.1.3/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-220/">Python 2.2.0</a></span>
+                <span class="release-date">Dec. 21, 2001</span>
+                <span class="release-download"><a href="/downloads/release/python-220/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.2/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+              <li>
+                <span class="release-number"><a href="/downloads/release/python-201/">Python 2.0.1</a></span>
+                <span class="release-date">June 22, 2001</span>
+                <span class="release-download"><a href="/downloads/release/python-201/"><span aria-hidden="true"
+                      class="icon-download"></span> Download</a></span>
+                <span class="release-enhancements"><a
+                    href="http://hg.python.org/cpython/raw-file/v2.0.1/Misc/NEWS">Release Notes</a></span>
+              </li>
+
+            </ol>
+            <p><a href="/download/releases/">View older releases</a>
+              <!-- removed by Frank until content available <small><em>Older releases: <a href="#">Source releases, <a href="#">binaries-1.1</a>, <a href="#">binaries-1.2</a>, <a href="#">binaries-1.3</a>, <a href="#">binaries-1.4</a>, <a href="#">binaries-1.5</a></em></small> -->
+            </p>
+
+          </div>
+
+
+          <div class="row">
+
+            <div class="small-widget download-widget1">
+              <h2 class="widget-title">Licenses</h2>
+              <p>All Python releases are <a href="http://www.opensource.org/">Open Source</a>. Historically, most, but
+                not all, Python releases have also been GPL-compatible. The Licenses page details GPL-compatibility and
+                Terms and Conditions. </p>
+              <p><a class="readmore"
+                  href="http://docs.python.org/3/license.html#terms-and-conditions-for-accessing-or-otherwise-using-python">Read
+                  more</a></p>
+
+            </div>
+
+            <div class="small-widget download-widget2">
+              <h2 class="widget-title">Sources</h2>
+              <p>For most Unix systems, you must download and compile the source code. The same source code archive can
+                also be used to build the Windows and Mac versions, and is the starting point for ports to all other
+                platforms.</p>
+
+              <p>Download the latest <a href="https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz">Python 3</a>
+                and <a href="https://www.python.org/ftp/python/2.7.16/Python-2.7.16.tar.xz">Python 2</a> source.</p>
+
+              <p><a class="readmore" href="/download/source/">Read more</a></p>
+
+            </div>
+
+            <div class="small-widget download-widget3">
+              <h2 class="widget-title">Alternative Implementations</h2>
+              <p>This site hosts the "traditional" implementation of Python (nicknamed CPython). A number of alternative
+                implementations are available as well. </p>
+              <p><a class="readmore" href="/download/alternatives/">Read more</a></p>
+
+            </div>
+
+            <div class="small-widget download-widget3 last">
+              <h2 class="widget-title">History</h2>
+              <p>Python was created in the early 1990s by Guido van Rossum at Stichting Mathematisch Centrum in the
+                Netherlands as a successor of a language called ABC. Guido remains Python’s principal author, although
+                it includes many contributions from others. </p>
+              <p><a class="readmore" href="http://docs.python.org/3/license.html">Read more</a></p>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+            <h2>Release Schedules</h2>
+
+            <ul>
+              <li><a href="https://www.python.org/dev/peps/pep-0537/">Python 3.7 Release Schedule</a></li>
+              <li><a href="https://www.python.org/dev/peps/pep-0494/">Python 3.6 Release Schedule</a></li>
+              <li><a href="https://www.python.org/dev/peps/pep-0478/">Python 3.5 Release Schedule</a></li>
+              <li><a href="https://www.python.org/dev/peps/pep-0429/">Python 3.4 Release Schedule</a></li>
+              <li><a href="https://www.python.org/dev/peps/pep-0373/">Python 2.7 Release Schedule</a></li>
+            </ul>
+
+            <!--
+The release schedule Google calendar is not up-to-date. See
+https://github.com/python/pythondotorg/issues/1070 for details.
+
+<div class="user-feedback level-general">
+<p>
+Looking for the release schedule? <a href="//www.google.com/calendar/embed?   src=b6v58qvojllt0i6ql654r1vh00@group.calendar.google.com"><span aria-hidden="true" class="icon-calendar"></span>Check the Google Calendar</a>.
+</p>
 </div>
-<ul>
-<li><a href="https://hg.python.org/cpython/shortlog">log</a></li>
-<li><a href="https://hg.python.org/cpython/graph">graph</a></li>
-<li class="active">tags</li>
-<li><a href="https://hg.python.org/cpython/bookmarks">bookmarks</a></li>
-<li><a href="https://hg.python.org/cpython/branches">branches</a></li>
-</ul>
-<ul>
-<li><a href="https://hg.python.org/cpython/help">help</a></li>
-</ul>
-<div class="atom-logo">
-<a href="https://hg.python.org/cpython/atom-tags" title="subscribe to atom feed">
-<img class="atom-logo" src="./index_files/feed-icon-14x14.png" alt="atom feed">
-</a>
-</div>
-</div>
+-->
+          </div>
 
-<div class="main">
-<h2 class="breadcrumb"><a href="https://hg.python.org/">Mercurial</a> &gt; <a href="https://hg.python.org/cpython">cpython</a> </h2>
-<h3>tags</h3>
+          <div class="row">
+            <h2>Information about specific ports, and developer info</h2>
 
-<form class="search" action="https://hg.python.org/cpython/log">
+            <ul>
+              <li><a href="/downloads/windows/">Windows (and DOS)</a></li>
+              <li><a href="/downloads/mac-osx/">Macintosh</a></li>
+              <li><a href="/download/other/">Other platforms</a></li>
+              <li><a href="/downloads/source/">Source</a></li>
+              <li><a href="/dev/">Python Developer's Guide</a></li>
+              <li><a href="http://bugs.python.org">Python Issue Tracker</a></li>
+            </ul>
+          </div>
 
-<p><input name="rev" id="search1" type="text" size="30"></p>
-<div id="hint">Find changesets by keywords (author, files, the commit message), revision
-number or hash, or <a href="https://hg.python.org/cpython/help/revsets">revset expression</a>.</div>
-</form>
+          <div class="row">
+            <h2>OpenPGP Public Keys</h2>
+            <p>
+              Source and binary executables are signed by the release manager using their
+              OpenPGP key. The release managers and binary builders since Python 2.3 have
+              been:
+            </p>
+            <ul>
+              <li>Anthony Baxter (key id: 6A45C816)</li>
+              <li>Georg Brandl (key id: 36580288)</li>
+              <li><a class="reference external" href="https://keybase.io/nad/">Ned Deily</a> (key ids: <a
+                  class="reference external"
+                  href="https://keybase.io/nad/pgp_keys.asc?fingerprint=0d96df4d4110e5c43fbfb17f2d347ea6aa65421d">AA65421D</a>,
+                <a class="reference external"
+                  href="https://keybase.io/nad/pgp_keys.asc?fingerprint=c9b104b3dd3aa72d7ccb1066fb9921286f5e1540">6F5E1540</a>,
+                and Apple Developer ID <strong>DJ3H93M7VJ</strong>)</li>
+              <li><a class="reference external" href="https://keybase.io/stevedower/">Steve Dower</a> (key id: <a
+                  class="reference external"
+                  href="https://keybase.io/stevedower/pgp_keys.asc?fingerprint=7ed10b6531d7c8e1bc296021fc624643487034e5">487034E5</a>)
+              </li>
+              <li>Larry Hastings (key id: F73C700D)</li>
+              <li><a class="reference external" href="https://keybase.io/ambv/">Łukasz Langa</a> (key id: <a
+                  class="reference external"
+                  href="https://keybase.io/ambv/pgp_keys.asc?fingerprint=e3ff2839c048b25c084debe9b26995e310250568">10250568</a>)
+              </li>
+              <li>Martin v. Löwis (key id: <a class="reference external"
+                  href="https://www.dcl.hpi.uni-potsdam.de/people/loewis/mvl.asc">7D9DC8D2</a>)</li>
+              <li>Ronald Oussoren (key id: E6DF025C)</li>
+              <li><a class="reference external" href="https://keybase.io/bp/">Benjamin Peterson</a> (key id: <a
+                  class="reference external"
+                  href="https://keybase.io/bp/pgp_keys.asc?fingerprint=c01e1cad5ea2c4f0b8e3571504c367c218add4ff">18ADD4FF</a>
+                and A4135B38)</li>
+              <li><a class="reference external" href="https://keybase.io/pumpichank/">Barry Warsaw</a> (key ids: <a
+                  class="reference external"
+                  href="https://keybase.io/pumpichank/pgp_keys.asc?fingerprint=8417157edbe73d9eac1e539b126eb563a74b06bf">A74B06BF</a>,
+                <a class="reference external" href="http://barry.warsaw.us/barrypub-gpg.asc">EA5BBD71, and ED9D77D5</a>)
+              </li>
+            </ul>
+            <br>
+            <p>Note: Barry's key id A74B06BF is used to sign the Python 2.6.8 and 2.6.9
+              releases. His key id EA5BBD71 was used to sign all other Python 2.6 and 3.0
+              releases. His key id ED9D77D5 is a v3 key and was used to sign older
+              releases; because it is an old MD5 key and rejected by more recent implementations, ED9D77D5
+              is no longer included in the public key file.</p>
+            <br>
+            <p>You can import the release manager public keys by either downloading
+              <a class="reference external" href="/static/files/pubkeys.txt">the public key file from here</a> and then
+              running</p>
 
-<table class="bigtable">
-<thead>
-<tr>
- <th>tag</th>
- <th>node</th>
-</tr>
-</thead>
-<tbody class="stripes2">
+            <code><pre>
+gpg --import pubkeys.txt
+</pre></code>
 
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/tip">
-tip
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/da510d1aa683">
-da510d1aa683
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0rc1">
-v3.6.0rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/29a273eee9a5">
-29a273eee9a5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.13rc1">
-v2.7.13rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4d6fd49eeb14">
-4d6fd49eeb14
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0b4">
-v3.6.0b4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/18496abdb3d5">
-18496abdb3d5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0b3">
-v3.6.0b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8345e066c0ed">
-8345e066c0ed
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0b2">
-v3.6.0b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b9fadc7d1c3f">
-b9fadc7d1c3f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0b1">
-v3.6.0b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/5b0ca4ed5e2f">
-5b0ca4ed5e2f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0a4">
-v3.6.0a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/017cf260936b">
-017cf260936b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0a3">
-v3.6.0a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f3edf13dc339">
-f3edf13dc339
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.5">
-v3.4.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/619b61e505d0">
-619b61e505d0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.2">
-v3.5.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4def2a2901a5">
-4def2a2901a5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.12">
-v2.7.12
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d33e0cf91556">
-d33e0cf91556
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0a2">
-v3.6.0a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/378893423552">
-378893423552
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.5rc1">
-v3.4.5rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/3631bb4a2490">
-3631bb4a2490
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.2rc1">
-v3.5.2rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/68feec6488b2">
-68feec6488b2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.12rc1">
-v2.7.12rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/13912cd1e7e8">
-13912cd1e7e8
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.6.0a1">
-v3.6.0a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/5896da372fb0">
-5896da372fb0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.4">
-v3.4.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/737efcadf5a6">
-737efcadf5a6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.4rc1">
-v3.4.4rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/04f3f725896c">
-04f3f725896c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.1">
-v3.5.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/37a07cee5969">
-37a07cee5969
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.11">
-v2.7.11
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/6d1b6a68f775">
-6d1b6a68f775
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.1rc1">
-v3.5.1rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/948ef16a6951">
-948ef16a6951
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.11rc1">
-v2.7.11rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/82dd9545bd93">
-82dd9545bd93
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0">
-v3.5.0
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/374f501f4567">
-374f501f4567
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0rc4">
-v3.5.0rc4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2d033fedfa7f">
-2d033fedfa7f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0rc3">
-v3.5.0rc3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/66ed52375df8">
-66ed52375df8
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0rc2">
-v3.5.0rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cc15d736d860">
-cc15d736d860
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0rc1">
-v3.5.0rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1a58b1227501">
-1a58b1227501
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0b4">
-v3.5.0b4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c0d641054635">
-c0d641054635
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0b3">
-v3.5.0b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0035fcd9b924">
-0035fcd9b924
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0b2">
-v3.5.0b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7a088af5615b">
-7a088af5615b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0b1">
-v3.5.0b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/071fefbb5e3d">
-071fefbb5e3d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.10">
-v2.7.10
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/15c95b7d81dc">
-15c95b7d81dc
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.10rc1">
-v2.7.10rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/80ccce248ba2">
-80ccce248ba2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0a4">
-v3.5.0a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/413e0e0004f4">
-413e0e0004f4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0a3">
-v3.5.0a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/82656e28b5e5">
-82656e28b5e5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0a2">
-v3.5.0a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0337bd7ebcb6">
-0337bd7ebcb6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.3">
-v3.4.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b4cbecbc0781">
-b4cbecbc0781
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.5.0a1">
-v3.5.0a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/5d4b6a57d5fd">
-5d4b6a57d5fd
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.3rc1">
-v3.4.3rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/69dd528ca625">
-69dd528ca625
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.9">
-v2.7.9
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/648dcafa7e5f">
-648dcafa7e5f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.9rc1">
-v2.7.9rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/40eada278702">
-40eada278702
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.6">
-v3.3.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/971fec30da1f">
-971fec30da1f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.6">
-v3.2.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0bd5f4f14de9">
-0bd5f4f14de9
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.2">
-v3.4.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ab2c023a9432">
-ab2c023a9432
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.6rc1">
-v3.3.6rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/51317c9786f5">
-51317c9786f5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.6rc1">
-v3.2.6rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/51382a5598ec">
-51382a5598ec
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.2rc1">
-v3.4.2rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8711a0951384">
-8711a0951384
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.8">
-v2.7.8
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ee879c0ffa11">
-ee879c0ffa11
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.7">
-v2.7.7
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f89216059edf">
-f89216059edf
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.1">
-v3.4.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c0e311e010fc">
-c0e311e010fc
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.1rc1">
-v3.4.1rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c67a19e11a71">
-c67a19e11a71
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.7rc1">
-v2.7.7rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e32e3a9f3902">
-e32e3a9f3902
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0">
-v3.4.0
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/04f714765c13">
-04f714765c13
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0rc3">
-v3.4.0rc3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8a81cdab3e9d">
-8a81cdab3e9d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0rc2">
-v3.4.0rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a300712ed38c">
-a300712ed38c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.5">
-v3.3.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/62cf4e77f785">
-62cf4e77f785
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.5rc2">
-v3.3.5rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ca5635efe090">
-ca5635efe090
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.5rc1">
-v3.3.5rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/9ec811df548e">
-9ec811df548e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0rc1">
-v3.4.0rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/5e088cea8660">
-5e088cea8660
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.4">
-v3.3.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7ff62415e426">
-7ff62415e426
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.4rc1">
-v3.3.4rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/fa92f5f940c6">
-fa92f5f940c6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0b3">
-v3.4.0b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a97ce3ecc96a">
-a97ce3ecc96a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0b2">
-v3.4.0b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ba32913eb13e">
-ba32913eb13e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0b1">
-v3.4.0b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/3405dc9a6afa">
-3405dc9a6afa
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.3">
-v3.3.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c3896275c0f6">
-c3896275c0f6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.3rc2">
-v3.3.3rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d32442c0e60d">
-d32442c0e60d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.6">
-v2.7.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/3a1db0d2747e">
-3a1db0d2747e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.9">
-v2.6.9
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/fcb3ec2842f9">
-fcb3ec2842f9
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.3rc1">
-v3.3.3rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/fd53c500f8b8">
-fd53c500f8b8
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.6rc1">
-v2.7.6rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4913d0e9be30">
-4913d0e9be30
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0a4">
-v3.4.0a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e245b0d7209b">
-e245b0d7209b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.9rc1">
-v2.6.9rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a0025037f11a">
-a0025037f11a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0a3">
-v3.4.0a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/dd9cdf90a507">
-dd9cdf90a507
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0a2">
-v3.4.0a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/9265a2168e2c">
-9265a2168e2c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.4.0a1">
-v3.4.0a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/46535f65e7f3">
-46535f65e7f3
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.2">
-v3.3.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d047928ae3f6">
-d047928ae3f6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.5">
-v3.2.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cef745775b65">
-cef745775b65
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.5">
-v2.7.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ab05e7dd2788">
-ab05e7dd2788
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.1">
-v3.3.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d9893d13c628">
-d9893d13c628
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.1rc1">
-v3.3.1rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/92c2cfb92405">
-92c2cfb92405
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.4">
-v3.2.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1e10bdeabe3d">
-1e10bdeabe3d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.4rc1">
-v3.2.4rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b2cb7bc1edb8">
-b2cb7bc1edb8
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.4">
-v2.7.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/026ee0057e2d">
-026ee0057e2d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.4rc1">
-v2.7.4rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a8d18780bc2b">
-a8d18780bc2b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0">
-v3.3.0
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/bd8afb90ebf2">
-bd8afb90ebf2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0rc3">
-v3.3.0rc3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c191d21cefaf">
-c191d21cefaf
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0rc2">
-v3.3.0rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/88a0792e8ba3">
-88a0792e8ba3
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0rc1">
-v3.3.0rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8bb5c7bc46ba">
-8bb5c7bc46ba
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0b2">
-v3.3.0b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4972a8f1b2aa">
-4972a8f1b2aa
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0b1">
-v3.3.0b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e15c554cd43e">
-e15c554cd43e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0a4">
-v3.3.0a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7c51388a3aa7">
-7c51388a3aa7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0a3">
-v3.3.0a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0b53b70a40a0">
-0b53b70a40a0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.3">
-v3.2.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/3d0686d90f55">
-3d0686d90f55
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.8">
-v2.6.8
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c9910fd022fc">
-c9910fd022fc
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.3">
-v2.7.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/70274d53c1dd">
-70274d53c1dd
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.5">
-v3.1.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7395330e495e">
-7395330e495e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0a2">
-v3.3.0a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2f69db52d6de">
-2f69db52d6de
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.3rc2">
-v3.2.3rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/428f05cb7277">
-428f05cb7277
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.8rc2">
-v2.6.8rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1d1b7b9fad48">
-1d1b7b9fad48
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.5rc2">
-v3.1.5rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/75db2bc69fc9">
-75db2bc69fc9
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.3rc2">
-v2.7.3rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d46c1973d3c4">
-d46c1973d3c4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.3.0a1">
-v3.3.0a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f1a9a6505731">
-f1a9a6505731
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.3rc1">
-v3.2.3rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7085403daf43">
-7085403daf43
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.8rc1">
-v2.6.8rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/caab08cd2b3e">
-caab08cd2b3e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.3rc1">
-v2.7.3rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b2c6aff96e12">
-b2c6aff96e12
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.5rc1">
-v3.1.5rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ee26aca3219c">
-ee26aca3219c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.2">
-v3.2.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/137e45f15c0b">
-137e45f15c0b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.2rc1">
-v3.2.2rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c860feaa348d">
-c860feaa348d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.1">
-v3.2.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ac1f7e5c0510">
-ac1f7e5c0510
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.1rc2">
-v3.2.1rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/5df549718fb4">
-5df549718fb4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.4">
-v3.1.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c918ec9f3a76">
-c918ec9f3a76
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.2">
-v2.7.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8527427914a2">
-8527427914a2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.7">
-v2.6.7
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a39a30ac7f2e">
-a39a30ac7f2e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.2rc1">
-v2.7.2rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f48756685406">
-f48756685406
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.4rc1">
-v3.1.4rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/32fcb9e94985">
-32fcb9e94985
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.6">
-v2.5.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/de34c7b097e8">
-de34c7b097e8
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.6c1">
-v2.5.6c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a87c7b96672b">
-a87c7b96672b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.1rc1">
-v3.2.1rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cfa9364997c7">
-cfa9364997c7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2.1b1">
-v3.2.1b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8ffac2337a33">
-8ffac2337a33
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2">
-v3.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a222a015e28d">
-a222a015e28d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2rc3">
-v3.2rc3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/18c1f5289650">
-18c1f5289650
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2rc2">
-v3.2rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/acf3e24dd0d0">
-acf3e24dd0d0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2rc1">
-v3.2rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/865d5b24bf28">
-865d5b24bf28
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2b2">
-v3.2b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e3af5f3a7904">
-e3af5f3a7904
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2b1">
-v3.2b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b635cea94195">
-b635cea94195
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.3">
-v3.1.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a4f75773c006">
-a4f75773c006
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.1">
-v2.7.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/5395f96588d4">
-5395f96588d4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7.1rc1">
-v2.7.1rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/63d9f00fea07">
-63d9f00fea07
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.3rc1">
-v3.1.3rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d18e9d71f369">
-d18e9d71f369
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2a4">
-v3.2a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d92a5b850f5e">
-d92a5b850f5e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2a3">
-v3.2a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/da012d9a2c23">
-da012d9a2c23
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2a2">
-v3.2a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/56d4373cecb7">
-56d4373cecb7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.6">
-v2.6.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/9f8771e09052">
-9f8771e09052
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.6rc2">
-v2.6.6rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e189dc8fd661">
-e189dc8fd661
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.6rc1">
-v2.6.6rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c1dc9e7986a2">
-c1dc9e7986a2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.2a1">
-v3.2a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b37b78347574">
-b37b78347574
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7">
-v2.7
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2145593d108d">
-2145593d108d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7rc2">
-v2.7rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/13e5b0b2071a">
-13e5b0b2071a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7rc1">
-v2.7rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/381c5eeb5110">
-381c5eeb5110
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7b2">
-v2.7b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/6bb9891d4275">
-6bb9891d4275
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7b1">
-v2.7b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/61550a1302b0">
-61550a1302b0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.2">
-v3.1.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/960efa327c5d">
-960efa327c5d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.5">
-v2.6.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/99af4b44e7e4">
-99af4b44e7e4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.5rc2">
-v2.6.5rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/fa4630916699">
-fa4630916699
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.2rc1">
-v3.1.2rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/149b8b87514d">
-149b8b87514d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7a4">
-v2.7a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d2e1027edde8">
-d2e1027edde8
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.5rc1">
-v2.6.5rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c9f68e42ab79">
-c9f68e42ab79
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7a3">
-v2.7a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4180557b7a9b">
-4180557b7a9b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.5">
-v2.5.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7098a46f0b75">
-7098a46f0b75
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.5c2">
-v2.5.5c2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1dc91e9dd5c1">
-1dc91e9dd5c1
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.5c1">
-v2.5.5c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/657f16582943">
-657f16582943
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7a2">
-v2.7a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/adc85ebc7271">
-adc85ebc7271
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.7a1">
-v2.7a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b4107eb00b42">
-b4107eb00b42
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.4">
-v2.6.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8803c3d61da2">
-8803c3d61da2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.4rc2">
-v2.6.4rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ea1fdafbe4fe">
-ea1fdafbe4fe
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.4rc1">
-v2.6.4rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/25aa90a6865b">
-25aa90a6865b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.3">
-v2.6.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/00c3396d7a8c">
-00c3396d7a8c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.3rc1">
-v2.6.3rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1873542c0000">
-1873542c0000
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.1">
-v3.1.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8b9c0f573ab2">
-8b9c0f573ab2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1.1rc1">
-v3.1.1rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/35efb1054ec6">
-35efb1054ec6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1">
-v3.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a69a031ac140">
-a69a031ac140
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1rc2">
-v3.1rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0b87e438e1b5">
-0b87e438e1b5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1rc1">
-v3.1rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4353fd0843cb">
-4353fd0843cb
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1b1">
-v3.1b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b63020797f96">
-b63020797f96
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.2">
-v2.6.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4feba09a826b">
-4feba09a826b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.2c1">
-v2.6.2c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/01f1ae83631a">
-01f1ae83631a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1a2">
-v3.1a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ee430e5075db">
-ee430e5075db
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.1a1">
-v3.1a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/bc1ce368986e">
-bc1ce368986e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0.1">
-v3.0.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cd42e85cafe7">
-cd42e85cafe7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.4">
-v2.5.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a0a6d9909312">
-a0a6d9909312
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.3">
-v2.5.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/3cc056d21c2f">
-3cc056d21c2f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.6">
-v2.4.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f3f1f1462c82">
-f3f1f1462c82
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.3c1">
-v2.5.3c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/9530d334d262">
-9530d334d262
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.6c1">
-v2.4.6c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a6c3c715e2b7">
-a6c3c715e2b7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6.1">
-v2.6.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cabf303e787a">
-cabf303e787a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0">
-v3.0
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/589c88b20b5b">
-589c88b20b5b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0rc3">
-v3.0rc3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e83a60c69d53">
-e83a60c69d53
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0rc2">
-v3.0rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8fae465a3962">
-8fae465a3962
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6">
-v2.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/95fff5a6a276">
-95fff5a6a276
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6rc2">
-v2.6rc2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/525792097c63">
-525792097c63
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0rc1">
-v3.0rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/507ede9c7f7f">
-507ede9c7f7f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6rc1">
-v2.6rc1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1ebb2a8cc06c">
-1ebb2a8cc06c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0b3">
-v3.0b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/509e30a7968e">
-509e30a7968e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6b3">
-v2.6b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c62862d73f9e">
-c62862d73f9e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0b2">
-v3.0b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/16ec4bb14a68">
-16ec4bb14a68
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0b1">
-v3.0b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a335c4d643b1">
-a335c4d643b1
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6b2">
-v2.6b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/81ec8263bd6e">
-81ec8263bd6e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6b1">
-v2.6b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2f2f32af8c4e">
-2f2f32af8c4e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6a3">
-v2.6a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/48e9fb0a7217">
-48e9fb0a7217
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0a5">
-v3.0a5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e35935475153">
-e35935475153
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6a2">
-v2.6a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/eec144917a18">
-eec144917a18
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0a4">
-v3.0a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/15f773f7300e">
-15f773f7300e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.7">
-v2.3.7
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2022943ad450">
-2022943ad450
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.5">
-v2.4.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d8df4aa06261">
-d8df4aa06261
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.7c1">
-v2.3.7c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/893c7bd4a92b">
-893c7bd4a92b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.5c1">
-v2.4.5c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1f7d628c70a9">
-1f7d628c70a9
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0a3">
-v3.0a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/df15827f3488">
-df15827f3488
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.6a1">
-v2.6a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2d0bd095c420">
-2d0bd095c420
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.2">
-v2.5.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1d508bbbdb49">
-1d508bbbdb49
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.2c1">
-v2.5.2c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0a8aae575cdd">
-0a8aae575cdd
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0a2">
-v3.0a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/65e82140e281">
-65e82140e281
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v3.0a1">
-v3.0a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cd3f783cd08a">
-cd3f783cd08a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.1">
-v2.5.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/490d8c09abcb">
-490d8c09abcb
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5.1c1">
-v2.5.1c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4777c4007b5b">
-4777c4007b5b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.6">
-v2.3.6
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/3b6fb5439c10">
-3b6fb5439c10
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.6c1">
-v2.3.6c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b21427ff2647">
-b21427ff2647
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.4">
-v2.4.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/592ac93532ef">
-592ac93532ef
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.4c1">
-v2.4.4c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/baaeea722b1c">
-baaeea722b1c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5">
-v2.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c10a71cf16e4">
-c10a71cf16e4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5c2">
-v2.5c2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cc3cb3a8237e">
-cc3cb3a8237e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5c1">
-v2.5c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2dc64d570e8d">
-2dc64d570e8d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5b3">
-v2.5b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c0abb18299b4">
-c0abb18299b4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5b2">
-v2.5b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/03b6fe57cd6d">
-03b6fe57cd6d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5b1">
-v2.5b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d49b198f545c">
-d49b198f545c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5a2">
-v2.5a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/26d0770f2b7e">
-26d0770f2b7e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5a1">
-v2.5a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/896f9fead17e">
-896f9fead17e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.5a0">
-v2.5a0
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/67192da3e69c">
-67192da3e69c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.3">
-v2.4.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8cca2492626c">
-8cca2492626c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.3c1">
-v2.4.3c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7c5be7c0fdfd">
-7c5be7c0fdfd
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.2">
-v2.4.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8d37276fdf07">
-8d37276fdf07
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.2c1">
-v2.4.2c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d02d387554e2">
-d02d387554e2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.1">
-v2.4.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f9054d235870">
-f9054d235870
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.1c2">
-v2.4.1c2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/333cf303543b">
-333cf303543b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4.1c1">
-v2.4.1c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/1195f9ba3439">
-1195f9ba3439
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.5">
-v2.3.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d22850942417">
-d22850942417
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.5c1">
-v2.3.5c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2639b10daa98">
-2639b10daa98
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4">
-v2.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f31e18d313c7">
-f31e18d313c7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4c1">
-v2.4c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ff80d8bbef6e">
-ff80d8bbef6e
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4b2">
-v2.4b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7e387a9dcc79">
-7e387a9dcc79
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4b1">
-v2.4b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/53cff0428385">
-53cff0428385
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4a3">
-v2.4a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/186b72550e53">
-186b72550e53
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4a2">
-v2.4a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/055fc6955f3c">
-055fc6955f3c
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.4a1">
-v2.4a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/92ca658fd420">
-92ca658fd420
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.4">
-v2.3.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a74f9081c697">
-a74f9081c697
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.4c1">
-v2.3.4c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/3639861d0264">
-3639861d0264
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.3">
-v2.3.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/a8f1286f2171">
-a8f1286f2171
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.3c1">
-v2.3.3c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d21d4ba2f973">
-d21d4ba2f973
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.2">
-v2.3.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/be2533fb10a5">
-be2533fb10a5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.2c1">
-v2.3.2c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7d7362a71253">
-7d7362a71253
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3.1">
-v2.3.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/fa65f6527fe1">
-fa65f6527fe1
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3c2">
-v2.3c2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/fce5c9e9abc7">
-fce5c9e9abc7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.3c1">
-v2.3c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d054c29647f9">
-d054c29647f9
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2.3">
-v2.2.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f4f134ad46ab">
-f4f134ad46ab
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2.3c1">
-v2.2.3c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ac77b9134253">
-ac77b9134253
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2.2">
-v2.2.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/61d531533a86">
-61d531533a86
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2.2b1">
-v2.2.2b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0128313c2855">
-0128313c2855
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2.1">
-v2.2.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/394790316aa3">
-394790316aa3
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1.3">
-v2.1.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7d1504c80fa0">
-7d1504c80fa0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2">
-v2.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4045e6e92faf">
-4045e6e92faf
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2.1c2">
-v2.2.1c2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/11c952c7d4be">
-11c952c7d4be
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2.1c1">
-v2.2.1c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/765434e7aa01">
-765434e7aa01
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1.2">
-v2.1.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/cf31b10e45b4">
-cf31b10e45b4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1.2c1">
-v2.1.2c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f76a425b14e4">
-f76a425b14e4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.2a3">
-v2.2a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/08796a137f1a">
-08796a137f1a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1.1">
-v2.1.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/572533a3038d">
-572533a3038d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1.1c1">
-v2.1.1c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/22bed2dd1b28">
-22bed2dd1b28
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.0.1">
-v2.0.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/73de94a722d2">
-73de94a722d2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.0.1c1">
-v2.0.1c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/83459cc191c1">
-83459cc191c1
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1">
-v2.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/020e95d8180d">
-020e95d8180d
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1c2">
-v2.1c2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/ff065e674af6">
-ff065e674af6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1c1">
-v2.1c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d611276e9ad5">
-d611276e9ad5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1b2">
-v2.1b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b59a536ae1ef">
-b59a536ae1ef
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1b1">
-v2.1b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/d0c830db5e68">
-d0c830db5e68
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1a2">
-v2.1a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b382f1f07ec6">
-b382f1f07ec6
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.1a1">
-v2.1a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b60831eeab5a">
-b60831eeab5a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.0">
-v2.0
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/2fa4e35083e0">
-2fa4e35083e0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.0c1">
-v2.0c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e276329cce03">
-e276329cce03
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.0b2">
-v2.0b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/55bba197d487">
-55bba197d487
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v2.0b1">
-v2.0b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/35c4fc1414a5">
-35c4fc1414a5
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.6a2">
-v1.6a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/011bee8fd9f7">
-011bee8fd9f7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.6a1">
-v1.6a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/605eb9326ffe">
-605eb9326ffe
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5.2">
-v1.5.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/61c91c7f101b">
-61c91c7f101b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5.2c1">
-v1.5.2c1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/39fb0dcc83dc">
-39fb0dcc83dc
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5.2b2">
-v1.5.2b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8fe7ec4b4fc1">
-8fe7ec4b4fc1
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5.2b1">
-v1.5.2b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/f08c7a2a56f8">
-f08c7a2a56f8
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5.2a2">
-v1.5.2a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/21d71f2e2724">
-21d71f2e2724
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5.2a1">
-v1.5.2a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/fed63ccbe6dc">
-fed63ccbe6dc
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5.1">
-v1.5.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/44aba4d26b01">
-44aba4d26b01
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5">
-v1.5
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/84461011a1a0">
-84461011a1a0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5b2">
-v1.5b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/eb78658d819f">
-eb78658d819f
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5b1">
-v1.5b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/8ff58b5730f0">
-8ff58b5730f0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5a4">
-v1.5a4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/746654a0af68">
-746654a0af68
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5a3">
-v1.5a3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/dc5c968ec992">
-dc5c968ec992
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5a2">
-v1.5a2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/c9498ac98837">
-c9498ac98837
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.5a1">
-v1.5a1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/062aed8a4ce2">
-062aed8a4ce2
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.4">
-v1.4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/db49494c93dc">
-db49494c93dc
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.4b3">
-v1.4b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/44a82ac654a4">
-44a82ac654a4
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.4b2">
-v1.4b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/129f1299d4e9">
-129f1299d4e9
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.4b1">
-v1.4b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/4fc85c82cc22">
-4fc85c82cc22
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.3">
-v1.3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/7d743c865a9a">
-7d743c865a9a
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.3b1">
-v1.3b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e63d83f82758">
-e63d83f82758
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.2">
-v1.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/e72257e65545">
-e72257e65545
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.2b4">
-v1.2b4
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/065e31cf5862">
-065e31cf5862
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.2b3">
-v1.2b3
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/9e82daf7605b">
-9e82daf7605b
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.2b2">
-v1.2b2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b45c688756d0">
-b45c688756d0
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.2b1">
-v1.2b1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/16eb4c51ee97">
-16eb4c51ee97
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.1.1">
-v1.1.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/9895475d18c7">
-9895475d18c7
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.1">
-v1.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/832615ec0764">
-832615ec0764
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.0.2">
-v1.0.2
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/0326b5d61445">
-0326b5d61445
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v1.0.1">
-v1.0.1
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/b15b8cc9b8d1">
-b15b8cc9b8d1
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v0.9.9">
-v0.9.9
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/78a7ed695302">
-78a7ed695302
-</a>
-</td>
-</tr>
-<tr class="tagEntry">
-<td>
-<a href="https://hg.python.org/cpython/rev/v0.9.8">
-v0.9.8
-</a>
-</td>
-<td class="node">
-<a href="https://hg.python.org/cpython/rev/64cc5439e10a">
-64cc5439e10a
-</a>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+            <p>or by grabbing the individual keys directly from the keyserver network
+              by running this command:</p>
 
-<script type="text/javascript">process_dates()</script>
+            <code><pre>
+gpg --recv-keys 10250568 6A45C816 36580288 7D9DC8D2 18ADD4FF A4135B38 A74B06BF EA5BBD71 E6DF025C AA65421D 6F5E1540 F73C700D 487034E5
+</pre></code>
+
+            <p>On the version-specific download pages, you should see a link to both the
+              downloadable file and a detached signature file. To verify the authenticity
+              of the download, grab both files and then run this command:</p>
+
+            <code><pre class="literal-block">
+gpg --verify Python-3.6.2.tgz.asc
+</pre></code>
+
+            <p>Note that you must use the name of the signature file, and you should use the
+              one that's appropriate to the download you're verifying.</p>
+
+            <ul>
+              <li>(These instructions are geared to
+                <a class="reference external" href="http://www.gnupg.org/">GnuPG</a> and Unix command-line users.
+                Contributions of instructions for other platforms and OpenPGP
+                applications are welcome.)</li>
+            </ul>
+
+
+            <h2>Other Useful Items</h2>
+            <ul>
+              <li>Looking for 3rd party <strong>Python modules</strong>? The
+                <a class="reference external" href="http://pypi.python.org/pypi">Package Index</a> has many of them.
+              </li>
+              <li>You can <a class="reference external" href="http://docs.python.org/">view</a> the standard
+                documentation
+                online, or you can <a class="reference external"
+                  href="http://docs.python.org/3/download.html">download</a> it
+                in HTML, PostScript, PDF and other formats. See the main
+                <a class="reference external" href="/doc/">Documentation</a> page.</li>
+              <li>Information on <a class="reference external" href="unpacking">tools for unpacking archive files</a>
+                provided on python.org is available.</li>
+              <li><strong>Tip</strong>: even if you download a ready-made binary for your
+                platform, it makes sense to also download the <a class="reference external" href="source">source</a>.
+                This lets you browse the standard library (the subdirectory <strong>Lib</strong>)
+                and the standard collections of demos (<strong>Demo</strong>) and tools
+                (<strong>Tools</strong>) that come with it. There's a lot you can learn from the
+                source!</li>
+              <li>There is also a <a class="reference external"
+                  href="https://wiki.python.org/moin/EmacsEditor">collection of Emacs packages</a>
+                that the Emacsing Pythoneer might find useful. This includes major
+                modes for editing Python, C, C++, Java, etc., Python debugger
+                interfaces and more. Most packages are compatible with Emacs and
+                XEmacs.</li>
+            </ul>
+
+            <h2>Want to contribute?</h2>
+
+            <p>Want to contribute? See the <a class="reference external" href="/dev/">Python Developer's Guide</a>
+              to learn about how Python development is managed.</p>
+          </div>
+      </div>
+
+
+      </section>
 
 
 
 
 
-</body></html>
+
+
+
+    </div><!-- end .container -->
+  </div><!-- end #content .content-wrapper -->
+
+  <!-- Footer and social media list -->
+  <footer id="site-map" class="main-footer" role="contentinfo">
+    <div class="main-footer-links">
+      <div class="container">
+
+
+        <a id="back-to-top-1" class="jump-link" href="#python-network"><span aria-hidden="true"
+            class="icon-arrow-up"><span>&#9650;</span></span> Back to Top</a>
+
+
+
+        <ul class="sitemap navigation menu do-not-print" role="tree" id="container">
+
+          <li class="tier-1 element-1">
+            <a href="/about/">About</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="/about/apps/" title="">Applications</a></li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="/about/quotes/" title="">Quotes</a></li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="/about/gettingstarted/" title="">Getting Started</a>
+              </li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="/about/help/" title="">Help</a></li>
+
+              <li class="tier-2 element-5" role="treeitem"><a href="http://brochure.getpython.info/" title="">Python
+                  Brochure</a></li>
+
+            </ul>
+
+
+          </li>
+
+          <li class="tier-1 element-2">
+            <a href="/downloads/">Downloads</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="/downloads/" title="">All releases</a></li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="/downloads/source/" title="">Source code</a></li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="/downloads/windows/" title="">Windows</a></li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="/downloads/mac-osx/" title="">Mac OS X</a></li>
+
+              <li class="tier-2 element-5" role="treeitem"><a href="/download/other/" title="">Other Platforms</a></li>
+
+              <li class="tier-2 element-6" role="treeitem"><a href="https://docs.python.org/3/license.html"
+                  title="">License</a></li>
+
+              <li class="tier-2 element-7" role="treeitem"><a href="/download/alternatives" title="">Alternative
+                  Implementations</a></li>
+
+            </ul>
+
+
+          </li>
+
+          <li class="tier-1 element-3">
+            <a href="/doc/">Documentation</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="/doc/" title="">Docs</a></li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="/doc/av" title="">Audio/Visual Talks</a></li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="https://wiki.python.org/moin/BeginnersGuide"
+                  title="">Beginner&#39;s Guide</a></li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="https://devguide.python.org/"
+                  title="">Developer&#39;s Guide</a></li>
+
+              <li class="tier-2 element-5" role="treeitem"><a href="https://docs.python.org/faq/" title="">FAQ</a></li>
+
+              <li class="tier-2 element-6" role="treeitem"><a href="http://wiki.python.org/moin/Languages"
+                  title="">Non-English Docs</a></li>
+
+              <li class="tier-2 element-7" role="treeitem"><a href="http://python.org/dev/peps/" title="">PEP Index</a>
+              </li>
+
+              <li class="tier-2 element-8" role="treeitem"><a href="https://wiki.python.org/moin/PythonBooks"
+                  title="">Python Books</a></li>
+
+              <li class="tier-2 element-9" role="treeitem"><a href="/doc/essays/" title="">Python Essays</a></li>
+
+            </ul>
+
+
+          </li>
+
+          <li class="tier-1 element-4">
+            <a href="/community/">Community</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="/community/survey" title="">Community Survey</a>
+              </li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="/community/diversity/" title="">Diversity</a></li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="/community/lists/" title="">Mailing Lists</a></li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="/community/irc/" title="">IRC</a></li>
+
+              <li class="tier-2 element-5" role="treeitem"><a href="/community/forums/" title="">Forums</a></li>
+
+              <li class="tier-2 element-6" role="treeitem"><a href="/community/workshops/" title="">Python
+                  Conferences</a></li>
+
+              <li class="tier-2 element-7" role="treeitem"><a href="/community/sigs/" title="">Special Interest
+                  Groups</a></li>
+
+              <li class="tier-2 element-8" role="treeitem"><a href="/community/logos/" title="">Python Logo</a></li>
+
+              <li class="tier-2 element-9" role="treeitem"><a href="https://wiki.python.org/moin/" title="">Python
+                  Wiki</a></li>
+
+              <li class="tier-2 element-10" role="treeitem"><a href="/community/merchandise/" title="">Merchandise</a>
+              </li>
+
+              <li class="tier-2 element-11" role="treeitem"><a href="/community/awards" title="">Community Awards</a>
+              </li>
+
+              <li class="tier-2 element-12" role="treeitem"><a href="https://www.python.org/psf/codeofconduct/"
+                  title="">Code of Conduct</a></li>
+
+            </ul>
+
+
+          </li>
+
+          <li class="tier-1 element-5">
+            <a href="/success-stories/" title="success-stories">Success Stories</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="/success-stories/category/arts/" title="">Arts</a>
+              </li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="/success-stories/category/business/"
+                  title="">Business</a></li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="/success-stories/category/education/"
+                  title="">Education</a></li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="/success-stories/category/engineering/"
+                  title="">Engineering</a></li>
+
+              <li class="tier-2 element-5" role="treeitem"><a href="/success-stories/category/government/"
+                  title="">Government</a></li>
+
+              <li class="tier-2 element-6" role="treeitem"><a href="/success-stories/category/scientific/"
+                  title="">Scientific</a></li>
+
+              <li class="tier-2 element-7" role="treeitem"><a href="/success-stories/category/software-development/"
+                  title="">Software Development</a></li>
+
+            </ul>
+
+
+          </li>
+
+          <li class="tier-1 element-6">
+            <a href="/blogs/" title="News from around the Python world">News</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="/blogs/" title="Python Insider Blog Posts">Python
+                  News</a></li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="http://planetpython.org/"
+                  title="Planet Python">Community News</a></li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="http://pyfound.blogspot.com/" title="PSF Blog">PSF
+                  News</a></li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="http://pycon.blogspot.com/" title="PyCon Blog">PyCon
+                  News</a></li>
+
+            </ul>
+
+
+          </li>
+
+          <li class="tier-1 element-7">
+            <a href="/events/">Events</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="/events/python-events" title="">Python Events</a>
+              </li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="/events/python-user-group/" title="">User Group
+                  Events</a></li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="/events/python-events/past/" title="">Python Events
+                  Archive</a></li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="/events/python-user-group/past/" title="">User Group
+                  Events Archive</a></li>
+
+              <li class="tier-2 element-5" role="treeitem"><a
+                  href="https://wiki.python.org/moin/PythonEventsCalendar#Submitting_an_Event" title="">Submit an
+                  Event</a></li>
+
+            </ul>
+
+
+          </li>
+
+          <li class="tier-1 element-8">
+            <a href="/dev/">Contributing</a>
+
+
+
+            <ul class="subnav menu">
+
+              <li class="tier-2 element-1" role="treeitem"><a href="https://devguide.python.org/"
+                  title="">Developer&#39;s Guide</a></li>
+
+              <li class="tier-2 element-2" role="treeitem"><a href="https://bugs.python.org/" title="">Issue Tracker</a>
+              </li>
+
+              <li class="tier-2 element-3" role="treeitem"><a href="https://mail.python.org/mailman/listinfo/python-dev"
+                  title="">python-dev list</a></li>
+
+              <li class="tier-2 element-4" role="treeitem"><a href="/dev/core-mentorship/" title="">Core Mentorship</a>
+              </li>
+
+              <li class="tier-2 element-5" role="treeitem"><a href="/news/security/" title="">Report a Security
+                  Issue</a></li>
+
+            </ul>
+
+
+          </li>
+
+        </ul>
+
+
+        <a id="back-to-top-2" class="jump-link" href="#python-network"><span aria-hidden="true"
+            class="icon-arrow-up"><span>&#9650;</span></span> Back to Top</a>
+
+
+      </div><!-- end .container -->
+    </div> <!-- end .main-footer-links -->
+
+    <div class="site-base">
+      <div class="container">
+
+        <ul class="footer-links navigation menu do-not-print" role="tree">
+          <li class="tier-1 element-1"><a href="/about/help/">Help &amp; <span class="say-no-more">General</span>
+              Contact</a></li>
+          <li class="tier-1 element-2"><a href="/community/diversity/">Diversity <span
+                class="say-no-more">Initiatives</span></a></li>
+          <li class="tier-1 element-3"><a href="https://github.com/python/pythondotorg/issues">Submit Website Bug</a>
+          </li>
+          <li class="tier-1 element-4">
+            <a href="https://status.python.org/">Status <span class="python-status-indicator-default"
+                id="python-status-indicator"></span></a>
+          </li>
+        </ul>
+
+        <div class="copyright">
+          <p><small>
+              <span class="pre">Copyright &copy;2001-2019.</span>
+              &nbsp;<span class="pre"><a href="/psf-landing/">Python Software Foundation</a></span>
+              &nbsp;<span class="pre"><a href="/about/legal/">Legal Statements</a></span>
+              &nbsp;<span class="pre"><a href="/privacy/">Privacy Policy</a></span>
+              &nbsp;<span class="pre"><a href="/psf/sponsorship/sponsors/#heroku">Powered by Heroku</a></span>
+            </small></p>
+        </div>
+
+      </div><!-- end .container -->
+    </div><!-- end .site-base -->
+
+  </footer>
+
+  </div><!-- end #touchnav-wrapper -->
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/static/js/libs/jquery-1.8.2.min.js"><\/script>')</script>
+
+  <script src="/static/js/libs/masonry.pkgd.min.js"></script>
+  <script src="/static/js/libs/html-includes.js"></script>
+
+  <script type="text/javascript" src="/static/js/main-min.fbfe252506ae.js" charset="utf-8"></script>
+
+
+  <!--[if lte IE 7]>
+    <script type="text/javascript" src="/static/js/plugins/IE8-min.16868e6a5d2f.js" charset="utf-8"></script>
+    
+    
+    <![endif]-->
+
+  <!--[if lte IE 8]>
+    <script type="text/javascript" src="/static/js/plugins/getComputedStyle-min.c3860be1d290.js" charset="utf-8"></script>
+    
+    
+    <![endif]-->
+
+
+
+
+
+
+</body>
+
+</html>

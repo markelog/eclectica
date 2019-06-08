@@ -29,12 +29,13 @@ import (
 	eStrings "github.com/markelog/eclectica/strings"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
+	"github.com/markelog/release"
 )
 
 var (
 
 	// VersionLink is the URL link from which we can get all possible versions
-	VersionLink = "https://hg.python.org/cpython/tags"
+	VersionLink = "https://www.python.org/downloads/"
 
 	remoteVersion  = "https://www.python.org/ftp/python"
 	versionPattern = "^\\d+\\.\\d+(?:\\.\\d)?"
@@ -203,36 +204,18 @@ func (python Python) ListRemote() (result []string, err error) {
 		return nil, errors.New(err)
 	}
 
-	tmp := []string{}
 	version := regexp.MustCompile(versionPattern)
-	links := doc.Find(".bigtable td:first-child a")
+	links := doc.Find(".release-number a")
 
 	for i := range links.Nodes {
 		content := links.Eq(i).Text()
 
 		content = strings.TrimSpace(content)
-		content = strings.Replace(content, "v", "", 1)
+		content = strings.Replace(content, "Python ", "", 1)
 
 		if version.MatchString(content) {
-			tmp = append(tmp, content)
+			result = append(result, content)
 		}
-	}
-
-	// Remove < 2.7 versions and "Pre" versions
-	for _, element := range tmp {
-		smr, _ := semver.Make(versions.Semverify(element))
-
-		if len(smr.Pre) > 0 {
-			continue
-		}
-		if smr.Major < 2 {
-			continue
-		}
-		if smr.Major == 2 && smr.Minor < 7 {
-			continue
-		}
-
-		result = append(result, element)
 	}
 
 	return
@@ -383,8 +366,8 @@ func (python Python) getOSXEnvs(original []string) []string {
 
 	for _, name := range externals {
 		opt := "/usr/local/opt/"
-		libFlags += `-L` + filepath.Join(opt, name, "lib") + " "
-		includeFlags += "-I" + filepath.Join(opt, name, "include") + " "
+		libFlags += "-L" + filepath.Join(opt, name, "lib") + " "
+		includeFlags += "-I" + filepath.Join(opt, name, "include") + ""
 	}
 
 	// For zlib
@@ -394,6 +377,8 @@ func (python Python) getOSXEnvs(original []string) []string {
 
 	original = append(original, "CPPFLAGS="+includeFlags)
 	original = append(original, "LDFLAGS="+libFlags)
+	// Since otherwise configure breaks for some versions :/
+	original = append(original, "MACOSX_DEPLOYMENT_TARGET="+release.Version())
 
 	return original
 }
@@ -432,11 +417,6 @@ func (python Python) getCmd(args ...string) (
 
 func (python Python) externals() (err error) {
 	path := variables.Path("python", python.Version)
-
-	// Don't need to do anything if we already have pip and setuptools
-	if hasTools(python.Version) {
-		return
-	}
 
 	// Now try the "hard" way
 	err = python.downloadExternals()

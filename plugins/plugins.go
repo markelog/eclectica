@@ -10,10 +10,10 @@ import (
 	"github.com/chuckpreslar/emission"
 	"github.com/go-errors/errors"
 	"github.com/kardianos/osext"
-	"github.com/markelog/archive"
-	"github.com/markelog/cprf"
 	"gopkg.in/cavaliercoder/grab.v1"
 
+	"github.com/markelog/archive"
+	"github.com/markelog/cprf"
 	"github.com/markelog/eclectica/io"
 	"github.com/markelog/eclectica/pkg"
 	"github.com/markelog/eclectica/shell"
@@ -474,7 +474,9 @@ func (plugin *Plugin) Extract() error {
 	}
 
 	// Just in case archive was downloaded, but not extracted
-	// i.e. this issue comes up at the second run.
+	// i.e. this issue comes up at the second run if first one was aborted
+	// and "Rollback" action, for some reason, did not happen
+	// I dunno, abrupt reboot?
 	// Which means we will delete folder with path like this –
 	// /home/user/.eclectica/versions/go1.7.1.linux-amd64
 	os.RemoveAll(filepath.Join(extractionPlace, plugin.info["filename"]))
