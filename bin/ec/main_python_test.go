@@ -65,6 +65,17 @@ var _ = Describe("python", func() {
 				Command("go", "run", path, "rm", "python@2.7.13").Output()
 			})
 
+			It("should be able to install some package via pip", func() {
+				command, _ := Command(pipBin, "install", "thefuck").Output()
+
+				Expect(strings.Contains(
+					string(command),
+					"Successfully installed thefuck-",
+				),
+				).To(Equal(true))
+
+			})
+
 			It(`should install latest 2.x.x version`, func() {
 				Execute("go", "run", path, "python@2")
 

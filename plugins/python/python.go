@@ -229,6 +229,7 @@ func (python Python) configure() (err error) {
 		configure = filepath.Join(path, "configure")
 		ensurepip = "--with-ensurepip=upgrade"
 	)
+
 	err = python.externals()
 	if err != nil {
 		return errors.New(err)
@@ -367,7 +368,7 @@ func (python Python) getOSXEnvs(original []string) []string {
 	for _, name := range externals {
 		opt := "/usr/local/opt/"
 		libFlags += "-L" + filepath.Join(opt, name, "lib") + " "
-		includeFlags += "-I" + filepath.Join(opt, name, "include") + ""
+		includeFlags += "-I" + filepath.Join(opt, name, "include") + " "
 	}
 
 	// For zlib
