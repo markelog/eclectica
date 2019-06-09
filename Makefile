@@ -15,7 +15,7 @@ test: install
 	@go test -v ./...
 .PHONY: test
 
-int: install
+integration: install
 	$(eval tmp := $(TMPDIR)"eclectica")
 
 	@echo "[+] integration testing"
@@ -31,7 +31,7 @@ int: install
 	@rm -rf $(tmp)
 .PHONY: int
 
-int-ci:
+integration-ci:
 	$(eval tmp := $(TMPDIR)"eclectica")
 
 	@echo "[+] integration testing"

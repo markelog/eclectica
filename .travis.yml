@@ -36,17 +36,17 @@ matrix:
     - env: "TEST_LANGUAGE=main"
       os: linux
       dist: trusty
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=node"
       os: linux
       dist: trusty
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=rust"
       os: linux
       dist: trusty
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 40 make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-first"
       os: linux
@@ -74,7 +74,7 @@ matrix:
         # C++14
         - sudo apt-get install -qq g++-6
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
-      script: "travis_wait 50 make int-ci"
+      script: "travis_wait 50 make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-second"
       os: linux
@@ -102,48 +102,48 @@ matrix:
         # C++14
         - sudo apt-get install -qq g++-6
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
-      script: "travis_wait 50 make int-ci"
+      script: "travis_wait 50 make integration-ci"
 
     - env: "TEST_LANGUAGE=go"
       os: linux
       dist: trusty
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=python2.7"
       os: linux
       dist: trusty
-      script: "travis_wait 60 make int-ci"
+      script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=python2-old"
       os: linux
       dist: trusty
-      script: "travis_wait 60 make int-ci"
+      script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=python3"
       os: linux
       dist: trusty
-      script: "travis_wait 60 make int-ci"
+      script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=elm"
       os: linux
       dist: trusty
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     # ubuntu precise
     - env: "TEST_LANGUAGE=main"
       os: linux
       dist: precise
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=node"
       os: linux
       dist: precise
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=rust"
       os: linux
       dist: precise
-      script: "travis_wait 40 make int-ci"
+      script: "travis_wait 40 make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-first"
       os: linux
@@ -171,7 +171,7 @@ matrix:
         # C++14
         - sudo apt-get install -qq g++-6
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
-      script: "travis_wait 50 make int-ci"
+      script: "travis_wait 50 make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-second"
       os: linux
@@ -199,131 +199,131 @@ matrix:
         # C++14
         - sudo apt-get install -qq g++-6
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
-      script: "travis_wait 50 make int-ci"
+      script: "travis_wait 50 make integration-ci"
 
     - env: "TEST_LANGUAGE=go"
       os: linux
       dist: precise
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=python2.7"
       os: linux
       dist: precise
-      script: "travis_wait 60 make int-ci"
+      script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=python2-old"
       os: linux
       dist: precise
-      script: "travis_wait 60 make int-ci"
+      script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=python3"
       os: linux
       dist: precise
-      script: "travis_wait 60 make int-ci"
+      script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=elm"
       os: linux
       dist: precise
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     # MacOS Sierra
     - env: "TEST_LANGUAGE=main"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=node"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=rust"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-first"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 50 make int-ci"
+      script: "travis_wait 50 make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-second"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 50 make int-ci"
+      script: "travis_wait 50 make integration-ci"
 
     - env: "TEST_LANGUAGE=go"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=elm"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=python2.7"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
+      script: "travis_wait 800 make integration-ci"
 
     - env: "TEST_LANGUAGE=python2-old"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
+      script: "travis_wait 800 make integration-ci"
 
     - env: "TEST_LANGUAGE=python3"
       os: osx
       osx_image: xcode8.3.3
-      script: "travis_wait 800 make int-ci"
+      script: "travis_wait 800 make integration-ci"
 
     # OS X El Capitan
     - env: "TEST_LANGUAGE=main"
       os: osx
       osx_image: xcode8
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=node"
       os: osx
       osx_image: xcode8
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=rust"
       os: osx
       osx_image: xcode8
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-first"
       os: osx
       osx_image: xcode8
-      script: "travis_wait 50 make int-ci"
+      script: "travis_wait 50 make integration-ci"
 
     # - env: "TEST_LANGUAGE=ruby-second"
     #   os: osx
     #   osx_image: xcode8
-    #   script: "travis_wait 50 make int-ci"
+    #   script: "travis_wait 50 make integration-ci"
 
     - env: "TEST_LANGUAGE=go"
       os: osx
       osx_image: xcode8
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=elm"
       os: osx
       osx_image: xcode8
-      script: "travis_wait make int-ci"
+      script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=python2.7"
       os: osx
       osx_image: xcode8
-      script: "travis_wait 9000 make int-ci"
+      script: "travis_wait 9000 make integration-ci"
 
     - env: "TEST_LANGUAGE=python2-old"
       os: osx
       osx_image: xcode8
-      script: "travis_wait 9000 make int-ci"
+      script: "travis_wait 9000 make integration-ci"
 
     - env: "TEST_LANGUAGE=python3"
       os: osx
       osx_image: xcode8
-      script: "travis_wait 9000 make int-ci"
+      script: "travis_wait 9000 make integration-ci"
