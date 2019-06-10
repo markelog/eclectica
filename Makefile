@@ -29,7 +29,7 @@ integration: install
 	@env EC_PROXY_PLACE=$(tmp) EC_WITHOUT_SPINNER=true TEST_ALL=true go test -v ./bin/ec -timeout 50m
 
 	@rm -rf $(tmp)
-.PHONY: int
+.PHONY: integration
 
 integration-ci:
 	$(eval tmp := $(TMPDIR)"eclectica")
@@ -48,13 +48,13 @@ integration-ci:
 
 	@rm -rf $(tmp)
 	@echo $(?)
-.PHONY: int-ci
+.PHONY: integration-ci
 
 build:
 	@echo "[+] building"
 	@go get github.com/mitchellh/gox
 	@rm -rf ec_* ec-proxy_*
-	@gox -osarch="darwin/amd64 linux/amd64" ./...
+	@gox -osarch="darwin/amd64 linux/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}" ./...
 .PHONY: build
 
 tag:

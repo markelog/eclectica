@@ -4,6 +4,7 @@ ec-proxy_*
 /bin/ec/ec
 /bin/ec/ec-proxy
 /bin/ec-proxy/ec-proxy
+/build
 
 # Ignore vendor folder
 /vendor
