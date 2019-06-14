@@ -2,7 +2,7 @@ all: clean install test
 .PHONY: all
 
 clean:
-	@rm -rf ec_* ec-proxy_* bin/ec/ec bin/ec/ec-proxy bin/ec-proxy/ec-proxy
+	@rm -rf ec_* ec-proxy_* bin/ec/ec bin/ec/ec-proxy bin/ec-proxy/ec-proxy build
 .PHONY: clean
 
 install:
