@@ -164,7 +164,6 @@ matrix:
 
         # C++14
         - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -qq
       install:
         - "make install"
 
@@ -192,7 +191,6 @@ matrix:
 
         # C++14
         - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -qq
       install:
         - "make install"
 
