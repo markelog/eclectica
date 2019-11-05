@@ -20,17 +20,23 @@ var _ = Describe("node", func() {
 	}
 
 	var (
-		mainVersion      = "7.10.1"
-		secondaryVersion = "6.16.0"
+		mainVersion      = "13.0.1"
+		secondaryVersion = "12.13.0"
 	)
 
 	BeforeEach(func() {
 		fmt.Println()
 
 		Execute("go", "run", path, "rm", "node@"+mainVersion)
+
 		fmt.Println("Install " + mainVersion + " version")
 		Execute("go", "run", path, "node@"+mainVersion)
 
+		Execute("go", "run", path, "rm", "node@"+secondaryVersion)
+	})
+
+	AfterSuite(func() {
+		Execute("go", "run", path, "rm", "node@"+mainVersion)
 		Execute("go", "run", path, "rm", "node@"+secondaryVersion)
 	})
 

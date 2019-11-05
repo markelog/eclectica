@@ -15,26 +15,37 @@ var _ = Describe("ruby", func() {
 		return
 	}
 
+	var (
+		mainVersion      = "2.4.2"
+		secondaryVersion = "2.2.1"
+	)
+
 	BeforeEach(func() {
 		fmt.Println()
 
-		fmt.Println("Install tmp version")
-		Execute("go", "run", path, "ruby@2.1.5")
+		fmt.Println("Install " + mainVersion + " version")
+		Execute("go", "run", path, "ruby@"+mainVersion)
 
-		fmt.Println("Removing ruby@2.2.1")
-		Execute("go", "run", path, "rm", "ruby@2.2.1")
-		fmt.Println("Removed")
+		fmt.Println("Remove ruby@" + secondaryVersion)
+		Execute("go", "run", path, "rm", "ruby@"+secondaryVersion)
+	})
+
+	AfterSuite(func() {
+		Execute("go", "run", path, "rm", "ruby@"+mainVersion)
+		Execute("go", "run", path, "rm", "ruby@"+secondaryVersion)
 	})
 
 	It("should install two versions of ruby", func() {
-		Execute("go", "run", path, "ruby@2.4.2")
-		Execute("go", "run", path, "ruby@2.4.1")
+		Execute("go", "run", path, "ruby@"+mainVersion)
+		Execute("go", "run", path, "ruby@"+secondaryVersion)
 
 		ruby, _ := Command("ruby", "--version").Output()
 		ec, _ := Command("go", "run", path, "ls", "ruby").Output()
 
-		Expect(strings.Contains(string(ruby), "2.4.1")).To(Equal(true))
-		Expect(strings.Contains(string(ec), "♥ 2.4.1")).To(Equal(true))
+		Expect(strings.Contains(string(ruby), secondaryVersion)).To(Equal(true))
+		Expect(strings.Contains(
+			string(ec), "♥ "+secondaryVersion),
+		).To(Equal(true))
 	})
 
 	It("should remove ruby version", func() {
@@ -57,16 +68,7 @@ var _ = Describe("ruby", func() {
 		}
 
 		Expect(result).To(Equal(true))
-	})
 
-	It("should install two versions of ruby", func() {
-		Execute("go", "run", path, "ruby@2.4.2")
-		Execute("go", "run", path, "ruby@2.4.1")
-
-		ruby, _ := Command("ruby", "--version").Output()
-		ec, _ := Command("go", "run", path, "ls", "ruby").Output()
-
-		Expect(strings.Contains(string(ruby), "2.4.1")).To(Equal(true))
-		Expect(strings.Contains(string(ec), "♥ 2.4.1")).To(Equal(true))
+		Command("go", "run", path, "rm", "ruby@2.1.0").Output()
 	})
 })

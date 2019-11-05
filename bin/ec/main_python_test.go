@@ -57,6 +57,11 @@ var _ = Describe("python", func() {
 				Execute("go", "run", path, "python@2.7.12")
 			})
 
+			AfterSuite(func() {
+				Command("go", "run", path, "rm", "python@2.7.10").Output()
+				Command("go", "run", path, "rm", "python@2.7.12").Output()
+			})
+
 			It(`should install 2.7.13 version`, func() {
 				Execute("go", "run", path, "python@2.7.13")
 
@@ -162,6 +167,7 @@ var _ = Describe("python", func() {
 	})
 
 	Describe("3.x", func() {
+
 		if shouldRun("python3") == false {
 			return
 		}
@@ -169,6 +175,11 @@ var _ = Describe("python", func() {
 		BeforeEach(func() {
 			Execute("go", "run", path, "python@3.5.1")
 			Execute("go", "run", path, "python@3.5.2")
+		})
+
+		AfterSuite(func() {
+			Command("go", "run", path, "rm", "python@3.5.1").Output()
+			Command("go", "run", path, "rm", "python@3.5.2").Output()
 		})
 
 		It("should list installed versions", func() {

@@ -19,19 +19,23 @@ var _ = Describe("go", func() {
 	}
 
 	var (
-		mainVersion      = "1.11.0"
-		secondaryVersion = "1.10.0"
+		mainVersion      = "1.13.0"
+		secondaryVersion = "1.12.0"
 	)
 
 	BeforeEach(func() {
 		fmt.Println()
 
-		fmt.Println("Install " + mainVersion + " version")
+		fmt.Println("Install " + secondaryVersion + " version")
 		Execute("go", "run", path, "go@"+secondaryVersion)
 
-		fmt.Println("Removing go@" + mainVersion)
+		fmt.Println("Remove go@" + mainVersion)
 		Execute("go", "run", path, "rm", "go@"+mainVersion)
-		fmt.Println("Removed")
+	})
+
+	AfterSuite(func() {
+		Execute("go", "run", path, "rm", "go@"+mainVersion)
+		Execute("go", "run", path, "rm", "go@"+secondaryVersion)
 	})
 
 	It("should list installed versions", func() {

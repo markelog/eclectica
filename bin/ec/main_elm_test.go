@@ -16,9 +16,6 @@ var _ = Describe("elm", func() {
 		return
 	}
 
-	BeforeEach(func() {
-	})
-
 	It("should install 0.18.0 version", func() {
 		Execute("go", "run", path, "elm@0.18.0")
 
@@ -26,6 +23,8 @@ var _ = Describe("elm", func() {
 
 		Expect(strings.Contains(string(command), "♥ 0.18.0")).To(Equal(true))
 		Expect(err).To(BeNil())
+
+		Execute("go", "run", path, "rm", "elm@0.18.0")
 	})
 
 	It("should install 0.17.1 version", func() {
@@ -35,6 +34,8 @@ var _ = Describe("elm", func() {
 
 		Expect(strings.Contains(string(command), "♥ 0.17.1")).To(Equal(true))
 		Expect(err).To(BeNil())
+
+		Execute("go", "run", path, "rm", "elm@0.17.1")
 	})
 
 	It("should install 0.17.0 version", func() {
@@ -44,6 +45,8 @@ var _ = Describe("elm", func() {
 
 		Expect(strings.Contains(string(command), "♥ 0.17.0")).To(Equal(true))
 		Expect(err).To(BeNil())
+
+		Execute("go", "run", path, "rm", "elm@0.17.0")
 	})
 
 	It("should install 0.16.0 version", func() {
@@ -53,6 +56,8 @@ var _ = Describe("elm", func() {
 
 		Expect(strings.Contains(string(command), "♥ 0.16.0")).To(Equal(true))
 		Expect(err).To(BeNil())
+
+		Execute("go", "run", path, "rm", "elm@0.16.0")
 	})
 
 	It("should install 0.15.1 version", func() {
@@ -62,6 +67,8 @@ var _ = Describe("elm", func() {
 
 		Expect(strings.Contains(string(command), "♥ 0.15.1")).To(Equal(true))
 		Expect(err).To(BeNil())
+
+		Execute("go", "run", path, "rm", "elm@0.15.1")
 	})
 
 	It("should install one version after another", func() {
@@ -72,12 +79,16 @@ var _ = Describe("elm", func() {
 
 		Expect(strings.Contains(string(command), "♥ 0.18.0")).To(Equal(true))
 		Expect(err).To(BeNil())
+
+		Execute("go", "run", path, "rm", "elm@0.17.0")
+		Execute("go", "run", path, "rm", "elm@0.18.0")
 	})
 
 	It("should use local version", func() {
 		pwd, _ := os.Getwd()
 		versionFile := filepath.Join(filepath.Dir(pwd), ".elm-version")
 
+		Execute("go", "run", path, "elm@0.17.0")
 		Execute("go", "run", path, "elm@0.18.0")
 
 		io.WriteFile(versionFile, "0.17.0")
@@ -89,5 +100,8 @@ var _ = Describe("elm", func() {
 		err := os.RemoveAll(versionFile)
 
 		Expect(err).To(BeNil())
+
+		Execute("go", "run", path, "rm", "elm@0.17.0")
+		Execute("go", "run", path, "rm", "elm@0.18.0")
 	})
 })
