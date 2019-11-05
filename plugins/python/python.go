@@ -29,7 +29,6 @@ import (
 	eStrings "github.com/markelog/eclectica/strings"
 	"github.com/markelog/eclectica/variables"
 	"github.com/markelog/eclectica/versions"
-	"github.com/markelog/release"
 )
 
 var (
@@ -113,7 +112,9 @@ func (python Python) PostInstall() (err error) {
 	bin := variables.GetBin("python", python.Version)
 
 	if hasTools(python.Version) {
-		cmd, stderr, stdout, cmdErr := python.getCmd(bin, "-m", "ensurepip")
+		cmd, stderr, stdout, cmdErr := python.getCmd(
+			bin, []string{"-m", "ensurepip"},
+		)
 		if cmdErr != nil {
 			return cmdErr
 		}
@@ -227,7 +228,6 @@ func (python Python) configure() (err error) {
 	var (
 		path      = variables.Path("python", python.Version)
 		configure = filepath.Join(path, "configure")
-		ensurepip = "--with-ensurepip=upgrade"
 	)
 
 	err = python.externals()
@@ -237,8 +237,7 @@ func (python Python) configure() (err error) {
 
 	cmd, stderr, stdout, err := python.getCmd(
 		configure,
-		"--prefix="+path,
-		ensurepip,
+		python.getLineArguments(),
 	)
 	if err != nil {
 		return err
@@ -265,7 +264,7 @@ func (python Python) prepare() (err error) {
 	// Ignore touch errors since newest python makefile doesn't have this task
 	python.touch()
 
-	cmd, stderr, stdout, err := python.getCmd("make", "-j")
+	cmd, stderr, stdout, err := python.getCmd("make", []string{"-j"})
 	if err != nil {
 		return err
 	}
@@ -287,7 +286,7 @@ func (python Python) prepare() (err error) {
 func (python Python) install() (err error) {
 	python.Emitter.Emit("install")
 
-	cmd, stderr, stdout, err := python.getCmd("make", "install")
+	cmd, stderr, stdout, err := python.getCmd("make", []string{"install"})
 	if err != nil {
 		return err
 	}
@@ -307,7 +306,7 @@ func (python Python) install() (err error) {
 }
 
 func (python Python) touch() (err error) {
-	cmd, stderr, stdout, cmdErr := python.getCmd("make", "touch")
+	cmd, stderr, stdout, cmdErr := python.getCmd("make", []string{"touch"})
 	if cmdErr != nil {
 		return cmdErr
 	}
@@ -353,44 +352,31 @@ func (python Python) listen(event string, pipe io.ReadCloser, emit bool) {
 
 func (python Python) getEnvs(original []string) (result []string) {
 	if runtime.GOOS == "darwin" {
-		result = python.getOSXEnvs(original)
+		result = getOSXEnvs(python.Version, original)
 	}
 
 	return
 }
 
-func (python Python) getOSXEnvs(original []string) []string {
-	externals := []string{"readline", "openssl"}
-
-	includeFlags := ""
-	libFlags := ""
-
-	for _, name := range externals {
-		opt := "/usr/local/opt/"
-		libFlags += "-L" + filepath.Join(opt, name, "lib") + " "
-		includeFlags += "-I" + filepath.Join(opt, name, "include") + " "
+func (python Python) getLineArguments() []string {
+	if runtime.GOOS == "darwin" {
+		return getOSXLineArguments(python.Version)
 	}
 
-	// For zlib
-	output, _ := exec.Command("xcrun", "--show-sdk-path").CombinedOutput()
-	out := strings.TrimSpace(string(output))
-	includeFlags += " -I" + filepath.Join(out, "/usr/include")
+	if runtime.GOOS == "linux" {
+		return getLinuxLineArguments(python.Version)
+	}
 
-	original = append(original, "CPPFLAGS="+includeFlags)
-	original = append(original, "LDFLAGS="+libFlags)
-	// Since otherwise configure breaks for some versions :/
-	original = append(original, "MACOSX_DEPLOYMENT_TARGET="+release.Version())
-
-	return original
+	return []string{}
 }
 
-func (python Python) getCmd(args ...string) (
-
+func (python Python) getCmd(name string, args []string) (
 	cmd *exec.Cmd,
 	stderr, stdout io.ReadCloser,
 	err error,
 ) {
-	cmd = exec.Command(args[0], args[1:]...)
+
+	cmd = exec.Command(name, args...)
 
 	cmd.Env = append(os.Environ(), "LC_ALL=C") // Required for some reason
 	cmd.Dir = variables.Path("python", python.Version)

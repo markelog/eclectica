@@ -9,6 +9,7 @@ import (
 	"github.com/mgutz/ansi"
 
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/variables"
 )
 
 var (
@@ -64,4 +65,18 @@ func dealWithLinuxShell() error {
 	os.Exit(1)
 
 	return nil
+}
+
+func getLinuxLineArguments(version string) []string {
+	var (
+		path      = variables.Path("python", version)
+		prefix    = "--prefix=" + path
+		ensurepip = "--with-ensurepip=upgrade"
+	)
+
+	result := []string{
+		prefix, ensurepip,
+	}
+
+	return result
 }

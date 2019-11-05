@@ -3,12 +3,16 @@ package python
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
+	"github.com/blang/semver"
 	"github.com/go-errors/errors"
 	"github.com/mgutz/ansi"
 
 	"github.com/markelog/eclectica/cmd/print"
+	"github.com/markelog/eclectica/variables"
+	"github.com/markelog/release"
 )
 
 var (
@@ -22,6 +26,10 @@ var (
 	XCodeDependencies = []string{
 		"xcrun", "make", "gcc",
 	}
+
+	// Minimal version for --with-openssl flag,
+	// without this flag python will no longer build with SSL :((
+	minimalForWithOpenSSLFlag, _ = semver.Make("3.7.0")
 )
 
 func checkXCodeDependencies() bool {
@@ -74,6 +82,60 @@ func printErrForXCodeDependencies() {
 
 	print.Warning(message, "")
 	os.Exit(1)
+}
+
+func isWithOpenSSLFlag(version string) bool {
+	madeVersion, _ := semver.Make(version)
+
+	return madeVersion.GTE(minimalForWithOpenSSLFlag)
+}
+
+func getOSXLineArguments(version string) []string {
+	var (
+		path      = variables.Path("python", version)
+		prefix    = "--prefix=" + path
+		ensurepip = "--with-ensurepip=upgrade"
+	)
+
+	result := []string{
+		prefix, ensurepip,
+	}
+
+	if isWithOpenSSLFlag(version) {
+		result = append(result, "--with-openssl=/usr/local/opt/openssl")
+	}
+
+	return result
+}
+
+func getOSXEnvs(version string, original []string) []string {
+	externals := []string{"readline"}
+
+	if isWithOpenSSLFlag(version) == false {
+		externals = append(externals, "openssl")
+	}
+
+	includeFlags := ""
+	libFlags := ""
+
+	for _, name := range externals {
+		opt := "/usr/local/opt/"
+		libFlags += "-L" + filepath.Join(opt, name, "lib") + " "
+		includeFlags += "-I" + filepath.Join(opt, name, "include") + " "
+	}
+
+	// For zlib
+	output, _ := exec.Command("xcrun", "--show-sdk-path").CombinedOutput()
+	out := strings.TrimSpace(string(output))
+	includeFlags += " -I" + filepath.Join(out, "/usr/include")
+
+	original = append(original, "CFLAGS="+includeFlags)
+	original = append(original, "LDFLAGS="+libFlags)
+
+	// Since otherwise configure breaks for some versions :/
+	original = append(original, "MACOSX_DEPLOYMENT_TARGET="+release.Version())
+
+	return original
 }
 
 func dealWithOSXShell() error {

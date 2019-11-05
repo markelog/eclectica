@@ -244,4 +244,26 @@ var _ = Describe("python", func() {
 			Expect(actual).To(ContainSubstring(expected))
 		})
 	})
+
+	Describe("latest", func() {
+
+		// Sure...
+		if shouldRun("python3") == false {
+			return
+		}
+
+		It("should install latest version", func() {
+			command, _ := Command("go", "run", path, "python@latest").Output()
+
+			Expect(strings.Contains(string(command), "♥ 3.")).To(Equal(true))
+		})
+
+		It("should install pytest", func() {
+			Execute("pip", "install", "pytest")
+
+			modules, _ := Command("pip", "list").Output()
+
+			Expect(strings.Contains(string(modules), "pytest")).To(Equal(true))
+		})
+	})
 })
