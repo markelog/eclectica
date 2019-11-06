@@ -20,8 +20,8 @@ var _ = Describe("node", func() {
 	}
 
 	var (
-		mainVersion      = "12.0.1"
-		secondaryVersion = "10.13.0"
+		mainVersion      = "12.13.0"
+		secondaryVersion = "10.17.0"
 	)
 
 	BeforeEach(func() {
