@@ -124,6 +124,11 @@ matrix:
       dist: trusty
       script: "travis_wait 60 make integration-ci"
 
+    - env: "TEST_LANGUAGE=python-latest"
+      os: linux
+      dist: trusty
+      script: "travis_wait 60 make integration-ci"
+
     - env: "TEST_LANGUAGE=elm"
       os: linux
       dist: trusty
@@ -221,6 +226,11 @@ matrix:
       dist: precise
       script: "travis_wait 60 make integration-ci"
 
+    - env: "TEST_LANGUAGE=python-latest"
+      os: linux
+      dist: precise
+      script: "travis_wait 60 make integration-ci"
+
     - env: "TEST_LANGUAGE=elm"
       os: linux
       dist: precise
@@ -277,6 +287,11 @@ matrix:
       osx_image: xcode8.3.3
       script: "travis_wait 800 make integration-ci"
 
+    - env: "TEST_LANGUAGE=python-latest"
+      os: osx
+      osx_image: xcode8.3.3
+      script: "travis_wait 800 make integration-ci"
+
     # OS X El Capitan
     - env: "TEST_LANGUAGE=main"
       os: osx
@@ -324,6 +339,11 @@ matrix:
       script: "travis_wait 9000 make integration-ci"
 
     - env: "TEST_LANGUAGE=python3"
+      os: osx
+      osx_image: xcode8
+      script: "travis_wait 9000 make integration-ci"
+    
+    - env: "TEST_LANGUAGE=python-latest"
       os: osx
       osx_image: xcode8
       script: "travis_wait 9000 make integration-ci"

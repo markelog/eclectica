@@ -247,8 +247,7 @@ var _ = Describe("python", func() {
 
 	Describe("latest", func() {
 
-		// Sure...
-		if shouldRun("python3") == false {
+		if shouldRun("python-latest") == false {
 			return
 		}
 
