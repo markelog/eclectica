@@ -134,25 +134,25 @@ matrix:
       dist: trusty
       script: "travis_wait make integration-ci"
 
-    # ubuntu precise
+    # ubuntu xenial
     - env: "TEST_LANGUAGE=main"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=node"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=rust"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait 40 make integration-ci"
 
     - env: "TEST_LANGUAGE=ruby-first"
       os: linux
-      dist: precise
+      dist: xenial
       before_install:
         - export PATH=~/.eclectica/versions/node/current/bin:$PATH
         - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
@@ -180,7 +180,7 @@ matrix:
 
     - env: "TEST_LANGUAGE=ruby-second"
       os: linux
-      dist: precise
+      dist: xenial
       before_install:
         - export PATH=~/.eclectica/versions/node/current/bin:$PATH
         - export PATH=~/.eclectica/versions/rust/current/bin:$PATH
@@ -208,32 +208,32 @@ matrix:
 
     - env: "TEST_LANGUAGE=go"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait make integration-ci"
 
     - env: "TEST_LANGUAGE=python2.7"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=python2-old"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=python3"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=python-latest"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait 60 make integration-ci"
 
     - env: "TEST_LANGUAGE=elm"
       os: linux
-      dist: precise
+      dist: xenial
       script: "travis_wait make integration-ci"
 
     # MacOS Sierra
