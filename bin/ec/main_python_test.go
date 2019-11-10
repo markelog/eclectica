@@ -57,10 +57,10 @@ var _ = Describe("python", func() {
 				Execute("go", "run", path, "python@2.7.12")
 			})
 
-			AfterSuite(func() {
+			teardown := func() {
 				Command("go", "run", path, "rm", "python@2.7.10").Output()
 				Command("go", "run", path, "rm", "python@2.7.12").Output()
-			})
+			}
 
 			It(`should install 2.7.13 version`, func() {
 				Execute("go", "run", path, "python@2.7.13")
@@ -146,6 +146,10 @@ var _ = Describe("python", func() {
 					Execute("go", "run", path, "python@2.7.8")
 				})
 
+				teardown := func() {
+					Execute("go", "run", path, "rm", "python@2.7.8")
+				}
+
 				It("should have pip installed when downloaded", func() {
 					command, err := Command(pipBin).CombinedOutput()
 
@@ -162,7 +166,11 @@ var _ = Describe("python", func() {
 					Expect(actual).ToNot(ContainSubstring("has not been established"))
 					Expect(actual).To(ContainSubstring(expected))
 				})
+
+				teardown()
 			})
+
+			teardown()
 		})
 	})
 
@@ -177,10 +185,10 @@ var _ = Describe("python", func() {
 			Execute("go", "run", path, "python@3.5.2")
 		})
 
-		AfterSuite(func() {
+		teardown := func() {
 			Command("go", "run", path, "rm", "python@3.5.1").Output()
 			Command("go", "run", path, "rm", "python@3.5.2").Output()
-		})
+		}
 
 		It("should list installed versions", func() {
 			command, _ := Command("go", "run", path, "ls", "python").Output()
@@ -243,16 +251,18 @@ var _ = Describe("python", func() {
 			Expect(actual).ToNot(ContainSubstring("has not been established"))
 			Expect(actual).To(ContainSubstring(expected))
 		})
+
+		teardown()
 	})
 
 	Describe("latest", func() {
-
 		if shouldRun("python-latest") == false {
 			return
 		}
 
 		It("should install latest version", func() {
-			command, _ := Command("go", "run", path, "python@latest").Output()
+			Execute("go", "run", path, "python@latest")
+			command, _ := Command("go", "run", path, "ls", "python").Output()
 
 			Expect(strings.Contains(string(command), "♥ 3.")).To(Equal(true))
 		})

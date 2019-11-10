@@ -30,10 +30,10 @@ var _ = Describe("ruby", func() {
 		Execute("go", "run", path, "rm", "ruby@"+secondaryVersion)
 	})
 
-	AfterSuite(func() {
+	teardown := func() {
 		Execute("go", "run", path, "rm", "ruby@"+mainVersion)
 		Execute("go", "run", path, "rm", "ruby@"+secondaryVersion)
-	})
+	}
 
 	It("should install two versions of ruby", func() {
 		Execute("go", "run", path, "ruby@"+mainVersion)
@@ -71,4 +71,6 @@ var _ = Describe("ruby", func() {
 
 		Command("go", "run", path, "rm", "ruby@2.1.0").Output()
 	})
+
+	teardown()
 })

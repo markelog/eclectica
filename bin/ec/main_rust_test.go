@@ -33,10 +33,10 @@ var _ = Describe("rust", func() {
 		Execute("go", "run", path, "rm", "rust@"+secondaryVersion)
 	})
 
-	AfterSuite(func() {
+	teardown := func() {
 		Execute("go", "run", path, "rm", "rust@"+mainVersion)
 		Execute("go", "run", path, "rm", "rust@"+secondaryVersion)
-	})
+	}
 
 	It("should install rust "+secondaryVersion, func() {
 		Execute("go", "run", path, "rust@"+secondaryVersion)
@@ -96,4 +96,6 @@ var _ = Describe("rust", func() {
 
 		Expect(result).To(Equal(true))
 	})
+
+	teardown()
 })

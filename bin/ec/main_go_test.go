@@ -33,10 +33,10 @@ var _ = Describe("go", func() {
 		Execute("go", "run", path, "rm", "go@"+mainVersion)
 	})
 
-	AfterSuite(func() {
+	teardown := func() {
 		Execute("go", "run", path, "rm", "go@"+mainVersion)
 		Execute("go", "run", path, "rm", "go@"+secondaryVersion)
-	})
+	}
 
 	It("should list installed versions", func() {
 		Execute("go", "run", path, "go@"+mainVersion)
@@ -86,4 +86,6 @@ var _ = Describe("go", func() {
 
 		Expect(result).To(Equal(true))
 	})
+
+	teardown()
 })

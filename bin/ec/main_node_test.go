@@ -35,10 +35,10 @@ var _ = Describe("node", func() {
 		Execute("go", "run", path, "rm", "node@"+secondaryVersion)
 	})
 
-	AfterSuite(func() {
+	teardown := func() {
 		Execute("go", "run", path, "rm", "node@"+mainVersion)
 		Execute("go", "run", path, "rm", "node@"+secondaryVersion)
-	})
+	}
 
 	Describe("globally installed modules", func() {
 		dir, _ := os.Getwd()
@@ -105,6 +105,8 @@ var _ = Describe("node", func() {
 
 			Expect(string(command)).ShouldNot(ContainSubstring(expected))
 		})
+
+		teardown()
 	})
 
 	Describe("installation of the local version", func() {

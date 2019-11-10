@@ -19,7 +19,7 @@ var (
 )
 
 func shouldRun(language string) bool {
-	if os.Getenv("TEST_ALL") == "true" {
+	if os.Getenv("TEST_LANGUAGE") == "" {
 		return true
 	}
 

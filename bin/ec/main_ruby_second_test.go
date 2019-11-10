@@ -32,10 +32,10 @@ var _ = Describe("ruby", func() {
 		Execute("go", "run", path, "rm", "ruby@"+secondaryVersion)
 	})
 
-	AfterSuite(func() {
+	teardown := func() {
 		Execute("go", "run", path, "rm", "ruby@"+mainVersion)
 		Execute("go", "run", path, "rm", "ruby@"+secondaryVersion)
-	})
+	}
 
 	It("should use local version", func() {
 		pwd, _ := os.Getwd()
@@ -108,4 +108,6 @@ var _ = Describe("ruby", func() {
 	It("should list remote ruby versions", func() {
 		Expect(checkRemoteList("ruby", "2.x", 5)).To(Equal(true))
 	})
+
+	teardown()
 })
