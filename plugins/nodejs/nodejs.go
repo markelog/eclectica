@@ -26,7 +26,7 @@ var (
 
 	minimalVersion, _ = semver.Make("0.10.0")
 
-	bins = []string{"node", "npm"}
+	bins = []string{"node", "npm", "npx"}
 	dots = []string{".nvmrc", ".node-version"}
 )
 
