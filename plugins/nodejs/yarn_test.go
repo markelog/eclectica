@@ -21,7 +21,6 @@ var _ = Describe("yarn", func() {
 		grabGet        bool
 		archiveExtract bool
 		cprfCopy       bool
-		osRemovaAll    bool
 		ioSymlink      bool
 	)
 
@@ -29,7 +28,6 @@ var _ = Describe("yarn", func() {
 		grabGet = false
 		archiveExtract = false
 		cprfCopy = false
-		osRemovaAll = false
 		ioSymlink = false
 
 		monkey.Patch(grab.Get, func(path, url string) (*grab.Response, error) {
@@ -47,11 +45,6 @@ var _ = Describe("yarn", func() {
 			return nil
 		})
 
-		monkey.Patch(os.RemoveAll, func(path string) error {
-			osRemovaAll = true
-			return nil
-		})
-
 		monkey.Patch(io.Symlink, func(from, to string) error {
 			ioSymlink = true
 			return nil
@@ -62,7 +55,6 @@ var _ = Describe("yarn", func() {
 		monkey.Unpatch(grab.Get)
 		monkey.Unpatch(archive.Extract)
 		monkey.Unpatch(cprf.Copy)
-		monkey.Unpatch(os.RemoveAll)
 		monkey.Unpatch(io.Symlink)
 	})
 
@@ -72,7 +64,6 @@ var _ = Describe("yarn", func() {
 		Expect(grabGet).To(Equal(false))
 		Expect(archiveExtract).To(Equal(false))
 		Expect(cprfCopy).To(Equal(false))
-		Expect(osRemovaAll).To(Equal(false))
 		Expect(ioSymlink).To(Equal(false))
 
 		Expect(working).To(Equal(true))
@@ -91,7 +82,6 @@ var _ = Describe("yarn", func() {
 		Expect(grabGet).To(Equal(true))
 		Expect(archiveExtract).To(Equal(true))
 		Expect(cprfCopy).To(Equal(true))
-		Expect(osRemovaAll).To(Equal(true))
 		Expect(ioSymlink).To(Equal(true))
 
 		Expect(working).To(Equal(true))
