@@ -55,7 +55,7 @@ func (node Node) Yarn() (ok bool, err error) {
 		return true, errors.New("\"" + node.Version + "\" version is not supported by yarn")
 	}
 
-	if _, statErr := os.Stat(unarchived); statErr != nil {
+	if _, statErr := os.Stat(from); statErr != nil {
 		err = node.download(archived)
 		if err != nil {
 			return
