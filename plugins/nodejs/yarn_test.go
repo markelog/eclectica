@@ -6,9 +6,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/bouk/monkey"
 	"github.com/markelog/archive"
 	"github.com/markelog/cprf"
+	"github.com/markelog/monkey"
 	"gopkg.in/cavaliercoder/grab.v1"
 
 	"github.com/markelog/eclectica/io"

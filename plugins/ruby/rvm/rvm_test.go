@@ -3,7 +3,7 @@ package rvm_test
 import (
 	"github.com/markelog/release"
 
-	"github.com/bouk/monkey"
+	"github.com/markelog/monkey"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 

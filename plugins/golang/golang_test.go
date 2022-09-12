@@ -10,8 +10,8 @@ import (
 	"os/user"
 	"runtime"
 
-	"github.com/bouk/monkey"
 	"github.com/jarcoal/httpmock"
+	"github.com/markelog/monkey"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/sanity-io/litter"

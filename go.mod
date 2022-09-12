@@ -6,7 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/andybalholm/cascadia v1.2.0
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/bouk/monkey v1.0.0
+	github.com/markelog/monkey v1.1.1
 	github.com/chuckpreslar/emission v0.0.0-20170206194824-a7ddd980baf9
 	github.com/creack/pty v1.1.15 // indirect
 	github.com/dustin/go-humanize v1.0.0

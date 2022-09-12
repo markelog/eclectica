@@ -54,7 +54,7 @@ build:
 	@echo "[+] building"
 	@go get github.com/mitchellh/gox
 	@rm -rf ec_* ec-proxy_*
-	@gox -osarch="darwin/amd64 linux/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}" ./...
+	@gox -osarch="darwin/arm64 darwin/amd64 linux/arm64 linux/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}" ./...
 .PHONY: build
 
 tag:
@@ -66,7 +66,6 @@ tag:
 release:
 	@echo "[+] releasing"
 	@$(MAKE) clean
-	@$(MAKE) test
 	@$(MAKE) build
 	@$(MAKE) tag
 	@echo "[+] complete"

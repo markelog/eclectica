@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/bouk/monkey"
+	"github.com/markelog/monkey"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 

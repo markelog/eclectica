@@ -240,6 +240,8 @@ github.com/markelog/curse v0.0.0-20160912213804-beb12e5a9148 h1:4RhoX63LLVyyiho6
 github.com/markelog/curse v0.0.0-20160912213804-beb12e5a9148/go.mod h1:z0r+5rwPX2nI594qYcZkrmSUI3MM1lnWt/ttpxHquLc=
 github.com/markelog/list v0.0.0-20180309191143-504b0718f271 h1:/F7dfCsJus75joeIbEPg7X76TFz4Pfu9a5n3RNmGKl8=
 github.com/markelog/list v0.0.0-20180309191143-504b0718f271/go.mod h1:awBvAcVBWyJpIS8oxcUQ5hENdIz9t5j53YNSRcUjuIc=
+github.com/markelog/monkey v1.1.1 h1:hNxgnb1UH677FFQNIX7PSeljBY5EHMB8A3dcf0RvjM4=
+github.com/markelog/monkey v1.1.1/go.mod h1:kupJDTvVpJ2r5ZPWwjfnEJY7hO46SzwOv78PLkDXlYs=
 github.com/markelog/release v0.0.0-20171013181022-a9369ddebcf9 h1:l9A2q1iW5x/ekvSf0AvpRxcwRz3CFTmkRiC1GwSX814=
 github.com/markelog/release v0.0.0-20171013181022-a9369ddebcf9/go.mod h1:cT6MzxN4/sjmTIlcF7UIZ8KO8C23+PmhN+NVBb75UNw=
 github.com/markelog/release v0.0.0-20190608215730-edcab05862d0 h1:j7qON1RWlhziE0Z8Te6+mD5u2Qk6X/rq6zbkOlnE+pM=
@@ -298,6 +300,7 @@ github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6L
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
+github.com/sanity-io/litter v1.1.0 h1:BllcKWa3VbZmOZbDCoszYLk7zCsKHz5Beossi8SUcTc=
 github.com/sanity-io/litter v1.1.0/go.mod h1:CJ0VCw2q4qKU7LaQr3n7UOSHzgEMgcGco7N/SkZQPjw=
 github.com/schollz/closestmatch v2.1.0+incompatible h1:Uel2GXEpJqOWBrlyI+oY9LTiyyjYS17cCYRqP13/SHk=
 github.com/schollz/closestmatch v2.1.0+incompatible/go.mod h1:RtP1ddjLong6gTkbtmuhtR2uUrrJOpYzYRvbcPAid+g=
@@ -727,6 +730,7 @@ gopkg.in/tomb.v1 v1.0.0-20140529071818-c131134a1947 h1:aNEcl02ps/eZaBJi2LycKl0jP
 gopkg.in/tomb.v1 v1.0.0-20140529071818-c131134a1947/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=
 gopkg.in/warnings.v0 v0.1.2 h1:wFXVbFY8DY5/xOe1ECiWdKCzZlxgshcYVNkBHstARME=
 gopkg.in/warnings.v0 v0.1.2/go.mod h1:jksf8JmL6Qr/oQM2OXTHunEvvTAsrWBLb6OOjuVWRNI=
+gopkg.in/yaml.v2 v2.2.1 h1:mUhvW9EsL+naU5Q3cakzfE91YhliOondGd6ZrsDBHQE=
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.3/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

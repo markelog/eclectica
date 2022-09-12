@@ -1,7 +1,7 @@
 package strings_test
 
 import (
-	"github.com/bouk/monkey"
+	"github.com/markelog/monkey"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 

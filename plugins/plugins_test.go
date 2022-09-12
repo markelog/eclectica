@@ -14,7 +14,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/bouk/monkey"
+	"github.com/markelog/monkey"
 
 	. "github.com/markelog/eclectica/plugins"
 	"github.com/markelog/eclectica/shell"
