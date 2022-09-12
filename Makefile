@@ -68,5 +68,6 @@ release:
 	@$(MAKE) clean
 	@$(MAKE) build
 	@$(MAKE) tag
+	@git push origin master --tags
 	@echo "[+] complete"
 .PHONY: release
