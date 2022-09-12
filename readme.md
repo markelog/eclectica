@@ -34,7 +34,7 @@ Like [pyenv](https://github.com/pyenv/pyenv) for Python,
 ## go get
 
 ```sh
-go get github.com/markelog/eclectica/bin/{ec,ec-proxy}
+go install github.com/markelog/eclectica/bin/{ec,ec-proxy}@latest
 ```
 
 ## npm
