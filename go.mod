@@ -6,7 +6,6 @@ require (
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/andybalholm/cascadia v1.2.0
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/markelog/monkey v1.1.1
 	github.com/chuckpreslar/emission v0.0.0-20170206194824-a7ddd980baf9
 	github.com/creack/pty v1.1.15 // indirect
 	github.com/dustin/go-humanize v1.0.0
@@ -25,11 +24,13 @@ require (
 	github.com/markelog/cprf v0.0.0-20160905195007-48ea6f5e1a32
 	github.com/markelog/curse v0.0.0-20160912213804-beb12e5a9148
 	github.com/markelog/list v0.0.0-20180309191143-504b0718f271
+	github.com/markelog/monkey v1.1.1
 	github.com/markelog/release v0.0.0-20190608215730-edcab05862d0
 	github.com/mattn/go-colorable v0.1.8
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/mitchellh/gox v1.0.1 // indirect
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.1
 	github.com/pelletier/go-buffruneio v0.3.0
