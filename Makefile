@@ -65,9 +65,11 @@ tag:
 
 release:
 	@echo "[+] releasing"
+	$(eval version := $(shell go run bin/ec/main.go version))
 	@$(MAKE) clean
 	@$(MAKE) build
 	@$(MAKE) tag
 	@git push origin master --tags
+	@gh release create v$(version) ./build/*
 	@echo "[+] complete"
 .PHONY: release
