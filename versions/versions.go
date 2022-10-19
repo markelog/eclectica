@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/go-errors/errors"
 	"github.com/blang/semver"
+	"github.com/go-errors/errors"
 	hversion "github.com/hashicorp/go-version"
 )
 
@@ -54,7 +54,7 @@ func ComposeMajors(versions []string) map[string][]string {
 // ComposeMinors composes minor version to map object of arrays from array
 func ComposeMinors(versions []string) map[string][]string {
 	result := map[string][]string{}
-	firstPart := regexp.MustCompile("(\\d)+\\.(\\d+)")
+	firstPart := regexp.MustCompile("(\\d+)\\.(\\d+)")
 
 	for _, version := range versions {
 		checkVersions := firstPart.FindAllStringSubmatch(version, 1)
@@ -78,9 +78,12 @@ func ComposeMinors(versions []string) map[string][]string {
 }
 
 // GetKeys returns array of keys
-//   map[string][]string{"4.x": []string{}, "0.x": []string{"0.8.2"}}
+//
+//	map[string][]string{"4.x": []string{}, "0.x": []string{"0.8.2"}}
+//
 // gets you:
-// 	 string{"0.x", "4.x"}
+//
+//	string{"0.x", "4.x"}
 func GetKeys(versions map[string][]string) []string {
 	result := []string{}
 	compare := map[string]string{}
@@ -118,11 +121,14 @@ func GetKeys(versions map[string][]string) []string {
 }
 
 // GetElements gets all elements for provided range of version in sorted semver format:
-//   map[string][]string{
-// 		"1.x": string{1.1, 1.1-beta}
-// 	}
+//
+//	  map[string][]string{
+//			"1.x": string{1.1, 1.1-beta}
+//		}
+//
 // Will return:
-//   [1.1.0, 1.1.0-beta]
+//
+//	[1.1.0, 1.1.0-beta]
 func GetElements(key string, versions map[string][]string) []string {
 	for version := range versions {
 		if version == key {
@@ -143,11 +149,10 @@ func Complete(version string, vers []string) (string, error) {
 	if len(vers) == 0 {
 		return "", errors.New("No versions available")
 	}
-
 	return Latest(version, vers)
 }
 
-// IsPartial checks if provided version is full semver version
+// IsPartial checks if provided version is not full semver version
 func IsPartial(version string) bool {
 	if version == "latest" {
 		return true

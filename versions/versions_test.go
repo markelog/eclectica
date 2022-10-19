@@ -135,6 +135,17 @@ var _ = Describe("versions", func() {
 			Expect(test).To(Equal("6.4.2"))
 		})
 
+		It("support for partial minor version > 10", func() {
+			version := "16.4"
+			versions := []string{
+				"16.1.0", "15.2.0", "16.2.0", "16.8.3", "16.4.2", "16.4.0",
+			}
+
+			test, _ := Complete(version, versions)
+
+			Expect(test).To(Equal("16.4.2"))
+		})
+
 		It("shouldn't do anything for full version", func() {
 			version := "6.1.1"
 			versions := []string{

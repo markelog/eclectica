@@ -7,7 +7,7 @@ import (
 	"github.com/markelog/eclectica/cmd/commands/install"
 	"github.com/markelog/eclectica/cmd/commands/ls"
 	"github.com/markelog/eclectica/cmd/commands/path"
-	"github.com/markelog/eclectica/cmd/commands/remove-everything"
+	removeEverything "github.com/markelog/eclectica/cmd/commands/remove-everything"
 	"github.com/markelog/eclectica/cmd/commands/rm"
 	"github.com/markelog/eclectica/cmd/commands/version"
 )
