@@ -427,7 +427,7 @@ func (python Python) renameLinks() (err error) {
 	}
 
 	path := filepath.Join(variables.Path("python", python.Version), "bin")
-	rp := regexp.MustCompile("(-?)3\\.\\w")
+	rp := regexp.MustCompile("(-?)3\\.\\w+")
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
