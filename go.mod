@@ -25,7 +25,7 @@ require (
 	github.com/markelog/cprf v0.0.0-20160905195007-48ea6f5e1a32
 	github.com/markelog/curse v0.0.0-20160912213804-beb12e5a9148
 	github.com/markelog/list v0.0.0-20180309191143-504b0718f271
-	github.com/markelog/monkey v1.1.1
+	github.com/markelog/monkey v1.1.2
 	github.com/markelog/release v0.0.0-20190608215730-edcab05862d0
 	github.com/mattn/go-colorable v0.1.8
 	github.com/mattn/go-isatty v0.0.14

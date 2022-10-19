@@ -243,6 +243,8 @@ github.com/markelog/list v0.0.0-20180309191143-504b0718f271 h1:/F7dfCsJus75joeIb
 github.com/markelog/list v0.0.0-20180309191143-504b0718f271/go.mod h1:awBvAcVBWyJpIS8oxcUQ5hENdIz9t5j53YNSRcUjuIc=
 github.com/markelog/monkey v1.1.1 h1:hNxgnb1UH677FFQNIX7PSeljBY5EHMB8A3dcf0RvjM4=
 github.com/markelog/monkey v1.1.1/go.mod h1:kupJDTvVpJ2r5ZPWwjfnEJY7hO46SzwOv78PLkDXlYs=
+github.com/markelog/monkey v1.1.2 h1:b41Jgmf0OGQ2uv3IHJIFBhgiro52upPgfvVt+imn/bc=
+github.com/markelog/monkey v1.1.2/go.mod h1:kupJDTvVpJ2r5ZPWwjfnEJY7hO46SzwOv78PLkDXlYs=
 github.com/markelog/release v0.0.0-20171013181022-a9369ddebcf9 h1:l9A2q1iW5x/ekvSf0AvpRxcwRz3CFTmkRiC1GwSX814=
 github.com/markelog/release v0.0.0-20171013181022-a9369ddebcf9/go.mod h1:cT6MzxN4/sjmTIlcF7UIZ8KO8C23+PmhN+NVBb75UNw=
 github.com/markelog/release v0.0.0-20190608215730-edcab05862d0 h1:j7qON1RWlhziE0Z8Te6+mD5u2Qk6X/rq6zbkOlnE+pM=
