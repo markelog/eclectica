@@ -12,7 +12,7 @@ install:
 
 test: install
 	@echo "[+] testing"
-	@go test -v ./...
+	go test -v ./...
 .PHONY: test
 
 integration:
