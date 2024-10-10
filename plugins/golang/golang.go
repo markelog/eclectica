@@ -150,12 +150,18 @@ func augmentSlice(result []string, node *goquery.Selection) []string {
 
 func getPlatform() (string, error) {
 	if runtime.GOOS == "linux" {
+		if runtime.GOARCH == "arm64" {
+			return "linux-arm64", nil
+		}
 		return "linux-amd64", nil
 	}
 
 	if runtime.GOOS == "darwin" {
+		if runtime.GOARCH == "arm64" {
+			return "darwin-arm64", nil
+		}
 		return "darwin-amd64", nil
 	}
 
-	return "", errors.New("Not supported envionment")
+	return "", errors.New("Not supported environment")
 }
