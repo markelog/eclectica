@@ -18,7 +18,7 @@ import (
 // Command config
 var Command = &cobra.Command{
 	Use:   "remove-everything",
-	Short: "removes everything related to the eclectica",
+	Short: "removes everything related to eclectica",
 	Run:   run,
 }
 

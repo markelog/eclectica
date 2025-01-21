@@ -10,7 +10,7 @@ import (
 // Command config
 var Command = &cobra.Command{
 	Use:   "version",
-	Short: "print version of Eclectica",
+	Short: "print version of eclectica",
 	Run:   run,
 }
 

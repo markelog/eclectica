@@ -16,12 +16,50 @@
 	</a>
 </p>
 <br/><br/>
-Eclectica unifies management of any language under one cohesive and minimalistic interface.
 
-Like [pyenv](https://github.com/pyenv/pyenv) for Python,
-[rbenv](https://github.com/rbenv/rbenv) for Ruby, [nvm](https://github.com/creationix/nvm) Node.js and etc. Managing multiple languages and doing it in a little more enjoyable fashion
+Eclectica unifies management of any language under one cohesive and minimalistic interface. Like [pyenv](https://github.com/pyenv/pyenv) for Python,
+[rbenv](https://github.com/rbenv/rbenv) for Ruby, [nvm](https://github.com/creationix/nvm) Node.js and etc.
 
-# Install
+But instead of having all of those, you have only one binary
+
+## Usage
+
+After you [install](#install) eclectica, `ec` program will be available in your terminal, I used to have a nice site with fancy animation explaning how to used it, but help output will do too -
+
+```
+$ ec --help
+
+Usage:
+  ec [command] [flags] [<language>@<version>]
+
+Examples:
+  Install specifc, say, node version
+  $ ec node@6.4.0
+
+  Or choose from already installed Go versions
+  $ ec go
+
+  Same way to choose, plus install available Rust versions
+  $ ec -r rust
+
+Available Commands:
+  completion        generate the autocompletion script for the specified shell
+  install           same as "ec [<language>@<version>]"
+  ls                list installed language versions
+  remove-everything removes everything related to eclectica
+  rm                remove language version
+  version           print version of eclectica
+
+Flags:
+  -h, --help   help for ec
+
+Use "ec [command] --help" for more information about a command
+
+```
+
+## Install
+
+Since eclectica is language manager for any language, it should be installed through any package manager :-)
 
 - [go get](#go-get)
 - [npm](#npm)

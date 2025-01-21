@@ -2,13 +2,13 @@ package commands
 
 // Command example for install command
 const example = `
-  Install specifc version
+  Install specifc, say, node version
   $ ec node@6.4.0
 
-  Choose local version with interactive list
+  Or choose from already installed Go versions
   $ ec go
 
-  Choose remote version with interactive list
+  Same way to choose, plus install available Rust versions
   $ ec -r rust`
 
 // Help output

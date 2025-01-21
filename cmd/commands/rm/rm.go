@@ -21,13 +21,13 @@ var Command = &cobra.Command{
 
 // Command example
 var example = `
-  Install specifc version
+  Remove specifc version
   $ ec rm rust@1.11.0
 
-  Remove language version with interactive list
+  Remove language version via interactive list
   $ ec rm go
 
-  Remove with interactive list
+  Remove via interactive list
   $ ec rm`
 
 // Runner
