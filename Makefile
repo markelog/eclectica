@@ -57,6 +57,13 @@ build:
 	@gox -osarch="darwin/arm64 darwin/amd64 linux/arm64 linux/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}" ./...
 .PHONY: build
 
+global: build
+	@echo "[+] installing ec globally"
+	@sudo cp ./build/ec_darwin_arm64 /usr/local/bin/ec
+	@sudo cp ./build/ec-proxy_darwin_arm64 /usr/local/bin/ec-proxy
+	@sudo chmod +x /usr/local/bin/ec /usr/local/bin/ec-proxy
+.PHONY: install-global
+
 tag:
 	$(eval version := $(shell go run bin/ec/main.go version))
 	@echo "[+] tagging"
