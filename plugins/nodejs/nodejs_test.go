@@ -113,6 +113,24 @@ var _ = Describe("nodejs", func() {
 			defer httpmock.DeactivateAndReset()
 		})
 
+		It("should use x64 for old macOS Node versions on arm64 machines", func() {
+			Expect(NodeArchiveArchFor("14.21.3", "darwin", "arm64")).To(Equal("x64"))
+		})
+
+		It("should use arm64 for supported macOS Node versions on arm64 machines", func() {
+			Expect(NodeArchiveArchFor("16.0.0", "darwin", "arm64")).To(Equal("arm64"))
+			Expect(NodeArchiveArchFor("26.4.0", "darwin", "arm64")).To(Equal("arm64"))
+		})
+
+		It("should use arm64 for supported Linux Node versions on arm64 machines", func() {
+			Expect(NodeArchiveArchFor("16.0.0", "linux", "arm64")).To(Equal("arm64"))
+		})
+
+		It("should map amd64 archive names to x64", func() {
+			Expect(NodeArchiveArchFor("26.4.0", "darwin", "amd64")).To(Equal("x64"))
+			Expect(NodeArchiveArchFor("26.4.0", "linux", "x86_64")).To(Equal("x64"))
+		})
+
 		It("should get info about 6.3.1 version", func() {
 			result := (&Node{Version: "6.3.1"}).Info()
 
@@ -123,6 +141,18 @@ var _ = Describe("nodejs", func() {
 			} else if runtime.GOOS == "linux" {
 				Expect(result["filename"]).To(Equal("node-v6.3.1-linux-x64"))
 				Expect(result["url"]).To(Equal("https://nodejs.org/dist/v6.3.1/node-v6.3.1-linux-x64.tar.gz"))
+			}
+		})
+
+		It("should get arm64 info for Node versions that support it", func() {
+			result := (&Node{Version: "16.0.0"}).Info()
+
+			if runtime.GOARCH == "arm64" {
+				Expect(result["filename"]).To(Equal(fmt.Sprintf("node-v16.0.0-%s-arm64", runtime.GOOS)))
+				Expect(result["url"]).To(Equal(fmt.Sprintf("https://nodejs.org/dist/v16.0.0/node-v16.0.0-%s-arm64.tar.gz", runtime.GOOS)))
+			} else if runtime.GOARCH == "amd64" {
+				Expect(result["filename"]).To(Equal(fmt.Sprintf("node-v16.0.0-%s-x64", runtime.GOOS)))
+				Expect(result["url"]).To(Equal(fmt.Sprintf("https://nodejs.org/dist/v16.0.0/node-v16.0.0-%s-x64.tar.gz", runtime.GOOS)))
 			}
 		})
 	})

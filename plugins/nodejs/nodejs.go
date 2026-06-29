@@ -4,6 +4,7 @@ package nodejs
 import (
 	"fmt"
 	"net"
+	"os/exec"
 	"regexp"
 	"runtime"
 	"strings"
@@ -97,10 +98,54 @@ func (node Node) Info() map[string]string {
 	result := make(map[string]string)
 	sourcesURL := fmt.Sprintf("%s/v%s", VersionLink, node.Version)
 
-	result["filename"] = fmt.Sprintf("node-v%s-%s-x64", node.Version, runtime.GOOS)
+	result["filename"] = fmt.Sprintf("node-v%s-%s-%s", node.Version, runtime.GOOS, nodeArchiveArch(node.Version))
 	result["url"] = fmt.Sprintf("%s/%s.tar.gz", sourcesURL, result["filename"])
 
 	return result
+}
+
+func nodeArchiveArch(version string) string {
+
+	arch := runtime.GOARCH
+	if runtime.GOOS == "darwin" && isDarwinArm64Machine() {
+		arch = "arm64"
+	}
+	return NodeArchiveArchFor(version, runtime.GOOS, arch)
+
+}
+
+// NodeArchiveArchFor determines the appropriate architecture for a Node.js archive
+func NodeArchiveArchFor(version, goos, arch string) string {
+	if arch == "amd64" || arch == "x86_64" {
+		return "x64"
+	}
+	if arch == "arm64" || arch == "aarch64" {
+		if goos == "darwin" && !supportsDarwinArm64(version) {
+			return "x64"
+		}
+		return "arm64"
+	}
+	return arch
+
+}
+
+func isDarwinArm64Machine() bool {
+	output, err := exec.Command("sysctl", "-n", "hw.optional.arm64").Output()
+	if err != nil {
+		return false
+	}
+	return strings.TrimSpace(string(output)) == "1"
+
+}
+
+func supportsDarwinArm64(version string) bool {
+	parsed, err := semver.Make(version)
+	if err != nil {
+		return false
+	}
+
+	min, _ := semver.Make("16.0.0")
+	return parsed.GTE(min)
 }
 
 // Bins returns list of the all bins included
