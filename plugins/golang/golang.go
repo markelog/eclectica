@@ -25,7 +25,7 @@ var (
 	VersionLink = "https://golang.org/dl"
 
 	// DownloadLink from which we download binaries for golang
-	DownloadLink = "https://storage.googleapis.com/golang"
+	DownloadLink = "https://dl.google.com/go"
 
 	versionPattern = `\d+\.\d+(?:\.\d+)?(?:(alpha|beta|rc)(?:\d*)?)?`
 
